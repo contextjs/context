@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "outDir": "../../_build/core"
+    },
+    "extends": "../../tsconfig-base.json",
+    "exclude": [
+        "tests/*"
+    ]
+}

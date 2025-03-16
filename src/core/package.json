@@ -1,0 +1,14 @@
+{
+  "name": "@contextjs/core",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS core",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/context-js/context.git",
+    "directory": "src/core"
+  }
+}
