@@ -6,7 +6,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node scripts/build.mts"
+        "build": "node scripts/build.js"
     },
     "repository": {
         "type": "git",
