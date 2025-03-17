@@ -10,7 +10,8 @@ env:
   NODE_VERSION: "22.x"
 
 jobs:
-  build:
+  run:
+    name: Build and Run Tests
     runs-on: ubuntu-latest
 
     steps:
