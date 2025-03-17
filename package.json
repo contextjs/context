@@ -6,7 +6,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node scripts/build.js"
+        "build": "node scripts/build.js",
+        "test": "glob -c \"tsx --test \" \"./**/*.test.mts\"",
+        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.mts\""
     },
     "repository": {
         "type": "git",
@@ -14,6 +16,11 @@
     },
     "devDependencies": {
         "@types/node": "^22.13.10",
+        "glob": "^11.0.1",
+        "tsx": "^4.19.3",
         "typescript": "^5.8.2"
+    },
+    "dependencies": {
+        "@contextjs/core": "file:_packages/contextjs-core-0.0.1-alpha.0.tgz"
     }
 }

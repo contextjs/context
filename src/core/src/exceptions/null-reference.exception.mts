@@ -10,7 +10,7 @@ import { Exception } from "./exception.mjs";
 
 export class NullReferenceException extends Exception {
     public constructor() {
-        super('Object reference not set to an instance of an object.');
+        super('The specified reference is null or undefined.');
         this.name = Exception.name;
     }
 }

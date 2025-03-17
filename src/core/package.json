@@ -1,8 +1,8 @@
 {
   "name": "@contextjs/core",
   "version": "__VERSION__",
-  "main": "api/index.js",
-  "description": "ContextJS core",
+  "main": "api/index.mjs",
+  "description": "ContextJS - Core",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
