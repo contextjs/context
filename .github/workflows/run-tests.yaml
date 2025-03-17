@@ -1,0 +1,29 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: "22.x"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ ENV.NODE_VERSION }}
+
+    - name: Build
+      run: npm run build
+
+    - name: Run Tests
+      run: npm run test:coverage
