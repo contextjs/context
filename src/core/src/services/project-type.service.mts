@@ -43,7 +43,7 @@ export class ProjectTypeService {
         return ProjectTypeService.fromString(ProjectType[value]);
     }
 
-    public static toCliOptions(): string[] {
+    public static toCLIOptions(): string[] {
         return Object.values(ProjectType).filter(t => !isNaN(+t)).map((item: any) => {
             return `  ${ProjectTypeService.toString(item)} [${+item}]`;
         })

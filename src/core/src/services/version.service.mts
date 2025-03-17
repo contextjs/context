@@ -9,6 +9,10 @@
 export class VersionService {
     private static version = "0.0.1-alpha.0";
 
+    public static get(): string {
+        return this.version;
+    }
+
     public static display(): void {
         const asciiArt = `
   ____            _            _         _ ____  
@@ -25,9 +29,5 @@ ________________________________________________
         console.info(`Node: ${process.version}`);
         console.info(`OS: ${process.platform} ${process.arch}`);
         console.info('\n\n');
-    }
-
-    public static get(): string {
-        return this.version;
     }
 }

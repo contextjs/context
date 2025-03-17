@@ -14,70 +14,46 @@ import { Throw } from "./throw.service.mjs";
 
 export class PathService {
     public static fileRead(filePath: string): string | null {
-        try {
-            if (existsSync(filePath))
-                return readFileSync(filePath, 'utf8');
+        if (existsSync(filePath))
+            return readFileSync(filePath, 'utf8');
 
-            throw new FileNotFoundException(filePath);
-        }
-        catch (e) {
-            console.error(e);
-            return null;
-        }
+        throw new FileNotFoundException(filePath);
     }
 
     public static fileSave(filePath: string, content: string, overwrite: boolean = false): boolean {
-        try {
-            Throw.ifNullOrWhiteSpace(filePath);
+        Throw.ifNullOrWhiteSpace(filePath);
 
-            if (!overwrite && existsSync(filePath))
-                throw new FileExistsException(filePath);
+        if (!overwrite && existsSync(filePath))
+            throw new FileExistsException(filePath);
 
-            const dirname = path.dirname(filePath);
-            if (!existsSync(dirname))
-                mkdirSync(dirname, { recursive: true });
+        const dirname = path.dirname(filePath);
+        if (!existsSync(dirname))
+            mkdirSync(dirname, { recursive: true });
 
-            writeFileSync(filePath, content, 'utf8');
-            return true;
-        }
-        catch (e) {
-            console.error(e);
-            return false;
-        }
+        writeFileSync(filePath, content, 'utf8');
+        return true;
     }
 
     public static fileDelete(filePath: string): boolean {
-        try {
-            Throw.ifNullOrWhiteSpace(filePath);
+        Throw.ifNullOrWhiteSpace(filePath);
 
-            if (existsSync(filePath)) {
-                unlinkSync(filePath);
-                return true;
-            }
+        if (existsSync(filePath)) {
+            unlinkSync(filePath);
+            return true;
+        }
 
-            return false;
-        }
-        catch (e) {
-            console.error(e);
-            return false;
-        }
+        return false;
     }
 
     public static directoryDelete(directoryPath: string): boolean {
-        try {
-            Throw.ifNullOrWhiteSpace(directoryPath);
+        Throw.ifNullOrWhiteSpace(directoryPath);
 
-            if (!existsSync(directoryPath))
-                return true;
-
-            rmSync(directoryPath, { recursive: true });
-
+        if (!existsSync(directoryPath))
             return true;
-        }
-        catch (e) {
-            console.error(e);
-            return false;
-        }
+
+        rmSync(directoryPath, { recursive: true });
+
+        return true;
     }
 
     public static exists(path: string): boolean {

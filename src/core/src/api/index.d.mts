@@ -415,7 +415,7 @@ export declare class ProjectTypeService {
      * Converts project types to CLI options.
      * @returns {string[]} An array of CLI options.
      */
-    public static toCliOptions(): string[];
+    public static toCLIOptions(): string[];
 }
 
 /**
