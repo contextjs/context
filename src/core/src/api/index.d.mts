@@ -1,4 +1,12 @@
 /**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/context-js/context/blob/main/LICENSE
+ */
+
+/**
  * Represents the main application.
  */
 export declare class Application {
@@ -393,8 +401,8 @@ export declare class PathService {
 
     /**
      * Checks if a directory is empty.
-     * @param {string} path - The path to check.
-     * @returns {boolean} True if the path is empty, otherwise false.
+     * @param {string} path - The path of the directory to check.
+     * @returns {boolean} True if the directory is empty, otherwise false.
      * @throws {PathNotFoundException} The path is null or empty.
      */
     public static directoryIsEmpty(path: string): boolean;

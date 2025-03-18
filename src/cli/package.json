@@ -1,0 +1,19 @@
+{
+  "name": "@contextjs/cli",
+  "version": "__VERSION__",
+  "description": "ContextJS - CLI",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "ctx": "./context.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/context-js/context.git",
+    "directory": "src/cli"
+  },
+  "peerDependencies": {
+    "@contextjs/core": "__VERSION__"
+  }
+}

@@ -1,9 +1,10 @@
-export const VERSION = "0.0.1-alpha.0";
+export const VERSION = "0.0.1-alpha";
 
 export const BUILD_FOLDER = "_build";
 export const PACKAGES_FOLDER = "_packages";
 
-/** List of projects to build. */
+/** List of available projects. */
 export const PROJECTS = [
-    'core'
+    'core',
+    'cli'
 ];

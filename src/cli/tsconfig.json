@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "outDir": "../../_build/cli",
+        "rootDir": "src",
+    },
+    "extends": "../../tsconfig-base.json",
+    "exclude": [
+        "tests/*"
+    ]
+}
