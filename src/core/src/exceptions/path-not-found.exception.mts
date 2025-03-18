@@ -9,8 +9,8 @@
 import { Exception } from "./exception.mjs";
 
 export class PathNotFoundException extends Exception {
-    public constructor(file: string) {
-        super(`The specified path was not found: ${file}`);
+    public constructor(path: string) {
+        super(`The specified path was not found: ${path}`);
         this.name = Exception.name;
     }
 }

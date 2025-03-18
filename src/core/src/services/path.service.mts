@@ -6,10 +6,11 @@
  * found at https://github.com/context-js/context/blob/main/LICENSE
  */
 
-import { existsSync, lstatSync, mkdirSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.mjs";
 import { FileNotFoundException } from "../exceptions/file-not-found.exception.mjs";
+import { PathNotFoundException } from "../exceptions/path-not-found.exception.mjs";
 import { Throw } from "./throw.service.mjs";
 
 export class PathService {
@@ -77,5 +78,12 @@ export class PathService {
         }
 
         return false;
+    }
+
+    public static directoryIsEmpty(path: string): boolean {
+        if (!this.exists(path) || !this.isDirectory(path))
+            throw new PathNotFoundException(path);
+
+        return readdirSync(path).length === 0;
     }
 }

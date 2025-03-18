@@ -93,7 +93,13 @@ export declare class NullReferenceException extends Exception { }
 /**
  * Represents an exception that occurs when a path is not found.
  */
-export declare class PathNotFoundException extends Exception { }
+export declare class PathNotFoundException extends Exception { 
+    /**
+     * Creates an instance of PathNotFoundException.
+     * @param {string} path - The path that was not found.
+     */
+    public constructor(path: string);
+}
 
 //#endregion
 
@@ -296,9 +302,9 @@ export declare class Environment {
  */
 export enum ProjectType {
     /**
-     * A web API project.
+     * API project.
      */
-    WebAPI
+    API
 }
 
 //#endregion
@@ -384,6 +390,14 @@ export declare class PathService {
      * @throws {NullReferenceException} The path is null or empty.
      */
     public static directoryCreate(path: string): boolean;
+
+    /**
+     * Checks if a directory is empty.
+     * @param {string} path - The path to check.
+     * @returns {boolean} True if the path is empty, otherwise false.
+     * @throws {PathNotFoundException} The path is null or empty.
+     */
+    public static directoryIsEmpty(path: string): boolean;
 }
 
 /**

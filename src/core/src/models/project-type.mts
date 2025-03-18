@@ -7,5 +7,5 @@
  */
 
 export enum ProjectType {
-    WebAPI
+    API
 }
