@@ -12,8 +12,8 @@ import { ProjectTypeService } from "../../src/services/project-type.service.mjs"
 import { StringExtensions } from '../../src/extensions/string.extensions.mts';
 
 test('ProjectTypeService: toString - success', (context: TestContext) => {
-    let result = ProjectTypeService.toString(ProjectType.WebAPI);
-    context.assert.strictEqual(result, "Web API");
+    let result = ProjectTypeService.toString(ProjectType.API);
+    context.assert.strictEqual(result, "API");
 
     result = ProjectTypeService.toString(null!);
     context.assert.strictEqual(result, null);
@@ -21,10 +21,7 @@ test('ProjectTypeService: toString - success', (context: TestContext) => {
 
 test('ProjectTypeService: fromString - success', (context: TestContext) => {
     let result = ProjectTypeService.fromString("api");
-    context.assert.strictEqual(result, ProjectType.WebAPI);
-
-    result = ProjectTypeService.fromString("webapi");
-    context.assert.strictEqual(result, ProjectType.WebAPI);
+    context.assert.strictEqual(result, ProjectType.API);
 
     result = ProjectTypeService.fromString("invalid");
     context.assert.strictEqual(result, null);
@@ -44,7 +41,7 @@ test('ProjectTypeService: fromString - success', (context: TestContext) => {
 
 test('ProjectTypeService: fromNumber - success', (context: TestContext) => {
     let result = ProjectTypeService.fromNumber(0);
-    context.assert.strictEqual(result, ProjectType.WebAPI);
+    context.assert.strictEqual(result, ProjectType.API);
 
     result = ProjectTypeService.fromNumber(2000);
     context.assert.strictEqual(result, null);
@@ -60,5 +57,5 @@ test('ProjectTypeService: toCliOptions - success', (context: TestContext) => {
     let result = ProjectTypeService.toCLIOptions();
 
     context.assert.strictEqual(result.length, 1);
-    context.assert.strictEqual(result[0], "  Web API [0]");
+    context.assert.strictEqual(result[0], "  API [0]");
 });

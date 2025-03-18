@@ -14,5 +14,5 @@ test('ProjectType: length - success', (context: TestContext) => {
 });
 
 test('ProjectType: toString - success', (context: TestContext) => {
-    context.assert.strictEqual(ProjectType.WebAPI, 0);
+    context.assert.strictEqual(ProjectType.API, 0);
 });

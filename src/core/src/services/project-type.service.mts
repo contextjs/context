@@ -16,8 +16,8 @@ export class ProjectTypeService {
             return null;
 
         switch (projectType) {
-            case ProjectType.WebAPI:
-                return "Web API";
+            case ProjectType.API:
+                return "API";
             default:
                 return null;
         }
@@ -29,8 +29,7 @@ export class ProjectTypeService {
 
         switch (value.toLowerCase()) {
             case "api":
-            case "webapi":
-                return ProjectType.WebAPI;
+                return ProjectType.API;
             default:
                 return null;
         }

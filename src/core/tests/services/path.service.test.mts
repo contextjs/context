@@ -10,8 +10,9 @@ import test, { TestContext } from 'node:test';
 import { FileExistsException } from "../../src/exceptions/file-exists.exception.mts";
 import { FileNotFoundException } from "../../src/exceptions/file-not-found.exception.mts";
 import { NullReferenceException } from "../../src/exceptions/null-reference.exception.mts";
-import { PathService } from "../../src/services/path.service.mjs";
+import { PathNotFoundException } from '../../src/exceptions/path-not-found.exception.mts';
 import { StringExtensions } from '../../src/extensions/string.extensions.mts';
+import { PathService } from "../../src/services/path.service.mjs";
 
 test('PathService: fileRead - success', (context: TestContext) => {
     const content = 'test content';
@@ -140,4 +141,30 @@ test('PathService: directoryCreate - success', (context: TestContext) => {
 
 test('PathService: directoryCreate - throws NullReferenceException', (context: TestContext) => {
     context.assert.throws(() => PathService.directoryCreate(StringExtensions.empty), new NullReferenceException());
+});
+
+test('PathService: directoryIsEmpty - success', (context: TestContext) => {
+    const path = 'test';
+    PathService.directoryCreate(path);
+
+    const result = PathService.directoryIsEmpty(path);
+    context.assert.strictEqual(result, true);
+
+    PathService.directoryDelete(path);
+});
+
+test('PathService: directoryIsEmpty - failure', (context: TestContext) => {
+    const path = 'test';
+    PathService.directoryCreate(path);
+    PathService.fileSave(`${path}/test.txt`, 'test content', true);
+
+    const result = PathService.directoryIsEmpty(path);
+    context.assert.strictEqual(result, false);
+
+    PathService.directoryDelete(path);
+});
+
+test('PathService: directoryIsEmpty - throws PathNotFoundException', (context: TestContext) => {
+    const nonExistentPath = 'does-not-exist';
+    context.assert.throws(() => PathService.directoryIsEmpty(nonExistentPath), new PathNotFoundException(nonExistentPath));
 });
