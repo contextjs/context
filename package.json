@@ -21,6 +21,7 @@
         "typescript": "^5.8.2"
     },
     "dependencies": {
-        "@contextjs/core": "file:_packages/contextjs-core-0.0.1-alpha.0.tgz"
+        "@contextjs/cli": "file:_packages/contextjs-cli-0.0.1-alpha.tgz",
+        "@contextjs/core": "file:_packages/contextjs-core-0.0.1-alpha.tgz"
     }
 }
