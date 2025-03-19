@@ -41,7 +41,6 @@ function buildProject(project) {
     copyPackageFile(project);
     setVersion(project);
     createPackage(project);
-    installPackage(project);
 
     console.log(`Building "${project}"... Done`);
 }

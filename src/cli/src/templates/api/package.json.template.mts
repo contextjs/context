@@ -7,6 +7,7 @@
  */
 
 import { FileTemplate } from "../../models/file-template.mjs";
+import { VersionService } from "@contextjs/core";
 
 export class PackageTemplate {
   private static readonly name = "package.json";
@@ -16,7 +17,7 @@ export class PackageTemplate {
   "type": "module",
   "private": true,
   "dependencies": {
-    "@contextjs/core": "0.0.1-alpha"
+    "@contextjs/core": "${VersionService.get()}"
   }
 }`;
 

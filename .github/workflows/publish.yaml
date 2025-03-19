@@ -1,4 +1,4 @@
-name: Publish Package to npmjs
+name: Release
 on:
   release:
     types: [published]
@@ -7,7 +7,7 @@ env:
   NODE_VERSION: "22.x"
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
