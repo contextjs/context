@@ -7,10 +7,8 @@
  */
 
 import { execSync } from "child_process";
-import * as fs from 'fs';
-import { BUILD_FOLDER, PACKAGES_FOLDER, PROJECTS, VERSION } from "./config.js";
-//import * as build from build.js;
 import './build.js';
+import { BUILD_FOLDER, PROJECTS } from "./config.js";
 
 try {
     const projects = getProjects(process.argv.slice(2));
@@ -24,9 +22,7 @@ catch (error) {
 
 function publishProject(project) {
     console.log(`Publishing "${project}"...`);
-    execSync(`cd ${BUILD_FOLDER}/${project}`, { stdio: 'inherit' });
-    execSync(`npm version prerelease --preid=${VERSION}`, { stdio: 'inherit' });
-    execSync(`npm publish && cd .. && cd ..`, { stdio: 'inherit' });
+    execSync(`cd ${BUILD_FOLDER}/${project} && npm publish && cd .. && cd ..`, { stdio: 'inherit' });
 
     console.log(`Publishing "${project}"... Done`);
 }
