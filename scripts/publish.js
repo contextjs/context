@@ -22,7 +22,7 @@ catch (error) {
 
 function publishProject(project) {
     console.log(`Publishing "${project}"...`);
-    execSync(`cd ${BUILD_FOLDER}/${project} && npm publish && cd .. && cd ..`, { stdio: 'inherit' });
+    execSync(`cd ${BUILD_FOLDER}/${project} && npm publish --provenance --access public && cd .. && cd ..`, { stdio: 'inherit' });
 
     console.log(`Publishing "${project}"... Done`);
 }
