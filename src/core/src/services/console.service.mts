@@ -20,7 +20,7 @@ export class ConsoleService {
 
         args.forEach(argument => {
             if (argument.startsWith('-')) {
-                argument = argument.substring(1);
+                argument = argument.replace(/^-+/, '');
 
                 const existingArgument = parsedArguments.find(a => a.name === argument);
                 if (existingArgument)
