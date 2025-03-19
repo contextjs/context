@@ -13,31 +13,32 @@ export class ConsoleService {
     public static parseArguments(args: string[]): ConsoleArgument[] {
         let parsedArguments: ConsoleArgument[] = [];
 
-        if (args.length > 0) {
-            let currentArgument: ConsoleArgument | null = null;
+        if (args.length == 0)
+            return parsedArguments;
 
-            args.forEach(argument => {
-                if (argument.startsWith('-')) {
-                    argument = argument.replace(/^-+/, '');
+        let currentArgument: ConsoleArgument | null = null;
 
-                    const existingArgument = parsedArguments.find(a => a.name === argument);
-                    if (existingArgument)
-                        currentArgument = existingArgument;
-                    else {
-                        currentArgument = new ConsoleArgument(argument, []);
-                        parsedArguments.push(currentArgument);
-                    }
-                }
+        args.forEach(argument => {
+            if (argument.startsWith('-')) {
+                argument = argument.replace(/^-+/, '');
+
+                const existingArgument = parsedArguments.find(a => a.name === argument);
+                if (existingArgument)
+                    currentArgument = existingArgument;
                 else {
-                    if (ObjectExtensions.isNullOrUndefined(currentArgument)) {
-                        console.error('Argument value provided without argument name');
-                        return process.exit(1);
-                    }
-
-                    currentArgument!.values.push(argument);
+                    currentArgument = new ConsoleArgument(argument, []);
+                    parsedArguments.push(currentArgument);
                 }
-            });
-        }
+            }
+            else {
+                if (ObjectExtensions.isNullOrUndefined(currentArgument)) {
+                    console.error('Argument value provided without argument name');
+                    return process.exit(1);
+                }
+
+                currentArgument!.values.push(argument);
+            }
+        });
 
         return parsedArguments;
     }

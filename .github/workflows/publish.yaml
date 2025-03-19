@@ -1,0 +1,31 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+
+env:
+  NODE_VERSION: "22.x"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ ENV.NODE_VERSION }}
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Build
+      run: npm run build
+
+    - name: Publish
+      run: npm run publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM }}

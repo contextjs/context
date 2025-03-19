@@ -8,7 +8,8 @@
     "scripts": {
         "build": "node scripts/build.js",
         "test": "glob -c \"tsx --test \" \"./**/*.test.mts\"",
-        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.mts\""
+        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.mts\"",
+        "publish": "node scripts/publish.js"
     },
     "repository": {
         "type": "git",
@@ -21,7 +22,7 @@
         "typescript": "^5.8.2"
     },
     "dependencies": {
-        "@contextjs/cli": "file:_packages/contextjs-cli-0.0.1-alpha.tgz",
-        "@contextjs/core": "file:_packages/contextjs-core-0.0.1-alpha.tgz"
+        "@contextjs/cli": "file:_packages/contextjs-cli-0.0.1.tgz",
+        "@contextjs/core": "file:_packages/contextjs-core-0.0.1.tgz"
     }
 }
