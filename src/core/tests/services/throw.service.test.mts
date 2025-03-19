@@ -7,9 +7,9 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { NullReferenceException } from "../../src/exceptions/null-reference.exception.mjs";
+import { NullReferenceException } from "../../src/exceptions/null-reference.exception.mts";
 import { Throw } from "../../src/services/throw.service.mjs";
-import { StringExtensions } from '@contextjs/core';
+import { StringExtensions } from '../../src/extensions/string.extensions.mts';
 
 test('Throw: ifNull - throws NullReferenceException', (context: TestContext) => {
     context.assert.throws(() => { Throw.ifNull(null) }, new NullReferenceException());
