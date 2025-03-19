@@ -8,7 +8,8 @@
     "scripts": {
         "build": "node scripts/build.js",
         "test": "glob -c \"tsx --test \" \"./**/*.test.mts\"",
-        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.mts\""
+        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.mts\"",
+        "publish": "node scripts/publish.js"
     },
     "repository": {
         "type": "git",
