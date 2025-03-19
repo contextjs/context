@@ -7,7 +7,6 @@
  */
 
 import { execSync } from "child_process";
-import './build.js';
 import { BUILD_FOLDER, PROJECTS } from "./config.js";
 
 try {
