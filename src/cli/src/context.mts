@@ -12,7 +12,6 @@ import { CommandType } from "./models/command-type.mjs";
 import { CLIService } from "./services/cli.service.mjs";
 import { BuildCommand } from "./services/commands/build.command.mjs";
 import { NewCommand } from "./services/commands/new.command.mjs";
-import { RunCommand } from "./services/commands/run.command.mjs";
 import { VersionCommand } from "./services/commands/version.command.mjs";
 import { WatchCommand } from "./services/commands/watch.command.mjs";
 
@@ -32,9 +31,6 @@ switch (command.type) {
         break;
     case CommandType.Version:
         await new VersionCommand().runAsync(command);
-        break;
-    case CommandType.Run:
-        await new RunCommand().runAsync(command);
         break;
     default:
         console.error('Invalid command. Exiting...');

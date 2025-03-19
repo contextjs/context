@@ -13,9 +13,6 @@
     "url": "git+https://github.com/context-js/context.git",
     "directory": "src/cli"
   },
-  "dependencies": {
-    "tsx": "^4.19.3"
-  },
   "peerDependencies": {
     "@contextjs/core": "__VERSION__"
   }
