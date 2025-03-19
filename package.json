@@ -24,6 +24,5 @@
     "dependencies": {
         "@contextjs/cli": "file:_packages/contextjs-cli-0.0.1.tgz",
         "@contextjs/core": "file:_packages/contextjs-core-0.0.1.tgz"
-    },
-    "version": "0.0.1-0.0.1.0"
+    }
 }
