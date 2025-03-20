@@ -15,7 +15,6 @@ import { CommandBase } from "./command-base.mjs";
 
 export class BuildCommand extends CommandBase {
     public override async runAsync(command: Command): Promise<void> {
-
         const projectCommand = command.args.find(arg => arg.name === 'project' || arg.name === 'p');
         const projectDescriptors = this.getProjectDescriptors(projectCommand?.values || []);
 
@@ -32,7 +31,6 @@ export class BuildCommand extends CommandBase {
     }
 
     private build(projectDescriptor: Project): void {
-
         console.log(`Building project: "${projectDescriptor.name}"...`);
 
         if (!PathService.exists(`${projectDescriptor.path}/context.json`)) {

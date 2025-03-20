@@ -4,7 +4,7 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "sourceMap": true,
+        "sourceMap": false,
         "inlineSourceMap": false,
         "allowSyntheticDefaultImports": true,
         "declaration": false,

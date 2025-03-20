@@ -26,7 +26,7 @@ export class WatchCommand extends CommandBase {
         });
     }
 
-    public watchProject(projectDescriptor: Project) {
+    private watchProject(projectDescriptor: Project) {
         const configPath = typescript.findConfigFile(projectDescriptor.path, typescript.sys.fileExists, "tsconfig.json");
         if (!configPath) {
             console.error("Could not find a valid 'tsconfig.json'.");
