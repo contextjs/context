@@ -12,8 +12,7 @@ export enum CommandType {
     New,
     Build,
     Watch,
-    Version,
-    Run
+    Version
 }
 
 export class CommandTypeMethods {
@@ -30,8 +29,6 @@ export class CommandTypeMethods {
                 return CommandType.Watch;
             case "version":
                 return CommandType.Version;
-            case "run":
-                return CommandType.Run;
             default:
                 return null;
         }
