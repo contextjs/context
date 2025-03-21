@@ -5,6 +5,6 @@ export const PACKAGES_FOLDER = "_packages";
 
 /** List of available projects. */
 export const PROJECTS = [
-    'core',
-    'cli'
+    "core",
+    "cli"
 ];

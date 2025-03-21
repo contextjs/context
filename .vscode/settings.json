@@ -1,7 +1,7 @@
 {
   "nodejs-testing.extensions": [
     {
-      "extensions": ["mts"],
+      "extensions": ["ts"],
       "parameters": ["--import", "tsx"]
     }
   ]

@@ -7,8 +7,8 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { EnvironmentName } from "../../src/models/environment-name.mjs";
-import { Environment } from "../../src/models/environment.mjs";
+import { EnvironmentName } from "../../src/models/environment-name.ts";
+import { Environment } from "../../src/models/environment.ts";
 
 test('Environment: isDevelopment - success', (context: TestContext) => {
     const environment = new Environment();

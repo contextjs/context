@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "ctx": "./context.mjs"
+    "ctx": "./context.js"
   },
   "repository": {
     "type": "git",
