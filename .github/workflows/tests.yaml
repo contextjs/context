@@ -23,8 +23,5 @@ jobs:
       with:
         node-version: ${{ ENV.NODE_VERSION }}
 
-    - name: Build
-      run: npm run build
-
     - name: Run Tests
       run: npm run test:coverage

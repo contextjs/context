@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { ProjectType } from '../../src/models/project-type.mts';
+import { ProjectType } from '../../src/models/project-type.js';
 
 test('ProjectType: length - success', (context: TestContext) => {
     context.assert.strictEqual(Object.keys(ProjectType).length / 2, 1);
