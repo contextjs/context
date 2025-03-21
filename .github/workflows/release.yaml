@@ -4,7 +4,7 @@ on:
     types: [published]
 
 env:
-  NODE_VERSION: "22.x"
+  NODE_VERSION: "23.x"
 
 jobs:
   release:
