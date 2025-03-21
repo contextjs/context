@@ -4,6 +4,7 @@
     },
     "extends": "../../tsconfig-base.json",
     "exclude": [
-        "tests/*"
+        "tests/*",
+        "builder.ts",
     ]
 }

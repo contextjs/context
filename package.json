@@ -1,15 +1,16 @@
 {
     "name": "contextjs",
+    "version": "0.0.5",
     "description": "ContextJS",
     "author": "ContextJS",
     "license": "MIT",
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node scripts/build.js",
+        "build": "node actions/builder.ts",
         "test": "glob -c \"tsx --test \" \"./**/*.test.ts\"",
         "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.ts\"",
-        "publish": "node scripts/publish.js"
+        "publish": "node actions/publish.ts"
     },
     "repository": {
         "type": "git",
@@ -20,6 +21,9 @@
         "glob": "^11.0.0",
         "tsx": "^4.19.3",
         "typescript": "^5.8.2"
+    },
+    "engines": {
+        "node": "23.x"
     },
     "dependencies": {
         "@contextjs/cli": "file:_packages/contextjs-cli-0.0.5.tgz",
