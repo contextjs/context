@@ -1,15 +1,15 @@
 /**
- * This script builds ContextJS.
- * 
- * @example
- * npm run build - builds all projects.
- * npm run build project1 project2 ... - builds specified projects.
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/context-js/context/blob/main/LICENSE
  */
 
-import Config from "./config";
+import Config from "./config.ts";
 import Script from "./script.ts";
 
-export class Publish extends Script {
+export class Release extends Script {
     public async runAsync(): Promise<void> {
         try {
             const packageNames = await this.getPackageNamesAsync();
@@ -29,4 +29,4 @@ export class Publish extends Script {
     }
 }
 
-new Publish();
+await new Release().runAsync();
