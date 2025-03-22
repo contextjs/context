@@ -91,14 +91,10 @@ export class NewCommand extends CommandBase {
         Throw.ifNullOrUndefined(this.type);
 
         this.name = StringExtensions.removeWhiteSpaces(this.name!);
-
-        const loading = CLIService.animate(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
+        CLIService.writeLine(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
         this.createTemplates();
-
-        clearInterval(loading);
         CLIService.removeLastLine();
-
-        console.log(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
+        CLIService.writeLine(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
         this.consoleInterface.close();
 
         return process.exit(0);

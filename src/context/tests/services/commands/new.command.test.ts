@@ -38,7 +38,6 @@ test('NewCommand: createProject - success', async (context: TestContext) => {
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
-    context.mock.method(CLIService, 'animate', () => setInterval(() => void 0, 10));
     context.mock.method(newCommand, 'createTemplates', () => { });
     console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {

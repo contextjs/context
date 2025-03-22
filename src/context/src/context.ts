@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * @license
  * Copyright ContextJS All Rights Reserved.
