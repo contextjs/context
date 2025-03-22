@@ -3,7 +3,7 @@
  * Copyright ContextJS All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
- * found at https://github.com/context-js/context/blob/main/LICENSE
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
 import { NullReferenceException } from "../exceptions/null-reference.exception.js";
