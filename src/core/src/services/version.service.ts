@@ -7,7 +7,7 @@
  */
 
 export class VersionService {
-    private static version = "0.0.5";
+    private static version = "0.0.6";
 
     public static get(): string {
         return this.version;

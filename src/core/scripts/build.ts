@@ -1,8 +1,8 @@
 import * as fs from 'fs';
-import { ActionBase } from '../../actions/action-base.ts';
-import Config from '../../actions/config.ts';
+import Script from '../../../scripts/script.ts';
+import Config from '../../../scripts/config.ts';
 
-export class Builder extends ActionBase {
+export class Builder extends Script {
     public override async runAsync(): Promise<void> {
         await this.publishApiAsync();
         await this.setVersionAsync();

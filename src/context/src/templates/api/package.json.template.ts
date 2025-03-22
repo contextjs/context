@@ -6,8 +6,8 @@
  * found at https://github.com/context-js/context/blob/main/LICENSE
  */
 
-import { FileTemplate } from "../../models/file-template.js";
 import { VersionService } from "@contextjs/core";
+import { FileTemplate } from "../../models/file-template.js";
 
 export class PackageTemplate {
   private static readonly name = "package.json";

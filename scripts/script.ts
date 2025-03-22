@@ -1,8 +1,16 @@
-import { execSync } from "child_process";
-import Config from "./config.ts";
-import fs from "fs";
+/**
+ * This script builds ContextJS.
+ * 
+ * @example
+ * npm run build - builds all projects.
+ * npm run build project1 project2 ... - builds specified projects.
+ */
 
-export abstract class ActionBase {
+import { execSync } from "child_process";
+import fs from "fs";
+import Config from "./config.ts";
+
+export default abstract class Script {
     abstract runAsync(): Promise<void>;
 
     protected async executeCommandAsync(command: string): Promise<void> {
