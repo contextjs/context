@@ -329,6 +329,17 @@ export declare class ConsoleService {
      * @returns {ConsoleArgument[]} An array of parsed console arguments.
      */
     public static parseArguments(args: string[]): ConsoleArgument[];
+
+    /**
+     * Writes a message to the console.
+     * @param {string} message - The message to write.
+     */
+    public static writeLine(message: string): void;
+
+    /**
+     * Removes the last line from the console.
+     */
+    public static removeLastLine(): void;
 }
 
 /**

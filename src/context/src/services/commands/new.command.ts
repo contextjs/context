@@ -6,11 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ObjectExtensions, PathService, ProjectType, ProjectTypeService, StringExtensions, Throw, VersionService } from "@contextjs/core";
+import { ConsoleService, ObjectExtensions, PathService, ProjectType, ProjectTypeService, StringExtensions, Throw, VersionService } from "@contextjs/core";
 import * as childProcess from "node:child_process";
 import readline from "node:readline/promises";
 import { Command } from "../../models/command.js";
-import { CLIService } from "../cli.service.js";
 import { TemplateService } from "../template.service.js";
 import { CommandBase } from "./command-base.js";
 
@@ -91,10 +90,10 @@ export class NewCommand extends CommandBase {
         Throw.ifNullOrUndefined(this.type);
 
         this.name = StringExtensions.removeWhiteSpaces(this.name!);
-        CLIService.writeLine(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
+        ConsoleService.writeLine(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
         this.createTemplates();
-        CLIService.removeLastLine();
-        CLIService.writeLine(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
+        ConsoleService.removeLastLine();
+        ConsoleService.writeLine(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
         this.consoleInterface.close();
 
         return process.exit(0);

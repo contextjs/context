@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import readline from 'node:readline';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
 
@@ -41,5 +42,13 @@ export class ConsoleService {
         });
 
         return parsedArguments;
+    }
+
+    public static writeLine(message: string): void {
+        console.log(message);
+    }
+
+    public static removeLastLine(): void {
+        readline.clearLine(process.stdout, 0);
     }
 }
