@@ -10,7 +10,6 @@ import { ConsoleArgument, PathService, ProjectType, StringExtensions } from "@co
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
-import { CLIService } from "../../../src/services/cli.service.ts";
 import { NewCommand } from "../../../src/services/commands/new.command.ts";
 
 test('NewCommand: runAsync - success', async (context: TestContext) => {

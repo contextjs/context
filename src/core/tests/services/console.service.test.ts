@@ -6,6 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { StringExtensions } from '@contextjs/core';
+import readline from 'node:readline';
 import test, { TestContext } from 'node:test';
 import { ConsoleService } from "../../src/services/console.service.ts";
 
@@ -67,4 +69,26 @@ test('ConsoleService: parseArguments - duplicate argument', (context: TestContex
     context.assert.strictEqual(result[0].values[0], 'value');
     context.assert.strictEqual(result[0].values[1], 'value2');
     context.assert.strictEqual(result[0].values.length, 2);
+});
+
+test('ConsoleService: removeLastLine - success', (context: TestContext) => {
+
+    let capturedOutput = StringExtensions.empty;
+
+    process.stdout.write = (data: string) => {
+        capturedOutput += data;
+        return true;
+    };
+
+    readline.clearLine = () => {
+        capturedOutput = capturedOutput.replace('line2', '');
+        return true;
+    };
+
+    process.stdout.write('line1');
+    process.stdout.write('line3');
+    process.stdout.write('line2');
+    ConsoleService.removeLastLine();
+
+    context.assert.doesNotMatch(capturedOutput, /line2/);
 });

@@ -7,7 +7,7 @@
  */
 
 import { CommandType } from "./models/command-type.js";
-import { CLIService } from "./services/cli.service.js";
+import { CommandsService } from "./services/commands.service.js";
 import { BuildCommand } from "./services/commands/build.command.js";
 import { NewCommand } from "./services/commands/new.command.js";
 import { VersionCommand } from "./services/commands/version.command.js";
@@ -15,7 +15,7 @@ import { WatchCommand } from "./services/commands/watch.command.js";
 
 process.title = 'ContextJS';
 
-const command = CLIService.parse();
+const command = CommandsService.parse();
 
 switch (command.type) {
     case CommandType.New:

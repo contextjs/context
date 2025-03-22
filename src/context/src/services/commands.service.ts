@@ -7,20 +7,11 @@
  */
 
 import { ConsoleService, ObjectExtensions } from "@contextjs/core";
-import readline from 'node:readline';
+
 import { CommandTypeMethods } from "../models/command-type.js";
 import { Command } from "../models/command.js";
 
-export class CLIService {
-
-    public static writeLine(message: string): void {
-        console.log(message);
-    }
-
-    public static removeLastLine(): void {
-        readline.clearLine(process.stdout, 0);
-    }
-
+export class CommandsService {
     public static parse(): Command {
         const args = process.argv.slice(2);
 
@@ -31,7 +22,7 @@ export class CLIService {
 
         const command = CommandTypeMethods.fromString(args[0]);
         if (ObjectExtensions.isNullOrUndefined(command)) {
-            console.error('Invalid command provided');
+            console.error('Invalid command provided. Exiting...');
             return process.exit(1);
         }
 

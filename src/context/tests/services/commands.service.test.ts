@@ -6,32 +6,31 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import readline from 'node:readline';
+import { StringExtensions } from '@contextjs/core';
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../src/models/command-type.ts";
-import { CLIService } from "../../src/services/cli.service.ts";
-import { StringExtensions } from '@contextjs/core';
+import { CommandsService } from "../../src/services/commands.service.ts";
 
-test('CLIService: parse - success', (context: TestContext) => {
+test('CommandsService: parse - success', (context: TestContext) => {
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'new'];
-    let command = CLIService.parse();
+    let command = CommandsService.parse();
     context.assert.equal(command.type, CommandType.New);
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'build'];
-    command = CLIService.parse();
+    command = CommandsService.parse();
     context.assert.equal(command.type, CommandType.Build);
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'watch'];
-    command = CLIService.parse();
+    command = CommandsService.parse();
     context.assert.equal(command.type, CommandType.Watch);
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'version'];
-    command = CLIService.parse();
+    command = CommandsService.parse();
     context.assert.equal(command.type, CommandType.Version);
 });
 
-test('CLIService: parse - no arguments', (context: TestContext) => {
+test('CommandsService: parse - no arguments', (context: TestContext) => {
     const originalLog = console.log;
     const originalExit = process.exit;
     let logOutput = StringExtensions.empty;
@@ -41,7 +40,7 @@ test('CLIService: parse - no arguments', (context: TestContext) => {
     console.error = (message: string) => logOutput = message;
     process.exit = (code: number) => { exitCode = code; return undefined as never; };
 
-    CLIService.parse();
+    CommandsService.parse();
 
     context.assert.strictEqual(logOutput, 'No arguments provided. Exiting...');
     context.assert.strictEqual(exitCode, 1);
@@ -50,7 +49,7 @@ test('CLIService: parse - no arguments', (context: TestContext) => {
     process.exit = originalExit;
 });
 
-test('CLIService: parse - invalid command', (context: TestContext) => {
+test('CommandsService: parse - invalid command', (context: TestContext) => {
     const originalLog = console.log;
     const originalExit = process.exit;
     let logOutput = StringExtensions.empty;
@@ -60,33 +59,12 @@ test('CLIService: parse - invalid command', (context: TestContext) => {
     console.error = (message: string) => logOutput = message;
     process.exit = (code: number) => { exitCode = code; return undefined as never; };
 
-    CLIService.parse();
+    CommandsService.parse();
 
-    context.assert.strictEqual(logOutput, 'Invalid command provided');
+    context.assert.strictEqual(logOutput, 'Invalid command provided. Exiting...');
     context.assert.strictEqual(exitCode, 1);
 
     console.log = originalLog;
     process.exit = originalExit;
 });
 
-test('CLIService: removeLastLine - success', (context: TestContext) => {
-
-    let capturedOutput = StringExtensions.empty;
-
-    process.stdout.write = (data: string) => {
-        capturedOutput += data;
-        return true;
-    };
-
-    readline.clearLine = () => {
-        capturedOutput = capturedOutput.replace('line2', '');
-        return true;
-    };
-
-    process.stdout.write('line1');
-    process.stdout.write('line3');
-    process.stdout.write('line2');
-    CLIService.removeLastLine();
-
-    context.assert.doesNotMatch(capturedOutput, /line2/);
-});
