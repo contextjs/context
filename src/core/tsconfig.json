@@ -5,6 +5,6 @@
     "extends": "../../tsconfig-base.json",
     "exclude": [
         "tests/*",
-        "builder.ts",
+        "scripts/*",
     ]
 }

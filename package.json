@@ -7,10 +7,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node actions/builder.ts",
+        "build": "node scripts/build.ts",
         "test": "glob -c \"tsx --test \" \"./**/*.test.ts\"",
         "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.ts\"",
-        "publish": "node actions/publish.ts"
+        "publish": "node scripts/publish.ts"
     },
     "repository": {
         "type": "git",
@@ -26,7 +26,7 @@
         "node": "23.x"
     },
     "dependencies": {
-        "@contextjs/cli": "file:_packages/contextjs-cli-0.0.5.tgz",
-        "@contextjs/core": "file:_packages/contextjs-core-0.0.5.tgz"
+        "@contextjs/context": "file:_packages/contextjs-context-0.0.6.tgz",
+        "@contextjs/core": "file:_packages/contextjs-core-0.0.6.tgz"
     }
 }

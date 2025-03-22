@@ -6,10 +6,10 @@
  * npm run build project1 project2 ... - builds specified projects.
  */
 
-import { ActionBase } from "./action-base";
 import Config from "./config";
+import Script from "./script.ts";
 
-export class Publish extends ActionBase {
+export class Publish extends Script {
     public async runAsync(): Promise<void> {
         try {
             const packageNames = await this.getPackageNamesAsync();

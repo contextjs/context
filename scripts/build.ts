@@ -1,7 +1,15 @@
-import { ActionBase } from "./action-base.ts";
-import Config from "./config.ts";
+/**
+ * This script builds ContextJS.
+ * 
+ * @example
+ * npm run build - builds all projects.
+ * npm run build project1 project2 ... - builds specified projects.
+ */
 
-export class Builder extends ActionBase {
+import Config from "./config.ts";
+import Script from "./script.ts";
+
+export class Build extends Script {
     public override async runAsync(): Promise<void> {
         await this.npmInstallAsync();
         await this.createOutputDirectoriesAsync();
@@ -50,10 +58,10 @@ export class Builder extends ActionBase {
     }
 
     private async runPackageBuilderAsync(packageName: string): Promise<void> {
-        if (await this.pathExistsAsync(`src/${packageName}/builder.ts`) === false)
+        if (await this.pathExistsAsync(`src/${packageName}/scripts/build.ts`) === false)
             return;
 
-        await import(`../src/${packageName}/builder.ts`);
+        await import(`../src/${packageName}/scripts/build.ts`);
     }
 
     private async copyPackageFileAsync(packageName: string): Promise<void> {
@@ -85,5 +93,5 @@ export class Builder extends ActionBase {
     }
 }
 
-const builer = new Builder();
+const builer = new Build();
 await builer.runAsync();
