@@ -44,9 +44,9 @@ export class Build extends Script {
 
         await this.removeDependencyAsync(packageName);
         await this.createPackageDirectoryAsync(packageName);
-        await this.runPackageBuilderAsync(packageName);
         await this.copyPackageFileAsync(packageName);
         await this.writeVersionAsync(packageName);
+        await this.buildAsync(packageName);
         await this.createPackageAsync(packageName);
         await this.installPackageAsync(packageName);
 
@@ -64,13 +64,6 @@ export class Build extends Script {
         await this.createDirectoryAsync(directoryName);
     }
 
-    private async runPackageBuilderAsync(packageName: string): Promise<void> {
-        if (await this.pathExistsAsync(`src/${packageName}/scripts/build.ts`) === false)
-            return;
-
-        await import(`../src/${packageName}/scripts/build.ts`);
-    }
-
     private async copyPackageFileAsync(packageName: string): Promise<void> {
         const packageFilePath = `src/${packageName}/package.json`;
         if (await this.pathExistsAsync(packageFilePath) === false)
@@ -83,11 +76,20 @@ export class Build extends Script {
         const packageFilePath = `${Config.buildFolder}/${packageName}/package.json`;
         let packageFileContent = await this.readFileAsync(packageFilePath);
         packageFileContent = packageFileContent.replace(/__VERSION__/g, Config.version);
-        await this.writeFileSync(packageFilePath, packageFileContent);
+        await this.writeFileAsync(packageFilePath, packageFileContent);
+    }
+
+    private async buildAsync(packageName: string): Promise<void> {
+        if (await this.pathExistsAsync(`src/${packageName}/scripts/before-build.ts`))
+            await import(`../src/${packageName}/scripts/before-build.ts`);
+
+        await this.executeCommandAsync(`cd src/${packageName} && tsc`);
+
+        if (await this.pathExistsAsync(`src/${packageName}/scripts/after-build.ts`))
+            await import(`../src/${packageName}/scripts/after-build.ts`);
     }
 
     private async createPackageAsync(packageName: string): Promise<void> {
-        await this.executeCommandAsync(`cd src/${packageName} && tsc`);
         await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageName} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`);
     }
 

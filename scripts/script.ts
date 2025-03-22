@@ -50,7 +50,7 @@ export default abstract class Script {
         return fs.readFileSync(filePath, 'utf8')?.toString();
     }
 
-    protected async writeFileSync(filePath: string, content: string): Promise<void> {
+    protected async writeFileAsync(filePath: string, content: string): Promise<void> {
         fs.writeFileSync(filePath, content);
     }
 }

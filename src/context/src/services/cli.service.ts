@@ -12,27 +12,9 @@ import { CommandTypeMethods } from "../models/command-type.js";
 import { Command } from "../models/command.js";
 
 export class CLIService {
-    private static frames = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 
-    public static animate(text: string): NodeJS.Timeout {
-        let loading = (function () {
-            var i = 0;
-            let interval = 0;
-
-            return setInterval(() => {
-                i = (i > 9) ? 0 : i;
-
-                if (interval > 0)
-                    CLIService.removeLastLine();
-
-                console.log(`${CLIService.frames[i]} ${text}`);
-
-                i++;
-                interval++;
-            }, 200);
-        })();
-
-        return loading;
+    public static writeLine(message: string): void {
+        console.log(message);
     }
 
     public static removeLastLine(): void {

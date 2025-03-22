@@ -12,21 +12,6 @@ import { CommandType } from "../../src/models/command-type.ts";
 import { CLIService } from "../../src/services/cli.service.ts";
 import { StringExtensions } from '@contextjs/core';
 
-test('CLIService: animate - success', (context: TestContext) => {
-    const originalLog = console.log;
-    let logOutput = StringExtensions.empty;
-    console.log = (message: string) => {
-        logOutput = message;
-    }
-
-    const timeout = CLIService.animate('Loading...');
-    setTimeout(() => {
-        clearInterval(timeout);
-        context.assert.match(logOutput, /Loading.../);
-        console.log = originalLog;
-    }, 200);
-});
-
 test('CLIService: parse - success', (context: TestContext) => {
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'new'];
