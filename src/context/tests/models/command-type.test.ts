@@ -10,7 +10,7 @@ import test, { TestContext } from 'node:test';
 import { CommandType, CommandTypeMethods } from "../../src/models/command-type.ts";
 
 test('CommandType: length - success', (context: TestContext) => {
-    context.assert.strictEqual(Object.keys(CommandType).length / 2, 4);
+    context.assert.strictEqual(Object.keys(CommandType).length / 2, 5);
 });
 
 test('CommandTypeMethods: fromString - success', (context: TestContext) => {

@@ -334,7 +334,7 @@ export declare class ConsoleService {
      * Writes a message to the console.
      * @param {string} message - The message to write.
      */
-    public static writeLine(message: string): void;
+    public static write(message: string): void;
 
     /**
      * Removes the last line from the console.

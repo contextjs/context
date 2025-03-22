@@ -9,6 +9,7 @@
 import { StringExtensions } from "@contextjs/core";
 
 export enum CommandType {
+    Context,
     New,
     Build,
     Watch,
@@ -21,6 +22,8 @@ export class CommandTypeMethods {
             return null;
 
         switch (command.toLowerCase()) {
+            case "ctx":
+                return CommandType.Context;
             case "new":
                 return CommandType.New;
             case "build":
