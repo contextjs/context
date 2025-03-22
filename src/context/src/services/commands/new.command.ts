@@ -90,10 +90,10 @@ export class NewCommand extends CommandBase {
         Throw.ifNullOrUndefined(this.type);
 
         this.name = StringExtensions.removeWhiteSpaces(this.name!);
-        ConsoleService.writeLine(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
+        ConsoleService.write(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
         this.createTemplates();
         ConsoleService.removeLastLine();
-        ConsoleService.writeLine(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
+        ConsoleService.write(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
         this.consoleInterface.close();
 
         return process.exit(0);

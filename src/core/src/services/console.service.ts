@@ -44,7 +44,7 @@ export class ConsoleService {
         return parsedArguments;
     }
 
-    public static writeLine(message: string): void {
+    public static write(message: string): void {
         console.log(message);
     }
 

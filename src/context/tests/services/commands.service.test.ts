@@ -13,8 +13,12 @@ import { CommandsService } from "../../src/services/commands.service.ts";
 
 test('CommandsService: parse - success', (context: TestContext) => {
 
-    process.argv = [StringExtensions.empty, StringExtensions.empty, 'new'];
+    process.argv = [StringExtensions.empty, StringExtensions.empty];
     let command = CommandsService.parse();
+    context.assert.equal(command.type, CommandType.Context);
+
+    process.argv = [StringExtensions.empty, StringExtensions.empty, 'new'];
+    command = CommandsService.parse();
     context.assert.equal(command.type, CommandType.New);
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'build'];
@@ -31,22 +35,10 @@ test('CommandsService: parse - success', (context: TestContext) => {
 });
 
 test('CommandsService: parse - no arguments', (context: TestContext) => {
-    const originalLog = console.log;
-    const originalExit = process.exit;
-    let logOutput = StringExtensions.empty;
-    let exitCode = 0;
     process.argv = [];
+    const command = CommandsService.parse();
 
-    console.error = (message: string) => logOutput = message;
-    process.exit = (code: number) => { exitCode = code; return undefined as never; };
-
-    CommandsService.parse();
-
-    context.assert.strictEqual(logOutput, 'No arguments provided. Exiting...');
-    context.assert.strictEqual(exitCode, 1);
-
-    console.log = originalLog;
-    process.exit = originalExit;
+    context.assert.equal(command.type, CommandType.Context);
 });
 
 test('CommandsService: parse - invalid command', (context: TestContext) => {
