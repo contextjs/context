@@ -11,7 +11,7 @@ import test, { TestContext } from 'node:test';
 import { Directory } from '../src/path/directory.ts';
 
 test('Directory: create - success', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     context.assert.strictEqual(Directory.create(directory), true);
 
     Directory.delete(directory);
@@ -22,7 +22,7 @@ test('Directory: create - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: create - path exists', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     Directory.create(directory);
 
     context.assert.strictEqual(Directory.create(directory), false);
@@ -31,8 +31,8 @@ test('Directory: create - path exists', (context: TestContext) => {
 });
 
 test('Directory: rename - success', (context: TestContext) => {
-    const oldDirectory = '/old-directory';
-    const newDirectory = '/new-directory';
+    const oldDirectory = 'old-directory';
+    const newDirectory = 'new-directory';
     Directory.create(oldDirectory);
     const result = Directory.rename(oldDirectory, newDirectory);
 
@@ -42,17 +42,17 @@ test('Directory: rename - success', (context: TestContext) => {
 });
 
 test('Directory: rename - throws NullReferenceException', (context: TestContext) => {
-    context.assert.throws(() => Directory.rename(StringExtensions.empty, '/new-directory'));
-    context.assert.throws(() => Directory.rename('/old-directory', StringExtensions.empty));
+    context.assert.throws(() => Directory.rename(StringExtensions.empty, 'new-directory'));
+    context.assert.throws(() => Directory.rename('old-directory', StringExtensions.empty));
 });
 
 test('Directory: rename - throws PathNotFoundException', (context: TestContext) => {
-    context.assert.throws(() => Directory.rename('/old-directory', '/new-directory'));
+    context.assert.throws(() => Directory.rename('old-directory', 'new-directory'));
 });
 
 test('Directory: rename - path exists', (context: TestContext) => {
-    const oldDirectory = '/old-directory';
-    const newDirectory = '/new-directory';
+    const oldDirectory = 'old-directory';
+    const newDirectory = 'new-directory';
     Directory.create(oldDirectory);
     Directory.create(newDirectory);
 
@@ -63,7 +63,7 @@ test('Directory: rename - path exists', (context: TestContext) => {
 });
 
 test('Directory: delete - success', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     Directory.create(directory);
     const result = Directory.delete(directory);
 
@@ -75,13 +75,13 @@ test('Directory: delete - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: delete - path does not exist', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
 
     context.assert.strictEqual(Directory.delete(directory), true);
 });
 
 test('Directory: exists - success', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     Directory.create(directory);
 
     context.assert.strictEqual(Directory.exists(directory), true);
@@ -94,13 +94,13 @@ test('Directory: exists - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: exists - path does not exist', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
 
     context.assert.strictEqual(Directory.exists(directory), false);
 });
 
 test('Directory: isEmpty - success', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     Directory.create(directory);
 
     context.assert.strictEqual(Directory.isEmpty(directory), true);
@@ -109,11 +109,11 @@ test('Directory: isEmpty - success', (context: TestContext) => {
 });
 
 test('Directory: isEmpty - throws PathNotFoundException', (context: TestContext) => {
-    context.assert.throws(() => Directory.isEmpty('/directory'));
+    context.assert.throws(() => Directory.isEmpty('directory'));
 });
 
 test('Directory: isEmpty - directory is not empty', (context: TestContext) => {
-    const directory = '/directory';
+    const directory = 'directory';
     Directory.create(directory);
     Directory.create(`${directory}/file`);
 
