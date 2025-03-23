@@ -71,6 +71,18 @@ test('ConsoleService: parseArguments - duplicate argument', (context: TestContex
     context.assert.strictEqual(result[0].values.length, 2);
 });
 
+test('ConsoleService: write - success', (context: TestContext) => {
+    const originalLog = console.log;
+    let logOutput = '';
+    console.log = (message: string) => logOutput = message;
+
+    ConsoleService.write('test');
+
+    context.assert.strictEqual(logOutput, 'test');
+
+    console.log = originalLog;
+});
+
 test('ConsoleService: removeLastLine - success', (context: TestContext) => {
 
     let capturedOutput = StringExtensions.empty;
