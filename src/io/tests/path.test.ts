@@ -10,7 +10,7 @@ import test, { TestContext } from 'node:test';
 import { Directory, Path } from '../src/api';
 
 test('Path: exists - success', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
     Directory.create(path);
 
     context.assert.strictEqual(Path.exists(path), true);
@@ -19,13 +19,13 @@ test('Path: exists - success', (context: TestContext) => {
 });
 
 test('Path: exists - failure', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
 
     context.assert.strictEqual(Path.exists(path), false);
 });
 
 test('Path: isDirectory - success', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
     Directory.create(path);
 
     context.assert.strictEqual(Path.isDirectory(path), true);
@@ -34,13 +34,13 @@ test('Path: isDirectory - success', (context: TestContext) => {
 });
 
 test('Path: isDirectory - failure', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
 
     context.assert.strictEqual(Path.isDirectory(path), false);
 });
 
 test('Path: isFile - success', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
     Directory.create(path);
 
     context.assert.strictEqual(Path.isFile(path), false);
@@ -49,7 +49,7 @@ test('Path: isFile - success', (context: TestContext) => {
 });
 
 test('Path: isFile - failure', (context: TestContext) => {
-    const path = '/path';
+    const path = 'path';
 
     context.assert.strictEqual(Path.isFile(path), false);
 });

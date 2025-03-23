@@ -11,7 +11,7 @@ import test, { TestContext } from 'node:test';
 import { File } from '../src/path/file.ts';
 
 test('File: read - success', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
     File.save(file, 'content', true);
 
     context.assert.strictEqual(File.read(file), 'content');
@@ -20,11 +20,11 @@ test('File: read - success', (context: TestContext) => {
 });
 
 test('File: read - throws FileNotFoundException', (context: TestContext) => {
-    context.assert.throws(() => File.read('/file.txt'));
+    context.assert.throws(() => File.read('file.txt'));
 });
 
 test('File: save - success', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
 
     context.assert.strictEqual(File.save(file, 'content'), true);
 
@@ -32,7 +32,7 @@ test('File: save - success', (context: TestContext) => {
 });
 
 test('File: save - success overwrite', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
     File.save(file, 'content');
 
     context.assert.strictEqual(File.save(file, 'content', true), true);
@@ -45,7 +45,7 @@ test('File: save - throws NullReferenceException', (context: TestContext) => {
 });
 
 test('File: save - throws FileExistsException', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
     File.save(file, 'content');
 
     context.assert.throws(() => File.save(file, 'content'));
@@ -54,7 +54,7 @@ test('File: save - throws FileExistsException', (context: TestContext) => {
 });
 
 test('File: delete - success', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
     File.save(file, 'content');
 
     context.assert.strictEqual(File.delete(file), true);
@@ -69,7 +69,7 @@ test('File: delete - file not found', (context: TestContext) => {
 });
 
 test('File: exists - success', (context: TestContext) => {
-    const file = '/file.txt';
+    const file = 'file.txt';
     File.save(file, 'content');
 
     context.assert.strictEqual(File.exists(file), true);
