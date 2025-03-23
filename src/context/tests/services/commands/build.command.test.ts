@@ -6,11 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { PathService, StringExtensions } from "@contextjs/core";
+import { StringExtensions } from "@contextjs/core";
+import { Directory, File } from "@contextjs/io";
 import fs from "node:fs";
 import test, { TestContext } from 'node:test';
-import { Command } from "../../../src/models/command.ts";
 import { CommandType } from "../../../src/models/command-type.ts";
+import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
 import { BuildCommand } from "../../../src/services/commands/build.command.ts";
 
@@ -113,8 +114,8 @@ test('BuildCommand: build - success', (context: TestContext) => {
 });
 
 test('BuildCommand: copyFiles - success', (context: TestContext) => {
-    context.mock.method(PathService, 'exists', () => true);
-    context.mock.method(PathService, 'fileRead', () => JSON.stringify({ files: [{ from: 'from1', to: 'to1' }] }));
+    context.mock.method(Directory, 'exists', () => true);
+    context.mock.method(File, 'read', () => JSON.stringify({ files: [{ from: 'from1', to: 'to1' }] }));
     context.mock.method(fs, 'existsSync', () => true);
     context.mock.method(fs, 'cpSync', () => void 0);
 

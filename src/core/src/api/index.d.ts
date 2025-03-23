@@ -71,43 +71,11 @@ export declare class Exception extends Error {
     constructor(message: string);
 }
 
-/**
- * Represents an exception that occurs when a file already exists.
- */
-export declare class FileExistsException extends Exception {
-    /**
-     * Creates an instance of FileExistsException.
-     * @param {string} file - The file that already exists.
-     */
-    public constructor(file: string);
-}
-
-/**
- * Represents an exception that occurs when a file is not found.
- */
-export declare class FileNotFoundException extends Exception {
-    /**
-     * Creates an instance of FileNotFoundException.
-     * @param {string} file - The file that was not found.
-     */
-    public constructor(file: string);
-}
 
 /**
  * Represents an exception that occurs when a null reference is encountered.
  */
 export declare class NullReferenceException extends Exception { }
-
-/**
- * Represents an exception that occurs when a path is not found.
- */
-export declare class PathNotFoundException extends Exception { 
-    /**
-     * Creates an instance of PathNotFoundException.
-     * @param {string} path - The path that was not found.
-     */
-    public constructor(path: string);
-}
 
 //#endregion
 
@@ -340,83 +308,6 @@ export declare class ConsoleService {
      * Removes the last line from the console.
      */
     public static removeLastLine(): void;
-}
-
-/**
- * A class for path system operations.
- */
-export declare class PathService {
-    /**
-     * Reads the contents of a file as a string.
-     * @param {string} filePath - The path of the file to read.
-     * @returns {string} The content of the file.
-     * @throws {FileNotFoundException} The file was not found.
-     */
-    public static fileRead(filePath: string): string;
-
-    /**
-     * Saves content to a file.
-     * @param {string} filePath - The path of the file to save to.
-     * @param {string} content - The content to write to the file.
-     * @param {boolean} [overwrite] - Whether to overwrite the file if it exists. Default is false.
-     * @returns {boolean} True if the file was saved, otherwise false.
-     * @throws {FileExistsException} The file already exists and overwrite is false.
-     * @throws {NullReferenceException} The path is null or empty.
-     */
-    public static fileSave(filePath: string, content: string, overwrite?: boolean): boolean;
-
-    /**
-     * Deletes a file.
-     * @param {string} filePath - The path of the file to delete.
-     * @returns {boolean} True if the file was deleted, otherwise false.
-     * @throws {NullReferenceException} The path is null or empty.
-     */
-    public static fileDelete(filePath: string): boolean;
-
-    /**
-     * Deletes a directory.
-     * @param {string} directoryPath - The path of the directory to delete.
-     * @returns {boolean} True if the directory was deleted, otherwise false.
-     * @throws {NullReferenceException} The path is null or empty.
-     */
-    public static directoryDelete(directoryPath: string): boolean;
-
-    /**
-     * Checks if a path exists.
-     * @param {string} path - The path to check.
-     * @returns {boolean} True if the path exists, otherwise false.
-     */
-    public static exists(path: string): boolean;
-
-    /**
-     * Checks if a path is a file.
-     * @param {string} path - The path to check.
-     * @returns {boolean} True if the path is a file, otherwise false.
-     */
-    public static isFile(path: string): boolean;
-
-    /**
-     * Checks if a path is a directory.
-     * @param {string} path - The path to check.
-     * @returns {boolean} True if the path is a directory, otherwise false.
-     */
-    public static isDirectory(path: string): boolean;
-
-    /**
-     * Creates a directory.
-     * @param {string} path - The path of the directory to create.
-     * @returns {boolean} True if the directory was created, otherwise false.
-     * @throws {NullReferenceException} The path is null or empty.
-     */
-    public static directoryCreate(path: string): boolean;
-
-    /**
-     * Checks if a directory is empty.
-     * @param {string} path - The path of the directory to check.
-     * @returns {boolean} True if the directory is empty, otherwise false.
-     * @throws {PathNotFoundException} The path is null or empty.
-     */
-    public static directoryIsEmpty(path: string): boolean;
 }
 
 /**

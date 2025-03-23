@@ -6,7 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions, PathService, ProjectType, ProjectTypeService, StringExtensions, Throw, VersionService } from "@contextjs/core";
+import { ConsoleService, ObjectExtensions, ProjectType, ProjectTypeService, StringExtensions, Throw, VersionService } from "@contextjs/core";
+import { File, Directory, Path } from "@contextjs/io";
 import * as childProcess from "node:child_process";
 import readline from "node:readline/promises";
 import { Command } from "../../models/command.js";
@@ -44,7 +45,7 @@ export class NewCommand extends CommandBase {
     private async getNameAsync(): Promise<string | null> {
         let name = this.name;
 
-        if (!PathService.directoryIsEmpty(process.cwd())) {
+        if (!Directory.isEmpty(process.cwd())) {
             console.log('The current directory is not empty. Please try again in an empty directory.');
             this.consoleInterface.close();
             return process.exit(1);
@@ -100,25 +101,25 @@ export class NewCommand extends CommandBase {
     }
 
     private createTemplates(): void {
-        if (PathService.exists(this.name!)) {
+        if (Path.exists(this.name!)) {
             console.error(`The Project \"${this.name}\" already exists. Exiting...`);
             this.consoleInterface.close();
             return process.exit(1);
         }
 
-        PathService.directoryDelete(this.name!);
+        Directory.delete(this.name!);
         const lowercaseName = this.name!.toLowerCase();
         const version = VersionService.get();
 
         TemplateService.fromProjectType(this.type!).forEach(file => {
             if (StringExtensions.isNullOrUndefined(file.content)) {
-                PathService.directoryCreate(file.name);
+                Directory.create(file.name);
                 return;
             }
 
             file.content = file.content!.replace(/{{name}}/g, lowercaseName);
             file.content = file.content!.replace(/{{version}}/g, version);
-            PathService.fileSave(file.name, file.content, true);
+            File.save(file.name, file.content, true);
         });
 
         childProcess.execSync(`npm install`, { stdio: 'inherit' });

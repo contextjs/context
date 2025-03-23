@@ -6,11 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, PathService, ProjectType, StringExtensions } from "@contextjs/core";
+import { ConsoleArgument, ProjectType, StringExtensions } from "@contextjs/core";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { NewCommand } from "../../../src/services/commands/new.command.ts";
+import { Path, Directory, File } from "@contextjs/io";
 
 test('NewCommand: runAsync - success', async (context: TestContext) => {
     const consoleArguments: ConsoleArgument[] = [
@@ -21,7 +22,7 @@ test('NewCommand: runAsync - success', async (context: TestContext) => {
     const newCommand = new NewCommand() as any;
 
     context.mock.method(newCommand, 'createProject', () => void 0);
-    PathService.directoryIsEmpty = () => true;
+    Directory.isEmpty = () => true;
 
     await newCommand.runAsync(command);
     newCommand.consoleInterface.close();
@@ -62,7 +63,7 @@ test('NewCommand: createTemplates - project exists', async (context: TestContext
         return undefined as never;
     };
     console.error = (message: string) => logOutput = message;
-    context.mock.method(PathService, 'exists', () => true);
+    context.mock.method(Path, 'exists', () => true);
 
     newCommand.createTemplates();
     newCommand.consoleInterface.close();

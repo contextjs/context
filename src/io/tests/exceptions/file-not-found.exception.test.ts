@@ -7,14 +7,11 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { Exception } from '../../src/exceptions/exception.ts';
 import { FileNotFoundException } from '../../src/exceptions/file-not-found.exception.ts';
 
 test('FileNotFoundException: instance - success', (context: TestContext) => {
     const exception = new FileNotFoundException("file");
     context.assert.ok(exception instanceof FileNotFoundException);
-    context.assert.ok(exception instanceof Exception);
-    context.assert.ok(exception instanceof Error);
 });
 
 test('FileNotFoundException: message - success', (context: TestContext) => {

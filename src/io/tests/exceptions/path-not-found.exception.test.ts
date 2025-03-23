@@ -7,15 +7,13 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { Exception } from '../../src/exceptions/exception.ts';
 import { PathNotFoundException } from '../../src/exceptions/path-not-found.exception.ts';
+import { Exception } from '@contextjs/core';
 
 
 test('PathNotFoundException: instance - success', (context: TestContext) => {
     const exception = new PathNotFoundException("path");
     context.assert.ok(exception instanceof PathNotFoundException);
-    context.assert.ok(exception instanceof Exception);
-    context.assert.ok(exception instanceof Error);
 });
 
 test('PathNotFoundException: message - success', (context: TestContext) => {

@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { PathService } from "@contextjs/core";
+import { File } from "@contextjs/io";
 import { execSync } from "node:child_process";
 import fs from 'node:fs';
 import { Command } from "../../models/command.js";
@@ -33,12 +33,12 @@ export class BuildCommand extends CommandBase {
     private build(projectDescriptor: Project): void {
         console.log(`Building project: "${projectDescriptor.name}"...`);
 
-        if (!PathService.exists(`${projectDescriptor.path}/context.json`)) {
+        if (!File.exists(`${projectDescriptor.path}/context.json`)) {
             console.error('No project file found. Exiting...');
             return process.exit(1);
         }
 
-        if (!PathService.exists(`${projectDescriptor.path}/tsconfig.json`)) {
+        if (!File.exists(`${projectDescriptor.path}/tsconfig.json`)) {
             console.error('No tsconfig.json file found. Exiting...');
             return process.exit(1);
         }
@@ -55,7 +55,11 @@ export class BuildCommand extends CommandBase {
     }
 
     private copyFiles(projectDescriptor: Project) {
-        const contextFileContent = PathService.fileRead(`${projectDescriptor.path}/context.json`);
+        const contextFileContent = File.read(`${projectDescriptor.path}/context.json`);
+        if (!contextFileContent) {
+            console.error('No context file found. Exiting...');
+            return process.exit(1);
+        }
         const contextJson = JSON.parse(contextFileContent);
 
         if (contextJson.files && contextJson.files.length > 0) {

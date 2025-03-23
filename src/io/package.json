@@ -1,20 +1,17 @@
 {
-  "name": "@contextjs/context",
+  "name": "@contextjs/io",
   "version": "__VERSION__",
-  "description": "ContextJS",
+  "main": "api/index.js",
+  "description": "ContextJS - IO",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
-  "bin": {
-    "ctx": "./context.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/contextjs/context.git",
-    "directory": "src/context"
+    "directory": "src/io"
   },
   "peerDependencies": {
-    "@contextjs/core": "__VERSION__",
-    "@contextjs/io": "__VERSION__"
+    "@contextjs/core": "__VERSION__"
   }
 }
