@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "./exception.js";
+import { Exception } from "@contextjs/core";
 
 export class FileNotFoundException extends Exception {
     public constructor(file: string) {

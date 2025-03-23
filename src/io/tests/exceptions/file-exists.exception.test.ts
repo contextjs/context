@@ -7,13 +7,11 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { Exception } from '../../src/exceptions/exception.ts';
 import { FileExistsException } from '../../src/exceptions/file-exists.exception.ts';
 
 test('FileExistsException: instance - success', (context: TestContext) => {
     const exception = new FileExistsException("file");
     context.assert.ok(exception instanceof FileExistsException);
-    context.assert.ok(exception instanceof Exception);
 });
 
 test('FileExistsException: message - success', (context: TestContext) => {

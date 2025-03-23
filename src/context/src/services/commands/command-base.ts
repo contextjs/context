@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { PathService } from "@contextjs/core";
 import fs from "node:fs";
 import typescript from "typescript";
 import { Command } from "../../models/command.js";
 import { Project } from '../../models/project.js';
+import { File } from '@contextjs/io'
 
 export abstract class CommandBase {
     public abstract runAsync(command: Command): Promise<void>;
@@ -22,7 +22,7 @@ export abstract class CommandBase {
         directoryEntries.forEach(entry => {
             if (entry.isFile() && entry.name === 'context.json') {
                 const entryPath = entry.parentPath || entry.path;
-                const projectFile = PathService.fileRead(`${entryPath}/context.json`);
+                const projectFile = File.read(`${entryPath}/context.json`);
                 const projectName = JSON.parse(projectFile || '{}')?.name || '';
 
                 if (projectNames.length > 0 && !projectNames.includes(projectName))
