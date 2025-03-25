@@ -53,4 +53,9 @@ export default abstract class Script {
     protected async writeFileAsync(filePath: string, content: string): Promise<void> {
         fs.writeFileSync(filePath, content);
     }
+
+    protected async copyDeclarationFile(packageName: string): Promise<void> {
+        await this.createDirectoryAsync(`${Config.buildFolder}/${packageName}/api`);
+        await this.copyFileAsync(`src/${packageName}/src/api/index.d.ts`, `${Config.buildFolder}/${packageName}/api/index.d.ts`);
+    }
 }

@@ -10,22 +10,19 @@ import Config from '../../../scripts/config.ts';
 import Script from '../../../scripts/script.ts';
 
 export class BeforeBuild extends Script {
-    public override async runAsync(): Promise<void> {
-        await this.publishApiAsync();
-        await this.setVersionAsync();
-    }
+    private readonly packageName: string = "core";
 
-    private async publishApiAsync() {
-        await this.createDirectoryAsync(`${Config.buildFolder}/core/api`);
-        await this.copyFileAsync('src/core/src/api/index.d.ts', `${Config.buildFolder}/core/api/index.d.ts`);
+    public override async runAsync(): Promise<void> {
+        await this.copyDeclarationFile(this.packageName);
+        await this.setVersionAsync();
     }
 
     private async setVersionAsync() {
 
-        const file = (await this.readFileAsync('src/core/src/services/version.service.ts'))
+        const file = (await this.readFileAsync(`src/${this.packageName}/src/services/version.service.ts`))
             .replace(/private static version = ".*";/, `private static version = "${Config.version}";`);
 
-        await this.writeFileAsync('src/core/src/services/version.service.ts', file);
+        await this.writeFileAsync(`src/${this.packageName}/src/services/version.service.ts`, file);
     }
 }
 
