@@ -9,14 +9,8 @@
 import { ConsoleService } from "./console.service.js";
 
 export class VersionService {
-    private static version = "0.1.0";
-
-    public static get(): string {
-        return this.version;
-    }
-
-    public static display(): void {
-        const ascii = `
+    private static readonly version: string = "0.1.0";
+    private static readonly ascii: string = `
   ____            _            _         _ ____  
  / ___|___  _ __ | |_ _____  _| |_      | / ___| 
 | |   / _ \\| '_ \\| __/ _ \\ \\/ / __|  _  | \\___ \\ 
@@ -26,7 +20,12 @@ export class VersionService {
 ________________________________________________
          `;
 
-        ConsoleService.writeLineFormatted({ format: 'yellow', text: ascii });
+    public static get(): string {
+        return this.version;
+    }
+
+    public static display(): void {
+        ConsoleService.writeLineFormatted({ format: 'yellow', text: this.ascii });
         console.info(`ContextJS: ${this.version}`);
         console.info(`Node: ${process.version}`);
         console.info(`OS: ${process.platform} ${process.arch}`);
