@@ -8,7 +8,7 @@
 
 import { StringExtensions } from '@contextjs/core';
 import test, { TestContext } from 'node:test';
-import { Directory } from '../src/path/directory.ts';
+import { Directory } from '../../src/path/directory.ts';
 
 test('Directory: create - success', (context: TestContext) => {
     const directory = 'directory';

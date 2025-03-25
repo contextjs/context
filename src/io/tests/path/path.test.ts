@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { Directory, Path } from '../src/api';
+import { Directory, Path } from '../../src/api';
 
 test('Path: exists - success', (context: TestContext) => {
     const path = 'path';

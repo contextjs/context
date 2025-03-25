@@ -8,7 +8,7 @@
 
 import { StringExtensions } from '@contextjs/core';
 import test, { TestContext } from 'node:test';
-import { File } from '../src/path/file.ts';
+import { File } from '../../src/path/file.ts';
 
 test('File: read - success', (context: TestContext) => {
     const file = 'file.txt';
