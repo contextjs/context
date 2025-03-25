@@ -7,7 +7,7 @@
  */
 
 import { Throw } from "@contextjs/core";
-import { readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";
 import { FileNotFoundException } from "../exceptions/file-not-found.exception.js";
@@ -55,7 +55,7 @@ export class File {
         Throw.ifNullOrWhiteSpace(file);
 
         if (this.exists(file)) {
-            unlinkSync(file);
+            rmSync(file);
             return true;
         }
 

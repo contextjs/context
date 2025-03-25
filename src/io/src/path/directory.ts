@@ -18,7 +18,6 @@ export class Directory {
         if (Path.exists(directory))
             return false;
 
-
         mkdirSync(directory, { recursive: true });
         return true;
     }

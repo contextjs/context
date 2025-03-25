@@ -8,9 +8,9 @@
 
 import readline from 'node:readline';
 import { styleText } from 'node:util';
+import { ConsoleMessage } from '../extensions/console-extensions.js';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
-import { ConsoleMessage } from '../models/console-format.js';
 
 export class ConsoleService {
     public static parseArguments(args: string[]): ConsoleArgument[] {
