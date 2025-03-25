@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { CommandType, CommandTypeMethods } from "../../src/models/command-type.ts";
+import { CommandType, CommandTypeExtensions } from "../../src/models/command-type.ts";
 
 test('CommandType: length - success', (context: TestContext) => {
     context.assert.strictEqual(Object.keys(CommandType).length / 2, 5);
@@ -16,26 +16,26 @@ test('CommandType: length - success', (context: TestContext) => {
 test('CommandTypeMethods: fromString - success', (context: TestContext) => {
 
     let command = 'build';
-    let result = CommandTypeMethods.fromString(command);
+    let result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, CommandType.Build);
 
     command = 'watch';
-    result = CommandTypeMethods.fromString(command);
+    result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, CommandType.Watch);
 
     command = 'new';
-    result = CommandTypeMethods.fromString(command);
+    result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, CommandType.New);
 
     command = 'version';
-    result = CommandTypeMethods.fromString(command);
+    result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, CommandType.Version);
 
     command = '';
-    result = CommandTypeMethods.fromString(command);
+    result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, null);
 
     command = 'invalid';
-    result = CommandTypeMethods.fromString(command);
+    result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, null);
 });

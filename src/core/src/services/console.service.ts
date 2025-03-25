@@ -7,8 +7,10 @@
  */
 
 import readline from 'node:readline';
+import { styleText } from 'node:util';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
+import { ConsoleMessage } from '../models/console-format.js';
 
 export class ConsoleService {
     public static parseArguments(args: string[]): ConsoleArgument[] {
@@ -21,7 +23,11 @@ export class ConsoleService {
 
         args.forEach(argument => {
             if (argument.startsWith('-')) {
-                argument = argument.replace(/^-+/, '');
+                if ((argument[1] === '-' && argument.length == 3) ||
+                    (argument[1] !== '-' && argument.length !== 2)) {
+                    ConsoleService.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
+                    return process.exit(1);
+                }
 
                 const existingArgument = parsedArguments.find(a => a.name === argument);
                 if (existingArgument)
@@ -33,22 +39,27 @@ export class ConsoleService {
             }
             else {
                 if (ObjectExtensions.isNullOrUndefined(currentArgument)) {
-                    console.error('Argument value provided without argument name');
-                    return process.exit(1);
+                    currentArgument = new ConsoleArgument(argument, []);
+                    parsedArguments.push(currentArgument);
                 }
-
-                currentArgument!.values.push(argument);
+                else
+                    currentArgument!.values.push(argument);
             }
         });
 
         return parsedArguments;
     }
 
-    public static write(message: string): void {
-        console.log(message);
+    public static writeLine(message: any, ...messages: any[]): void {
+        console.log(message, ...messages);
+    }
+
+    public static writeLineFormatted(message: ConsoleMessage, ...messages: ConsoleMessage[]): void {
+        console.log(styleText(message.format, message.text), ...messages.map(m => styleText(m.format, m.text)));
     }
 
     public static removeLastLine(): void {
-        readline.clearLine(process.stdout, 0);
+        readline.moveCursor(process.stdout, 0, -1);
+        readline.clearLine(process.stdout, 1);
     }
 }

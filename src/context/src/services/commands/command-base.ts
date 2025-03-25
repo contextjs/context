@@ -6,14 +6,25 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { File } from '@contextjs/io';
 import fs from "node:fs";
 import typescript from "typescript";
 import { Command } from "../../models/command.js";
 import { Project } from '../../models/project.js';
-import { File } from '@contextjs/io'
+import { TemplatesService } from "../templates/templates.service.js";
 
 export abstract class CommandBase {
     public abstract runAsync(command: Command): Promise<void>;
+
+    protected async checkForHelpCommandAsync(command: Command, templatesService: TemplatesService): Promise<boolean> {
+        const helpCommandName = command.args[1]?.name;
+        if (helpCommandName === '-h' || helpCommandName === '--help') {
+            await templatesService.displayHelpAsync();
+            return true;
+        }
+
+        return false;
+    }
 
     protected getProjectDescriptors(projectNames: string[]): Project[] {
         let directoryEntries = fs.readdirSync(process.cwd(), { withFileTypes: true, encoding: 'utf-8', recursive: true });

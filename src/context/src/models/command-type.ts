@@ -16,7 +16,7 @@ export enum CommandType {
     Version
 }
 
-export class CommandTypeMethods {
+export class CommandTypeExtensions {
     public static fromString(command: string): CommandType | null {
         if (StringExtensions.isNullOrWhiteSpace(command))
             return null;

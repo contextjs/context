@@ -6,25 +6,28 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ProjectType, StringExtensions } from '@contextjs/core';
 import test, { TestContext } from 'node:test';
-import { TemplateService } from '../../src/services/template.service.ts';
+import { FileTemplate } from '../../src/models/file-template.js';
+import { TemplatesService } from '../../src/services/templates/templates.service.js';
 
-test('TemplateService: fromProjectType - success', (context: TestContext) => {
-    const fileTemplate = TemplateService.api;
-    const result = TemplateService.fromProjectType(ProjectType.API);
+test('TemplateService: instance - success', (context: TestContext) => {
+    class TestTemplatesService extends TemplatesService {
+        protected helpText: string;
+        public displayHelpAsync(): Promise<void> {
+            throw new Error('Method not implemented.');
+        }
+        public templates: FileTemplate[];
 
-    context.assert.strictEqual(result, fileTemplate);
-});
+        public constructor() {
+            super();
+            this.helpText = 'Help text';
+            this.templates = [{ name: 'test', content: 'test' }];
+        }
+    }
 
-test('TemplateService: fromProjectType - failure', (context: TestContext) => {
-    const result = TemplateService.fromProjectType(null!);
+    const service = new TestTemplatesService();
 
-    context.assert.strictEqual(result.length, 0);
-});
-
-test('TemplateService: fromProjectType - unknown', (context: TestContext) => {
-    const result = TemplateService.fromProjectType(20);
-
-    context.assert.strictEqual(result.length, 0);
+    context.assert.strictEqual((service as any).helpText, 'Help text');
+    context.assert.throws(() => service.displayHelpAsync(), { message: 'Method not implemented.' });
+    context.assert.deepEqual((service as any).templates, [{ name: 'test', content: 'test' }]);
 });
