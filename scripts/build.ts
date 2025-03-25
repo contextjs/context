@@ -40,7 +40,8 @@ export class Build extends Script {
     }
 
     private async buildPackageAsync(packageName: string): Promise<void> {
-        await this.writeLogAsync(`\nBuilding "@contextjs/${packageName}"...`);
+        await this.writeLogAsync('');
+        await this.writeLogAsync(`Building "@contextjs/${packageName}"...`);
 
         await this.removeDependencyAsync(packageName);
         await this.createPackageDirectoryAsync(packageName);
