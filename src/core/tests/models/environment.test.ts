@@ -66,9 +66,14 @@ test('Environment: isStaging - failure', (context: TestContext) => {
     context.assert.strictEqual(environment.isStaging, false);
 });
 
-test('Environment: getCLIEnvironment - success', (context: TestContext) => {
+test('Environment: getEnvironment - success', (context: TestContext) => {
     process.argv = ['node', 'app', '--environment', 'production'];
-    const environment = new Environment();
+    const environment1 = new Environment();
 
-    context.assert.strictEqual(environment.name, EnvironmentName.production);
+    context.assert.strictEqual(environment1.name, EnvironmentName.production);
+
+    process.argv = ['node', 'app', '-e', 'production'];
+    const environment2 = new Environment();
+
+    context.assert.strictEqual(environment2.name, EnvironmentName.production);
 });

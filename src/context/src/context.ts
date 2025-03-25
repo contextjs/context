@@ -7,7 +7,7 @@
  */
 
 import { CommandType } from "./models/command-type.js";
-import { CommandsService } from "./services/commands.service.js";
+import { CommandsService } from "./services/commands/commands.service.js";
 import { BuildCommand } from "./services/commands/build.command.js";
 import { ContextCommand } from "./services/commands/context.command.js";
 import { NewCommand } from "./services/commands/new.command.js";

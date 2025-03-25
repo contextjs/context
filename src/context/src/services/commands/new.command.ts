@@ -6,122 +6,81 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions, ProjectType, ProjectTypeService, StringExtensions, Throw, VersionService } from "@contextjs/core";
-import { File, Directory, Path } from "@contextjs/io";
-import * as childProcess from "node:child_process";
-import readline from "node:readline/promises";
+import { ConsoleService, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/core";
+import { Directory, File, Path } from "@contextjs/io";
+import childProcess from "child_process";
+import path from "path";
 import { Command } from "../../models/command.js";
-import { TemplateService } from "../template.service.js";
+import { TemplatesServiceResolver } from "../templates/templates-service-resolver.js";
 import { CommandBase } from "./command-base.js";
 
 export class NewCommand extends CommandBase {
-    private name: string | null = null;
-    private type: ProjectType | null = null;
-    private consoleInterface: readline.Interface = readline.createInterface({ input: process.stdin, output: process.stdout });
+    private readonly helpText = `The "ctx new" command creates a ContextJS project based on a template.
+Usage: ctx new [options]
 
-    public async runAsync(command: Command): Promise<void> {
-        if (command.args.length > 0) {
-            const nameCommand = command.args.find(arg => arg.name === 'name' || arg.name === 'n');
-            if (!ObjectExtensions.isNullOrUndefined(nameCommand))
-                this.name = nameCommand!.values[0];
+Command         Template Name           Description
+--------        ----------------        -----------------------------------------------------
+api             Web API project         A Web API project containing controllers and actions.
+`;
+    public override async runAsync(command: Command): Promise<void> {
+        if (command.args.length === 0)
+            return await this.displayHelpAsync();
 
-            const typeCommand = command.args.find(arg => arg.name === 'type' || arg.name === 't');
-            if (!ObjectExtensions.isNullOrUndefined(typeCommand))
-                this.type = ProjectTypeService.fromString(typeCommand!.values[0]);
-        }
-
-        this.name = await this.getNameAsync();
-        this.type = await this.getProjectTypeAsync();
-
-        if (StringExtensions.isNullOrWhiteSpace(this.name) || ObjectExtensions.isNullOrUndefined(this.type)) {
-            console.log('Invalid parameters provided. Exiting...');
-            this.consoleInterface.close();
-            return process.exit(1);
-        }
-
-        this.createProject();
+        return this.createTemplateAsync(command);
     }
 
-    private async getNameAsync(): Promise<string | null> {
-        let name = this.name;
-
-        if (!Directory.isEmpty(process.cwd())) {
-            console.log('The current directory is not empty. Please try again in an empty directory.');
-            this.consoleInterface.close();
-            return process.exit(1);
-        }
-
-        if (StringExtensions.isNullOrWhiteSpace(name)) {
-            name = await this.consoleInterface.question('Enter Project Name: ');
-
-            if (StringExtensions.isNullOrWhiteSpace(name)) {
-                console.log('Invalid project name provided. Please try again:');
-                return await this.getNameAsync();
-            }
-
-            return name;
-        }
-
-        return name;
-    }
-
-    private async getProjectTypeAsync(): Promise<ProjectType | null> {
-        let type = this.type;
-
+    private async createTemplateAsync(command: Command): Promise<void> {
+        const type = ProjectTypeExtensions.fromString(command.args[0].name);
         if (ObjectExtensions.isNullOrUndefined(type)) {
-            console.log('Project Type:');
-
-            ProjectTypeService.toCLIOptions().forEach((option) => {
-                console.log(`   ${option}`);
-            });
-
-            const typeAnswer = await this.consoleInterface.question('Choose the Project Type: ');
-            type = ProjectTypeService.fromNumber(+typeAnswer);
-            if (ObjectExtensions.isNullOrUndefined(type)) {
-                console.log('Invalid Project Type provided. Please try again:');
-                return await this.getProjectTypeAsync();
-            }
-        }
-
-        return type;
-    }
-
-    private createProject(): void {
-        Throw.ifNullOrWhiteSpace(this.name);
-        Throw.ifNullOrUndefined(this.type);
-
-        this.name = StringExtensions.removeWhiteSpaces(this.name!);
-        ConsoleService.write(`Creating Project "${this.name}" (${ProjectTypeService.toString(this.type!)})...`);
-        this.createTemplates();
-        ConsoleService.removeLastLine();
-        ConsoleService.write(`${ProjectTypeService.toString(this.type!)} "${this.name}" created successfully.`);
-        this.consoleInterface.close();
-
-        return process.exit(0);
-    }
-
-    private createTemplates(): void {
-        if (Path.exists(this.name!)) {
-            console.error(`The Project \"${this.name}\" already exists. Exiting...`);
-            this.consoleInterface.close();
+            ConsoleService.writeLineFormatted({ format: 'red', text: `Invalid project type "${command.args[0].name}".` });
             return process.exit(1);
         }
 
-        Directory.delete(this.name!);
-        const lowercaseName = this.name!.toLowerCase();
-        const version = VersionService.get();
+        const templatesService = await TemplatesServiceResolver.resolveAsync(type!);
+        if (ObjectExtensions.isNullOrUndefined(templatesService)) {
+            ConsoleService.writeLineFormatted({ format: 'red', text: `The project type "${command.args[0].name}" is not supported.` });
+            return process.exit(1);
+        }
 
-        TemplateService.fromProjectType(this.type!).forEach(file => {
+        if (await this.checkForHelpCommandAsync(command, templatesService!))
+            return;
+
+        const name = await this.getNameAsync(command);
+
+        if (Path.exists(name)) {
+            ConsoleService.writeLineFormatted({ format: 'red', text: `The Project \"${name}\" already exists. Exiting...` });
+            return process.exit(1);
+        }
+
+        ConsoleService.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` });
+
+        templatesService!.templates.forEach(file => {
             if (StringExtensions.isNullOrUndefined(file.content)) {
-                Directory.create(file.name);
+                Directory.create(`${name}/${file.name}`);
                 return;
             }
 
-            file.content = file.content!.replace(/{{name}}/g, lowercaseName);
-            file.content = file.content!.replace(/{{version}}/g, version);
-            File.save(file.name, file.content, true);
+            file.content = file.content!.replace(/{{name}}/g, name);
+            file.content = file.content!.replace(/{{version}}/g, VersionService.get());
+            File.save(`${name}/${file.name}`, file.content, true);
         });
 
-        childProcess.execSync(`npm install`, { stdio: 'inherit' });
+        childProcess.execSync(`cd ${name} && npm install && cd ..`);
+        ConsoleService.removeLastLine();
+        ConsoleService.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` }, { format: ['green', 'bold'], text: 'Done.' });
+    }
+
+    private async getNameAsync(command: Command): Promise<string> {
+        return (command.args.find(t => t.name === '--name' || t.name == '-n')?.values[0]
+            ?? command.args[0].values[0]
+            ?? path.basename(process.cwd()))
+            .toLowerCase()
+            .replace(/ /g, '-');
+    }
+
+    private async displayHelpAsync(): Promise<void> {
+        VersionService.display();
+        ConsoleService.writeLine(this.helpText);
+        return process.exit(0);
     }
 }

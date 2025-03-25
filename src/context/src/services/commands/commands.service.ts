@@ -8,8 +8,8 @@
 
 import { ConsoleService, ObjectExtensions } from "@contextjs/core";
 
-import { CommandType, CommandTypeMethods } from "../models/command-type.js";
-import { Command } from "../models/command.js";
+import { CommandType, CommandTypeExtensions } from "../../models/command-type.js";
+import { Command } from "../../models/command.js";
 
 export class CommandsService {
     public static parse(): Command {
@@ -18,7 +18,7 @@ export class CommandsService {
         if (args.length === 0)
             return new Command(CommandType.Context, []);
 
-        const command = CommandTypeMethods.fromString(args[0]);
+        const command = CommandTypeExtensions.fromString(args[0]);
         if (ObjectExtensions.isNullOrUndefined(command)) {
             console.error('Invalid command provided. Exiting...');
             return process.exit(1);

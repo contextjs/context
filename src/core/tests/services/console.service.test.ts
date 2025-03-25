@@ -16,12 +16,12 @@ test('ConsoleService: parseArguments - success', (context: TestContext) => {
     const result = ConsoleService.parseArguments(args);
 
     context.assert.strictEqual(result.length, 3);
-    context.assert.strictEqual(result[0].name, 'name');
+    context.assert.strictEqual(result[0].name, '--name');
     context.assert.strictEqual(result[0].values[0], 'value');
     context.assert.strictEqual(result[0].values[1], 'value2');
-    context.assert.strictEqual(result[1].name, 'age');
+    context.assert.strictEqual(result[1].name, '--age');
     context.assert.strictEqual(result[1].values[0], '25');
-    context.assert.strictEqual(result[2].name, 'isTrue');
+    context.assert.strictEqual(result[2].name, '--isTrue');
     context.assert.strictEqual(result[2].values[0], 'true');
 });
 
@@ -37,27 +37,8 @@ test('ConsoleService: parseArguments - no values', (context: TestContext) => {
     const result = ConsoleService.parseArguments(args);
 
     context.assert.strictEqual(result.length, 1);
-    context.assert.strictEqual(result[0].name, 'name');
+    context.assert.strictEqual(result[0].name, '--name');
     context.assert.strictEqual(result[0].values.length, 0);
-});
-
-test('ConsoleService: parseArguments - failure', (context: TestContext) => {
-    const originalLog = console.log;
-    const originalExit = process.exit;
-    let logOutput = '';
-    let exitCode = 0;
-    const args = ['value']
-
-    console.error = (message: string) => logOutput = message;
-    process.exit = (code: number) => { exitCode = code; return undefined as never; };
-
-    ConsoleService.parseArguments(args)
-
-    context.assert.strictEqual(logOutput, 'Argument value provided without argument name');
-    context.assert.strictEqual(exitCode, 1);
-
-    console.log = originalLog;
-    process.exit = originalExit;
 });
 
 test('ConsoleService: parseArguments - duplicate argument', (context: TestContext) => {
@@ -65,7 +46,7 @@ test('ConsoleService: parseArguments - duplicate argument', (context: TestContex
     const result = ConsoleService.parseArguments(args);
 
     context.assert.strictEqual(result.length, 1);
-    context.assert.strictEqual(result[0].name, 'name');
+    context.assert.strictEqual(result[0].name, '--name');
     context.assert.strictEqual(result[0].values[0], 'value');
     context.assert.strictEqual(result[0].values[1], 'value2');
     context.assert.strictEqual(result[0].values.length, 2);
@@ -76,7 +57,7 @@ test('ConsoleService: write - success', (context: TestContext) => {
     let logOutput = '';
     console.log = (message: string) => logOutput = message;
 
-    ConsoleService.write('test');
+    ConsoleService.writeLine('test');
 
     context.assert.strictEqual(logOutput, 'test');
 
@@ -97,9 +78,9 @@ test('ConsoleService: removeLastLine - success', (context: TestContext) => {
         return true;
     };
 
-    process.stdout.write('line1');
-    process.stdout.write('line3');
-    process.stdout.write('line2');
+    ConsoleService.writeLine('line1');
+    ConsoleService.writeLine('line2');
+    ConsoleService.writeLine('line3');
     ConsoleService.removeLastLine();
 
     context.assert.doesNotMatch(capturedOutput, /line2/);

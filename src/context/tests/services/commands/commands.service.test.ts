@@ -8,8 +8,8 @@
 
 import { StringExtensions } from '@contextjs/core';
 import test, { TestContext } from 'node:test';
-import { CommandType } from "../../src/models/command-type.ts";
-import { CommandsService } from "../../src/services/commands.service.ts";
+import { CommandType } from "../../../src/models/command-type.ts";
+import { CommandsService } from "../../../src/services/commands/commands.service.ts";
 
 test('CommandsService: parse - success', (context: TestContext) => {
 

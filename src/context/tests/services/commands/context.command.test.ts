@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, PathService, ProjectType, StringExtensions } from "@contextjs/core";
+import { ConsoleArgument, StringExtensions } from "@contextjs/core";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
@@ -21,5 +21,5 @@ test('ContextCommand: runAsync - success', async (context: TestContext) => {
 
     await contextCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, 'ContextJS:\nUsage: ctx [options]\n\nOptions:\n    new         creates a new project or solution\n');
+    context.assert.strictEqual(logOutput, 'Usage: ctx [options]\n\nOptions:\n    new     creates a new project or solution\n');
 });

@@ -6,6 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+//#region Application
+
 /**
  * Represents the main application.
  */
@@ -28,6 +30,8 @@ export declare class Application {
      */
     public onRun(execute: () => Promise<any>): Application;
 }
+
+//#endregion
 
 //#region Collections
 
@@ -214,6 +218,48 @@ export declare class ConsoleArgument {
     constructor(name: string, values: string[]);
 }
 
+export type ConsoleMessage = {
+    format: ForegroundColors | BackgroundColors | Modifiers | Array<ForegroundColors | BackgroundColors | Modifiers>,
+    text: string
+};
+
+export declare type Modifiers =
+    'blink' |
+    'bold' |
+    'dim' |
+    'doubleunderline' |
+    'framed' |
+    'hidden' |
+    'inverse' |
+    'italic' |
+    'overlined' |
+    'reset' |
+    'strikethrough' |
+    'underline';
+
+export declare type ForegroundColors =
+    'black' |
+    'blue' |
+    'cyan' |
+    'gray' |
+    'green' |
+    'grey' |
+    'magenta' |
+    'red' |
+    'white' |
+    'yellow';
+
+export declare type BackgroundColors =
+    'bgBlack' |
+    'bgBlue' |
+    'bgCyan' |
+    'bgGray' |
+    'bgGreen' |
+    'bgMagenta' |
+    'bgRed' |
+    'bgWhite' |
+    'bgYellow';
+
 /**
  * Class that represents the environment name.
  */
@@ -283,6 +329,25 @@ export enum ProjectType {
     API
 }
 
+/**
+ * Class that represents project type extensions.
+ */
+export class ProjectTypeExtensions {
+    /**
+     * Converts the project type to a string.
+     * @param {ProjectType} projectType - The project type to convert.
+     * @returns {string | null} The string representation of the project type or null if the project type is invalid.
+     */
+    public static toString(projectType: ProjectType): string | null;
+
+    /**
+     * Converts the string to a project type.
+     * @param {string} value - The string to convert.
+     * @returns {ProjectType | null} The project type or null if the string is invalid.
+     */
+    public static fromString(value: string): ProjectType | null;
+}
+
 //#endregion
 
 //#region Services
@@ -299,47 +364,23 @@ export declare class ConsoleService {
     public static parseArguments(args: string[]): ConsoleArgument[];
 
     /**
-     * Writes a message to the console.
-     * @param {string} message - The message to write.
+     * Writes a message to the console and moves to the next line.
+     * @param {any} message - The message to write.
+     * @param {...any} messages - Additional messages to write.
      */
-    public static write(message: string): void;
+    public static writeLine(message: any, ...messages: any[]): void;
+
+    /**
+     * Writes a formatted message to the console and moves to the next line.
+     * @param {ConsoleMessage} message - The message to write.
+     * @param {...ConsoleMessage} messages - Additional messages to write.
+     */
+    public static writeLineFormatted(message: ConsoleMessage, ...messages: ConsoleMessage[]): void;
 
     /**
      * Removes the last line from the console.
      */
     public static removeLastLine(): void;
-}
-
-/**
- * A service for handling project types.
- */
-export declare class ProjectTypeService {
-    /**
-     * Converts a project type to a string.
-     * @param {ProjectType} projectType - The project type to convert.
-     * @returns {string | null} The string representation of the project type or null if the project type is not recognized.
-     */
-    public static toString(projectType: ProjectType): string | null;
-
-    /**
-     * Converts a string to a project type.
-     * @param {string} value - The string to convert.
-     * @returns {ProjectType | null} The project type or null if the string is not recognized.
-     */
-    public static fromString(value: string): ProjectType | null;
-
-    /**
-     * Converts a number to a project type.
-     * @param {number} value - The number to convert.
-     * @returns {ProjectType | null} The project type or null if the number is not recognized.
-     */
-    public static fromNumber(value: number): ProjectType | null;
-
-    /**
-     * Converts project types to CLI options.
-     * @returns {string[]} An array of CLI options.
-     */
-    public static toCLIOptions(): string[];
 }
 
 /**

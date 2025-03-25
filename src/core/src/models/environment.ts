@@ -29,12 +29,12 @@ export class Environment {
     }
 
     public constructor() {
-        this.getCLIEnvironment();
+        this.getEnvironment();
     }
 
-    private getCLIEnvironment() {
+    private getEnvironment() {
         const args = ConsoleService.parseArguments(process.argv.slice(2));
-        const environmentArgument = args.find(a => a.name === 'environment');
+        const environmentArgument = args.find(t => t.name === '--environment' || t.name === '-e');
 
         if (environmentArgument && environmentArgument.values.length > 0)
             this.name = environmentArgument.values[0];
