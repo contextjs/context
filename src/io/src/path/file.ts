@@ -7,7 +7,7 @@
  */
 
 import { Throw } from "@contextjs/core";
-import { readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";
 import { FileNotFoundException } from "../exceptions/file-not-found.exception.js";
@@ -33,6 +33,21 @@ export class File {
             Directory.create(dirname);
 
         writeFileSync(file, content, 'utf8');
+        return true;
+    }
+
+    public static rename(oldFile: string, newFile: string): boolean {
+        Throw.ifNullOrWhiteSpace(oldFile);
+        Throw.ifNullOrWhiteSpace(newFile);
+
+        if (!this.exists(oldFile))
+            throw new FileNotFoundException(oldFile);
+
+        if (this.exists(newFile))
+            throw new FileExistsException(newFile);
+
+        renameSync(oldFile, newFile);
+
         return true;
     }
 

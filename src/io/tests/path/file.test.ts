@@ -53,6 +53,38 @@ test('File: save - throws FileExistsException', (context: TestContext) => {
     File.delete(file);
 });
 
+test('File: rename - success', (context: TestContext) => {
+    const oldName = 'old-name.txt';
+    const newName = 'new-name.txt';
+    File.save(oldName, 'content');
+    const result = File.rename(oldName, newName);
+
+    context.assert.strictEqual(result, true);
+
+    File.delete(newName);
+});
+
+test('File: rename - throws NullReferenceException', (context: TestContext) => {
+    context.assert.throws(() => File.rename(StringExtensions.empty, 'new-file.txt'));
+    context.assert.throws(() => File.rename('old-file.txt', StringExtensions.empty));
+});
+
+test('File: rename - throws PathNotFoundException', (context: TestContext) => {
+    context.assert.throws(() => File.rename('old-name.txt', 'new-name.txt'));
+});
+
+test('File: rename - path exists', (context: TestContext) => {
+    const oldName = 'old-name.txt';
+    const newName = 'new-name.txt';
+    File.save(oldName, 'content1');
+    File.save(newName, 'content2');
+
+    context.assert.throws(() => File.rename(oldName, newName));
+
+    File.delete(oldName);
+    File.delete(newName);
+});
+
 test('File: delete - success', (context: TestContext) => {
     const file = 'file.txt';
     File.save(file, 'content');
