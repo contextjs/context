@@ -54,8 +54,12 @@ export default abstract class Script {
         fs.writeFileSync(filePath, content);
     }
 
-    protected async copyDeclarationFile(packageName: string): Promise<void> {
+    protected async copyDeclarationsFileAsync(packageName: string): Promise<void> {
         await this.createDirectoryAsync(`${Config.buildFolder}/${packageName}/api`);
         await this.copyFileAsync(`src/${packageName}/src/api/index.d.ts`, `${Config.buildFolder}/${packageName}/api/index.d.ts`);
+    }
+
+    protected async copyReadmeFileAsync(packageName: string): Promise<void> {
+        await this.copyFileAsync(`src/${packageName}/README.md`, `${Config.buildFolder}/${packageName}/README.md`);
     }
 }

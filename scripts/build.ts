@@ -45,6 +45,7 @@ export class Build extends Script {
         await this.removeDependencyAsync(packageName);
         await this.createPackageDirectoryAsync(packageName);
         await this.copyPackageFileAsync(packageName);
+        await this.copyLicenseFileAsync(packageName);
         await this.writeVersionAsync(packageName);
         await this.buildAsync(packageName);
         await this.createPackageAsync(packageName);
@@ -70,6 +71,10 @@ export class Build extends Script {
             throw new Error(`Missing package.json in "${packageName}" package.`);
 
         await this.copyFileAsync(packageFilePath, `${Config.buildFolder}/${packageName}/package.json`);
+    }
+
+    private async copyLicenseFileAsync(packageName: string): Promise<void> {
+        await this.copyFileAsync('LICENSE', `${Config.buildFolder}/${packageName}/LICENSE`);
     }
 
     private async writeVersionAsync(packageName: string): Promise<void> {

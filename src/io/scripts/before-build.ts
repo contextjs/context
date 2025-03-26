@@ -12,7 +12,8 @@ export class BeforeBuild extends Script {
     private readonly packageName: string = "io";
 
     public override async runAsync(): Promise<void> {
-        await this.copyDeclarationFile(this.packageName);
+        await this.copyDeclarationsFileAsync(this.packageName);
+        await this.copyReadmeFileAsync(this.packageName);
     }
 }
 
