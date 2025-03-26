@@ -7,8 +7,8 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { FileTemplate } from '../../src/models/file-template.js';
-import { TemplatesService } from '../../src/services/templates/templates.service.js';
+import { FileTemplate } from '../../../src/models/file-template.js';
+import { TemplatesService } from '../../../src/services/templates/templates.service.js';
 
 test('TemplateService: instance - success', (context: TestContext) => {
     class TestTemplatesService extends TemplatesService {

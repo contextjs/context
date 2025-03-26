@@ -21,8 +21,5 @@ export class PackageTemplate {
   }
 }`;
 
-  public static readonly template: FileTemplate = {
-    name: PackageTemplate.name,
-    content: PackageTemplate.content
-  };
+  public static readonly template: FileTemplate = new FileTemplate(PackageTemplate.name, PackageTemplate.content);
 }

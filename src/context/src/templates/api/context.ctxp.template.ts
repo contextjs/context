@@ -16,8 +16,5 @@ export class ContextTemplate {
   "main": "src/program.ts"
 }`;
 
-  public static readonly template: FileTemplate = {
-    name: ContextTemplate.name,
-    content: ContextTemplate.content
-  };
+  public static readonly template: FileTemplate = new FileTemplate(ContextTemplate.name, ContextTemplate.content);
 }

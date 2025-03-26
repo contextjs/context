@@ -10,19 +10,11 @@ import test, { TestContext } from 'node:test';
 import { FileTemplate } from "../../src/models/file-template.ts";
 
 test('FileTemplate: constructor - success', (context: TestContext) => {
-    const templateFile: FileTemplate =
-    {
-        name: "name",
-        content: "content"
-    }
-
-    const templateFileWithoutContent: FileTemplate =
-    {
-        name: "name"
-    }
+    const templateFile: FileTemplate = new FileTemplate("name", "content");
+    const templateFileWithoutContent: FileTemplate = new FileTemplate("name");
 
     context.assert.strictEqual(templateFile.name, "name");
     context.assert.strictEqual(templateFile.content, "content");
     context.assert.strictEqual(templateFileWithoutContent.name, "name");
-    context.assert.strictEqual(templateFileWithoutContent.content, undefined);
+    context.assert.strictEqual(templateFileWithoutContent.content, null);
 });

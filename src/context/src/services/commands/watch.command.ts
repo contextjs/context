@@ -26,14 +26,14 @@ export class WatchCommand extends CommandBase {
         });
     }
 
-    private watchProject(projectDescriptor: Project) {
-        const configPath = typescript.findConfigFile(projectDescriptor.path, typescript.sys.fileExists, "tsconfig.json");
+    private watchProject(project: Project) {
+        const configPath = typescript.findConfigFile(project.path, typescript.sys.fileExists, "tsconfig.json");
         if (!configPath) {
             console.error("Could not find a valid 'tsconfig.json'.");
             return process.exit(1);
         }
 
-        console.log(`Watching project "${projectDescriptor.name}" for changes...`);
+        console.log(`Watching project "${project.name}" for changes...`);
 
         const createProgram = typescript.createSemanticDiagnosticsBuilderProgram;
         const host = typescript.createWatchCompilerHost(
@@ -41,8 +41,8 @@ export class WatchCommand extends CommandBase {
             undefined,
             typescript.sys,
             createProgram,
-            (diagnostic) => this.processDiagnostics(projectDescriptor, [diagnostic]),
-            (diagnostic) => this.processDiagnostics(projectDescriptor, [diagnostic])
+            (diagnostic) => this.processDiagnostics(project, [diagnostic]),
+            (diagnostic) => this.processDiagnostics(project, [diagnostic])
         );
 
         const originalCreateProgram = host.createProgram;

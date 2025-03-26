@@ -45,8 +45,5 @@ export class TsConfigTemplate {
     }
 }`;
 
-    public static readonly template: FileTemplate = {
-        name: TsConfigTemplate.name,
-        content: TsConfigTemplate.content
-    };
+    public static readonly template: FileTemplate = new FileTemplate(TsConfigTemplate.name, TsConfigTemplate.content);
 }
