@@ -8,8 +8,9 @@
 
 import { ConsoleArgument, StringExtensions } from "@contextjs/core";
 import test, { TestContext } from 'node:test';
-import { Command } from "../../../src/models/command.ts";
+import typescript from "typescript";
 import { CommandType } from "../../../src/models/command-type.ts";
+import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
 import { WatchCommand } from "../../../src/services/commands/watch.command.ts";
 
@@ -51,4 +52,16 @@ test('WatchCommand: runAsync - success', async (context: TestContext) => {
     await watchCommand.runAsync(command);
 
     context.assert.strictEqual(logOutput, 'Watching project "test" for changes...');
+});
+
+test('watchProject_Success', async (context: TestContext) => {
+    let logOutput = '';
+    let watchCommand = new WatchCommand();
+
+    const project: Project = new Project('test', 'src/core');
+    console.log = (message: string) => { if (!logOutput) logOutput = message; }
+
+    const watcher = (watchCommand as any).watchProject(project);
+    context.assert.strictEqual(logOutput, `Watching project "${project.name}" for changes...`);
+    watcher?.close();
 });

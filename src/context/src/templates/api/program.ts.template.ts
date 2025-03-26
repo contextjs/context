@@ -20,8 +20,5 @@ application.onRun(async () => {
 
 application.runAsync();`
 
-  public static readonly template: FileTemplate = {
-    name: ProgramTemplate.name,
-    content: ProgramTemplate.content
-  };
+  public static readonly template: FileTemplate = new FileTemplate(ProgramTemplate.name, ProgramTemplate.content);
 }

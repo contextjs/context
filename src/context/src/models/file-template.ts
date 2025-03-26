@@ -6,7 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export type FileTemplate = {
-    name: string;
-    content?: string;
+export class FileTemplate {
+    public readonly name: string;
+    public content: string | null;
+
+    constructor(name: string, content: string | null = null) {
+        this.name = name;
+        this.content = content;
+    }
 }
