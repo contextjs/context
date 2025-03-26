@@ -35,7 +35,7 @@ export declare class FileNotFoundException extends Exception {
 /**
  * Represents an exception that occurs when a path is not found.
  */
-export declare class PathNotFoundException extends Exception { 
+export declare class PathNotFoundException extends Exception {
     /**
      * Creates an instance of PathNotFoundException.
      * @param {string} path - The path that was not found.
@@ -44,6 +44,8 @@ export declare class PathNotFoundException extends Exception {
 }
 
 //#endregion
+
+//#region Path
 
 /**
  * Contains methods for working with directories.
@@ -105,7 +107,6 @@ export declare class File {
      */
     public static save(file: string, content: string): boolean;
 
-
     /**
      * Saves content to a file.
      * @param file The file to save to.
@@ -114,6 +115,14 @@ export declare class File {
      * @returns true if the file was saved; otherwise, false.
      */
     public static save(file: string, content: string, overwrite: boolean): boolean;
+
+    /**
+     * Renames a file.
+     * @param oldFile The old file name.
+     * @param newFile The new file name.
+     * @returns true if the file was renamed; otherwise, false.
+     */
+    public static rename(oldFile: string, newFile: string): boolean
 
     /**
      * Deletes a file.
@@ -155,3 +164,5 @@ export declare class Path {
      */
     public static isFile(path: string): boolean;
 }
+
+//#endregion

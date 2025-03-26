@@ -31,7 +31,6 @@ export type ForegroundColors =
     'cyan' |
     'gray' |
     'green' |
-    'grey' |
     'magenta' |
     'red' |
     'white' |

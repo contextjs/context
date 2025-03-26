@@ -16,8 +16,8 @@ export * from "../exceptions/null-reference.exception.js";
 export * from "../extensions/object.extensions.js";
 export * from "../extensions/string.extensions.js";
 
+export * from "../extensions/console-extensions.js";
 export * from "../models/console-argument.js";
-export * from "../models/console-format.js";
 export * from "../models/environment-name.js";
 export * from "../models/environment.js";
 export * from "../models/project-type.js";
