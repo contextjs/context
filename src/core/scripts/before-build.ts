@@ -18,9 +18,8 @@ export class BeforeBuild extends Script {
     }
 
     private async setVersionAsync() {
-
         const file = (await this.readFileAsync(`src/${this.packageName}/src/services/version.service.ts`))
-            .replace(/private static version = ".*";/, `private static version = "${Config.version}";`);
+            .replace(/private static readonly version: string = ".*";/, `private static version = "${Config.version}";`);
 
         await this.writeFileAsync(`src/${this.packageName}/src/services/version.service.ts`, file);
     }
