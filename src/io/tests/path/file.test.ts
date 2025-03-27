@@ -25,17 +25,18 @@ test('File: read - throws FileNotFoundException', (context: TestContext) => {
 
 test('File: save - success', (context: TestContext) => {
     const file = 'file.txt';
+    const result = File.save(file, 'content');
 
-    context.assert.strictEqual(File.save(file, 'content'), true);
+    context.assert.strictEqual(result, true);
 
     File.delete(file);
 });
 
 test('File: save - success overwrite', (context: TestContext) => {
     const file = 'file.txt';
-    File.save(file, 'content');
+    const result = File.save(file, 'content', true);
 
-    context.assert.strictEqual(File.save(file, 'content', true), true);
+    context.assert.strictEqual(result, true);
 
     File.delete(file);
 });

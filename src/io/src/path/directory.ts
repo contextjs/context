@@ -8,6 +8,7 @@
 
 import { Throw } from "@contextjs/core";
 import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
+import { DirectoryExistsException } from "../exceptions/directory-exists.exception.js";
 import { PathNotFoundException } from "../exceptions/path-not-found.exception.js";
 import { Path } from "./path.js";
 
@@ -30,7 +31,7 @@ export class Directory {
             throw new PathNotFoundException(oldDirectory);
 
         if (Path.exists(newDirectory))
-            throw new Error(`The path '${newDirectory}' already exists.`);
+            throw new DirectoryExistsException(newDirectory);
 
         renameSync(oldDirectory, newDirectory);
 
