@@ -8,6 +8,7 @@
 
 import { ConsoleArgument, StringExtensions } from "@contextjs/core";
 import { Directory, Path } from "@contextjs/io";
+import childProcess from "child_process";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
@@ -143,6 +144,7 @@ test('NewCommand: runAsync - success', async (context: TestContext) => {
     const consoleArguments: ConsoleArgument[] = [{ name: 'api', values: [] }, { name: '-n', values: [projectName] }];
     const command = new Command(CommandType.New, consoleArguments);
     const newCommand = new NewCommand();
+    context.mock.method(childProcess, 'execSync', () => { });
 
     await newCommand.runAsync(command);
 
