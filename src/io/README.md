@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
 [![npm](https://badgen.net/npm/v/@contextjs/io)](https://www.npmjs.com/package/@contextjs/io)
-[![License](https://badgen.net/static/linense/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
+[![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
 Contains functionality that allow reading and writing to files, and classes that provide path, files and directories support.
 
