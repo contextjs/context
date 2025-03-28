@@ -13,6 +13,7 @@ export default class Config {
     public static packages: string[] = [
         "core",
         "io",
-        "context"
+        "context",
+        "configuration"
     ];
 }

@@ -26,6 +26,7 @@
         "node": "23.x"
     },
     "dependencies": {
+        "@contextjs/configuration": "file:_packages/contextjs-configuration-0.2.2.tgz",
         "@contextjs/context": "file:_packages/contextjs-context-0.2.2.tgz",
         "@contextjs/core": "file:_packages/contextjs-core-0.2.2.tgz",
         "@contextjs/io": "file:_packages/contextjs-io-0.2.2.tgz"
