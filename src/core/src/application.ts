@@ -9,16 +9,16 @@
 import { Environment } from "./models/environment.js";
 
 export class Application {
-    private readonly events: (() => Promise<any>)[] = [];
+    private readonly functions: (() => Promise<any>)[] = [];
     public readonly environment: Environment = new Environment();
 
-    public async runAsync(): Promise<void> {
-        for (let i = 0; i < this.events.length; i++)
-            await this.events[i]();
+    public async runAsync(): Promise<Application> {
+        await Promise.all(this.functions.map(f => f()));
+        return this;
     }
 
-    public onRun(execute: () => Promise<any>): Application {
-        this.events.push(execute);
+    public onRun(event: () => Promise<any>): Application {
+        this.functions.push(event);
         return this;
     }
 }

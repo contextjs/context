@@ -1,13 +1,19 @@
-/**
- * @license
- * Copyright ContextJS All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found at https://github.com/contextjs/context/blob/main/LICENSE
- */
+# @contextjs/core
 
-//#region Application
+[![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
+[![npm](https://badgen.net/npm/v/@contextjs/core)](https://www.npmjs.com/package/@contextjs/core)
+[![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
+Core functionality, such as console services, base exception classes, and common object and string extensions.  
+
+### Installation
+
+```
+npm install @contextjs/core
+```
+### Application
+
+```typescript
 /**
  * Represents the main application.
  */
@@ -33,61 +39,11 @@ export declare class Application {
      */
     public onRun(func: () => Promise<any>): Application;
 }
+```
 
-//#endregion
+### Extensions
 
-//#region Collections
-
-/**
- * Represents a stack data structure.
- * @template T The type of elements in the stack.
- */
-export declare class Stack<T> {
-    /**
-     * Pushes an element onto the stack.
-     * @param t The element to push.
-     */
-    public push(t: T): void;
-
-    /**
-     * Pops an element off the stack.
-     * @returns The popped element or null if the stack is empty.
-     */
-    public pop(): T | null;
-
-    /**
-     * Gets the current element on the stack without removing it.
-     * 
-     * @returns The current element or null if the stack is empty.
-     */
-    public get current(): T | null;
-}
-
-//#endregion
-
-//#region Exceptions
-
-/**
- * Represents an exception with a custom message.
- */
-export declare class Exception extends Error {
-    /**
-     * Creates an instance of Exception.
-     * @param {string} message - The error message.
-     */
-    constructor(message: string);
-}
-
-
-/**
- * Represents an exception that occurs when a null reference is encountered.
- */
-export declare class NullReferenceException extends Exception { }
-
-//#endregion
-
-//#region Extensions
-
+```typescript
 /**
  * A utility class for extending objects.
  */
@@ -213,11 +169,11 @@ export class ProjectTypeExtensions {
      */
     public static fromString(value: string): ProjectType | null;
 }
+```
 
-//#endregion
+### Models
 
-//#region Models
-
+```typescript
 /**
  * Class that represents a console argument.
  */
@@ -350,11 +306,11 @@ export enum ProjectType {
      */
     API
 }
+```
 
-//#endregion
+### Services
 
-//#region Services
-
+```typescript
 /**
  * Service for handling console.
  */
@@ -434,5 +390,25 @@ export declare class VersionService {
      */
     public static get(): string;
 }
+```
 
-//#endregion
+### Exceptions
+
+```typescript
+/**
+ * Represents an exception with a custom message.
+ */
+export declare class Exception extends Error {
+    /**
+     * Creates an instance of Exception.
+     * @param {string} message - The error message.
+     */
+    constructor(message: string);
+}
+
+
+/**
+ * Represents an exception that occurs when a null reference is encountered.
+ */
+export declare class NullReferenceException extends Exception { }
+```
