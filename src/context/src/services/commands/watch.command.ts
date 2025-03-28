@@ -14,7 +14,7 @@ import { CommandBase } from "./command-base.js";
 export class WatchCommand extends CommandBase {
     public async runAsync(command: Command): Promise<void> {
         const projectCommand = command.args.find(arg => arg.name === 'project' || arg.name === 'p');
-        const projectDescriptors = this.getProjectDescriptors(projectCommand?.values || []);
+        const projectDescriptors = this.getProjects(projectCommand?.values || []);
 
         if (projectDescriptors.length === 0) {
             console.error('No projects found. Exiting...');

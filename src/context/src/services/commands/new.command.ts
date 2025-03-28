@@ -61,7 +61,6 @@ api             Web API project         A Web API project containing controllers
             }
 
             file.content = file.content!.replace(/{{name}}/g, name);
-            file.content = file.content!.replace(/{{version}}/g, VersionService.get());
             File.save(`${name}/${file.name}`, file.content, true);
         });
 

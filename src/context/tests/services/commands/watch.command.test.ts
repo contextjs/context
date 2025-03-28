@@ -47,7 +47,7 @@ test('WatchCommand: runAsync - success', async (context: TestContext) => {
 
     console.log = (message: string) => logOutput = message;
 
-    context.mock.method(watchCommand as any, 'getProjectDescriptors', () => projects);
+    context.mock.method(watchCommand as any, 'getProjects', () => projects);
     context.mock.method(watchCommand as any, 'watchProject', () => { console.log(`Watching project "test" for changes...`); });
     await watchCommand.runAsync(command);
 
