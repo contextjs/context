@@ -11,7 +11,7 @@ import { VersionService } from "../../src/services/version.service.ts";
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();
-    context.assert.strictEqual(version, "0.1.1");
+    context.assert.strictEqual(version, "0.1.2");
 });
 
 test('VersionService: display - success', async (context: TestContext) => {

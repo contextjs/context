@@ -14,12 +14,13 @@ export class BeforeBuild extends Script {
 
     public override async runAsync(): Promise<void> {
         await this.copyDeclarationsFileAsync(this.packageName);
+        await this.copyReadmeFileAsync(this.packageName);
         await this.setVersionAsync();
     }
 
     private async setVersionAsync() {
         const file = (await this.readFileAsync(`src/${this.packageName}/src/services/version.service.ts`))
-            .replace(/private static readonly version: string = ".*";/, `private static version = "${Config.version}";`);
+            .replace(/private static readonly version: string = ".*";/, `private static readonly version: string = "${Config.version}";`);
 
         await this.writeFileAsync(`src/${this.packageName}/src/services/version.service.ts`, file);
     }
