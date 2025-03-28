@@ -7,8 +7,8 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { VersionService } from "../../src/services/version.service.ts";
 import Config from "../../../../scripts/config.ts";
+import { VersionService } from "../../src/services/version.service.ts";
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();
