@@ -8,10 +8,11 @@
 
 import test, { TestContext } from 'node:test';
 import { VersionService } from "../../src/services/version.service.ts";
+import Config from "../../../../scripts/config.ts";
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();
-    context.assert.strictEqual(version, "0.1.2");
+    context.assert.strictEqual(version, Config.version);
 });
 
 test('VersionService: display - success', async (context: TestContext) => {
