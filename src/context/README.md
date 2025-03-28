@@ -12,19 +12,19 @@ Base ContextJS package containing commands to create, build, watch and debug you
 npm install -g @contextjs/context
 ```
 
-### Displaying ContextJS options:
+### Displaying ContextJS options
 
 ```shell
 ctx
 ```
 
-### Version:
+### Version
 
 ```shell
 ctx version
 ```
 
-### New project:
+### New project
 
 These commands are equivalent:
 
@@ -44,7 +44,7 @@ If no argument is passed at all, the help will be displayed:
 ctx new
 ```
 
-### Build:
+### Build
 
 ```shell
 ctx build
@@ -55,7 +55,7 @@ Pass the name(s) if you want only to build a specific project:
 ctx build myApi1 myApi2 ...
 ```
 
-### Watch:
+### Watch
 
 Watch command is similar to build command with the exception that it watches for the changes and automatically rebuilds the affected projects:
 ```shell
