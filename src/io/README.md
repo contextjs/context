@@ -6,6 +6,12 @@
 
 Contains functionality that allow reading and writing to files, and classes that provide path, files and directories support.
 
+### Installation
+
+```
+npm install @contextjs/io
+```
+
 ### Directory
 static methods for creating, renaming and deleting directories and subdirectories.
 
@@ -165,4 +171,45 @@ public static isDirectory(path: string): boolean;
  * @returns true if the path is a file; otherwise, false.
  */
 public static isFile(path: string): boolean;
+```
+
+### Exceptions
+
+```ts
+/**
+ * Represents an exception that occurs when a file already exists.
+ */
+export declare class FileExistsException extends Exception {
+    /**
+     * Creates an instance of FileExistsException.
+     * @param {string} file - The file that already exists.
+     */
+    public constructor(file: string);
+}
+```
+
+```ts
+/**
+ * Represents an exception that occurs when a file is not found.
+ */
+export declare class FileNotFoundException extends Exception {
+    /**
+     * Creates an instance of FileNotFoundException.
+     * @param {string} file - The file that was not found.
+     */
+    public constructor(file: string);
+}
+```
+
+```ts
+/**
+ * Represents an exception that occurs when a path is not found.
+ */
+export declare class PathNotFoundException extends Exception {
+    /**
+     * Creates an instance of PathNotFoundException.
+     * @param {string} path - The path that was not found.
+     */
+    public constructor(path: string);
+}
 ```

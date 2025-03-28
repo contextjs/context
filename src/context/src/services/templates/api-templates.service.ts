@@ -12,6 +12,7 @@ Usage: ctx new api [options]
 
 Options             Description
 ------------        -----------------------------------------------------
+[no option]         Creates a project with current directory name as project name.
 -n, --name          The name of the project to create.
 `;
 

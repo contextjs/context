@@ -6,8 +6,8 @@
 
 ## Packages
 
-**[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)** - base ContextJS package that exposes commands to create, build, watch and debug your projects and solutions.  
+**[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)** - base ContextJS package containing commands to create, build, watch and debug your projects and solutions.  
 
-**[@contextjs/core](https://github.com/contextjs/context/tree/main/src/core)** - package containing core functionality, such as console services, base exception classes, and common object and string extensions.  
+**[@contextjs/core](https://github.com/contextjs/context/tree/main/src/core)** - contains core functionality, such as console services, base exception classes, and common object and string extensions.  
 
 **[@contextjs/io](https://github.com/contextjs/context/tree/main/src/io)** - contains functionality that allow reading and writing to files, and classes that provide path, files and directories support.
