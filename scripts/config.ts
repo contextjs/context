@@ -7,7 +7,7 @@
  */
 
 export default class Config {
-    public static version: string = "0.1.2";
+    public static version: string = "0.2.2";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packages: string[] = [
