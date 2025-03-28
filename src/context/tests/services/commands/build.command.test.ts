@@ -74,7 +74,7 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     const buildCommand = new BuildCommand();
     const projects = [new Project('project1', 'path1')];
 
-    context.mock.method(buildCommand as any, 'getProjectDescriptors', () => projects);
+    context.mock.method(buildCommand as any, 'getProjects', () => projects);
     context.mock.method(buildCommand as any, 'build', () => void 0);
 
     console.error = (message: string) => logOutput = message;

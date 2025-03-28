@@ -26,14 +26,14 @@ export abstract class CommandBase {
         return false;
     }
 
-    protected getProjectDescriptors(projectNames: string[]): Project[] {
+    protected getProjects(projectNames: string[]): Project[] {
         let directoryEntries = fs.readdirSync(process.cwd(), { withFileTypes: true, encoding: 'utf-8', recursive: true });
         let projects: Project[] = [];
 
         directoryEntries.forEach(entry => {
-            if (entry.isFile() && entry.name === 'context.json') {
+            if (entry.isFile() && entry.name === 'context.ctxp') {
                 const entryPath = entry.parentPath || entry.path;
-                const projectFile = File.read(`${entryPath}/context.json`);
+                const projectFile = File.read(`${entryPath}/context.ctxp`);
                 const projectName = JSON.parse(projectFile || '{}')?.name || '';
 
                 if (projectNames.length > 0 && !projectNames.includes(projectName))
