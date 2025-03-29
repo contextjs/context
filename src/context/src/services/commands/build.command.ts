@@ -23,7 +23,7 @@ export class BuildCommand extends CommandBase {
             return process.exit(1);
         }
 
-        projects.forEach(project => async () => {
+        projects.forEach(async project => {
             await this.buildAsync(project);
         });
 
