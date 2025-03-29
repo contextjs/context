@@ -1,0 +1,17 @@
+{
+  "name": "@contextjs/configuration",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - Configuration module",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/context-js/context.git",
+    "directory": "src/configuration"
+  },
+  "peerDependencies": {
+    "@contextjs/core": "__VERSION__"
+  }
+}
