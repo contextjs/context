@@ -358,7 +358,7 @@ export enum ProjectType {
 /**
  * Service for handling console.
  */
-export declare class ConsoleService {
+export declare class Console {
     /**
      * Parses console arguments into an array of ConsoleArgument objects.
      * @param {string[]} args - The arguments to parse.

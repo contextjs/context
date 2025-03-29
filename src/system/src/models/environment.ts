@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService } from "../services/console.service.js";
+import { Console } from "../services/console.js";
 import { EnvironmentName } from "./environment-name.js";
 
 export class Environment {
@@ -33,7 +33,7 @@ export class Environment {
     }
 
     private getEnvironment() {
-        const args = ConsoleService.parseArguments(process.argv.slice(2));
+        const args = Console.parseArguments(process.argv.slice(2));
         const environmentArgument = args.find(t => t.name === '--environment' || t.name === '-e');
 
         if (environmentArgument && environmentArgument.values.length > 0)
