@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, StringExtensions } from "@contextjs/core";
+import { ConsoleArgument, StringExtensions } from "@contextjs/system";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
@@ -57,7 +57,7 @@ test('watchProject_Success', async (context: TestContext) => {
     let logOutput = '';
     let watchCommand = new WatchCommand();
 
-    const project: Project = new Project('test', 'src/core');
+    const project: Project = new Project('test', 'src/system');
     console.log = (message: string) => { if (!logOutput) logOutput = message; }
 
     const watcher = (watchCommand as any).watchProject(project);

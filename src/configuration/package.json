@@ -12,6 +12,6 @@
     "directory": "src/configuration"
   },
   "peerDependencies": {
-    "@contextjs/core": "__VERSION__"
+    "@contextjs/system": "__VERSION__"
   }
 }

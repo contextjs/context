@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/core";
+import { Throw } from "@contextjs/system";
 import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";

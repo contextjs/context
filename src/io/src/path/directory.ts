@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/core";
+import { Throw } from "@contextjs/system";
 import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { DirectoryExistsException } from "../exceptions/directory-exists.exception.js";
 import { PathNotFoundException } from "../exceptions/path-not-found.exception.js";

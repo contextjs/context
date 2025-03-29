@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, ObjectExtensions, StringExtensions } from "@contextjs/core";
+import { Application, ObjectExtensions, StringExtensions } from "@contextjs/system";
 import { IConfigurationProvider } from "./interfaces/i-configuration.provider.js";
 
 export class Configuration {

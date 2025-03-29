@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, StringExtensions } from "@contextjs/core";
+import { ConsoleArgument, StringExtensions } from "@contextjs/system";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";

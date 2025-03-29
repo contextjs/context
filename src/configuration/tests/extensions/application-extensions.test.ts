@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application } from "@contextjs/core";
+import { Application } from "@contextjs/system";
 import { test, TestContext } from 'node:test';
 import '../../src/extensions/application-extensions.ts';
 

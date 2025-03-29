@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument } from "@contextjs/core";
+import { ConsoleArgument } from "@contextjs/system";
 import { CommandType } from "./command-type.js";
 
 export class Command {

@@ -1,4 +1,4 @@
-import { ConsoleService, VersionService } from "@contextjs/core";
+import { ConsoleService, VersionService } from "@contextjs/system";
 import { Command } from "../../models/command.js";
 import { CommandBase } from "./command-base.js";
 

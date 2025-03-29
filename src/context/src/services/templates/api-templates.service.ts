@@ -1,4 +1,4 @@
-import { ConsoleService, VersionService } from "@contextjs/core";
+import { ConsoleService, VersionService } from "@contextjs/system";
 import { FileTemplate } from "../../models/file-template.js";
 import { ContextTemplate } from "../../templates/api/context.ctxp.template.js";
 import { PackageTemplate } from "../../templates/api/package.json.template.js";

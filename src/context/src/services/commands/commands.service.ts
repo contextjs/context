@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions } from "@contextjs/core";
+import { ConsoleService, ObjectExtensions } from "@contextjs/system";
 import { CommandType, CommandTypeExtensions } from "../../models/command-type.js";
 import { Command } from "../../models/command.js";
 

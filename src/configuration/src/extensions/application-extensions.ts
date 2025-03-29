@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/core";
+import { Application, Throw } from "@contextjs/system";
 import { ConfigurationOptions } from "../configuration-options.js";
 import { Configuration } from "../configuration.js";
 
-declare module "@contextjs/core" {
+declare module "@contextjs/system" {
     export interface Application {
         useConfiguration(options: (configurationOptions: ConfigurationOptions) => void): Application;
         configuration: Configuration;

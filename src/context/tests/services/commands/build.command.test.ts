@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/core";
+import { StringExtensions } from "@contextjs/system";
 import { Directory, File } from "@contextjs/io";
 import fs from "node:fs";
 import test, { TestContext } from 'node:test';

@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/core";
+import { ConsoleService, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/system";
 import { Directory, File, Path } from "@contextjs/io";
 import childProcess from "child_process";
 import path from "path";
