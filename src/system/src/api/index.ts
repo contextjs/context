@@ -22,6 +22,6 @@ export * from "../models/environment-name.js";
 export * from "../models/environment.js";
 export * from "../models/project-type.js";
 
-export * from "../services/console.service.js";
+export * from "../services/console.js";
 export * from "../services/throw.service.js";
 export * from "../services/version.service.js";

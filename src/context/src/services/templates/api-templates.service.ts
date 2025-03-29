@@ -1,4 +1,4 @@
-import { ConsoleService, VersionService } from "@contextjs/system";
+import { Console, VersionService } from "@contextjs/system";
 import { FileTemplate } from "../../models/file-template.js";
 import { ContextTemplate } from "../../templates/api/context.ctxp.template.js";
 import { PackageTemplate } from "../../templates/api/package.json.template.js";
@@ -18,7 +18,7 @@ Options             Description
 
     public override async displayHelpAsync(): Promise<void> {
         VersionService.display();
-        ConsoleService.writeLine(this.helpText);
+        Console.writeLine(this.helpText);
         return process.exit(0);
     }
 

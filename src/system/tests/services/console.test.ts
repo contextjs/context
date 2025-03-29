@@ -9,11 +9,11 @@
 import { StringExtensions } from '@contextjs/system';
 import readline from 'node:readline';
 import test, { TestContext } from 'node:test';
-import { ConsoleService } from "../../src/services/console.service.ts";
+import { Console } from "../../src/services/console.ts";
 
-test('ConsoleService: parseArguments - success', (context: TestContext) => {
+test('Console: parseArguments - success', (context: TestContext) => {
     const args = ['--name', 'value', 'value2', '--age', '25', '--isTrue', 'true'];
-    const result = ConsoleService.parseArguments(args);
+    const result = Console.parseArguments(args);
 
     context.assert.strictEqual(result.length, 3);
     context.assert.strictEqual(result[0].name, '--name');
@@ -25,25 +25,25 @@ test('ConsoleService: parseArguments - success', (context: TestContext) => {
     context.assert.strictEqual(result[2].values[0], 'true');
 });
 
-test('ConsoleService: parseArguments - empty', (context: TestContext) => {
+test('Console: parseArguments - empty', (context: TestContext) => {
     const args: string[] = [];
-    const result = ConsoleService.parseArguments(args);
+    const result = Console.parseArguments(args);
 
     context.assert.strictEqual(result.length, 0);
 });
 
-test('ConsoleService: parseArguments - no values', (context: TestContext) => {
+test('Console: parseArguments - no values', (context: TestContext) => {
     const args = ['--name'];
-    const result = ConsoleService.parseArguments(args);
+    const result = Console.parseArguments(args);
 
     context.assert.strictEqual(result.length, 1);
     context.assert.strictEqual(result[0].name, '--name');
     context.assert.strictEqual(result[0].values.length, 0);
 });
 
-test('ConsoleService: parseArguments - duplicate argument', (context: TestContext) => {
+test('Console: parseArguments - duplicate argument', (context: TestContext) => {
     const args = ['--name', 'value', '--name', 'value2'];
-    const result = ConsoleService.parseArguments(args);
+    const result = Console.parseArguments(args);
 
     context.assert.strictEqual(result.length, 1);
     context.assert.strictEqual(result[0].name, '--name');
@@ -52,19 +52,19 @@ test('ConsoleService: parseArguments - duplicate argument', (context: TestContex
     context.assert.strictEqual(result[0].values.length, 2);
 });
 
-test('ConsoleService: write - success', (context: TestContext) => {
+test('Console: write - success', (context: TestContext) => {
     const originalLog = console.log;
     let logOutput = '';
     console.log = (message: string) => logOutput = message;
 
-    ConsoleService.writeLine('test');
+    Console.writeLine('test');
 
     context.assert.strictEqual(logOutput, 'test');
 
     console.log = originalLog;
 });
 
-test('ConsoleService: removeLastLine - success', (context: TestContext) => {
+test('Console: removeLastLine - success', (context: TestContext) => {
 
     let capturedOutput = StringExtensions.empty;
 
@@ -78,10 +78,10 @@ test('ConsoleService: removeLastLine - success', (context: TestContext) => {
         return true;
     };
 
-    ConsoleService.writeLine('line1');
-    ConsoleService.writeLine('line2');
-    ConsoleService.writeLine('line3');
-    ConsoleService.removeLastLine();
+    Console.writeLine('line1');
+    Console.writeLine('line2');
+    Console.writeLine('line3');
+    Console.removeLastLine();
 
     context.assert.doesNotMatch(capturedOutput, /line2/);
 });

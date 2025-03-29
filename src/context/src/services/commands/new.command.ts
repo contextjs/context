@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/system";
+import { Console, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/system";
 import { Directory, File, Path } from "@contextjs/io";
 import childProcess from "child_process";
 import path from "path";
@@ -32,13 +32,13 @@ api             Web API project         A Web API project containing controllers
     private async createTemplateAsync(command: Command): Promise<void> {
         const type = ProjectTypeExtensions.fromString(command.args[0].name);
         if (ObjectExtensions.isNullOrUndefined(type)) {
-            ConsoleService.writeLineFormatted({ format: 'red', text: `Invalid project type "${command.args[0].name}".` });
+            Console.writeLineFormatted({ format: 'red', text: `Invalid project type "${command.args[0].name}".` });
             return process.exit(1);
         }
 
         const templatesService = await TemplatesServiceResolver.resolveAsync(type!);
         if (ObjectExtensions.isNullOrUndefined(templatesService)) {
-            ConsoleService.writeLineFormatted({ format: 'red', text: `The project type "${command.args[0].name}" is not supported.` });
+            Console.writeLineFormatted({ format: 'red', text: `The project type "${command.args[0].name}" is not supported.` });
             return process.exit(1);
         }
 
@@ -48,11 +48,11 @@ api             Web API project         A Web API project containing controllers
         const name = await this.getNameAsync(command);
 
         if (Path.exists(name)) {
-            ConsoleService.writeLineFormatted({ format: 'red', text: `The Project \"${name}\" already exists. Exiting...` });
+            Console.writeLineFormatted({ format: 'red', text: `The Project \"${name}\" already exists. Exiting...` });
             return process.exit(1);
         }
 
-        ConsoleService.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` });
+        Console.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` });
 
         templatesService!.templates.forEach(file => {
             if (StringExtensions.isNullOrUndefined(file.content)) {
@@ -65,8 +65,8 @@ api             Web API project         A Web API project containing controllers
         });
 
         childProcess.execSync(`cd ${name} && npm install && cd ..`);
-        ConsoleService.removeLastLine();
-        ConsoleService.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` }, { format: ['green', 'bold'], text: 'Done.' });
+        Console.removeLastLine();
+        Console.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` }, { format: ['green', 'bold'], text: 'Done.' });
     }
 
     private async getNameAsync(command: Command): Promise<string> {
@@ -79,7 +79,7 @@ api             Web API project         A Web API project containing controllers
 
     private async displayHelpAsync(): Promise<void> {
         VersionService.display();
-        ConsoleService.writeLine(this.helpText);
+        Console.writeLine(this.helpText);
         return process.exit(0);
     }
 }

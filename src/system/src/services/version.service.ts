@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService } from "./console.service.js";
+import { Console } from "./console.js";
 
 export class VersionService {
     private static readonly version: string = "0.3.0";
@@ -25,7 +25,7 @@ ________________________________________________
     }
 
     public static display(): void {
-        ConsoleService.writeLineFormatted({ format: 'yellow', text: this.ascii });
+        Console.writeLineFormatted({ format: 'yellow', text: this.ascii });
         console.info(`ContextJS: ${this.version}`);
         console.info(`Node: ${process.version}`);
         console.info(`OS: ${process.platform} ${process.arch}`);

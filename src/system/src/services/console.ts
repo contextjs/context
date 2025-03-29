@@ -12,7 +12,7 @@ import { ConsoleMessage } from '../extensions/console-extensions.js';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
 
-export class ConsoleService {
+export class Console {
     public static parseArguments(args: string[]): ConsoleArgument[] {
         let parsedArguments: ConsoleArgument[] = [];
 
@@ -25,7 +25,7 @@ export class ConsoleService {
             if (argument.startsWith('-')) {
                 if ((argument[1] === '-' && argument.length == 3) ||
                     (argument[1] !== '-' && argument.length !== 2)) {
-                    ConsoleService.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
+                    Console.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
                     return process.exit(1);
                 }
 

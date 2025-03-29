@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleService, ObjectExtensions } from "@contextjs/system";
+import { Console, ObjectExtensions } from "@contextjs/system";
 import { CommandType, CommandTypeExtensions } from "../../models/command-type.js";
 import { Command } from "../../models/command.js";
 
@@ -23,7 +23,7 @@ export class CommandsService {
             return process.exit(1);
         }
 
-        const parsedArguments = ConsoleService.parseArguments(args.slice(1));
+        const parsedArguments = Console.parseArguments(args.slice(1));
 
         return new Command(command!, parsedArguments);
     }

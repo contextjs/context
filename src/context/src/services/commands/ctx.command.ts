@@ -1,4 +1,4 @@
-import { ConsoleService, VersionService } from "@contextjs/system";
+import { Console, VersionService } from "@contextjs/system";
 import { Command } from "../../models/command.js";
 import { CommandBase } from "./command-base.js";
 
@@ -11,6 +11,6 @@ Options:
 
     public override async runAsync(command: Command): Promise<void> {
         VersionService.display();
-        ConsoleService.writeLine(this.text);
+        Console.writeLine(this.text);
     }
 }
