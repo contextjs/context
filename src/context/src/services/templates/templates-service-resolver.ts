@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ProjectType } from "@contextjs/core";
+import { ProjectType } from "@contextjs/system";
 import { APITemplatesService } from "./api-templates.service.js";
 import { TemplatesService } from "./templates.service.js";
 

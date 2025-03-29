@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from '@contextjs/core';
+import { StringExtensions } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { APITemplatesService } from '../../../src/services/templates/api-templates.service.js';
 

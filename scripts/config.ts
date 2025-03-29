@@ -7,11 +7,11 @@
  */
 
 export default class Config {
-    public static version: string = "0.2.3";
+    public static version: string = "0.3.0";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packages: string[] = [
-        "core",
+        "system",
         "io",
         "context",
         "configuration"

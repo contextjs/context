@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application } from "@contextjs/core";
+import { Application } from "@contextjs/system";
 
 /**
  * Class representing options for configuring the application's settings.
@@ -69,9 +69,9 @@ export declare class Configuration {
 //#region Extensions
 
 /**
- * Module declaration for "@contextjs/core".
+ * Module declaration for "@contextjs/system".
  */
-declare module "@contextjs/core" {
+declare module "@contextjs/system" {
     /**
      * Interface for extending the Application.
      */

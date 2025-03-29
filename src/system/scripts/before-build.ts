@@ -10,7 +10,7 @@ import Config from '../../../scripts/config.ts';
 import Script from '../../../scripts/script.ts';
 
 export class BeforeBuild extends Script {
-    private readonly packageName: string = "core";
+    private readonly packageName: string = "system";
 
     public override async runAsync(): Promise<void> {
         await this.copyDeclarationsFileAsync(this.packageName);

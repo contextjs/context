@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "../../_build/core"
+        "outDir": "../../_build/system"
     },
     "extends": "../../tsconfig-base.json",
     "exclude": [

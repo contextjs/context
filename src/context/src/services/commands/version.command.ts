@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { VersionService } from "@contextjs/core";
+import { VersionService } from "@contextjs/system";
 import { Command } from "../../models/command.js";
 import { CommandBase } from "./command-base.js";
 

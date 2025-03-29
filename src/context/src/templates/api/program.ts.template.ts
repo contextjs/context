@@ -10,7 +10,7 @@ import { FileTemplate } from "../../models/file-template.js";
 
 export class ProgramTemplate {
   private static readonly name = "src/program.ts";
-  private static readonly content = `import { Application } from '@contextjs/core';
+  private static readonly content = `import { Application } from '@contextjs/system';
 
 const application = new Application();
 

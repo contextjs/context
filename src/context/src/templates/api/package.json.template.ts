@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { VersionService } from "@contextjs/core";
+import { VersionService } from "@contextjs/system";
 import { FileTemplate } from "../../models/file-template.js";
 
 export class PackageTemplate {
@@ -17,7 +17,7 @@ export class PackageTemplate {
   "type": "module",
   "private": true,
   "dependencies": {
-    "@contextjs/core": "${VersionService.get()}"
+    "@contextjs/system": "${VersionService.get()}"
   }
 }`;
 

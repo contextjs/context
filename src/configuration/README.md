@@ -77,9 +77,9 @@ export declare class Configuration {
 
 ```typescript
 /**
- * Module declaration for "@contextjs/core".
+ * Module declaration for "@contextjs/system".
  */
-declare module "@contextjs/core" {
+declare module "@contextjs/system" {
     /**
      * Interface for extending the Application.
      */

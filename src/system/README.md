@@ -1,15 +1,15 @@
-# @contextjs/core
+# @contextjs/system
 
 [![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
-[![npm](https://badgen.net/npm/v/@contextjs/core?cache=300)](https://www.npmjs.com/package/@contextjs/core)
+[![npm](https://badgen.net/npm/v/@contextjs/system?cache=300)](https://www.npmjs.com/package/@contextjs/system)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-Core functionality, such as console services, base exception classes, and common object and string extensions.  
+System functionality, such as console services, base exception classes, and common object and string extensions.  
 
 ### Installation
 
 ```
-npm install @contextjs/core
+npm install @contextjs/system
 ```
 ### Application
 
