@@ -52,6 +52,55 @@ test('Console: parseArguments - duplicate argument', (context: TestContext) => {
     context.assert.strictEqual(result[0].values.length, 2);
 });
 
+test('Console: writeLineError - success', (context: TestContext) => {
+    const originalLog = console.log;
+    let logOutput = '';
+    console.log = (message: string) => logOutput = message;
+
+    Console.writeLineError('test');
+
+    context.assert.strictEqual(logOutput, '\x1b[31mtest\x1b[39m');
+
+    console.log = originalLog;
+});
+
+test('Console: writeLineWarning - success', (context: TestContext) => {
+    const originalLog = console.log;
+    let logOutput = '';
+    console.log = (message: string) => logOutput = message;
+
+    Console.writeLineWarning('test');
+
+    context.assert.strictEqual(logOutput, '\x1b[33mtest\x1b[39m');
+
+    console.log = originalLog;
+});
+
+test('Console: writeLineInfo - success', (context: TestContext) => {
+    const originalLog = console.log;
+    let logOutput = '';
+    console.log = (message: string) => logOutput = message;
+
+    Console.writeLineInfo('test');
+
+    context.assert.strictEqual(logOutput, '\x1b[34mtest\x1b[39m');
+
+    console.log = originalLog;
+});
+
+test('Console: writeLineSuccess - success', (context: TestContext) => {
+    const originalLog = console.log;
+    let logOutput = '';
+    console.log = (message: string) => logOutput = message;
+
+    Console.writeLineSuccess('test');
+
+    context.assert.strictEqual(logOutput, '\x1b[32mtest\x1b[39m');
+
+    console.log = originalLog;
+});
+
+
 test('Console: write - success', (context: TestContext) => {
     const originalLog = console.log;
     let logOutput = '';

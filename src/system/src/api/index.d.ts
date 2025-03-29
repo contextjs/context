@@ -367,6 +367,37 @@ export declare class Console {
     public static parseArguments(args: string[]): ConsoleArgument[];
 
     /**
+     * Writes a message to the console, in red color, and moves to the next line.
+     * @param {string} message - The message to write.
+     * @param {...string} messages - Additional messages to write.
+     * @returns {void}
+     */
+    public static writeLineError(message: string, ...messages: string[]): void;
+
+    /**
+     * Writes a message to the console, in yellow color, and moves to the next line.
+     * @param {string} message - The message to write.
+     * @param {...string} messages - Additional messages to write.
+     * @returns {void}
+     */
+    public static writeLineWarning(message: string, ...messages: string[]): void;
+
+    /**
+     * Writes a message to the console, in blue color, and moves to the next line.
+     * @param {string} message - The message to write.
+     * @param {...string} messages - Additional messages to write.
+     * @returns {void}
+     */
+    public static writeLineInfo(message: string, ...messages: string[]): void;
+
+    /**
+     * Writes a message to the console, in green color, and moves to the next line.
+     * @param {string} message - The message to write.
+     * @param {...string} messages - Additional messages to write.
+     * @returns {void}
+     */
+    public static writeLineSuccess(message: string, ...messages: string[]): void;
+    /**
      * Writes a message to the console and moves to the next line.
      * @param {any} message - The message to write.
      * @param {...any} messages - Additional messages to write.
