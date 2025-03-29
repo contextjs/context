@@ -7,7 +7,6 @@
  */
 
 import { ConsoleService, ObjectExtensions } from "@contextjs/core";
-
 import { CommandType, CommandTypeExtensions } from "../../models/command-type.js";
 import { Command } from "../../models/command.js";
 
@@ -16,7 +15,7 @@ export class CommandsService {
         const args = process.argv.slice(2);
 
         if (args.length === 0)
-            return new Command(CommandType.Context, []);
+            return new Command(CommandType.Ctx, []);
 
         const command = CommandTypeExtensions.fromString(args[0]);
         if (ObjectExtensions.isNullOrUndefined(command)) {

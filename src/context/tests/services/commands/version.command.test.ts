@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import test, { TestContext } from 'node:test';
-import { Command } from "../../../src/models/command.ts";
-import { CommandType } from "../../../src/models/command-type.ts";
-import { VersionCommand } from "../../../src/services/commands/version.command.ts";
 import { StringExtensions } from '@contextjs/core';
+import test, { TestContext } from 'node:test';
+import { CommandType } from "../../../src/models/command-type.ts";
+import { Command } from "../../../src/models/command.ts";
+import { VersionCommand } from "../../../src/services/commands/version.command.ts";
 
 test('VersionCommand: runAsync - success', async (context: TestContext) => {
     const command = new Command(CommandType.Version, []);

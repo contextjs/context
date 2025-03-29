@@ -10,14 +10,14 @@ import { ConsoleArgument, StringExtensions } from "@contextjs/core";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
-import { ContextCommand } from "../../../src/services/commands/context.command.ts";
+import { CtxCommand } from "../../../src/services/commands/ctx.command.ts";
 
 test('ContextCommand: runAsync - success', async (context: TestContext) => {
     let logOutput = StringExtensions.empty;
     console.log = (message: string) => logOutput = message;
     const consoleArguments: ConsoleArgument[] = [];
-    const command = new Command(CommandType.Context, consoleArguments);
-    const contextCommand = new ContextCommand();
+    const command = new Command(CommandType.Ctx, consoleArguments);
+    const contextCommand = new CtxCommand();
 
     await contextCommand.runAsync(command);
 

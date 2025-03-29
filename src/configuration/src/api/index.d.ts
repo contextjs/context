@@ -12,7 +12,6 @@ import { Application } from "@contextjs/core";
  * Class representing options for configuring the application's settings.
  */
 export declare class ConfigurationOptions {
-
     /**
      * The configuration object for the application.
      * @type {Configuration}
@@ -40,7 +39,6 @@ export declare class ConfigurationOptions {
  * It manages configuration providers and retrieves configuration values.
  */
 export declare class Configuration {
-
     /**
      * The application associated with this configuration.
      * @type {Application}

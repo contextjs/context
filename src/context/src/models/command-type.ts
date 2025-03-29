@@ -6,10 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/core";
-
 export enum CommandType {
-    Context,
+    Ctx,
     New,
     Build,
     Watch,
@@ -18,12 +16,9 @@ export enum CommandType {
 
 export class CommandTypeExtensions {
     public static fromString(command: string): CommandType | null {
-        if (StringExtensions.isNullOrWhiteSpace(command))
-            return null;
-
         switch (command.toLowerCase()) {
             case "ctx":
-                return CommandType.Context;
+                return CommandType.Ctx;
             case "new":
                 return CommandType.New;
             case "build":

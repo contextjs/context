@@ -7,7 +7,13 @@
  */
 
 export class Project {
+    public readonly name: string;
+    public readonly path: string;
+
     public constructor(
-        public name: string,
-        public path: string) { }
+        name: string,
+        path: string) {
+        this.name = name;
+        this.path = path;
+    }
 }

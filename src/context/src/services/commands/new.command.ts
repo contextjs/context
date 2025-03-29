@@ -26,7 +26,7 @@ api             Web API project         A Web API project containing controllers
         if (command.args.length === 0)
             return await this.displayHelpAsync();
 
-        return this.createTemplateAsync(command);
+        return await this.createTemplateAsync(command);
     }
 
     private async createTemplateAsync(command: Command): Promise<void> {

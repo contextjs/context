@@ -23,14 +23,14 @@ export class BuildCommand extends CommandBase {
             return process.exit(1);
         }
 
-        projects.forEach(project => {
-            this.build(project);
+        projects.forEach(project => async () => {
+            await this.buildAsync(project);
         });
 
         return process.exit(0);
     }
 
-    private build(project: Project): void {
+    private async buildAsync(project: Project): Promise<void> {
         console.log(`Building project: "${project.name}"...`);
 
         if (!File.exists(`${project.path}/context.ctxp`)) {

@@ -11,8 +11,8 @@ import { test, TestContext } from 'node:test';
 import '../../src/extensions/application-extensions.ts';
 
 test('Application: useConfiguration - success', (context: TestContext) => {
-    const app = new Application();
-    app.useConfiguration(() => { });
+    const application = new Application();
+    application.useConfiguration(() => { });
 
-    context.assert.notStrictEqual(app.configuration, null);
+    context.assert.notStrictEqual(application.configuration, null);
 });
