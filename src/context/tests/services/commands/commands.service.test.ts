@@ -15,7 +15,7 @@ test('CommandsService: parse - success', (context: TestContext) => {
 
     process.argv = [StringExtensions.empty, StringExtensions.empty];
     let command = CommandsService.parse();
-    context.assert.equal(command.type, CommandType.Context);
+    context.assert.equal(command.type, CommandType.Ctx);
 
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'new'];
     command = CommandsService.parse();
@@ -38,7 +38,7 @@ test('CommandsService: parse - no arguments', (context: TestContext) => {
     process.argv = [];
     const command = CommandsService.parse();
 
-    context.assert.equal(command.type, CommandType.Context);
+    context.assert.equal(command.type, CommandType.Ctx);
 });
 
 test('CommandsService: parse - invalid command', (context: TestContext) => {

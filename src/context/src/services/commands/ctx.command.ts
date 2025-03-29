@@ -2,8 +2,7 @@ import { ConsoleService, VersionService } from "@contextjs/core";
 import { Command } from "../../models/command.js";
 import { CommandBase } from "./command-base.js";
 
-export class ContextCommand extends CommandBase {
-
+export class CtxCommand extends CommandBase {
     private readonly text = `Usage: ctx [options]
 
 Options:

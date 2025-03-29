@@ -8,8 +8,6 @@
 
 import test, { TestContext } from 'node:test';
 import { PathNotFoundException } from '../../src/exceptions/path-not-found.exception.ts';
-import { Exception } from '@contextjs/core';
-
 
 test('PathNotFoundException: instance - success', (context: TestContext) => {
     const exception = new PathNotFoundException("path");

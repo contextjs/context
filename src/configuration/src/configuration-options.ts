@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { IConfigurationProvider } from "./interfaces/i-configuration.provider.js";
 import { Configuration } from "./configuration.js";
+import { IConfigurationProvider } from "./interfaces/i-configuration.provider.js";
 
 export class ConfigurationOptions {
     public readonly configuration: Configuration;

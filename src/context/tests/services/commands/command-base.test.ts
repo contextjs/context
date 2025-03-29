@@ -8,8 +8,8 @@
 
 import test, { TestContext } from 'node:test';
 import typescript from "typescript";
-import { Command } from "../../../src/models/command.ts";
 import { CommandType } from "../../../src/models/command-type.ts";
+import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
 import { CommandBase } from "../../../src/services/commands/command-base.ts";
 

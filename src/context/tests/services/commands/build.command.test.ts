@@ -75,7 +75,7 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     const projects = [new Project('project1', 'path1')];
 
     context.mock.method(buildCommand as any, 'getProjects', () => projects);
-    context.mock.method(buildCommand as any, 'build', () => void 0);
+    context.mock.method(buildCommand as any, 'buildAsync', () => void 0);
 
     console.error = (message: string) => logOutput = message;
     process.exit = (code: number) => {
@@ -88,7 +88,7 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     context.assert.strictEqual(exitCode, 0);
 });
 
-test('BuildCommand: build - success', (context: TestContext) => {
+test('BuildCommand: build - success', async (context: TestContext) => {
     const originalLog = console.error;
     const originalExit = process.exit;
 
@@ -104,7 +104,7 @@ test('BuildCommand: build - success', (context: TestContext) => {
         return undefined as never;
     };
 
-    (buildCommand as any).build(project);
+    await (buildCommand as any).buildAsync(project);
 
     context.assert.strictEqual(logOutput, 'No project file found. Exiting...');
     context.assert.strictEqual(exitCode, 1);

@@ -8,7 +8,6 @@
 
 import { ConsoleArgument, StringExtensions } from "@contextjs/core";
 import test, { TestContext } from 'node:test';
-import typescript from "typescript";
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";

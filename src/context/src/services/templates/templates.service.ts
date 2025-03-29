@@ -9,7 +9,6 @@
 import { FileTemplate } from "../../models/file-template.js";
 
 export abstract class TemplatesService {
-
     protected abstract readonly helpText: string;
     public abstract displayHelpAsync(): Promise<void>;
     public abstract templates: FileTemplate[];
