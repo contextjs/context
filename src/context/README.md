@@ -1,7 +1,7 @@
 # @contextjs/context
 
 [![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
-[![npm](https://badgen.net/npm/v/@contextjs/context)](https://www.npmjs.com/package/@contextjs/context)
+[![npm](https://badgen.net/npm/v/@contextjs/context?cache=300)](https://www.npmjs.com/package/@contextjs/context)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
 Base ContextJS package containing commands to create, build, watch and debug your projects and solutions.
