@@ -17,9 +17,12 @@ test('VersionService: get - success', async (context: TestContext) => {
 
 test('VersionService: display - success', async (context: TestContext) => {
     let consoleText = '';
-    console.info = (message: string) => consoleText += message;
+    const originalLog = console.log;
+    console.log = (message: string) => consoleText += message;
 
     VersionService.display();
 
     context.assert.match(consoleText, /ContextJS/);
+
+    console.log = originalLog;
 });

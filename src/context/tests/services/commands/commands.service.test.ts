@@ -48,12 +48,12 @@ test('CommandsService: parse - invalid command', (context: TestContext) => {
     let exitCode = 0;
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'invalid'];
 
-    console.error = (message: string) => logOutput = message;
+    console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => { exitCode = code; return undefined as never; };
 
     CommandsService.parse();
 
-    context.assert.strictEqual(logOutput, 'Invalid command provided. Exiting...');
+    context.assert.strictEqual(logOutput, '\x1b[31mInvalid command provided. Exiting...\x1b[39m');
     context.assert.strictEqual(exitCode, 1);
 
     console.log = originalLog;

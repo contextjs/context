@@ -19,7 +19,7 @@ export class CommandsService {
 
         const command = CommandTypeExtensions.fromString(args[0]);
         if (ObjectExtensions.isNullOrUndefined(command)) {
-            console.error('Invalid command provided. Exiting...');
+            Console.writeLineError('Invalid command provided. Exiting...');
             return process.exit(1);
         }
 

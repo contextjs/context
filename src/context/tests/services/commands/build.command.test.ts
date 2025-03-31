@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/system";
 import { Directory, File } from "@contextjs/io";
+import { StringExtensions } from "@contextjs/system";
 import fs from "node:fs";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
@@ -26,7 +26,7 @@ test('BuildCommand: runAsync(--project) - success', async (context: TestContext)
     const command: Command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
-    console.error = (message: string) => logOutput = message;
+    console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -34,7 +34,7 @@ test('BuildCommand: runAsync(--project) - success', async (context: TestContext)
 
     await buildCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, 'No projects found. Exiting...');
+    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
     context.assert.strictEqual(exitCode, 1);
 
     console.log = originalLog;
@@ -52,7 +52,7 @@ test('BuildCommand: runAsync(--p) - success', async (context: TestContext) => {
     const command: Command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
-    console.error = (message: string) => logOutput = message;
+    console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -60,7 +60,7 @@ test('BuildCommand: runAsync(--p) - success', async (context: TestContext) => {
 
     await buildCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, 'No projects found. Exiting...');
+    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
     context.assert.strictEqual(exitCode, 1);
 
     console.log = originalLog;
@@ -77,7 +77,7 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     context.mock.method(buildCommand as any, 'getProjects', () => projects);
     context.mock.method(buildCommand as any, 'buildAsync', () => void 0);
 
-    console.error = (message: string) => logOutput = message;
+    console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -89,7 +89,7 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
 });
 
 test('BuildCommand: build - success', async (context: TestContext) => {
-    const originalLog = console.error;
+    const originalLog = console.log;
     const originalExit = process.exit;
 
     let logOutput = StringExtensions.empty;
@@ -98,7 +98,7 @@ test('BuildCommand: build - success', async (context: TestContext) => {
 
     const buildCommand = new BuildCommand();
 
-    console.error = (message: string) => logOutput = message;
+    console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -106,10 +106,10 @@ test('BuildCommand: build - success', async (context: TestContext) => {
 
     await (buildCommand as any).buildAsync(project);
 
-    context.assert.strictEqual(logOutput, 'No project file found. Exiting...');
+    context.assert.strictEqual(logOutput, '\x1b[31mNo context file found. Exiting...\x1b[39m');
     context.assert.strictEqual(exitCode, 1);
 
-    console.error = originalLog;
+    console.log = originalLog;
     process.exit = originalExit;
 });
 

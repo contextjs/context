@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, StringExtensions } from "@contextjs/system";
 import { Directory, Path } from "@contextjs/io";
+import { ConsoleArgument, StringExtensions } from "@contextjs/system";
 import childProcess from "child_process";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
@@ -27,6 +27,8 @@ api             Web API project         A Web API project containing controllers
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
+    const originalLog = console.log;
+    const originalExit = process.exit;
     console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
@@ -40,12 +42,17 @@ api             Web API project         A Web API project containing controllers
 
     context.assert.strictEqual(exitCode, 0);
     context.assert.strictEqual(logOutput, helpText);
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - invalid project type', async (context: TestContext) => {
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
+    const originalLog = console.log;
+    const originalExit = process.exit;
     console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
         exitCode = code;
@@ -60,11 +67,16 @@ test('NewCommand: runAsync - invalid project type', async (context: TestContext)
 
     context.assert.strictEqual(exitCode, 1);
     context.assert.strictEqual(logOutput, '\x1b[31mInvalid project type "app".\x1b[39m');
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - project type not supported', async (context: TestContext) => {
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
+    const originalLog = console.log;
+    const originalExit = process.exit;
 
     const originalResolveAsync = TemplatesServiceResolver.resolveAsync;
     TemplatesServiceResolver.resolveAsync = async () => null;
@@ -84,6 +96,9 @@ test('NewCommand: runAsync - project type not supported', async (context: TestCo
     context.assert.strictEqual(exitCode, 1);
 
     TemplatesServiceResolver.resolveAsync = originalResolveAsync;
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - command help', async (context: TestContext) => {
@@ -98,6 +113,8 @@ Options             Description
 
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
+    const originalLog = console.log;
+    const originalExit = process.exit;
 
     console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
@@ -113,12 +130,17 @@ Options             Description
 
     context.assert.strictEqual(logOutput, helpText);
     context.assert.strictEqual(exitCode, 0);
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - path exists', async (context: TestContext) => {
     const projectName = 'pathexists';
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
+    const originalLog = console.log;
+    const originalExit = process.exit;
 
     console.log = (message: string) => logOutput = message;
     process.exit = (code: number) => {
@@ -138,6 +160,8 @@ test('NewCommand: runAsync - path exists', async (context: TestContext) => {
     context.assert.strictEqual(exitCode, 1);
 
     Path.exists = originalPathExists;
+    console.log = originalLog;
+    process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - success', async (context: TestContext) => {

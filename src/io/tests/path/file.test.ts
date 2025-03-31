@@ -9,6 +9,7 @@
 import { StringExtensions } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { File } from '../../src/path/file.ts';
+import { Directory } from '@contextjs/io';
 
 test('File: read - success', (context: TestContext) => {
     const file = 'file.txt';
@@ -30,6 +31,16 @@ test('File: save - success', (context: TestContext) => {
     context.assert.strictEqual(result, true);
 
     File.delete(file);
+});
+
+test('File: save - success - directory create', (context: TestContext) => {
+    const file = 'dir/file.txt';
+    const result = File.save(file, 'content');
+
+    context.assert.strictEqual(result, true);
+
+    File.delete(file);
+    Directory.delete('dir');
 });
 
 test('File: save - success overwrite', (context: TestContext) => {

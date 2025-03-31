@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Console } from "@contextjs/system";
 import { CommandType } from "./models/command-type.js";
 import { BuildCommand } from "./services/commands/build.command.js";
 import { CommandsService } from "./services/commands/commands.service.js";
@@ -35,6 +36,6 @@ switch (command.type) {
         await new VersionCommand().runAsync(command);
         break;
     default:
-        console.error('Invalid command. Exiting...');
+        Console.writeLineError('Invalid command provided. Exiting...');
         process.exit(1);
 }

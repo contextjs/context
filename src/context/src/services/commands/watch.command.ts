@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Console } from "@contextjs/system";
 import typescript from "typescript";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
@@ -17,7 +18,7 @@ export class WatchCommand extends CommandBase {
         const projectDescriptors = this.getProjects(projectCommand?.values || []);
 
         if (projectDescriptors.length === 0) {
-            console.error('No projects found. Exiting...');
+            Console.writeLineError('No projects found. Exiting...');
             return process.exit(1);
         }
 
@@ -29,11 +30,11 @@ export class WatchCommand extends CommandBase {
     private watchProject(project: Project) {
         const configPath = typescript.findConfigFile(project.path, typescript.sys.fileExists, "tsconfig.json");
         if (!configPath) {
-            console.error("Could not find a valid 'tsconfig.json'.");
+            Console.writeLineError(`Could not find a valid 'tsconfig.json' in project "${project.name}".`);
             return process.exit(1);
         }
 
-        console.log(`Watching project "${project.name}" for changes...`);
+        Console.writeLineInfo(`Watching project "${project.name}" for changes...`);
 
         const createProgram = typescript.createSemanticDiagnosticsBuilderProgram;
         const host = typescript.createWatchCompilerHost(
