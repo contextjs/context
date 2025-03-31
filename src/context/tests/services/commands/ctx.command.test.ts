@@ -14,6 +14,9 @@ import { CtxCommand } from "../../../src/services/commands/ctx.command.ts";
 
 test('ContextCommand: runAsync - success', async (context: TestContext) => {
     let logOutput = StringExtensions.empty;
+    const originalLog = console.log;
+    const originalExit = process.exit;
+
     console.log = (message: string) => logOutput = message;
     const consoleArguments: ConsoleArgument[] = [];
     const command = new Command(CommandType.Ctx, consoleArguments);
@@ -22,4 +25,7 @@ test('ContextCommand: runAsync - success', async (context: TestContext) => {
     await contextCommand.runAsync(command);
 
     context.assert.strictEqual(logOutput, 'Usage: ctx [options]\n\nOptions:\n    new     creates a new project or solution\n');
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });

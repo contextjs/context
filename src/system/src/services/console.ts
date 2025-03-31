@@ -50,19 +50,19 @@ export class Console {
         return parsedArguments;
     }
 
-    public static writeLineError(message: string, ...messages: string[]): void {
+    public static writeLineError(message: any, ...messages: any[]): void {
         this.writeLineFormatted({ format: 'red', text: message }, ...messages.map<ConsoleMessage>(m => ({ format: 'red', text: m })));
     }
 
-    public static writeLineWarning(message: string, ...messages: string[]): void {
+    public static writeLineWarning(message: any, ...messages: any[]): void {
         this.writeLineFormatted({ format: 'yellow', text: message }, ...messages.map<ConsoleMessage>(m => ({ format: 'yellow', text: m })));
     }
 
-    public static writeLineInfo(message: string, ...messages: string[]): void {
+    public static writeLineInfo(message: any, ...messages: any[]): void {
         this.writeLineFormatted({ format: 'blue', text: message }, ...messages.map<ConsoleMessage>(m => ({ format: 'blue', text: m })));
     }
 
-    public static writeLineSuccess(message: string, ...messages: string[]): void {
+    public static writeLineSuccess(message: any, ...messages: any[]): void {
         this.writeLineFormatted({ format: 'green', text: message }, ...messages.map<ConsoleMessage>(m => ({ format: 'green', text: m })));
     }
 

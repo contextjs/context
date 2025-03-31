@@ -7,6 +7,7 @@
  */
 
 import { File } from '@contextjs/io';
+import { Console } from '@contextjs/system';
 import fs from "node:fs";
 import typescript from "typescript";
 import { Command } from "../../models/command.js";
@@ -57,11 +58,11 @@ export abstract class CommandBase {
                 message = `${projectDescriptor.name}: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
 
             if (diagnostic.category === typescript.DiagnosticCategory.Error)
-                console.error(message);
+                Console.writeLineError(message);
             else if (diagnostic.category === typescript.DiagnosticCategory.Warning)
-                console.warn(message);
+                Console.writeLineWarning(message);
             else if (diagnostic.category === typescript.DiagnosticCategory.Message)
-                console.log(message);
+                Console.writeLine(message);
         });
     }
 }

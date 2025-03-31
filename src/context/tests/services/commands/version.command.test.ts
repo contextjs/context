@@ -16,12 +16,17 @@ test('VersionCommand: runAsync - success', async (context: TestContext) => {
     const command = new Command(CommandType.Version, []);
     const versionCommand = new VersionCommand();
     let consoleText = StringExtensions.empty;
+    const originalLog = console.log;
+    const originalExit = process.exit;
 
-    console.info = (message: string) => {
+    console.log = (message: string) => {
         consoleText += message;
     };
 
     await versionCommand.runAsync(command);
 
     context.assert.match(consoleText, /ContextJS/);
+
+    console.log = originalLog;
+    process.exit = originalExit;
 });

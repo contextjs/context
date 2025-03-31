@@ -8,7 +8,7 @@
 
 export type ConsoleMessage = {
     format: ForegroundColors | BackgroundColors | Modifiers | Array<ForegroundColors | BackgroundColors | Modifiers>,
-    text: string
+    text: any
 };
 
 export type Modifiers =

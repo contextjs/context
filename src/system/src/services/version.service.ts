@@ -26,9 +26,9 @@ ________________________________________________
 
     public static display(): void {
         Console.writeLineFormatted({ format: 'yellow', text: this.ascii });
-        console.info(`ContextJS: ${this.version}`);
-        console.info(`Node: ${process.version}`);
-        console.info(`OS: ${process.platform} ${process.arch}`);
-        console.info('\n');
+        Console.writeLine(`ContextJS: ${this.version}`);
+        Console.writeLine(`Node: ${process.version}`);
+        Console.writeLine(`OS: ${process.platform} ${process.arch}`);
+        Console.writeLine('\n');
     }
 }
