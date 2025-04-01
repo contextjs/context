@@ -1,4 +1,4 @@
-# @contextjs/configuration
+# @contextjs/configuration-json
 
 [![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
 [![npm](https://badgen.net/npm/v/@contextjs/configuration-json)](https://www.npmjs.com/package/@contextjs/configuration-json)
