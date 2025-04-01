@@ -9,7 +9,7 @@ System functionality, such as console services, base exception classes, and comm
 ### Installation
 
 ```
-npm install @contextjs/system
+npm i @contextjs/system
 ```
 ### Application
 

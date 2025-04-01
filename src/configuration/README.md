@@ -8,7 +8,7 @@ Base classes for configuration management.
 
 ### Installation
 ```
-npm install @contextjs/configuration
+npm i @contextjs/configuration
 ```
 
 ```typescript

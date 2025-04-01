@@ -14,6 +14,7 @@ export default class Config {
         "system",
         "io",
         "context",
-        "configuration"
+        "configuration",
+        "configuration-json",
     ];
 }
