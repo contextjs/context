@@ -9,7 +9,7 @@ Contains functionality that allow reading and writing to files, and classes that
 ### Installation
 
 ```
-npm install @contextjs/io
+npm i @contextjs/io
 ```
 
 ### Directory

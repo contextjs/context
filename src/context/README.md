@@ -9,7 +9,7 @@ Base ContextJS package containing commands to create, build, watch and debug you
 ### Installation
 
 ```
-npm install -g @contextjs/context
+npm i -g @contextjs/context
 ```
 
 ### Displaying ContextJS options

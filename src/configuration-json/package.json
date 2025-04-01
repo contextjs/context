@@ -1,0 +1,19 @@
+{
+  "name": "@contextjs/configuration-json",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - Json Configuration",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/configuration-json"
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/configuration": "__VERSION__",
+    "@contextjs/io": "__VERSION__"
+  }
+}
