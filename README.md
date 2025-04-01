@@ -10,3 +10,4 @@
 - **[@contextjs/system](https://github.com/contextjs/context/tree/main/src/system)**: System utilities including console services, exception handling, and common extensions.
 - **[@contextjs/io](https://github.com/contextjs/context/tree/main/src/io)**: Tools for file operations, path management, and directory handling.
 - **[@contextjs/configuration](https://github.com/contextjs/context/tree/main/src/configuration)**: Base classes for configuration management.
+- **[@contextjs/configuration-json](https://github.com/contextjs/context/tree/main/src/configuration-json)**: Provides JSON-based configuration management utilities.
