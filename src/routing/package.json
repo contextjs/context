@@ -1,0 +1,17 @@
+{
+  "name": "@contextjs/routing",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - Routing module",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/routing"
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}
