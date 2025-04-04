@@ -1,0 +1,17 @@
+{
+  "name": "@contextjs/webserver-middleware-static",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - WebServer static middleware",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/webserver-middleware-static"
+  },
+  "peerDependencies": {
+    "@contextjs/webserver": "__VERSION__"
+  }
+}
