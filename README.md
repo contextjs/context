@@ -13,3 +13,4 @@
 - **[@contextjs/configuration-json](https://github.com/contextjs/context/tree/main/src/configuration-json)**: Provides JSON-based configuration management utilities.
 - **[@contextjs/routing](https://github.com/contextjs/context/tree/main/src/routing)**: Define and manage application routes.
 - **[@contextjs/webserver](https://github.com/contextjs/context/tree/main/src/webserver)**: ContextJS Web Server
+- **[@contextjs/webserver-middleware-static](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static)**: Static files middleware for ContextJS webserver.
