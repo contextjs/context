@@ -7,12 +7,13 @@
  */
 
 import test, { TestContext } from 'node:test';
-import Config from "../../../../scripts/config.ts";
 import { VersionService } from "../../src/services/version.service.ts";
+
+const CURRENT_VERSION = "0.4.2"
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();
-    context.assert.strictEqual(version, Config.version);
+    context.assert.strictEqual(version, CURRENT_VERSION);
 });
 
 test('VersionService: display - success', async (context: TestContext) => {
