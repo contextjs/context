@@ -26,11 +26,12 @@
         "node": "23.x"
     },
     "dependencies": {
-        "@contextjs/configuration": "file:_packages/contextjs-configuration-0.4.1.tgz",
-        "@contextjs/configuration-json": "file:_packages/contextjs-configuration-json-0.4.1.tgz",
-        "@contextjs/context": "file:_packages/contextjs-context-0.4.1.tgz",
-        "@contextjs/io": "file:_packages/contextjs-io-0.4.1.tgz",
-        "@contextjs/routing": "file:_packages/contextjs-routing-0.4.1.tgz",
-        "@contextjs/system": "file:_packages/contextjs-system-0.4.1.tgz"
+        "@contextjs/configuration": "file:_packages/contextjs-configuration-0.4.2.tgz",
+        "@contextjs/configuration-json": "file:_packages/contextjs-configuration-json-0.4.2.tgz",
+        "@contextjs/context": "file:_packages/contextjs-context-0.4.2.tgz",
+        "@contextjs/io": "file:_packages/contextjs-io-0.4.2.tgz",
+        "@contextjs/routing": "file:_packages/contextjs-routing-0.4.2.tgz",
+        "@contextjs/system": "file:_packages/contextjs-system-0.4.2.tgz",
+        "@contextjs/webserver": "file:_packages/contextjs-webserver-0.4.2.tgz"
     }
 }
