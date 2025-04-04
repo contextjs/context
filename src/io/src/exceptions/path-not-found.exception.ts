@@ -11,6 +11,6 @@ import { Exception } from "@contextjs/system";
 export class PathNotFoundException extends Exception {
     public constructor(path: string) {
         super(`The specified path was not found: ${path}`);
-        this.name = Exception.name;
+        this.name = PathNotFoundException.name;
     }
 }

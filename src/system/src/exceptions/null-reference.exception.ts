@@ -11,6 +11,6 @@ import { Exception } from "./exception.js";
 export class NullReferenceException extends Exception {
     public constructor() {
         super('The specified reference is null or undefined.');
-        this.name = Exception.name;
+        this.name = NullReferenceException.name;
     }
 }
