@@ -11,6 +11,6 @@ import { Exception } from "@contextjs/system";
 export class DirectoryExistsException extends Exception {
     public constructor(directory: string) {
         super(`The specified directory already exists: ${directory}`);
-        this.name = Exception.name;
+        this.name = DirectoryExistsException.name;
     }
 }

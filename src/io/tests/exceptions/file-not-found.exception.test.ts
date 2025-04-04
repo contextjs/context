@@ -21,5 +21,5 @@ test('FileNotFoundException: message - success', (context: TestContext) => {
 
 test('FileNotFoundException: toString - success', (context: TestContext) => {
     const exception = new FileNotFoundException("file");
-    context.assert.strictEqual(exception.toString(), "Exception: The specified file was not found: file");
+    context.assert.strictEqual(exception.toString(), "FileNotFoundException: The specified file was not found: file");
 });

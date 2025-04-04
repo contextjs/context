@@ -11,6 +11,6 @@ import { Exception } from "@contextjs/system";
 export class FileNotFoundException extends Exception {
     public constructor(file: string) {
         super(`The specified file was not found: ${file}`);
-        this.name = Exception.name;
+        this.name = FileNotFoundException.name;
     }
 }

@@ -24,5 +24,5 @@ test('NullReferenceException: message - success', (context: TestContext) => {
 
 test('NullReferenceException: toString - success', (context: TestContext) => {
     const exception = new NullReferenceException();
-    context.assert.strictEqual(exception.toString(), "Exception: The specified reference is null or undefined.");
+    context.assert.strictEqual(exception.toString(), "NullReferenceException: The specified reference is null or undefined.");
 });

@@ -21,5 +21,5 @@ test('PathNotFoundException: message - success', (context: TestContext) => {
 
 test('PathNotFoundException: toString - success', (context: TestContext) => {
     const exception = new PathNotFoundException("path");
-    context.assert.strictEqual(exception.toString(), "Exception: The specified path was not found: path");
+    context.assert.strictEqual(exception.toString(), "PathNotFoundException: The specified path was not found: path");
 });

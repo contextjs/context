@@ -21,5 +21,5 @@ test('DirectoryExistsException: message - success', (context: TestContext) => {
 
 test('DirectoryExistsException: toString - success', (context: TestContext) => {
     const exception = new DirectoryExistsException("directory");
-    context.assert.strictEqual(exception.toString(), "Exception: The specified directory already exists: directory");
+    context.assert.strictEqual(exception.toString(), "DirectoryExistsException: The specified directory already exists: directory");
 });

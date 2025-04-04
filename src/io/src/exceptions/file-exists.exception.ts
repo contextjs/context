@@ -11,6 +11,6 @@ import { Exception } from "@contextjs/system";
 export class FileExistsException extends Exception {
     public constructor(file: string) {
         super(`The specified file already exists: ${file}`);
-        this.name = Exception.name;
+        this.name = FileExistsException.name;
     }
 }

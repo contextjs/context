@@ -21,5 +21,5 @@ test('FileExistsException: message - success', (context: TestContext) => {
 
 test('FileExistsException: toString - success', (context: TestContext) => {
     const exception = new FileExistsException("file");
-    context.assert.strictEqual(exception.toString(), "Exception: The specified file already exists: file");
+    context.assert.strictEqual(exception.toString(), "FileExistsException: The specified file already exists: file");
 });
