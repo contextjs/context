@@ -7,3 +7,4 @@
  */
 
 export * from "../stack{t}.js";
+export * from "../dictionary.js";

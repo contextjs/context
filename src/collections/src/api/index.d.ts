@@ -30,3 +30,54 @@ export declare class Stack<T> {
      */
     public get current(): T | null;
 }
+
+/**
+ * Represents a dictionary data structure.
+ * @template TKey The type of keys in the dictionary.
+ * @template TValue The type of values in the dictionary.
+ */
+export declare class Dictionary<TKey, TValue> {
+
+    /**
+     * Adds an item to the dictionary.
+     * @param key The key of the item.
+     * @param item The item to add. 
+     */
+    public add(key: TKey, item: TValue): void;
+
+    /**
+     * Gets an item from the dictionary.
+     * @param key The key of the item.
+     * @returns The item or null if not found.
+     */
+    public get(key: TKey): TValue | null;
+
+    /**
+     * Removes an item from the dictionary.
+     * @param key The key of the item to remove.
+     */
+    public remove(key: TKey): void;
+
+    /**
+     * Clears all items from the dictionary.
+     */
+    public clear(): void;
+
+    /**
+     * Gets all values in the dictionary.
+     * @returns An array of values.
+     */
+    public get values(): TValue[];
+
+    /**
+     * Gets all keys in the dictionary.
+     * @returns An array of keys.
+     */
+    public get keys(): TKey[];
+
+    /**
+     * Gets the number of items in the dictionary.
+     * @returns The count of items.
+     */
+    public get count(): number;
+}
