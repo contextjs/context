@@ -15,6 +15,7 @@
     "id": "parser"
   },
   "peerDependencies": {
-    "@contextjs/system": "__VERSION__"
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/collections": "__VERSION__"
   }
 }

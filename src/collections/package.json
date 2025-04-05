@@ -1,0 +1,17 @@
+{
+  "name": "@contextjs/collections",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - Collections",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/collections"
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}

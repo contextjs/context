@@ -36,35 +36,6 @@ export declare class Application {
 
 //#endregion
 
-//#region Collections
-
-/**
- * Represents a stack data structure.
- * @template T The type of elements in the stack.
- */
-export declare class Stack<T> {
-    /**
-     * Pushes an element onto the stack.
-     * @param t The element to push.
-     */
-    public push(t: T): void;
-
-    /**
-     * Pops an element off the stack.
-     * @returns The popped element or null if the stack is empty.
-     */
-    public pop(): T | null;
-
-    /**
-     * Gets the current element on the stack without removing it.
-     * 
-     * @returns The current element or null if the stack is empty.
-     */
-    public get current(): T | null;
-}
-
-//#endregion
-
 //#region Exceptions
 
 /**
