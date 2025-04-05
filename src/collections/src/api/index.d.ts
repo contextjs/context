@@ -81,3 +81,45 @@ export declare class Dictionary<TKey, TValue> {
      */
     public get count(): number;
 }
+
+/**
+ * Represents a list data structure.
+ * @template T The type of elements in the list.
+ */
+export declare class List<T> {
+    /**
+     * Adds an item to the list.
+     * @param item The item to add.
+     */
+    public add(item: T): void;
+
+    /**
+     * Removes an item from the list by index.
+     * @param index The index of the item to remove.
+     */
+    public remove(index: number): void;
+
+    /**
+     * Gets an item from the list by index.
+     * @param index The index of the item to get.
+     * @returns The item or null if not found.
+     */
+    public get(index: number): T | null;
+
+    /**
+     * Clears all items from the list.
+     */
+    public clear(): void;
+
+    /**
+     * Gets the number of items in the list.
+     * @returns The count of items.
+     */
+    public get count(): number;
+
+    /**
+     * Converts the list to an array.
+     * @returns An array of items in the list.
+     */
+    public toArray(): T[];
+}
