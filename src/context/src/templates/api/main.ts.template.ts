@@ -8,8 +8,8 @@
 
 import { FileTemplate } from "../../models/file-template.js";
 
-export class ProgramTemplate {
-  private static readonly name = "src/program.ts";
+export class MainTemplate {
+  private static readonly name = "src/main.ts";
   private static readonly content = `import { Application } from '@contextjs/system';
 
 const application = new Application();
@@ -20,5 +20,5 @@ application.onRun(async () => {
 
 application.runAsync();`
 
-  public static readonly template: FileTemplate = new FileTemplate(ProgramTemplate.name, ProgramTemplate.content);
+  public static readonly template: FileTemplate = new FileTemplate(MainTemplate.name, MainTemplate.content);
 }
