@@ -10,6 +10,7 @@ export enum CommandType {
     Ctx,
     New,
     Build,
+    Restore,
     Watch,
     Version
 }
@@ -23,6 +24,8 @@ export class CommandTypeExtensions {
                 return CommandType.New;
             case "build":
                 return CommandType.Build;
+            case "restore":
+                return CommandType.Restore;
             case "watch":
                 return CommandType.Watch;
             case "version":

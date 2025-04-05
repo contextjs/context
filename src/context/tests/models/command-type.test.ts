@@ -10,7 +10,7 @@ import test, { TestContext } from 'node:test';
 import { CommandType, CommandTypeExtensions } from "../../src/models/command-type.ts";
 
 test('CommandType: length - success', (context: TestContext) => {
-    context.assert.strictEqual(Object.keys(CommandType).length / 2, 5);
+    context.assert.strictEqual(Object.keys(CommandType).length / 2, 6);
 });
 
 test('CommandTypeMethods: fromString - success', (context: TestContext) => {
@@ -18,6 +18,10 @@ test('CommandTypeMethods: fromString - success', (context: TestContext) => {
     let command = 'build';
     let result = CommandTypeExtensions.fromString(command);
     context.assert.strictEqual(result, CommandType.Build);
+
+    command = 'restore';
+    result = CommandTypeExtensions.fromString(command);
+    context.assert.strictEqual(result, CommandType.Restore);
 
     command = 'watch';
     result = CommandTypeExtensions.fromString(command);
