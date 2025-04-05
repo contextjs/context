@@ -4,7 +4,7 @@
 [![npm](https://badgen.net/npm/v/@contextjs/parser?cache=300)](https://www.npmjs.com/package/@contextjs/parser)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-ContextJS components parser
+ContextJS parser
 
 ### Installation
 
