@@ -4,7 +4,7 @@
 [![npm](https://badgen.net/npm/v/@contextjs/collections?cache=300)](https://www.npmjs.com/package/@contextjs/collections)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-Contains interfaces and classes that define various collections of objects, such as lists, stacks and dictionaries.
+Various collections of objects.
 
 ### Installation
 
