@@ -8,8 +8,6 @@
 
 export * from "../application.js";
 
-export * from "../collections/stack{t}.js";
-
 export * from "../exceptions/exception.js";
 export * from "../exceptions/null-reference.exception.js";
 

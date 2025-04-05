@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { Stack } from '../../src/collections/stack{t}.js';
+import { Stack } from '../src/stack{t}.js';
 
 test('Stack<T>: instance - success', (context: TestContext) => {
     const stack = new Stack<string>();

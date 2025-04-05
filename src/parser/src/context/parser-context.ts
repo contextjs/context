@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Stack } from "@contextjs/system";
+import { Stack } from "@contextjs/collections";
 import { Diagnostic } from "../diagnostics/diagnostic.js";
 import { Location } from "../sources/location.js";
 import { Source } from "../sources/source.js";
