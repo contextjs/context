@@ -7,7 +7,7 @@
  */
 
 export default class Config {
-    public static version: string = "0.4.3";
+    public static version: string = "0.4.4";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packages: string[] = [
@@ -18,6 +18,7 @@ export default class Config {
         "configuration-json",
         "routing",
         "webserver",
-        "webserver-middleware-static"
+        "webserver-middleware-static",
+        "parser"
     ];
 }

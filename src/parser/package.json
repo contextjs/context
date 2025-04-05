@@ -1,0 +1,20 @@
+{
+  "name": "@contextjs/parser",
+  "version": "__VERSION__",
+  "description": "ContextJS - Parser",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "main": "api/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/contextjs/context.git",
+    "directory": "src/parser"
+  },
+  "config": {
+    "id": "parser"
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}

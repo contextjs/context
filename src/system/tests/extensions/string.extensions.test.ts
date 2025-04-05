@@ -148,6 +148,26 @@ test('StringExtensions: isWhitespace - failure', (context: TestContext) => {
     context.assert.strictEqual(StringExtensions.isWhiteSpace(value), false);
 });
 
+test('StringExtensions: containsOnlyLineBreaksAndSpaces - success', (context: TestContext) => {
+    let value = " \n\r";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+
+    value = "a";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), false);
+
+    value = "\u2028";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+
+    value = "\u2029";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+
+    value = " \u2028";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+
+    value = "\u2028 ";
+    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+});
+
 test('StringExtensions: format - success', (context: TestContext) => {
     const template = "Hello {0}{1}";
     const world = "World";
