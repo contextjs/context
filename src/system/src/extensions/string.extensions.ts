@@ -48,6 +48,10 @@ export class StringExtensions {
         return /^\s$/.test(value);
     }
 
+    public static containsOnlyLineBreaksAndSpaces(value: string): boolean {
+        return /^[\s\n\r]*$/.test(value);
+    }
+
     public static format(template: string, ...args: any[]): string {
         return template.replace(/{(\d+)}/g, (match, index) => {
             return typeof args[index] !== 'undefined' ? args[index] : match;

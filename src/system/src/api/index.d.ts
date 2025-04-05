@@ -187,6 +187,13 @@ export declare class StringExtensions {
     public static isWhitespace(value: string): boolean;
 
     /**
+     * Checks if a string contains only line breaks and spaces.
+     * @param value The string to check.
+     * @returns True if the string contains only line breaks and spaces; otherwise, false.
+     */
+    public static containsOnlyLineBreaksAndSpaces(value: string): boolean;
+
+    /**
      * Formats a string with the given arguments.
      * @param template The string template.
      * @param args The arguments to format the string.
