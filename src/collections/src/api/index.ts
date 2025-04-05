@@ -6,5 +6,6 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export * from "../stack{t}.js";
 export * from "../dictionary.js";
+export * from "../list{t}.js";
+export * from "../stack{t}.js";
