@@ -15,7 +15,7 @@ npm i @contextjs/webserver
 ### Extensions
 
 ```typescript
-declare module "@contextjs/core"
+declare module "@contextjs/system"
 {
     export interface Application {
         /**

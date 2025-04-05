@@ -10,7 +10,7 @@ import { Exception } from "@contextjs/system";
 
 //#region Extensions
 
-declare module "@contextjs/core"
+declare module "@contextjs/system"
 {
     export interface Application {
         /**
