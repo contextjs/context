@@ -2,7 +2,7 @@ import { Console, VersionService } from "@contextjs/system";
 import { FileTemplate } from "../../models/file-template.js";
 import { ContextTemplate } from "../../templates/api/context.ctxp.template.js";
 import { PackageTemplate } from "../../templates/api/package.json.template.js";
-import { ProgramTemplate } from "../../templates/api/program.ts.template.js";
+import { MainTemplate } from "../../templates/api/main.ts.template.js";
 import { TsConfigTemplate } from "../../templates/tsconfig.json.template.js";
 import { TemplatesService } from "./templates.service.js";
 
@@ -26,6 +26,6 @@ Options             Description
         TsConfigTemplate.template,
         ContextTemplate.template,
         PackageTemplate.template,
-        ProgramTemplate.template
+        MainTemplate.template
     ];
 }

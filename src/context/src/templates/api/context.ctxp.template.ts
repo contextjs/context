@@ -13,7 +13,7 @@ export class ContextTemplate {
   private static readonly content = `{
   "name": "{{name}}",
   "type": "api",
-  "main": "src/program.ts"
+  "main": "src/main.ts"
 }`;
 
   public static readonly template: FileTemplate = new FileTemplate(ContextTemplate.name, ContextTemplate.content);
