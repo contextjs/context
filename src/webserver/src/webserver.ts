@@ -12,11 +12,11 @@ import { IncomingMessage, Server, ServerResponse } from "http";
 import { InvalidCertificateKeyException } from "./exceptions/invalid-certificate-key.exception.js";
 import { InvalidCertificateException } from "./exceptions/invalid-certificate.exception.js";
 import { MiddlewareExistsException } from "./exceptions/middleware-exists.exception.js";
+import { WebServerOptions } from "./extensions/webserver-options.js";
 import { HttpContext } from "./http-context.js";
 import { HttpRequest } from "./http-request.js";
 import { HttpResponse } from "./http-response.js";
 import { IMiddleware } from "./interfaces/i-middleware.js";
-import { WebServerOptions } from "./extensions/webserver-options.js";
 
 export class WebServer {
 
@@ -52,15 +52,11 @@ export class WebServer {
             Console.writeLineInfo("Context Web Server is stopping [http]");
             this.httpServer.close();
         }
-        else
-            Console.writeLineInfo("Context Web Server is not listening on http.");
 
         if (this.httpsServer && this.httpsServer.listening) {
             Console.writeLineInfo("Context Web Server is stopping [https]");
             this.httpsServer.close();
         }
-        else
-            Console.writeLineInfo("Context Web Server is not listening on https.");
     }
 
     public async restartAsync(): Promise<void> {
@@ -90,7 +86,7 @@ export class WebServer {
 
         const port = this.options.http.port || 80;
         this.httpServer.listen(port);
-        Console.writeLineInfo(`Context Web Server is starting on port ${port} [http]`);
+        Console.writeLineInfo(`Context Web Server is listening on port ${port} [http]`);
     }
 
     private async createHttpsServerAsync(): Promise<void> {
@@ -115,7 +111,7 @@ export class WebServer {
 
         const port = this.options.https.port || 443;
         this.httpsServer.listen(port);
-        Console.writeLineInfo(`Context Web Server is starting on port ${port} [https]`);
+        Console.writeLineInfo(`Context Web Server is listening on port ${port} [https]`);
     }
 
     private async parseRequestAsync(request: IncomingMessage, response: ServerResponse): Promise<void> {
