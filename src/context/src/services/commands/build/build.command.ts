@@ -9,12 +9,10 @@
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import fs from 'node:fs';
-import path from "node:path";
 import typescript from 'typescript';
 import { Command } from "../../../models/command.js";
 import { Project } from "../../../models/project.js";
 import { CommandBase } from "../command-base.js";
-import { TransformersService } from "./transformers/transformers.service.js";
 
 export class BuildCommand extends CommandBase {
     public override async runAsync(command: Command): Promise<void> {
@@ -50,9 +48,8 @@ export class BuildCommand extends CommandBase {
             this.copyFiles(project);
             Console.writeLineSuccess(`Project "${project.name}" built successfully.`);
         }
-        catch(error: any) {
+        catch {
             Console.writeLineError(`Error building project "${project.name}".`);
-            console.log(error);
             return process.exit(1);
         }
     }
@@ -97,7 +94,7 @@ export class BuildCommand extends CommandBase {
         const tsConfigFile = typescript.readConfigFile(`${project.path}/tsconfig.json`, typescript.sys.readFile);
         const parsedConfig = typescript.parseJsonConfigFileContent(tsConfigFile.config, typescript.sys, project.path);
         const program = typescript.createProgram(filePaths, parsedConfig.options);
-        const emitResult = program.emit(undefined, undefined, undefined, undefined, { before: TransformersService.transformers });
+        const emitResult = program.emit();
 
         if (emitResult.diagnostics.length > 0) {
             emitResult.diagnostics.forEach(diagnostic => {
