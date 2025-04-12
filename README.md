@@ -11,6 +11,7 @@
 - **[@contextjs/collections](https://github.com/contextjs/context/tree/main/src/collections)**: Various collections of objects.
 - **[@contextjs/configuration](https://github.com/contextjs/context/tree/main/src/configuration)**: Base classes for configuration management.
 - **[@contextjs/configuration-json](https://github.com/contextjs/context/tree/main/src/configuration-json)**: Provides JSON-based configuration management utilities.
+- **[@contextjs/di](https://github.com/contextjs/context/tree/main/src/di)**: Dependency Injection package
 - **[@contextjs/io](https://github.com/contextjs/context/tree/main/src/io)**: Tools for file operations, path management, and directory handling.
 - **[@contextjs/parser](https://github.com/contextjs/context/tree/main/src/parser)**: ContextJS parser
 - **[@contextjs/routing](https://github.com/contextjs/context/tree/main/src/routing)**: Define and manage application routes.
