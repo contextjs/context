@@ -25,6 +25,8 @@ export class Build extends Script {
 
         for (const packageName of packageNames)
             await this.buildPackageAsync(packageName);
+
+        await this.afterBuildAsync(packageNames)
     }
 
     private async npmInstallAsync(): Promise<void> {
@@ -87,6 +89,13 @@ export class Build extends Script {
     private async buildAsync(packageName: string): Promise<void> {
         if (await this.pathExistsAsync(`src/${packageName}/scripts/build.ts`))
             await import(`../src/${packageName}/scripts/build.ts`);
+    }
+
+    private async afterBuildAsync(packageNames: string[]): Promise<void> {
+        for (const packageName of packageNames) {
+            if (await this.pathExistsAsync(`src/${packageName}/scripts/after-build.ts`))
+                await import(`../src/${packageName}/scripts/after-build.ts`);
+        }
     }
 
     private async createPackageAsync(packageName: string): Promise<void> {
