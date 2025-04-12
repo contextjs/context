@@ -9,7 +9,7 @@
 import Config from '../../../scripts/config.ts';
 import Script from '../../../scripts/script.ts';
 
-export class BeforeBuild extends Script {
+export class Build extends Script {
     private readonly packageName: string = "system";
 
     public override async runAsync(): Promise<void> {
@@ -21,9 +21,10 @@ export class BeforeBuild extends Script {
     private async setVersionAsync() {
         const file = (await this.readFileAsync(`src/${this.packageName}/src/services/version.service.ts`))
             .replace(/private static readonly version: string = ".*";/, `private static readonly version: string = "${Config.version}";`);
-
         await this.writeFileAsync(`src/${this.packageName}/src/services/version.service.ts`, file);
+
+        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
     }
 }
 
-await new BeforeBuild().runAsync();
+await new Build().runAsync();

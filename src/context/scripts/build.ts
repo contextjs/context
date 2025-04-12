@@ -9,14 +9,17 @@
 import Config from '../../../scripts/config.ts';
 import Script from '../../../scripts/script.ts';
 
-export class AfterBuild extends Script {
+export class Build extends Script {
+    private readonly packageName: string = "context";
     private statement = '#!/usr/bin/env node';
 
     public override async runAsync(): Promise<void> {
-        await this.prependExecutableStatement();
+        await this.copyReadmeFileAsync(this.packageName);
+        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
+        await this.addExecutableStatement();
     }
 
-    private async prependExecutableStatement() {
+    private async addExecutableStatement() {
         const filePath = `${Config.buildFolder}/context/context.js`;
         let file = await this.readFileAsync(filePath);
         file = `${this.statement}\n\n${file}`;
@@ -24,4 +27,4 @@ export class AfterBuild extends Script {
     }
 }
 
-await new AfterBuild().runAsync();
+await new Build().runAsync();

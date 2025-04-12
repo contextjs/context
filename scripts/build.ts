@@ -85,13 +85,8 @@ export class Build extends Script {
     }
 
     private async buildAsync(packageName: string): Promise<void> {
-        if (await this.pathExistsAsync(`src/${packageName}/scripts/before-build.ts`))
-            await import(`../src/${packageName}/scripts/before-build.ts`);
-
-        await this.executeCommandAsync(`cd src/${packageName} && tsc`);
-
-        if (await this.pathExistsAsync(`src/${packageName}/scripts/after-build.ts`))
-            await import(`../src/${packageName}/scripts/after-build.ts`);
+        if (await this.pathExistsAsync(`src/${packageName}/scripts/build.ts`))
+            await import(`../src/${packageName}/scripts/build.ts`);
     }
 
     private async createPackageAsync(packageName: string): Promise<void> {
