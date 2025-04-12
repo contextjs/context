@@ -8,6 +8,7 @@
 
 import { execSync } from "child_process";
 import fs from "fs";
+import readline from 'node:readline';
 import Config from "./config.ts";
 
 export default abstract class Script {
@@ -17,7 +18,11 @@ export default abstract class Script {
         execSync(command, { stdio: 'inherit' });
     }
 
-    protected async writeLogAsync(message: string): Promise<void> {
+    protected async writeLogAsync(message: string, removeLastLine: boolean = false): Promise<void> {
+        if (removeLastLine) {
+            readline.moveCursor(process.stdout, 0, -1);
+            readline.clearLine(process.stdout, 1);
+        }
         console.log(message);
     }
 

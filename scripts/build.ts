@@ -25,6 +25,12 @@ export class Build extends Script {
 
         for (const packageName of packageNames)
             await this.buildPackageAsync(packageName);
+
+        await this.writeLogAsync('\nCreating packages...');
+        for (const packageName of packageNames)
+            await this.createAndInstallPackageAsync(packageName);
+        
+        await this.writeLogAsync('Done');
     }
 
     private async npmInstallAsync(): Promise<void> {
@@ -34,13 +40,18 @@ export class Build extends Script {
         }
     }
 
+    private async createAndInstallPackageAsync(packageName: string): Promise<void> {
+        await this.createPackageAsync(packageName);
+        await this.installPackageAsync(packageName);
+    }
+
     private async createOutputDirectoriesAsync(): Promise<void> {
         await this.createDirectoryAsync(Config.buildFolder);
         await this.createDirectoryAsync(Config.packagesFolder);
     }
 
     private async buildPackageAsync(packageName: string): Promise<void> {
-        await this.writeLogAsync(`\nBuilding "@contextjs/${packageName}"...`);
+        await this.writeLogAsync(`Building "@contextjs/${packageName}"...`);
 
         await this.removeDependencyAsync(packageName);
         await this.createPackageDirectoryAsync(packageName);
@@ -48,10 +59,8 @@ export class Build extends Script {
         await this.copyLicenseFileAsync(packageName);
         await this.writeVersionAsync(packageName);
         await this.buildAsync(packageName);
-        await this.createPackageAsync(packageName);
-        await this.installPackageAsync(packageName);
 
-        await this.writeLogAsync(`Building "@contextjs/${packageName}"... Done.`);
+        await this.writeLogAsync(`Building "@contextjs/${packageName}"... Done.`, true);
     }
 
     private async removeDependencyAsync(packageName: string): Promise<void> {
@@ -98,7 +107,7 @@ export class Build extends Script {
         const packageJson = JSON.parse(packageJsonFile);
         const name = packageJson.name.replace("@", "").replace("/", "-");
 
-        await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz`);
+        await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz --silent`);
     }
 }
 
