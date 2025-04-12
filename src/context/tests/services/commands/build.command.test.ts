@@ -13,7 +13,7 @@ import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
-import { BuildCommand } from "../../../src/services/commands/build.command.ts";
+import { BuildCommand } from "../../../src/services/commands/build/build.command.ts";
 
 test('BuildCommand: runAsync(--project) - success', async (context: TestContext) => {
     const originalLog = console.log;

@@ -8,13 +8,14 @@
 
 import Script from '../../../scripts/script.ts';
 
-export class BeforeBuild extends Script {
-    private readonly packageName: string = "webserver";
+export class Build extends Script {
+    private readonly packageName: string = "configuration-json";
 
     public override async runAsync(): Promise<void> {
         await this.copyDeclarationsFileAsync(this.packageName);
         await this.copyReadmeFileAsync(this.packageName);
+        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
     }
 }
 
-await new BeforeBuild().runAsync();
+await new Build().runAsync();
