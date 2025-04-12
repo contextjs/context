@@ -4,6 +4,8 @@
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found at https://github.com/contextjs/context/blob/main/LICENSE
+ * 
+ * Notice: the order of the packages in the array is important, as some packages depend on others.
  */
 
 export default class Config {
@@ -14,12 +16,13 @@ export default class Config {
         "system",
         "io",
         "collections",
-        "context",
         "configuration",
         "configuration-json",
+        "di",
         "routing",
         "webserver",
         "webserver-middleware-static",
-        "parser"
+        "parser",
+        "context"
     ];
 }
