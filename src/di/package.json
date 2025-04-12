@@ -1,0 +1,24 @@
+{
+  "name": "@contextjs/di",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "description": "ContextJS - Dependency Injection",
+  "keywords": [
+    "contextjs",
+    "di",
+    "dependency-injection",
+    "context",
+    "js"
+  ],
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/di"
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}
