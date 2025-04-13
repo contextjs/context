@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { IHttpContext, IMiddleware } from "@contextjs/webserver";
+import "@contextjs/webserver";
 
 /**
  * Extends the WebServerOptions interface with a method to serve static files.
@@ -31,38 +31,4 @@ export declare class StaticFilesOptions {
      * Get or set the file extensions. If empty, the middleware will serve all files.
      */
     public fileExtensions: string[];
-}
-
-/**
- * Middleware to serve static files.
- */
-export declare class StaticFilesMiddleware implements IMiddleware {
-    /**
-     * The name of the middleware.
-     */
-    public name: string;
-
-    /**
-     * The version of the middleware.
-     */
-    public version: string;
-
-    /**
-     * The folder that contains the static files.
-     */
-    public publicFolder: string;
-
-    /**
-     * Creates a new instance of the StaticFilesMiddleware class.
-     * @param publicFolder The folder that contains the static files. Default is "public".
-     */
-    public constructor(publicFolder: string);
-
-    /**
-     * Handles the request to serve the static files.
-     * @param httpContext The HTTP context.
-     * @param next The next middleware
-     * @returns A promise that represents the asynchronous operation.
-     */
-    public onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void>;
 }
