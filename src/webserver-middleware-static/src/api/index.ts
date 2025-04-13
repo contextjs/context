@@ -7,5 +7,4 @@
  */
 
 export * from "../extensions/webserver-options.extensions.js";
-export * from "../static-files.middleware.js";
 export * from "../static-files.options.js";
