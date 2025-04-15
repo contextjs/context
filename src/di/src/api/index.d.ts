@@ -55,10 +55,10 @@ export declare class Service {
  * Represents a collection of services in the dependency injection container.
  */
 export declare class ServiceCollection {
-  public static singletonRegistry: Map<string, any>;
-  public static transientRegistry: Map<string, any>;
-
-  static resolve<T>(target: new (...args: any[]) => T): T;
+    public addTransient<TInterface, TImplementation>(): void;
+    public addSingleton<TInterface, TImplementation>(): void;
+    public resolve<T>(): T | null;
+    public resolve<T>(interfaceName?: string): T | null;
 }
 
 //#endregion

@@ -10,9 +10,10 @@ import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import fs from 'node:fs';
 import typescript from 'typescript';
-import { Command } from "../../../models/command.js";
-import { Project } from "../../../models/project.js";
-import { CommandBase } from "../command-base.js";
+import { Command } from "../../models/command.js";
+import { Project } from "../../models/project.js";
+import { CommandBase } from "./command-base.js";
+import { TransformersService } from "./transformers/transformers.service.js";
 
 export class BuildCommand extends CommandBase {
     public override async runAsync(command: Command): Promise<void> {
@@ -94,7 +95,8 @@ export class BuildCommand extends CommandBase {
         const tsConfigFile = typescript.readConfigFile(`${project.path}/tsconfig.json`, typescript.sys.readFile);
         const parsedConfig = typescript.parseJsonConfigFileContent(tsConfigFile.config, typescript.sys, project.path);
         const program = typescript.createProgram(filePaths, parsedConfig.options);
-        const emitResult = program.emit();
+        const transformersService = new TransformersService(program);
+        const emitResult = program.emit(undefined, undefined, undefined, undefined, { before: transformersService.transformers });
 
         if (emitResult.diagnostics.length > 0) {
             emitResult.diagnostics.forEach(diagnostic => {

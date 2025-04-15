@@ -8,7 +8,7 @@
 
 import { Console } from "@contextjs/system";
 import { CommandType } from "./models/command-type.js";
-import { BuildCommand } from "./services/commands/build/build.command.js";
+import { BuildCommand } from "./services/commands/build.command.js";
 import { CommandsService } from "./services/commands/commands.service.js";
 import { CtxCommand } from "./services/commands/ctx.command.js";
 import { NewCommand } from "./services/commands/new.command.js";

@@ -8,30 +8,27 @@
 
 import typescript from "typescript";
 
-export function createArrayAppendTransformer(classPropertyName: string, elementsToAdd: string[]): typescript.TransformerFactory<typescript.SourceFile> {
+export function appendToArrayTransformer(propertyName: string, elements: string[]): typescript.TransformerFactory<typescript.SourceFile> {
     return () => {
         return (sourceFile) => {
-            const updatedStatements = sourceFile.statements.map(statement => {
-                if (!typescript.isClassDeclaration(statement)) return statement;
+            const statements = sourceFile.statements.map(statement => {
+                if (!typescript.isClassDeclaration(statement))
+                    return statement;
 
-                const updatedMembers = statement.members.map(member => {
-                    if (
-                        typescript.isPropertyDeclaration(member) &&
+                const members = statement.members.map(member => {
+                    if (typescript.isPropertyDeclaration(member) &&
                         typescript.isIdentifier(member.name) &&
-                        member.name.text === classPropertyName &&
+                        member.name.text === propertyName &&
                         member.initializer &&
-                        typescript.isArrayLiteralExpression(member.initializer)
-                    ) {
-                        const existing = member.initializer.elements;
-                        const existingNames = new Set(existing.filter(typescript.isIdentifier).map(id => id.text));
-                        const additions = elementsToAdd
+                        typescript.isArrayLiteralExpression(member.initializer)) {
+                        const existingNames = new Set(member.initializer.elements.filter(typescript.isIdentifier).map(id => id.text));
+                        const additions = elements
                             .filter(name => !existingNames.has(name))
                             .map(name => typescript.factory.createIdentifier(name));
 
                         const updatedArray = typescript.factory.updateArrayLiteralExpression(
                             member.initializer,
-                            [...existing, ...additions]
-                        );
+                            [...member.initializer.elements, ...additions]);
 
                         return typescript.factory.updatePropertyDeclaration(
                             member,
@@ -39,8 +36,7 @@ export function createArrayAppendTransformer(classPropertyName: string, elements
                             member.name,
                             member.questionToken,
                             member.type,
-                            updatedArray
-                        );
+                            updatedArray);
                     }
 
                     return member;
@@ -52,11 +48,10 @@ export function createArrayAppendTransformer(classPropertyName: string, elements
                     statement.name,
                     statement.typeParameters,
                     statement.heritageClauses,
-                    updatedMembers
-                );
+                    members);
             });
 
-            return typescript.factory.updateSourceFile(sourceFile, updatedStatements);
+            return typescript.factory.updateSourceFile(sourceFile, statements);
         };
     };
 }
