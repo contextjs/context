@@ -10,6 +10,7 @@ import { Console } from "@contextjs/system";
 import typescript from "typescript";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
+import { TransformersService } from "./transformers/transformers.service.js";
 import { CommandBase } from "./command-base.js";
 
 export class WatchCommand extends CommandBase {
@@ -56,7 +57,30 @@ export class WatchCommand extends CommandBase {
         }) as typescript.CreateProgram<typescript.SemanticDiagnosticsBuilderProgram>;
 
         const originalAfterProgramCreate = host.afterProgramCreate;
-        host.afterProgramCreate = program => { originalAfterProgramCreate!(program); };
+        host.afterProgramCreate = builder => {
+            const transformersService = new TransformersService(builder.getProgram()).transformers;
+            const originalEmit = builder.emit;
+            builder.emit = (
+                targetSourceFile,
+                writeFile,
+                cancellationToken,
+                emitOnlyDtsFiles,
+                customTransformers) => {
+                return originalEmit(
+                    targetSourceFile,
+                    writeFile,
+                    cancellationToken,
+                    emitOnlyDtsFiles,
+                    {
+                        before: [...transformersService],
+                        after: customTransformers?.after,
+                        afterDeclarations: customTransformers?.afterDeclarations
+                    }
+                );
+            };
+            originalAfterProgramCreate?.(builder);
+        };
+
 
         return typescript.createWatchProgram(host);
     }

@@ -10,11 +10,10 @@ import Script from '../../../scripts/script.ts';
 
 export class AfterBuild extends Script {
     private readonly contextTransformersPath = 'src/context/src/services/commands/build/transformers';
-    private readonly transformersServiceTemplate = `import ts from "typescript";
-
+    private readonly transformersServiceTemplate = `import typescript from "typescript";
 export class TransformersService {
-    public static transformers: Array<ts.TransformerFactory<ts.SourceFile>> = [
-    ];
+    public transformers: Array<typescript.TransformerFactory<typescript.SourceFile>> = [];
+    public constructor(private readonly program: typescript.Program) {}
 }`
 
     public override async runAsync(): Promise<void> {

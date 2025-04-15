@@ -9,15 +9,16 @@
 import { File } from '@contextjs/io';
 import typescript from 'typescript';
 import Script from '../../../scripts/script.ts';
-import { createArrayAppendTransformer } from './typescript/array.transformer.ts';
-import { createImportTransformer } from './typescript/import.transformer.ts';
+import { addImportTransformer } from './typescript/add-import.transformer.ts';
+import { appendToArrayTransformer } from './typescript/append-to-array.transformer.ts';
+import { serviceLifetimeTransformer } from './typescript/service-lifetime.transformer.ts';
 
 export class Build extends Script {
     private readonly packageName: string = "di";
-    private readonly contextTransformersPath = 'src/context/src/services/commands/build/transformers';
+    private readonly contextTransformersPath = 'src/context/src/services/commands/transformers';
     private readonly transformers = [
-        { className: "transientServiceTransformer", classPath: "transient-service.transformer" },
-        { className: "singletonServiceTransformer", classPath: "singleton-service.transformer" }
+        { className: "serviceCollectionTransformer", classFile: "service-collection.transformer" },
+        { className: "serviceResolverTransformer", classFile: "service-resolver.transformer" }
     ];
 
     public override async runAsync(): Promise<void> {
@@ -31,24 +32,12 @@ export class Build extends Script {
     private async copyTranformerFilesAsync(): Promise<void> {
         await Promise.all(this.transformers.map(async (transformer) => {
             await this.copyFileAsync(
-                `src/${this.packageName}/scripts/transformers/${transformer.classPath}.ts`,
-                `${this.contextTransformersPath}/${transformer.classPath}.ts`)
+                `src/${this.packageName}/scripts/transformers/${transformer.classFile}.ts`,
+                `${this.contextTransformersPath}/${transformer.classFile}.ts`)
         }));
     }
 
     private async applyTransformersAsync(): Promise<void> {
-        const transformers = this.transformers.map(transformer => {
-            return createImportTransformer(transformer.className, `./${transformer.classPath}.js`);
-        });
-        const arrayAppenderTransformers = this.transformers.map(transformer =>
-            createArrayAppendTransformer("transformers", [transformer.className])
-        );
-
-        const allTransformers = [
-            ...this.transformers.map(t => createImportTransformer(t.className, `./${t.classPath}.js`)),
-            ...this.transformers.map(t => createArrayAppendTransformer("transformers", [t.className]))
-        ];
-
         const contextTransformerServicePath = `${this.contextTransformersPath}/transformers.service.ts`;
         const sourceText = File.read(contextTransformerServicePath);
         const sourceFile = typescript.createSourceFile(
@@ -59,7 +48,16 @@ export class Build extends Script {
             typescript.ScriptKind.TS
         );
 
-        const result = typescript.transform(sourceFile, allTransformers);
+        const importTransformers = this.transformers.map(transformer => {
+            return addImportTransformer(transformer.className, `./${transformer.classFile}.js`);
+        });
+
+        const codeTransformers = [
+            serviceLifetimeTransformer({ addTransient: "transient", addSingleton: "singleton" }),
+            appendToArrayTransformer("transformers", ['serviceResolverTransformer']),
+        ];
+
+        const result = typescript.transform(sourceFile, [...importTransformers, ...codeTransformers]);
         const transformedSourceFile = result.transformed[0];
 
         const printer = typescript.createPrinter({ newLine: typescript.NewLineKind.LineFeed });
