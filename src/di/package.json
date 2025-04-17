@@ -1,22 +1,38 @@
 {
   "name": "@contextjs/di",
   "version": "__VERSION__",
-  "main": "api/index.js",
-  "description": "ContextJS - Dependency Injection",
+  "description": "Object-oriented dependency injection for TypeScript — class-based, extensible, and transformer-powered.",
   "keywords": [
     "contextjs",
-    "di",
     "dependency-injection",
-    "context",
-    "js"
+    "typescript",
+    "ioc",
+    "container",
+    "oop",
+    "object-oriented",
+    "class",
+    "interfaces",
+    "lifecycle"
   ],
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
   "author": "ContextJS",
   "license": "MIT",
-  "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contextjs/context.git",
+    "url": "https://github.com/contextjs/context.git",
     "directory": "src/di"
+  },
+  "homepage": "https://github.com/contextjs/context/tree/main/src/di#readme",
+  "bugs": {
+    "url": "https://github.com/contextjs/context/issues"
   },
   "peerDependencies": {
     "@contextjs/system": "__VERSION__"

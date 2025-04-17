@@ -9,7 +9,7 @@
 import Script from '../../../scripts/script.ts';
 
 export class AfterBuild extends Script {
-    private readonly contextTransformersPath = 'src/context/src/services/commands/build/transformers';
+    private readonly contextTransformersPath = 'src/context/src/services/commands/transformers';
     private readonly transformersServiceTemplate = `import typescript from "typescript";
 export class TransformersService {
     public transformers: Array<typescript.TransformerFactory<typescript.SourceFile>> = [];

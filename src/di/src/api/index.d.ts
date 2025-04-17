@@ -8,43 +8,48 @@
 
 import { Exception } from "@contextjs/system";
 
-//#region Enums
+//#region Extensions
 
 /**
- * Enum representing the lifetime of a service in the dependency injection container.
- */
-export declare enum ServiceLifetime {
+ * Module that extends the Application class to include dependency injection capabilities.
+ * This module provides methods for configuring and using dependency injection in the application.
+ **/
+declare module "@contextjs/system" {
     /**
-     * Singleton lifetime: a single instance is created and shared across the application.
+     * Extends the Application class to include dependency injection capabilities.
+     * 
+     * @param options - A function that takes a DependencyInjectionOptions object to configure the dependency injection system.
+     * @returns The current instance of the Application with dependency injection configured.
      */
-    Singleton = 'Singleton',
+    export interface Application {
+        /**
+         * Configures the dependency injection system for the application.
+         * 
+         * @param options - A function that takes a DependencyInjectionOptions object to configure the dependency injection system.
+         * @returns The current instance of the Application with dependency injection configured.
+         */
+        useDependencyInjection(options: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application;
 
-    /**
-     * Scoped lifetime: a new instance is created for each scope (e.g., per request).
-     */
-    Scoped = 'Scoped',
-
-    /**
-     * Transient lifetime: a new instance is created each time the service is requested.
-     */
-    Transient = 'Transient'
+        /**
+         * The collection of services registered in the dependency injection system.
+         * 
+         * @type {ServiceCollection}
+         */
+        services: ServiceCollection;
+    }
 }
 
-//#region Models
-
 /**
- * Represents a service in the dependency injection container.
- */
-export declare class Service {
-    /**
-     * The lifetime of the service (Singleton, Scoped, Transient).
-     */
-    public readonly lifetime: ServiceLifetime;
-
-    /**
-     * The type of the service.
-     */
-    public readonly type: any;
+* Class representing options for configuring the dependency injection system.
+* This class allows customization of the dependency injection behavior, such as resolving dependencies and managing service lifetimes.
+**/
+export declare class DependencyInjectionOptions {
+    public onResolve?: (context: {
+        name: string;
+        lifetime: ServiceLifetime;
+        parameters: ConstructorParameter[];
+        service: Service;
+    }) => any | null;
 }
 
 //#endregion
@@ -52,13 +57,113 @@ export declare class Service {
 //#region Classes
 
 /**
- * Represents a collection of services in the dependency injection container.
- */
+ * Class representing a constructor parameter.
+ * This class is used to define the parameters of a constructor in a service, including their names and types.
+ **/
+export declare class ConstructorParameter {
+    /**
+     * The name of the parameter.
+     * @type {string}
+     */
+    public readonly name: string;
+
+    /**
+     * The type of the parameter.
+     * @type {any}
+     */
+    public readonly type: any;
+
+    /**
+     * Creates an instance of ConstructorParameter.
+     * @param name - The name of the parameter.
+     * @param type - The type of the parameter.
+     **/
+    public constructor(name: string, type: any);
+}
+
+/**
+ * Represents a service lifetime in the dependency injection system.
+ **/
+export declare type ServiceLifetime = "singleton" | "transient";
+
+/**
+ * Class representing a service in the dependency injection system.
+ * This class contains information about the service's lifetime, type, and constructor parameters.
+ **/
+export declare class Service {
+    /**
+     * The lifetime of the service.
+     * @type {ServiceLifetime}
+     */
+    public readonly lifetime: ServiceLifetime;
+
+    /**
+     * The type of the service.
+     * @type {any}
+     */
+    public readonly type: any;
+
+    /**
+     * The constructor parameters of the service.
+     * @type {ConstructorParameter[]}
+     */
+    public readonly parameters: ConstructorParameter[];
+
+    /**
+     * Creates an instance of Service.
+     * @param type - The type of the service.
+     * @param lifetime - The lifetime of the service.
+     * @param parameters - The constructor parameters of the service.
+     **/
+    public constructor(type: any, lifetime: ServiceLifetime, parameters: ConstructorParameter[]);
+}
+
+//#endregion
+
+//#region Services
+
+/**
+ * Class representing a collection of services in the dependency injection system.
+ * This class provides methods for adding and resolving services, as well as managing their lifetimes.
+ **/
 export declare class ServiceCollection {
-    public addTransient<TInterface, TImplementation>(): void;
-    public addSingleton<TInterface, TImplementation>(): void;
-    public resolve<T>(): T | null;
-    public resolve<T>(interfaceName?: string): T | null;
+    /**
+     * Creates an instance of ServiceCollection.
+     **/
+    constructor();
+
+    /**
+     * Adds a service to the collection with a singleton lifetime.
+     * @type {TImplementation} - The implementation type of the service.
+     **/
+    addSingleton<TImplementation>(): void;
+
+    /**
+     * Adds a service to the collection with a singleton lifetime.
+     * @type {TInterface} - The interface type of the service.
+     * @type {TImplementation} - The implementation type of the service.
+     **/
+    addSingleton<TInterface, TImplementation>(): void;
+
+    /**
+     * Adds a service to the collection with a transient lifetime.
+     * @type {TImplementation} - The implementation type of the service.
+     **/
+    addTransient<TImplementation>(): void;
+
+    /**
+     * Adds a service to the collection with a transient lifetime.
+     * @type {TInterface} - The interface type of the service.
+     * @type {TImplementation} - The implementation type of the service.
+     **/
+    addTransient<TInterface, TImplementation>(): void;
+
+    /**
+     * Resolves a service from the collection by its type
+     * @type {T} - The type of the service to resolve.
+     * @returns The resolved service instance, or null if not found.
+     **/
+    resolve<T>(): T | null;
 }
 
 //#endregion
@@ -66,25 +171,44 @@ export declare class ServiceCollection {
 //#region Exceptions
 
 /**
- * Exception thrown when a scope already exists.
- */
-export declare class ScopeExistsException extends Exception {
+ * Exception thrown when a circular dependency is detected in the dependency injection system.
+ * This exception is thrown when a service depends on itself, either directly or indirectly.
+ * @param dependencyName - The name of the dependency that caused the circular reference.
+ * @example
+ * ```typescript
+ * import { CircularDependencyException } from "@contextjs/di";
+ * throw new CircularDependencyException("MyService");
+ * ```
+ **/
+export declare class CircularDependencyException extends Exception {
+
     /**
-     * Creates an instance of ScopeExistsException.
-     * @param scopeName The name of the scope that already exists.
-     */
-    constructor(scopeName: string);
+     * Creates an instance of CircularDependencyException.
+     * @param dependencyName - The name of the dependency that caused the circular reference.
+     **/
+    constructor(dependencyName: string);
 }
 
 /**
- * Exception thrown when an invalid scope is encountered.
- */
-export declare class InvalidScopeException extends Exception {
+ * Exception thrown when a dependency cannot be resolved in the dependency injection system.
+ * This exception is thrown when a service depends on another service that cannot be resolved.
+ * @param name - The name of the unresolved dependency.
+ * @param type - The type of the unresolved dependency.
+ * @param serviceName - The name of the service that depends on the unresolved dependency.
+ * @example
+ * ```typescript
+ * import { UnresolvedDependencyException } from "@contextjs/di";
+ * throw new UnresolvedDependencyException("MyDependency", "MyType", "MyService");
+ * ```
+ **/
+export declare class UnresolvedDependencyException extends Exception {
     /**
-     * Creates an instance of InvalidScopeException.
-     * @param scopeName The name of the invalid scope.
-     */
-    constructor(scopeName: string);
+     * Creates an instance of UnresolvedDependencyException.
+     * @param name - The name of the unresolved dependency.
+     * @param type - The type of the unresolved dependency.
+     * @param serviceName - The name of the service that depends on the unresolved dependency.
+     **/
+    constructor(name: string, type: string, serviceName: string);
 }
 
 //#endregion

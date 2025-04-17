@@ -6,8 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export enum ServiceLifetime {
-    Singleton = 'Singleton',
-    Scoped = 'Scoped',
-    Transient = 'Transient'
+export class ConstructorParameter {
+    public readonly name: string;
+    public readonly type: any;
+
+    public constructor(name: string, type: any) {
+        this.name = name;
+        this.type = type;
+    }
 }
