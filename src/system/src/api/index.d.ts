@@ -216,6 +216,12 @@ export declare class ConsoleArgument {
      * @param {string[]} values - The values associated with the argument.
      */
     constructor(name: string, values: string[]);
+
+    /**
+     * Converts the console argument to a string.
+     * @returns {string} The string representation of the console argument.
+     */
+    public toString(): string;
 }
 
 export type ConsoleMessage = {
