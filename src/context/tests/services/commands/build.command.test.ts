@@ -7,7 +7,7 @@
  */
 
 import { Directory, File } from "@contextjs/io";
-import { StringExtensions } from "@contextjs/system";
+import { Console, StringExtensions } from "@contextjs/system";
 import fs from "node:fs";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
@@ -16,60 +16,88 @@ import { Project } from "../../../src/models/project.ts";
 import { BuildCommand } from "../../../src/services/commands/build.command.ts";
 
 test('BuildCommand: runAsync(--project) - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
-    process.argv = [StringExtensions.empty, StringExtensions.empty, 'build', '--project',];
 
-    const command: Command = new Command(CommandType.Build, []);
+    process.argv = ['', '', 'build', '--project'];
+    const command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await buildCommand.runAsync(command);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
-    context.assert.strictEqual(exitCode, 1);
+    try {
+        await buildCommand.runAsync(command);
+    }
+    catch (error) {
+        threw = error as Error;
+    }
 
-    console.log = originalLog;
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(logOutput, /No projects found\. Exiting/);
+
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
+
+
 test('BuildCommand: runAsync(--p) - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
-    process.argv = [StringExtensions.empty, StringExtensions.empty, 'build', '--p', ''];
 
+    process.argv = ['', '', 'build', '--p', ''];
     const command: Command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await buildCommand.runAsync(command);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
-    context.assert.strictEqual(exitCode, 1);
+    try {
+        await buildCommand.runAsync(command);
+    }
+    catch (error) {
+        threw = error as Error;
+    }
 
-    console.log = originalLog;
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(logOutput, /No projects found\. Exiting/);
+
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('BuildCommand: runAsync - success', async (context: TestContext) => {
+    const originalExit = process.exit;
+    const originalOutput = Console['output'];
+
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
+
     const command: Command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
     const projects = [new Project('project1', 'path1')];
@@ -77,7 +105,10 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     context.mock.method(buildCommand as any, 'getProjects', () => projects);
     context.mock.method(buildCommand as any, 'buildAsync', () => void 0);
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -86,11 +117,15 @@ test('BuildCommand: runAsync - success', async (context: TestContext) => {
     await buildCommand.runAsync(command);
 
     context.assert.strictEqual(exitCode, 0);
+
+    Console.setOutput(originalOutput);
+    process.exit = originalExit;
 });
 
+
 test('BuildCommand: build - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
@@ -98,18 +133,29 @@ test('BuildCommand: build - success', async (context: TestContext) => {
 
     const buildCommand = new BuildCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await (buildCommand as any).buildAsync(project);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo context file found. Exiting...\x1b[39m');
-    context.assert.strictEqual(exitCode, 1);
+    try {
+        await (buildCommand as any).buildAsync(project);
+    }
+    catch (error) {
+        threw = error as Error;
+    }
 
-    console.log = originalLog;
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(logOutput, /No context file found\. Exiting/);
+
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 

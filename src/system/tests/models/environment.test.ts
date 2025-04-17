@@ -10,70 +10,73 @@ import test, { TestContext } from 'node:test';
 import { EnvironmentName } from "../../src/models/environment-name.ts";
 import { Environment } from "../../src/models/environment.ts";
 
-test('Environment: isDevelopment - success', (context: TestContext) => {
-    const environment = new Environment();
+test('Environment: isDevelopment', (context: TestContext) => {
+    const environment = new Environment([]);
     environment.name = EnvironmentName.development;
+    context.assert.ok(environment.isDevelopment);
 
-    context.assert.strictEqual(environment.isDevelopment, true);
-});
-
-test('Environment: isDevelopment - failure', (context: TestContext) => {
-    const environment = new Environment();
     environment.name = EnvironmentName.production;
-
-    context.assert.strictEqual(environment.isDevelopment, false);
+    context.assert.ok(!environment.isDevelopment);
 });
 
-test('Environment: isProduction - success', (context: TestContext) => {
-    const environment = new Environment();
+test('Environment: isProduction', (context: TestContext) => {
+    const environment = new Environment([]);
     environment.name = EnvironmentName.production;
+    context.assert.ok(environment.isProduction);
 
-    context.assert.strictEqual(environment.isProduction, true);
-});
-
-test('Environment: isProduction - failure', (context: TestContext) => {
-    const environment = new Environment();
     environment.name = EnvironmentName.development;
-
-    context.assert.strictEqual(environment.isProduction, false);
+    context.assert.ok(!environment.isProduction);
 });
 
-test('Environment: isTest - success', (context: TestContext) => {
-    const environment = new Environment();
+test('Environment: isTest', (context: TestContext) => {
+    const environment = new Environment([]);
     environment.name = EnvironmentName.test;
+    context.assert.ok(environment.isTest);
 
-    context.assert.strictEqual(environment.isTest, true);
-});
-
-test('Environment: isTest - failure', (context: TestContext) => {
-    const environment = new Environment();
     environment.name = EnvironmentName.development;
-
-    context.assert.strictEqual(environment.isTest, false);
+    context.assert.ok(!environment.isTest);
 });
 
-test('Environment: isStaging - success', (context: TestContext) => {
-    const environment = new Environment();
+test('Environment: isStaging', (context: TestContext) => {
+    const environment = new Environment([]);
     environment.name = EnvironmentName.staging;
+    context.assert.ok(environment.isStaging);
 
-    context.assert.strictEqual(environment.isStaging, true);
-});
-
-test('Environment: isStaging - failure', (context: TestContext) => {
-    const environment = new Environment();
     environment.name = EnvironmentName.development;
-
-    context.assert.strictEqual(environment.isStaging, false);
+    context.assert.ok(!environment.isStaging);
 });
 
-test('Environment: getEnvironment - success', (context: TestContext) => {
-    process.argv = ['node', 'app', '--environment', 'production'];
-    const environment1 = new Environment();
+test('Environment: parses --environment and -e', (context: TestContext) => {
+    const env1 = new Environment(['--environment', 'production']);
+    context.assert.strictEqual(env1.name, EnvironmentName.production);
 
-    context.assert.strictEqual(environment1.name, EnvironmentName.production);
+    const env2 = new Environment(['-e', 'test']);
+    context.assert.strictEqual(env2.name, EnvironmentName.test);
+});
 
-    process.argv = ['node', 'app', '-e', 'production'];
-    const environment2 = new Environment();
+test('Environment: parses mixed case values', (context: TestContext) => {
+    const environment = new Environment(['--environment', 'PrOdUcTiOn']);
+    context.assert.strictEqual(environment.name, EnvironmentName.production);
+});
 
-    context.assert.strictEqual(environment2.name, EnvironmentName.production);
+test('Environment: fallback to development when no environment is given', (context: TestContext) => {
+    const environment = new Environment(['--unknown', 'value']);
+    context.assert.strictEqual(environment.name, EnvironmentName.development);
+});
+
+test('Environment: toString returns name', (context: TestContext) => {
+    const environment = new Environment(['--environment', 'staging']);
+    context.assert.strictEqual(environment.toString(), EnvironmentName.staging);
+});
+
+test('Environment: setter normalizes case', (context: TestContext) => {
+    const environment = new Environment([]);
+    environment.name = 'PrOdUcTiOn';
+    context.assert.strictEqual(environment.name, EnvironmentName.production);
+    context.assert.ok(environment.isProduction);
+});
+
+test('Environment: extracts environment value from arguments', (context: TestContext) => {
+    const environment = new Environment(['--environment', 'sTagiNg']);
+    context.assert.strictEqual(environment.name, EnvironmentName.staging);
 });

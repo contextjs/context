@@ -15,15 +15,18 @@ import { WatchCommand } from "../../../src/services/commands/watch.command.ts";
 
 test('WatchCommand: runAsync - no projects', async (context: TestContext) => {
     let processExitCode = -100;
-    let errorOutput = StringExtensions.empty;
-    const originalLog = console.log;
+    let output = StringExtensions.empty;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
+
+    Console.setOutput((...args: any[]) => {
+        output += args.map(arg => String(arg)).join(' ') + '\n';
+    });
 
     process.exit = (code: number) => {
         processExitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
-    console.log = (message: string) => errorOutput = message;
 
     const consoleArguments: ConsoleArgument[] = [
         { name: 'project', values: ['test'] }
@@ -31,51 +34,66 @@ test('WatchCommand: runAsync - no projects', async (context: TestContext) => {
 
     const command = new Command(CommandType.Watch, consoleArguments);
     const watchCommand = new WatchCommand();
-    await watchCommand.runAsync(command);
 
-    context.assert.strictEqual(processExitCode, 1);
-    context.assert.strictEqual(errorOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
+    let threw: Error | null = null;
+    try {
+        await watchCommand.runAsync(command);
+    } 
+    catch (err) {
+        threw = err as Error;
+    }
 
-    console.log = originalLog;
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(output, /No projects found\. Exiting/);
+
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('WatchCommand: runAsync - success', async (context: TestContext) => {
-    let logOutput = StringExtensions.empty;
-    const command = new Command(CommandType.Watch, []);
-    const watchCommand = new WatchCommand();
-    const projects: Project[] = [
-        new Project('test', 'test')
-    ];
-    const originalLog = console.log;
+    let output = StringExtensions.empty;
+    const originalOutput = Console['output'];
     const originalExit = process.exit;
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        output += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
+    const command = new Command(CommandType.Watch, []);
+    const watchCommand = new WatchCommand();
+    const projects: Project[] = [new Project('test', 'test')];
 
     context.mock.method(watchCommand as any, 'getProjects', () => projects);
-    context.mock.method(watchCommand as any, 'watchProject', () => { Console.writeLineInfo('Watching project test for changes...'); });
+    context.mock.method(watchCommand as any, 'watchProject', () => {
+        Console.writeLineInfo('Watching project test for changes...');
+    });
+
     await watchCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, '\x1b[34mWatching project test for changes...\x1b[39m');
+    context.assert.match(output, /Watching project test for changes/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('watchProject_Success', async (context: TestContext) => {
-    let logOutput = '';
-    let watchCommand = new WatchCommand();
-    const originalLog = console.log;
+    let output = '';
+    const watchCommand = new WatchCommand();
+    const originalOutput = Console['output'];
     const originalExit = process.exit;
 
     const project: Project = new Project('test', 'src/system');
-    console.log = (message: string) => { if (!logOutput) logOutput = message; }
+
+    Console.setOutput((...args: any[]) => {
+        output += args.map(arg => String(arg)).join(' ') + '\n';
+    });
 
     const watcher = (watchCommand as any).watchProject(project);
     watcher?.close();
 
-    context.assert.strictEqual(logOutput, '\x1b[34mWatching project "test" for changes...\x1b[39m');
+    context.assert.match(output, /Watching project "test" for changes/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });

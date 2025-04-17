@@ -7,15 +7,15 @@
  */
 
 export class ObjectExtensions {
-    public static isNullOrUndefined(value: any): boolean {
-        return this.isNull(value) || this.isUndefined(value);
-    }
-
-    public static isNull(value: any): boolean {
+    public static isNull(value: unknown): value is null {
         return value === null;
     }
 
-    public static isUndefined(value: any): boolean {
+    public static isUndefined(value: unknown): value is undefined {
         return value === undefined;
+    }
+
+    public static isNullOrUndefined<T>(value: T | null | undefined): value is null | undefined {
+        return value === null || value === undefined;
     }
 }

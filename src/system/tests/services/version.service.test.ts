@@ -8,8 +8,9 @@
 
 import test, { TestContext } from 'node:test';
 import { VersionService } from "../../src/services/version.service.ts";
+import { Console } from "../../src/services/console.ts";
 
-const CURRENT_VERSION = "0.4.7"
+const CURRENT_VERSION = "0.4.7";
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();
@@ -18,12 +19,13 @@ test('VersionService: get - success', async (context: TestContext) => {
 
 test('VersionService: display - success', async (context: TestContext) => {
     let consoleText = '';
-    const originalLog = console.log;
-    console.log = (message: string) => consoleText += message;
+    Console.setOutput((message: string) => consoleText += message + '\n');
 
     VersionService.display();
 
-    context.assert.match(consoleText, /ContextJS/);
+    context.assert.match(consoleText, /Node: v?\d+\.\d+\.\d+/);
+    context.assert.match(consoleText, /OS: (linux|darwin|win32)/);
+    context.assert.match(consoleText, /____/);
 
-    console.log = originalLog;
+    Console.resetOutput();
 });

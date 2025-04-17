@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from '@contextjs/system';
+import { Console } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { APITemplatesService } from '../../../src/services/templates/api-templates.service.js';
 
@@ -20,21 +20,34 @@ Options             Description
 -n, --name          The name of the project to create.
 `;
 
-    const originalLog = console.log;
     const originalExit = process.exit;
-    let logOutput = StringExtensions.empty;
-    let exitCode = -100;
-    console.log = (message: string) => logOutput = message;
+    const originalOutput = Console['output'];
+    let output = '';
+    let exitCode = -1;
+
+    const stripAnsi = (text: string): string => text.replace(/\x1B\[[0-9;]*m/g, '');
+
+    Console.setOutput((...args: any[]) => {
+        output += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
     };
 
-    await new APITemplatesService().displayHelpAsync();
+    try {
+        await new APITemplatesService().displayHelpAsync();
+    }
+    catch { }
+
+    const cleanOutput = stripAnsi(output);
+    const helpTextIndex = cleanOutput.indexOf('The "ctx new api" command');
+    const justHelpText = helpTextIndex !== -1 ? cleanOutput.slice(helpTextIndex).trim() : '';
 
     context.assert.strictEqual(exitCode, 0);
-    context.assert.strictEqual(logOutput, expectedHelpText);
+    context.assert.strictEqual(justHelpText, expectedHelpText.trim());
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });

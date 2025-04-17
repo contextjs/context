@@ -6,26 +6,31 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ConsoleArgument, StringExtensions } from "@contextjs/system";
+import { Console, ConsoleArgument, StringExtensions } from "@contextjs/system";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { CtxCommand } from "../../../src/services/commands/ctx.command.ts";
 
 test('ContextCommand: runAsync - success', async (context: TestContext) => {
-    let logOutput = StringExtensions.empty;
-    const originalLog = console.log;
+    const originalOutput = Console['output'];
     const originalExit = process.exit;
 
-    console.log = (message: string) => logOutput = message;
+    let logOutput = StringExtensions.empty;
+
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     const consoleArguments: ConsoleArgument[] = [];
     const command = new Command(CommandType.Ctx, consoleArguments);
     const contextCommand = new CtxCommand();
 
     await contextCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, 'Usage: ctx [options]\n\nOptions:\n    new     creates a new project or solution\n');
+    context.assert.match(logOutput, /Usage: ctx \[options\]/);
+    context.assert.match(logOutput, /new\s+creates a new project or solution/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });

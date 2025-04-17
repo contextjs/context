@@ -7,20 +7,19 @@
  */
 
 export class StringExtensions {
-
-    private static lineBreaks = ['\r', '\n', '\u0085', '\u2028', '\u2029'];
+    private static readonly lineBreaks = ['\r', '\n', '\u0085', '\u2028', '\u2029'];
 
     public static readonly empty: string = "";
 
-    public static isNullOrEmpty(value: string | null | undefined): boolean {
+    public static isNullOrEmpty(value: string | null | undefined): value is null | undefined | "" {
         return value === null || value === undefined || value === StringExtensions.empty;
     }
 
-    public static isNullOrUndefined(value: string | null | undefined): boolean {
+    public static isNullOrUndefined(value: string | null | undefined): value is null | undefined {
         return value === null || value === undefined;
     }
 
-    public static isNullOrWhiteSpace(value: string | null | undefined): boolean {
+    public static isNullOrWhiteSpace(value: string | null | undefined): value is null | undefined | "" {
         return this.isNullOrEmpty(value) || value?.trim() === StringExtensions.empty;
     }
 
@@ -49,7 +48,7 @@ export class StringExtensions {
     }
 
     public static containsOnlyLineBreaksAndSpaces(value: string): boolean {
-        return /^[\s\n\r]*$/.test(value);
+        return /^[\s\n\r\u0085\u2028\u2029]*$/.test(value);
     }
 
     public static format(template: string, ...args: any[]): string {

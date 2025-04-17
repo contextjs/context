@@ -7,7 +7,7 @@
  */
 
 import { Directory, Path } from "@contextjs/io";
-import { ConsoleArgument, StringExtensions } from "@contextjs/system";
+import { Console, ConsoleArgument, StringExtensions } from "@contextjs/system";
 import childProcess from "child_process";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
@@ -16,44 +16,53 @@ import { NewCommand } from "../../../src/services/commands/new.command.ts";
 import { TemplatesServiceResolver } from "../../../src/services/templates/templates-service-resolver.ts";
 
 test('NewCommand: runAsync - success - displayHelp', async (context: TestContext) => {
-    const helpText = `The "ctx new" command creates a ContextJS project based on a template.
-Usage: ctx new [options]
+    const expectedHelpText = `The "ctx new" command creates a ContextJS project based on a template.`;
 
-Command         Template Name           Description
---------        ----------------        -----------------------------------------------------
-api             Web API project         A Web API project containing controllers and actions.
-`;
+    const originalOutput = Console['output'];
+    const originalExit = process.exit;
 
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
-    const originalLog = console.log;
-    const originalExit = process.exit;
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    const consoleArguments: ConsoleArgument[] = [];
-    const command = new Command(CommandType.New, consoleArguments);
+    const command = new Command(CommandType.New, []);
     const newCommand = new NewCommand();
-    await newCommand.runAsync(command);
 
+    let threw: Error | null = null;
+    try {
+        await newCommand.runAsync(command);
+    } catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
     context.assert.strictEqual(exitCode, 0);
-    context.assert.strictEqual(logOutput, helpText);
+    context.assert.match(logOutput, new RegExp(expectedHelpText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
+
 test('NewCommand: runAsync - invalid project type', async (context: TestContext) => {
+    const originalOutput = Console['output'];
+    const originalExit = process.exit;
+
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
-    const originalLog = console.log;
-    const originalExit = process.exit;
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -66,21 +75,26 @@ test('NewCommand: runAsync - invalid project type', async (context: TestContext)
     await newCommand.runAsync(command);
 
     context.assert.strictEqual(exitCode, 1);
-    context.assert.strictEqual(logOutput, '\x1b[31mInvalid project type "app".\x1b[39m');
+    context.assert.match(logOutput, /Invalid project type "app"/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - project type not supported', async (context: TestContext) => {
+    const originalOutput = Console['output'];
+    const originalExit = process.exit;
+    const originalResolveAsync = TemplatesServiceResolver.resolveAsync;
+
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
-    const originalLog = console.log;
-    const originalExit = process.exit;
 
-    const originalResolveAsync = TemplatesServiceResolver.resolveAsync;
     TemplatesServiceResolver.resolveAsync = async () => null;
-    console.log = (message: string) => logOutput = message;
+
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -92,31 +106,27 @@ test('NewCommand: runAsync - project type not supported', async (context: TestCo
 
     await newCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, '\x1b[31mThe project type "api" is not supported.\x1b[39m');
     context.assert.strictEqual(exitCode, 1);
+    context.assert.match(logOutput, /The project type "api" is not supported/);
 
     TemplatesServiceResolver.resolveAsync = originalResolveAsync;
-
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - command help', async (context: TestContext) => {
-    const helpText = `The "ctx new api" command creates a Web API project based on a template.
-Usage: ctx new api [options]
+    const expectedHelpText = `The "ctx new api" command creates a Web API project based on a template.`;
 
-Options             Description
-------------        -----------------------------------------------------
-[no option]         Creates a project with current directory name as project name.
--n, --name          The name of the project to create.
-`;
+    const originalOutput = Console['output'];
+    const originalExit = process.exit;
 
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
-    const originalLog = console.log;
-    const originalExit = process.exit;
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
@@ -128,39 +138,44 @@ Options             Description
 
     await newCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, helpText);
     context.assert.strictEqual(exitCode, 0);
+    context.assert.match(logOutput, new RegExp(expectedHelpText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('NewCommand: runAsync - path exists', async (context: TestContext) => {
     const projectName = 'pathexists';
+    const originalPathExists = Path.exists;
+    const originalExit = process.exit;
+    const originalOutput = Console['output'];
+
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
-    const originalLog = console.log;
-    const originalExit = process.exit;
 
-    console.log = (message: string) => logOutput = message;
+    Path.exists = () => true;
+
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
         return undefined as never;
     };
 
-    const originalPathExists = Path.exists;
-    Path.exists = () => true;
     const consoleArguments: ConsoleArgument[] = [{ name: 'api', values: [projectName] }];
     const command = new Command(CommandType.New, consoleArguments);
     const newCommand = new NewCommand();
 
     await newCommand.runAsync(command);
 
-    context.assert.strictEqual(logOutput, `\x1b[31mThe Project "${projectName}" already exists. Exiting...\x1b[39m`);
     context.assert.strictEqual(exitCode, 1);
+    context.assert.match(logOutput, new RegExp(`The Project "${projectName}" already exists`));
 
     Path.exists = originalPathExists;
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 

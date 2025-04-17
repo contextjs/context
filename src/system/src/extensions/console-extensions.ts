@@ -7,8 +7,8 @@
  */
 
 export type ConsoleMessage = {
-    format: ForegroundColors | BackgroundColors | Modifiers | Array<ForegroundColors | BackgroundColors | Modifiers>,
-    text: any
+    format: ForegroundColors | BackgroundColors | Modifiers | Array<ForegroundColors | BackgroundColors | Modifiers>;
+    text: any;
 };
 
 export type Modifiers =

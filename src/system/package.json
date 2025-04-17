@@ -2,6 +2,7 @@
   "name": "@contextjs/system",
   "version": "__VERSION__",
   "main": "api/index.js",
+  "types": "api/index.d.ts",
   "description": "ContextJS - System",
   "author": "ContextJS",
   "license": "MIT",
@@ -10,5 +11,13 @@
     "type": "git",
     "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/system"
-  }
+  },
+  "keywords": [
+    "contextjs",
+    "system",
+    "cli",
+    "utilities",
+    "environment",
+    "console"
+  ]
 }

@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from '@contextjs/system';
+import { Console, StringExtensions } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { CommandsService } from "../../../src/services/commands/commands.service.ts";
@@ -42,21 +42,35 @@ test('CommandsService: parse - no arguments', (context: TestContext) => {
 });
 
 test('CommandsService: parse - invalid command', (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
+
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
+
     process.argv = [StringExtensions.empty, StringExtensions.empty, 'invalid'];
 
-    console.log = (message: string) => logOutput = message;
-    process.exit = (code: number) => { exitCode = code; return undefined as never; };
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
 
-    CommandsService.parse();
+    process.exit = (code: number) => {
+        exitCode = code;
+        throw new Error(`exit:${code}`);
+    };
 
-    context.assert.strictEqual(logOutput, '\x1b[31mInvalid command provided. Exiting...\x1b[39m');
-    context.assert.strictEqual(exitCode, 1);
+    let threw: Error | null = null;
 
-    console.log = originalLog;
+    try {
+        CommandsService.parse();
+    } catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(logOutput, /Invalid command provided\. Exiting/);
+
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
-

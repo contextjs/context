@@ -10,33 +10,44 @@ import { Console } from "../services/console.js";
 import { EnvironmentName } from "./environment-name.js";
 
 export class Environment {
-    public name: string = EnvironmentName.development;
+    private _name: string;
+
+    public constructor(args: string[] = process.argv.slice(2)) {
+        this._name = this.extractEnvironmentName(args);
+    }
+
+    public get name(): string {
+        return this._name;
+    }
+
+    public set name(value: string) {
+        this._name = value.toLowerCase();
+    }
 
     public get isDevelopment(): boolean {
-        return this.name.toLowerCase() === EnvironmentName.development;
+        return this._name === EnvironmentName.development;
     }
 
     public get isProduction(): boolean {
-        return this.name.toLowerCase() === EnvironmentName.production;
+        return this._name === EnvironmentName.production;
     }
 
     public get isTest(): boolean {
-        return this.name.toLowerCase() === EnvironmentName.test;
+        return this._name === EnvironmentName.test;
     }
 
     public get isStaging(): boolean {
-        return this.name.toLowerCase() === EnvironmentName.staging;
+        return this._name === EnvironmentName.staging;
     }
 
-    public constructor() {
-        this.getEnvironment();
+    public toString(): string {
+        return this._name;
     }
 
-    private getEnvironment() {
-        const args = Console.parseArguments(process.argv.slice(2));
-        const environmentArgument = args.find(t => t.name === '--environment' || t.name === '-e');
-
-        if (environmentArgument && environmentArgument.values.length > 0)
-            this.name = environmentArgument.values[0];
+    private extractEnvironmentName(args: string[]): string {
+        const parsed = Console.parseArguments(args);
+        const envArg = parsed.find(t => t.name === '--environment' || t.name === '-e');
+        const env = envArg?.values?.[0]?.toLowerCase();
+        return env || EnvironmentName.development;
     }
 }

@@ -15,6 +15,6 @@
 - **[@contextjs/io](https://github.com/contextjs/context/tree/main/src/io)**: Tools for file operations, path management, and directory handling.
 - **[@contextjs/parser](https://github.com/contextjs/context/tree/main/src/parser)**: ContextJS parser
 - **[@contextjs/routing](https://github.com/contextjs/context/tree/main/src/routing)**: Define and manage application routes.
-- **[@contextjs/system](https://github.com/contextjs/context/tree/main/src/system)**: System utilities including console services, exception handling, and common extensions.
+- **[@contextjs/system](https://github.com/contextjs/context/tree/main/src/system)**: A zero-dependency system utility library for the ContextJS ecosystem, providing application lifecycle, environment detection, console formatting, exception handling, and core extensions — all written with full type safety.
 - **[@contextjs/webserver](https://github.com/contextjs/context/tree/main/src/webserver)**: ContextJS Web Server
 - **[@contextjs/webserver-middleware-static](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static)**: Static files middleware for ContextJS webserver.
