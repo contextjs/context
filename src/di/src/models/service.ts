@@ -6,15 +6,17 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ServiceLifetime } from "../enums/service-lifetime.js";
+import { ConstructorParameter } from "./constructor-parameter.js";
+import { ServiceLifetime } from "./service-lifetime.js";
 
 export class Service {
     public readonly lifetime: ServiceLifetime;
     public readonly type: any;
-    public instance: any | null = null;
+    public readonly parameters: ConstructorParameter[];
 
-    public constructor(lifetime: ServiceLifetime, type: any) {
-        this.lifetime = lifetime;
+    public constructor(type: any, lifetime: ServiceLifetime, parameters: ConstructorParameter[]) {
         this.type = type;
+        this.lifetime = lifetime;
+        this.parameters = parameters;
     }
 }

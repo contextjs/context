@@ -8,9 +8,9 @@
 
 import { Exception } from "@contextjs/system";
 
-export class InvalidScopeException extends Exception {
-    constructor(scopeName: string) {
-        super(`Invalid scope "${scopeName}".`);
-        this.name = "InvalidScopeException";
+export class CircularDependencyException extends Exception {
+    constructor(dependencyName: string) {
+        super(`Circular dependency detected: ${dependencyName}.`);
+        this.name = "CircularDependencyException";
     }
 }

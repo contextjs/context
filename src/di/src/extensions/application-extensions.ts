@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/system";
+import { Application, ObjectExtensions, Throw } from "@contextjs/system";
 import { ServiceCollection } from "../service-collection.js";
 import { DependencyInjectionOptions } from "./dependency-injection-options.js";
 
@@ -18,14 +18,15 @@ declare module "@contextjs/system" {
 }
 
 Application.prototype.useDependencyInjection = function (options: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application {
-
     Throw.ifNullOrUndefined(options);
 
     const dependencyInjectionOptions = new DependencyInjectionOptions();
     options(dependencyInjectionOptions);
 
-    this.services = new ServiceCollection();
+    if (ObjectExtensions.isNullOrUndefined(this.services))
+        this.services = new ServiceCollection();
+
+    this.services.onResolve = dependencyInjectionOptions.onResolve;
 
     return this;
 }
-
