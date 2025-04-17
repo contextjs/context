@@ -14,4 +14,8 @@ export class ConsoleArgument {
         this.name = name;
         this.values = values;
     }
+
+    public toString(): string {
+        return `${this.name}: ${this.values.join(", ")}`;
+    }
 }

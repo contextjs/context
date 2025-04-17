@@ -6,12 +6,18 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from '../../src/exceptions/exception.ts';
 import test, { TestContext } from 'node:test';
+import { Exception } from '../../src/exceptions/exception.ts';
 
 test('Exception: instance - success', (context: TestContext) => {
     const exception = new Exception("Test Exception");
     context.assert.ok(exception instanceof Exception);
+    context.assert.ok(exception instanceof Error); // ensure base class
+});
+
+test('Exception: name - success', (context: TestContext) => {
+    const exception = new Exception("Test Exception");
+    context.assert.strictEqual(exception.name, "Exception");
 });
 
 test('Exception: message - success', (context: TestContext) => {
@@ -22,4 +28,10 @@ test('Exception: message - success', (context: TestContext) => {
 test('Exception: toString - success', (context: TestContext) => {
     const exception = new Exception("Test Exception");
     context.assert.strictEqual(exception.toString(), "Exception: Test Exception");
+});
+
+test('Exception: supports cause', (context: TestContext) => {
+    const original = new Error("Original cause");
+    const exception = new Exception("With cause", { cause: original });
+    context.assert.strictEqual(exception.cause, original);
 });

@@ -181,3 +181,24 @@ test('StringExtensions: format - failure', (context: TestContext) => {
     const exclamation = "!";
     context.assert.notStrictEqual(StringExtensions.format(template, world, exclamation), "Hello World");
 });
+
+test('StringExtensions: type narrowing - isNullOrEmpty', (context: TestContext) => {
+    const value: string | null | undefined = "contextjs";
+
+    if (!StringExtensions.isNullOrEmpty(value)) {
+        const upper = value.toUpperCase();
+        context.assert.strictEqual(upper, "CONTEXTJS");
+    } else
+        context.assert.ok(true);
+});
+
+test('StringExtensions: type narrowing - isNullOrWhiteSpace', (context: TestContext) => {
+    const value: string | null | undefined = "ContextJS";
+
+    if (!StringExtensions.isNullOrWhiteSpace(value)) {
+        const first = value.charAt(0);
+        context.assert.strictEqual(first, "C");
+    }
+    else
+        context.assert.ok(true);
+});

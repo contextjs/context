@@ -4,13 +4,122 @@
 [![npm](https://badgen.net/npm/v/@contextjs/system?cache=300)](https://www.npmjs.com/package/@contextjs/system)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-System functionality, such as console services, base exception classes, and common object and string extensions.  
+> A zero-dependency system utility library for the ContextJS ecosystem, providing application lifecycle, environment detection, console formatting, exception handling, and core extensions — all written with full type safety.
 
-### Installation
+---
 
-```
+## ✨ Features
+
+- **Application lifecycle management** with `onRun()` hooks
+- **Environment detection** with development/production/test/staging support
+- **Console formatting** with ANSI styles and argument parsing
+- **Typed exceptions** like `NullReferenceException`
+- **Core helpers** for object and string manipulation with type guards
+- **Type-safe utility `Throw` guard methods**
+- **Fully tested**, 100% coverage, no dependencies
+
+---
+
+## 📆 Installation
+
+```bash
 npm i @contextjs/system
 ```
+
+---
+
+## 🚀 Quick Start
+
+### 1. Run an application
+
+```ts
+import { Application } from '@contextjs/system';
+
+const app = new Application();
+
+app.onRun(async () => {
+    console.log("App booted");
+});
+
+await app.runAsync();
+```
+
+### 2. Check environment
+
+```ts
+if (app.environment.isProduction)
+    console.log("Running in production");
+```
+
+Run with:
+
+```bash
+node app.js --environment production
+```
+
+---
+
+## 🎨 Console Formatting
+
+```ts
+Console.writeLineSuccess('✔ Success');
+Console.writeLineWarning('⚠ Warning');
+Console.writeLineError('✖ Error');
+Console.writeLineInfo('ℹ Info');
+
+Console.writeLineFormatted({ format: ['bold', 'green'], text: 'Styled' });
+```
+
+---
+
+## 📚 Common Utilities
+
+### Guard with `Throw`
+
+```ts
+Throw.ifNullOrWhiteSpace(name);
+Throw.ifNullOrEmpty(configPath);
+Throw.ifNull(obj);
+```
+
+### Use string helpers
+
+```ts
+StringExtensions.removeWhiteSpaces("a b c"); // "abc"
+StringExtensions.isNullOrWhiteSpace(value); // true or false
+```
+
+### Check object null state
+
+```ts
+if (!ObjectExtensions.isNullOrUndefined(value)) {
+    // TypeScript will narrow the type
+}
+```
+
+---
+
+## 🧪 Testing
+
+This library is fully covered with unit tests using Node's native `test` module.
+
+Test coverage includes:
+- Environment parsing
+- Console formatting
+- String/object helpers
+- Throw guard behavior
+- Version display
+- Application lifecycle execution
+
+---
+
+## 💡 Philosophy
+
+@contextjs/system is built to be the minimal core foundation for higher-level libraries in the ContextJS ecosystem.
+It provides safe, strongly-typed primitives that you can rely on without reflection, decorators, or external dependencies.
+
+## 📘 API Reference
+
 ### Application
 
 ```typescript

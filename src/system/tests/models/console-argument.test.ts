@@ -21,3 +21,8 @@ test('ConsoleArgument: constructor - success', (context: TestContext) => {
     context.assert.strictEqual(argument.values[0], 'value1');
     context.assert.strictEqual(argument.values[1], 'value2');
 });
+
+test('ConsoleArgument: toString - success', (context: TestContext) => {
+    const argument = new ConsoleArgument('--env', ['dev', 'test']);
+    context.assert.strictEqual(argument.toString(), '--env: dev, test');
+});

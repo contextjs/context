@@ -24,3 +24,14 @@ test('ProjectTypeExtensions: toString - success', (context: TestContext) => {
 test('ProjectTypeExtensions: fromString - success', (context: TestContext) => {
     context.assert.strictEqual(ProjectTypeExtensions.fromString("API"), ProjectType.API);
 });
+
+test('ProjectTypeExtensions: toString - fallback', (context: TestContext) => {
+    const invalid = -1 as ProjectType;
+    context.assert.strictEqual(ProjectTypeExtensions.toString(invalid), null);
+});
+
+test('ProjectTypeExtensions: fromString - fallback', (context: TestContext) => {
+    context.assert.strictEqual(ProjectTypeExtensions.fromString("unknown"), null);
+    context.assert.strictEqual(ProjectTypeExtensions.fromString(""), null);
+    context.assert.strictEqual(ProjectTypeExtensions.fromString("123"), null);
+});

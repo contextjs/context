@@ -66,23 +66,23 @@ export declare class ObjectExtensions {
     /**
      * Checks if the given value is null or undefined.
      * @param {any} value - The value to check.
-     * @returns {boolean} True if the value is null or undefined, otherwise false.
+     * @returns {value is null | undefined} True if the value is null or undefined, otherwise false.
      */
-    public static isNullOrUndefined(value: any): boolean;
+    public static isNullOrUndefined(value: any): value is null | undefined;
 
     /**
      * Checks if the given value is null.
      * @param {any} value - The value to check.
-     * @returns {boolean} True if the value is null, otherwise false.
+     * @returns {value is null} True if the value is null, otherwise false.
      */
-    public static isNull(value: any): boolean;
+    public static isNull(value: any): value is null;
 
     /**
      * Checks if the given value is undefined.
      * @param {any} value - The value to check.
-     * @returns {boolean} True if the value is undefined, otherwise false.
+     * @returns {value is undefined} True if the value is undefined, otherwise false.
      */
-    public static isUndefined(value: any): boolean;
+    public static isUndefined(value: any): value is undefined;
 }
 
 /**
@@ -96,79 +96,79 @@ export declare class StringExtensions {
 
     /**
      * Checks if the given string is null or empty.
-     * @param {string | null | undefined} value - The string to check.
-     * @returns {boolean} True if the string is null or empty, otherwise false.
+     * @param value The string to check.
+     * @returns {value is null | undefined | ""} True if the string is null or empty.
      */
-    public static isNullOrEmpty(value: string | null | undefined): boolean;
+    public static isNullOrEmpty(value: string | null | undefined): value is null | undefined | "";
 
     /**
      * Checks if the given value is null or undefined.
-     * @param {string | null | undefined} value - The value to check.
-     * @returns {boolean} True if the value is null or undefined, otherwise false.
+     * @param value The value to check.
+     * @returns {value is null | undefined} True if null or undefined.
      */
-    public static isNullOrUndefined(value: string | null | undefined): boolean;
+    public static isNullOrUndefined(value: string | null | undefined): value is null | undefined;
 
     /**
-     * Checks if the given string is null or contains only whitespaces.
-     * @param {string | null | undefined} value - The string to check.
-     * @returns {boolean} True if the string is null or white space, otherwise false.
+     * Checks if the string is null or whitespace.
+     * @param value The string to check.
+     * @returns {value is null | undefined | ""} True if null, empty, or only whitespace.
      */
-    public static isNullOrWhiteSpace(value: string | null | undefined): boolean;
+    public static isNullOrWhiteSpace(value: string | null | undefined): value is null | undefined | "";
 
     /**
-     * Removes all white spaces from the given string.
-     * @param {string} value - The string to process.
-     * @returns {string} The string without white spaces.
+     * Removes all white spaces from the string.
+     * @param value The string to process.
+     * @returns {string} The trimmed string.
      */
     public static removeWhiteSpaces(value: string): string;
 
     /**
-     * Checks if a character is a line break.
+     * Checks if the character is a line break.
      * @param value The character to check.
-     * @returns True if the character is a line break; otherwise, false.
+     * @returns {boolean} True if line break.
      */
     public static isLineBreak(value: string): boolean;
 
     /**
-     * Checks if a character is a digit (0-9).
+     * Checks if the character is a digit.
      * @param character The character to check.
-     * @returns True if the character is a digit; otherwise, false.
+     * @returns {boolean} True if digit.
      */
     public static isDigit(character: string): boolean;
 
     /**
-     * Checks if a character is a letter from any language (Unicode letters).
+     * Checks if the character is a Unicode letter.
      * @param character The character to check.
-     * @returns True if the character is a letter from any language; otherwise, false.
+     * @returns {boolean} True if letter.
      */
     public static isLetter(character: string): boolean;
 
     /**
-     * Checks if a character is letter or digit.
+     * Checks if the character is a letter or digit.
      * @param value The character to check.
-     * @returns True if the character is letter or digit; otherwise, false.
+     * @returns {boolean} True if letter or digit.
      */
     public static isLetterOrDigit(value: string): boolean;
 
     /**
-     * Checks if a character is a whitespace character.
+     * Checks if the character is a whitespace character.
      * @param value The character to check.
-     * @returns True if the character is a whitespace character; otherwise, false.
+     * @returns {boolean} True if whitespace.
      */
     public static isWhitespace(value: string): boolean;
 
     /**
      * Checks if a string contains only line breaks and spaces.
      * @param value The string to check.
-     * @returns True if the string contains only line breaks and spaces; otherwise, false.
+     * @returns {boolean} True if only line breaks and spaces.
      */
     public static containsOnlyLineBreaksAndSpaces(value: string): boolean;
 
     /**
-     * Formats a string with the given arguments.
-     * @param template The string template.
-     * @param args The arguments to format the string.
-     * @returns The formatted string.
+     * Formats a string using positional arguments.
+     * @param template The format string.
+     * @param args The values to insert.
+     * @returns {string} The formatted string.
      */
     public static format(template: string, ...args: any[]): string;
 }
@@ -216,6 +216,12 @@ export declare class ConsoleArgument {
      * @param {string[]} values - The values associated with the argument.
      */
     constructor(name: string, values: string[]);
+
+    /**
+     * Converts the console argument to a string.
+     * @returns {string} The string representation of the console argument.
+     */
+    public toString(): string;
 }
 
 export type ConsoleMessage = {
@@ -393,6 +399,18 @@ export declare class Console {
      * Removes the last line from the console.
      */
     public static removeLastLine(): void;
+
+    /**
+     * Sets the output function for the console.
+     * @param {(...args: any[]) => void} writer - The function to set as the output.
+     */
+    public static setOutput(writer: (...args: any[]) => void): void;
+
+    /**
+     * Resets the output function to the default console log.
+     * @returns {void}
+     */
+    public static resetOutput(): void;
 }
 
 /**

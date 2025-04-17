@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/system";
+import { Console, StringExtensions } from "@contextjs/system";
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
@@ -14,54 +14,76 @@ import { Project } from "../../../src/models/project.ts";
 import { RestoreCommand } from "../../../src/services/commands/restore.command.ts";
 
 test('RestoreCommand: runAsync(--project) - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
-    process.argv = [StringExtensions.empty, StringExtensions.empty, 'restore', '--project',];
 
-    const command: Command = new Command(CommandType.Restore, []);
+    process.argv = ['', '', 'restore', '--project'];
+
+    const command = new Command(CommandType.Restore, []);
     const restoreCommand = new RestoreCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await restoreCommand.runAsync(command);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
+    try {
+        await restoreCommand.runAsync(command);
+    } catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
     context.assert.strictEqual(exitCode, 1);
+    context.assert.match(logOutput, /No projects found\. Exiting/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
 test('RestoreCommand: runAsync(--p) - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
-    process.argv = [StringExtensions.empty, StringExtensions.empty, 'restore', '--p', 'api'];
 
-    const command: Command = new Command(CommandType.Restore, []);
+    process.argv = ['', '', 'restore', '--p', 'api'];
+
+    const command = new Command(CommandType.Restore, []);
     const restoreCommand = new RestoreCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await restoreCommand.runAsync(command);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo projects found. Exiting...\x1b[39m');
+    try {
+        await restoreCommand.runAsync(command);
+    } catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
     context.assert.strictEqual(exitCode, 1);
+    context.assert.match(logOutput, /No projects found\. Exiting/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });
 
@@ -87,26 +109,35 @@ test('RestoreCommand: runAsync - success', async (context: TestContext) => {
 });
 
 test('RestoreCommand: restore - success', async (context: TestContext) => {
-    const originalLog = console.log;
     const originalExit = process.exit;
+    const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
     let exitCode = 0;
     const project = new Project('project1', 'path1');
-
     const restoreCommand = new RestoreCommand();
 
-    console.log = (message: string) => logOutput = message;
+    Console.setOutput((...args: any[]) => {
+        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
+    });
+
     process.exit = (code: number) => {
         exitCode = code;
-        return undefined as never;
+        throw new Error(`exit:${code}`);
     };
 
-    await (restoreCommand as any).restoreAsync(project);
+    let threw: Error | null = null;
 
-    context.assert.strictEqual(logOutput, '\x1b[31mNo context file found. Exiting...\x1b[39m');
+    try {
+        await (restoreCommand as any).restoreAsync(project);
+    } catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
     context.assert.strictEqual(exitCode, 1);
+    context.assert.match(logOutput, /No context file found\. Exiting/);
 
-    console.log = originalLog;
+    Console.setOutput(originalOutput);
     process.exit = originalExit;
 });

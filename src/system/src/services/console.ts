@@ -13,25 +13,26 @@ import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
 
 export class Console {
+    private static output = console.log;
+
     public static parseArguments(args: string[]): ConsoleArgument[] {
-        let parsedArguments: ConsoleArgument[] = [];
+        const parsedArguments: ConsoleArgument[] = [];
 
         if (args.length == 0)
             return parsedArguments;
 
         let currentArgument: ConsoleArgument | null = null;
 
-        args.forEach(argument => {
+        for (const argument of args) {
             if (argument.startsWith('-')) {
-                if ((argument[1] === '-' && argument.length == 3) ||
-                    (argument[1] !== '-' && argument.length !== 2)) {
-                    Console.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
-                    return process.exit(1);
+                if (!this.isValidArgument(argument)) {
+                    this.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
+                    process.exit(1);
                 }
 
-                const existingArgument = parsedArguments.find(a => a.name === argument);
-                if (existingArgument)
-                    currentArgument = existingArgument;
+                const existing = parsedArguments.find(a => a.name === argument);
+                if (existing)
+                    currentArgument = existing;
                 else {
                     currentArgument = new ConsoleArgument(argument, []);
                     parsedArguments.push(currentArgument);
@@ -45,7 +46,7 @@ export class Console {
                 else
                     currentArgument!.values.push(argument);
             }
-        });
+        }
 
         return parsedArguments;
     }
@@ -67,15 +68,27 @@ export class Console {
     }
 
     public static writeLine(message: any, ...messages: any[]): void {
-        console.log(message, ...messages);
+        this.output(message, ...messages);
     }
 
     public static writeLineFormatted(message: ConsoleMessage, ...messages: ConsoleMessage[]): void {
-        console.log(styleText(message.format, message.text), ...messages.map(m => styleText(m.format, m.text)));
+        this.output(styleText(message.format, message.text), ...messages.map(m => styleText(m.format, m.text)));
     }
 
     public static removeLastLine(): void {
         readline.moveCursor(process.stdout, 0, -1);
         readline.clearLine(process.stdout, 1);
+    }
+
+    public static setOutput(writer: (...args: any[]) => void): void {
+        this.output = writer;
+    }
+
+    public static resetOutput(): void {
+        this.output = console.log;
+    }
+
+    private static isValidArgument(arg: string): boolean {
+        return (arg[1] === '-' && arg.length > 2) || (arg[1] !== '-' && arg.length === 2);
     }
 }

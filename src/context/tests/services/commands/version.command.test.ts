@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from '@contextjs/system';
+import { Console, StringExtensions } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
@@ -16,17 +16,15 @@ test('VersionCommand: runAsync - success', async (context: TestContext) => {
     const command = new Command(CommandType.Version, []);
     const versionCommand = new VersionCommand();
     let consoleText = StringExtensions.empty;
-    const originalLog = console.log;
-    const originalExit = process.exit;
 
-    console.log = (message: string) => {
-        consoleText += message;
-    };
+    const originalOutput = Console['output'];
+    Console.setOutput((...args: any[]) => {
+        consoleText += args.map(arg => String(arg)).join(' ') + '\n';
+    });
 
     await versionCommand.runAsync(command);
 
     context.assert.match(consoleText, /ContextJS/);
 
-    console.log = originalLog;
-    process.exit = originalExit;
+    Console.setOutput(originalOutput);
 });
