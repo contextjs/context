@@ -10,16 +10,21 @@ import test, { TestContext } from 'node:test';
 import { PathNotFoundException } from '../../src/exceptions/path-not-found.exception.ts';
 
 test('PathNotFoundException: instance - success', (context: TestContext) => {
-    const exception = new PathNotFoundException("path");
+    const exception = new PathNotFoundException("/invalid/path");
     context.assert.ok(exception instanceof PathNotFoundException);
 });
 
 test('PathNotFoundException: message - success', (context: TestContext) => {
-    const exception = new PathNotFoundException("path");
-    context.assert.strictEqual(exception.message, "The specified path was not found: path");
+    const exception = new PathNotFoundException("/invalid/path");
+    context.assert.strictEqual(exception.message, "The specified path was not found: /invalid/path");
+});
+
+test('PathNotFoundException: name - success', (context: TestContext) => {
+    const exception = new PathNotFoundException("/invalid/path");
+    context.assert.strictEqual(exception.name, "PathNotFoundException");
 });
 
 test('PathNotFoundException: toString - success', (context: TestContext) => {
-    const exception = new PathNotFoundException("path");
-    context.assert.strictEqual(exception.toString(), "PathNotFoundException: The specified path was not found: path");
+    const exception = new PathNotFoundException("/invalid/path");
+    context.assert.strictEqual(exception.toString(), "PathNotFoundException: The specified path was not found: /invalid/path");
 });

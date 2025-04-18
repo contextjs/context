@@ -7,14 +7,22 @@
  */
 
 import { StringExtensions } from '@contextjs/system';
-import test, { TestContext } from 'node:test';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import test, { TestContext, after } from 'node:test';
 import { Directory } from '../../src/path/directory.ts';
 
-test('Directory: create - success', (context: TestContext) => {
-    const directory = 'directory';
-    context.assert.strictEqual(Directory.create(directory), true);
+const base = fs.mkdtempSync(path.join(os.tmpdir(), 'contextjs-directory-'));
 
-    Directory.delete(directory);
+after(() => {
+    if (fs.existsSync(base))
+        fs.rmSync(base, { recursive: true, force: true });
+});
+
+test('Directory: create - success', (context: TestContext) => {
+    const dir = path.join(base, 'create-success');
+    context.assert.strictEqual(Directory.create(dir), true);
 });
 
 test('Directory: create - throws NullReferenceException', (context: TestContext) => {
@@ -22,51 +30,42 @@ test('Directory: create - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: create - path exists', (context: TestContext) => {
-    const directory = 'directory';
-    Directory.create(directory);
-
-    context.assert.strictEqual(Directory.create(directory), false);
-
-    Directory.delete(directory);
+    const dir = path.join(base, 'create-exists');
+    Directory.create(dir);
+    context.assert.strictEqual(Directory.create(dir), false);
 });
 
 test('Directory: rename - success', (context: TestContext) => {
-    const oldDirectory = 'old-directory';
-    const newDirectory = 'new-directory';
-    Directory.create(oldDirectory);
-    const result = Directory.rename(oldDirectory, newDirectory);
-
+    const oldDir = path.join(base, 'rename-old');
+    const newDir = path.join(base, 'rename-new');
+    Directory.create(oldDir);
+    const result = Directory.rename(oldDir, newDir);
     context.assert.strictEqual(result, true);
-
-    Directory.delete(newDirectory);
 });
 
 test('Directory: rename - throws NullReferenceException', (context: TestContext) => {
-    context.assert.throws(() => Directory.rename(StringExtensions.empty, 'new-directory'));
-    context.assert.throws(() => Directory.rename('old-directory', StringExtensions.empty));
+    context.assert.throws(() => Directory.rename(StringExtensions.empty, 'new-dir'));
+    context.assert.throws(() => Directory.rename('old-dir', StringExtensions.empty));
 });
 
 test('Directory: rename - throws PathNotFoundException', (context: TestContext) => {
-    context.assert.throws(() => Directory.rename('old-directory', 'new-directory'));
+    const oldDir = path.join(base, 'rename-not-found');
+    const newDir = path.join(base, 'rename-target');
+    context.assert.throws(() => Directory.rename(oldDir, newDir));
 });
 
 test('Directory: rename - path exists', (context: TestContext) => {
-    const oldDirectory = 'old-directory';
-    const newDirectory = 'new-directory';
-    Directory.create(oldDirectory);
-    Directory.create(newDirectory);
-
-    context.assert.throws(() => Directory.rename(oldDirectory, newDirectory));
-
-    Directory.delete(oldDirectory);
-    Directory.delete(newDirectory);
+    const oldDir = path.join(base, 'rename-collision-old');
+    const newDir = path.join(base, 'rename-collision-new');
+    Directory.create(oldDir);
+    Directory.create(newDir);
+    context.assert.throws(() => Directory.rename(oldDir, newDir));
 });
 
 test('Directory: delete - success', (context: TestContext) => {
-    const directory = 'directory';
-    Directory.create(directory);
-    const result = Directory.delete(directory);
-
+    const dir = path.join(base, 'delete-success');
+    Directory.create(dir);
+    const result = Directory.delete(dir);
     context.assert.strictEqual(result, true);
 });
 
@@ -75,18 +74,15 @@ test('Directory: delete - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: delete - path does not exist', (context: TestContext) => {
-    const directory = 'directory';
-
-    context.assert.strictEqual(Directory.delete(directory), true);
+    const dir = path.join(base, `delete-missing-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    context.assert.strictEqual(Directory.exists(dir), false);
+    context.assert.strictEqual(Directory.delete(dir), true);
 });
 
 test('Directory: exists - success', (context: TestContext) => {
-    const directory = 'directory';
-    Directory.create(directory);
-
-    context.assert.strictEqual(Directory.exists(directory), true);
-
-    Directory.delete(directory);
+    const dir = path.join(base, 'exists-true');
+    Directory.create(dir);
+    context.assert.strictEqual(Directory.exists(dir), true);
 });
 
 test('Directory: exists - throws NullReferenceException', (context: TestContext) => {
@@ -94,30 +90,24 @@ test('Directory: exists - throws NullReferenceException', (context: TestContext)
 });
 
 test('Directory: exists - path does not exist', (context: TestContext) => {
-    const directory = 'directory';
-
-    context.assert.strictEqual(Directory.exists(directory), false);
+    const dir = path.join(base, 'exists-false');
+    context.assert.strictEqual(Directory.exists(dir), false);
 });
 
 test('Directory: isEmpty - success', (context: TestContext) => {
-    const directory = 'directory';
-    Directory.create(directory);
-
-    context.assert.strictEqual(Directory.isEmpty(directory), true);
-
-    Directory.delete(directory);
+    const dir = path.join(base, 'is-empty-true');
+    Directory.create(dir);
+    context.assert.strictEqual(Directory.isEmpty(dir), true);
 });
 
 test('Directory: isEmpty - throws PathNotFoundException', (context: TestContext) => {
-    context.assert.throws(() => Directory.isEmpty('directory'));
+    const dir = path.join(base, 'is-empty-missing');
+    context.assert.throws(() => Directory.isEmpty(dir));
 });
 
 test('Directory: isEmpty - directory is not empty', (context: TestContext) => {
-    const directory = 'directory';
-    Directory.create(directory);
-    Directory.create(`${directory}/file`);
-
-    context.assert.strictEqual(Directory.isEmpty(directory), false);
-
-    Directory.delete(directory);
+    const dir = path.join(base, 'is-empty-false');
+    Directory.create(dir);
+    fs.writeFileSync(path.join(dir, 'file.txt'), 'data');
+    context.assert.strictEqual(Directory.isEmpty(dir), false);
 });

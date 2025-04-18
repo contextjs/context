@@ -106,7 +106,7 @@ export declare class File {
      * @returns The contents of the file.
      * @throws {FileNotFoundException} When the file does not exist.
      */
-    public static read(file: string): string | null;
+    public static read(file: string): string;
 
     /**
      * Saves content to a file.

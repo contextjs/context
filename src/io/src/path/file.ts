@@ -15,12 +15,12 @@ import { Directory } from "./directory.js";
 import { Path } from "./path.js";
 
 export class File {
-    public static read(file: string): string | null {
+    public static read(file: string): string {
         if (Path.isFile(file))
             return readFileSync(file, 'utf8');
-
+    
         throw new FileNotFoundException(file);
-    }
+    }    
 
     public static save(file: string, content: string, overwrite: boolean = false): boolean {
         Throw.ifNullOrWhiteSpace(file);

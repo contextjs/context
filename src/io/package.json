@@ -1,17 +1,33 @@
 {
   "name": "@contextjs/io",
   "version": "__VERSION__",
+  "description": "File system utilities for reading, writing, and inspecting files, directories, and paths.",
   "main": "api/index.js",
-  "description": "ContextJS - IO",
+  "types": "api/index.d.ts",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contextjs/context.git",
+    "url": "https://github.com/contextjs/context.git",
     "directory": "src/io"
   },
+  "keywords": [
+    "filesystem",
+    "io",
+    "file",
+    "directory",
+    "path",
+    "utility",
+    "contextjs"
+  ],
   "peerDependencies": {
     "@contextjs/system": "__VERSION__"
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
   }
 }
