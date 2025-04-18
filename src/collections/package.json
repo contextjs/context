@@ -1,16 +1,39 @@
 {
   "name": "@contextjs/collections",
   "version": "__VERSION__",
-  "main": "api/index.js",
-  "description": "ContextJS - Collections",
+  "description": "Strongly-typed collection classes for TypeScript, including List, Dictionary, Queue, Stack, and HashSet.",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contextjs/context.git",
+    "url": "https://github.com/contextjs/context.git",
     "directory": "src/collections"
   },
+  "bugs": {
+    "url": "https://github.com/contextjs/context/issues"
+  },
+  "homepage": "https://github.com/contextjs/context/tree/main/src/collections#readme",
+  "keywords": [
+    "typescript",
+    "collections",
+    "list",
+    "dictionary",
+    "stack",
+    "queue",
+    "hashset",
+    "generics",
+    "data-structures",
+    "contextjs"
+  ],
   "peerDependencies": {
     "@contextjs/system": "__VERSION__"
   }

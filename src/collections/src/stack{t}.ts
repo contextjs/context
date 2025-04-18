@@ -20,4 +20,20 @@ export class Stack<T> {
     public get current(): T | null {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
     }
+
+    public clear(): void {
+        this.stack.length = 0;
+    }
+
+    public get count(): number {
+        return this.stack.length;
+    }
+
+    public toArray(): T[] {
+        return this.stack.slice();
+    }
+
+    public get isEmpty(): boolean {
+        return this.stack.length === 0;
+    }
 }
