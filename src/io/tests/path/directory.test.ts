@@ -111,3 +111,35 @@ test('Directory: isEmpty - directory is not empty', (context: TestContext) => {
     fs.writeFileSync(path.join(dir, 'file.txt'), 'data');
     context.assert.strictEqual(Directory.isEmpty(dir), false);
 });
+
+test('Directory: listFiles - success non-recursive', (context: TestContext) => {
+    const dir = path.join(base, 'list-non-recursive');
+    Directory.create(dir);
+
+    fs.writeFileSync(path.join(dir, 'a.txt'), 'a');
+    fs.writeFileSync(path.join(dir, 'b.txt'), 'b');
+
+    const files = Directory.listFiles(dir);
+    context.assert.strictEqual(files.length, 2);
+    context.assert.ok(files.some(x => x.endsWith('a.txt')));
+    context.assert.ok(files.some(x => x.endsWith('b.txt')));
+});
+
+test('Directory: listFiles - success recursive', (context: TestContext) => {
+    const root = path.join(base, 'list-recursive');
+    const sub = path.join(root, 'nested');
+
+    Directory.create(sub);
+    fs.writeFileSync(path.join(root, 'a.txt'), 'a');
+    fs.writeFileSync(path.join(sub, 'b.txt'), 'b');
+
+    const files = Directory.listFiles(root, true);
+    context.assert.strictEqual(files.length, 2);
+    context.assert.ok(files.some(x => x.endsWith('a.txt')));
+    context.assert.ok(files.some(x => x.endsWith('b.txt')));
+});
+
+test('Directory: listFiles - throws PathNotFoundException', (context: TestContext) => {
+    const dir = path.join(base, 'list-missing');
+    context.assert.throws(() => Directory.listFiles(dir), /PathNotFoundException/);
+});

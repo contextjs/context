@@ -103,6 +103,24 @@ public static exists(directory: string): boolean;
 public static isEmpty(directory: string): boolean;
 ```  
 
+```ts
+    /**
+     * Lists the files in a directory.
+     * @param directory The directory to list files from.
+     * @returns An array of file paths in the directory.
+     * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
+     */
+    public static listFiles(directory: string): string[];
+
+    /**
+     * Lists the files in a directory.
+     * @param directory The directory to list files from.
+     * @param recursive true to list files recursively; otherwise, false.
+     * @returns An array of file paths in the directory.
+     * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
+     */
+    public static listFiles(directory: string, recursive: boolean): string[];
+```
 
 ### File 
 static methods for creating, renaming, editing and deleting files.
@@ -164,6 +182,19 @@ public static rename(oldFile: string, newFile: string): boolean;
  * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
  */
 public static delete(file: string): boolean;
+```
+
+```ts
+/**
+     * Copies a file.
+     * @param source The source file path.
+     * @param target The target file path.
+     * @returns true if the file was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or target string is null or contains only empty spaces.
+     * @throws {FileNotFoundException} When the source file does not exist.
+     * @throws {FileExistsException} When the target file already exists.
+     */
+    public static copy(source: string, target: string): boolean;
 ```
 
 ```ts
