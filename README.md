@@ -8,7 +8,7 @@
 
 **[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)**: The base package for creating, building, and debugging projects.
 
-- **[@contextjs/collections](https://github.com/contextjs/context/tree/main/src/collections)**: Various collections of objects.
+- **[@contextjs/collections](https://github.com/contextjs/context/tree/main/src/collections)**: A set of object-oriented collection types for TypeScript, designed for clarity, safety, and predictability in modern applications.
 - **[@contextjs/configuration](https://github.com/contextjs/context/tree/main/src/configuration)**: Base classes for configuration management.
 - **[@contextjs/configuration-json](https://github.com/contextjs/context/tree/main/src/configuration-json)**: Provides JSON-based configuration management utilities.
 - **[@contextjs/di](https://github.com/contextjs/context/tree/main/src/di)**: A TypeScript-first, object-oriented dependency injection container with interface support, zero decorators, and full transformer-based resolution.

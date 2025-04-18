@@ -7,5 +7,7 @@
  */
 
 export * from "../dictionary.js";
+export * from "../hash-set{t}.js";
 export * from "../list{t}.js";
+export * from "../queue{t}.js";
 export * from "../stack{t}.js";
