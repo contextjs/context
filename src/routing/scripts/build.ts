@@ -9,7 +9,7 @@
 import Script from '../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageName: string = "configuration-json";
+    private readonly packageName: string = "routing";
 
     public override async runAsync(): Promise<void> {
         await this.copyDeclarationsFileAsync(this.packageName);
