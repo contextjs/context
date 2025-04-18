@@ -7,7 +7,8 @@
  */
 
 import { Throw } from "@contextjs/system";
-import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
+import { mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
+import path from "node:path";
 import { DirectoryExistsException } from "../exceptions/directory-exists.exception.js";
 import { PathNotFoundException } from "../exceptions/path-not-found.exception.js";
 import { Path } from "./path.js";
@@ -34,7 +35,6 @@ export class Directory {
             throw new DirectoryExistsException(newDirectory);
 
         renameSync(oldDirectory, newDirectory);
-
         return true;
     }
 
@@ -45,13 +45,11 @@ export class Directory {
             return true;
 
         rmSync(directory, { recursive: true });
-
         return true;
     }
 
     public static exists(directory: string): boolean {
         Throw.ifNullOrWhiteSpace(directory);
-
         return Path.isDirectory(directory);
     }
 
@@ -60,5 +58,25 @@ export class Directory {
             throw new PathNotFoundException(directory);
 
         return readdirSync(directory).length === 0;
+    }
+
+    public static listFiles(directory: string, recursive: boolean = false): string[] {
+        if (!Path.isDirectory(directory))
+            throw new PathNotFoundException(directory);
+
+        const result: string[] = [];
+
+        for (const entry of readdirSync(directory)) {
+            const fullPath = path.join(directory, entry);
+            const stat = statSync(fullPath);
+
+            if (stat.isFile())
+                result.push(fullPath);
+
+            else if (stat.isDirectory() && recursive)
+                result.push(...Directory.listFiles(fullPath, true));
+        }
+
+        return result;
     }
 }

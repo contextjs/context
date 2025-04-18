@@ -107,3 +107,30 @@ test('File: exists - success', (context: TestContext) => {
     File.save(file, 'hello');
     context.assert.strictEqual(File.exists(file), true);
 });
+
+test('File: copy - success', (context: TestContext) => {
+    const source = path.join(base, 'copy-source.txt');
+    const target = path.join(base, 'copy-target.txt');
+
+    File.save(source, 'copy content', true);
+    const result = File.copy(source, target);
+
+    context.assert.strictEqual(result, true);
+    context.assert.strictEqual(File.read(target), 'copy content');
+});
+
+test('File: copy - throws FileNotFoundException', (context: TestContext) => {
+    const source = path.join(base, 'missing-copy.txt');
+    const target = path.join(base, 'copy-target2.txt');
+
+    context.assert.throws(() => File.copy(source, target));
+});
+
+test('File: copy - throws FileExistsException', (context: TestContext) => {
+    const source = path.join(base, 'copy-source2.txt');
+    const target = path.join(base, 'copy-existing.txt');
+
+    File.save(source, 'a');
+    File.save(target, 'b');
+    context.assert.throws(() => File.copy(source, target));
+});

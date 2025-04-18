@@ -7,7 +7,7 @@
  */
 
 import { Throw } from "@contextjs/system";
-import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";
 import { FileNotFoundException } from "../exceptions/file-not-found.exception.js";
@@ -18,9 +18,9 @@ export class File {
     public static read(file: string): string {
         if (Path.isFile(file))
             return readFileSync(file, 'utf8');
-    
+
         throw new FileNotFoundException(file);
-    }    
+    }
 
     public static save(file: string, content: string, overwrite: boolean = false): boolean {
         Throw.ifNullOrWhiteSpace(file);
@@ -60,6 +60,25 @@ export class File {
         }
 
         return false;
+    }
+
+    public static copy(source: string, target: string): boolean {
+        Throw.ifNullOrWhiteSpace(source);
+        Throw.ifNullOrWhiteSpace(target);
+
+        if (!this.exists(source))
+            throw new FileNotFoundException(source);
+
+        if (this.exists(target))
+            throw new FileExistsException(target);
+
+        const dirname = path.dirname(target);
+        if (!Directory.exists(dirname))
+            Directory.create(dirname);
+
+        copyFileSync(source, target);
+        
+        return true;
     }
 
     public static exists(file: string): boolean {
