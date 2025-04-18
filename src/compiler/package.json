@@ -1,0 +1,34 @@
+{
+  "name": "@contextjs/compiler",
+  "version": "__VERSION__",
+  "description": "ContextJS - TypeScript compiler with extension support for transformers.",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/contextjs/context.git",
+    "directory": "src/compiler"
+  },
+  "keywords": [
+    "typescript",
+    "compiler",
+    "transformers",
+    "contextjs",
+    "tsc",
+    "extensions",
+    "plugins",
+    "dependency-injection"
+  ],
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}
