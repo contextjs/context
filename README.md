@@ -9,6 +9,7 @@
 **[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)**: The base package for creating, building, and debugging projects.
 
 - **[@contextjs/collections](https://github.com/contextjs/context/tree/main/src/collections)**: File system utilities for reading, writing, and inspecting files, directories, and paths — with clean APIs and exception-based error handling.
+- **[@contextjs/compiler](https://github.com/contextjs/context/tree/main/src/compiler)**: TypeScript compiler with extensibility support for internal and external transformers.
 - **[@contextjs/configuration](https://github.com/contextjs/context/tree/main/src/configuration)**: Base classes for configuration management.
 - **[@contextjs/configuration-json](https://github.com/contextjs/context/tree/main/src/configuration-json)**: Provides JSON-based configuration management utilities.
 - **[@contextjs/di](https://github.com/contextjs/context/tree/main/src/di)**: A TypeScript-first, object-oriented dependency injection container with interface support, zero decorators, and full transformer-based resolution.
