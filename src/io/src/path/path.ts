@@ -6,18 +6,18 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { existsSync, lstatSync } from "node:fs";
+import fs from "node:fs";
 
 export class Path {
     public static exists(path: string): boolean {
-        return existsSync(path);
+        return fs.existsSync(path);
     }
 
     public static isDirectory(path: string): boolean {
-        return this.exists(path) && lstatSync(path).isDirectory();
+        return Path.exists(path) && fs.statSync(path).isDirectory();
     }
 
     public static isFile(path: string): boolean {
-        return this.exists(path) && lstatSync(path).isFile();
+        return Path.exists(path) && fs.statSync(path).isFile();
     }
 }
