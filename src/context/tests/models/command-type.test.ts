@@ -6,40 +6,23 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import test, { TestContext } from 'node:test';
-import { CommandType, CommandTypeExtensions } from "../../src/models/command-type.ts";
+import test, { TestContext } from "node:test";
+import { CommandType } from "../../src/models/command-type.js";
 
-test('CommandType: length - success', (context: TestContext) => {
-    context.assert.strictEqual(Object.keys(CommandType).length / 2, 6);
+test("CommandType: enum has all expected values", (context: TestContext) => {
+    context.assert.equal(CommandType.Ctx, 0);
+    context.assert.equal(CommandType.New, 1);
+    context.assert.equal(CommandType.Build, 2);
+    context.assert.equal(CommandType.Restore, 3);
+    context.assert.equal(CommandType.Watch, 4);
+    context.assert.equal(CommandType.Version, 5);
 });
 
-test('CommandTypeMethods: fromString - success', (context: TestContext) => {
-
-    let command = 'build';
-    let result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, CommandType.Build);
-
-    command = 'restore';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, CommandType.Restore);
-
-    command = 'watch';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, CommandType.Watch);
-
-    command = 'new';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, CommandType.New);
-
-    command = 'version';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, CommandType.Version);
-
-    command = '';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, null);
-
-    command = 'invalid';
-    result = CommandTypeExtensions.fromString(command);
-    context.assert.strictEqual(result, null);
+test("CommandType: enum can map numeric values back to names", (context: TestContext) => {
+    context.assert.equal(CommandType[0], "Ctx");
+    context.assert.equal(CommandType[1], "New");
+    context.assert.equal(CommandType[2], "Build");
+    context.assert.equal(CommandType[3], "Restore");
+    context.assert.equal(CommandType[4], "Watch");
+    context.assert.equal(CommandType[5], "Version");
 });

@@ -7,36 +7,56 @@
  */
 
 import { Directory, File } from "@contextjs/io";
-import { Console, StringExtensions } from "@contextjs/system";
-import fs from "node:fs";
-import test, { TestContext } from 'node:test';
+import { Console } from "@contextjs/system";
+import os from "node:os";
+import path from "node:path";
+import test, { TestContext } from "node:test";
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
 import { BuildCommand } from "../../../src/services/commands/build.command.ts";
 
-test('BuildCommand: runAsync(--project) - success', async (context: TestContext) => {
+const mockProcessExit = (context: TestContext) => {
     const originalExit = process.exit;
-    const originalOutput = Console['output'];
+    let exitCode = -1;
 
-    let logOutput = StringExtensions.empty;
-    let exitCode = 0;
+    process.exit = (code: number) => {
+        exitCode = code;
+        throw new Error(`exit:${code}`);
+    };
 
-    process.argv = ['', '', 'build', '--project'];
+    context.after(() => {
+        process.exit = originalExit;
+    });
+
+    return () => exitCode;
+};
+
+const mockConsoleOutput = (context: TestContext) => {
+    const originalOutput = Console["output"];
+    let output = "";
+
+    Console.setOutput((...args: any[]) => {
+        output += args.map(String).join(" ") + "\n";
+    });
+
+    context.after(() => {
+        Console.setOutput(originalOutput);
+    });
+
+    return () => output;
+};
+
+test("BuildCommand: runAsync(--project) - no projects", async (context: TestContext) => {
+    const getExitCode = mockProcessExit(context);
+    const getOutput = mockConsoleOutput(context);
+
     const command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
-    Console.setOutput((...args: any[]) => {
-        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
-    });
-
-    process.exit = (code: number) => {
-        exitCode = code;
-        throw new Error(`exit:${code}`);
-    };
+    context.mock.method(buildCommand as any, "getProjects", () => []);
 
     let threw: Error | null = null;
-
     try {
         await buildCommand.runAsync(command);
     }
@@ -46,36 +66,24 @@ test('BuildCommand: runAsync(--project) - success', async (context: TestContext)
 
     context.assert.ok(threw);
     context.assert.match(threw.message, /exit:1/);
-    context.assert.match(logOutput, /No projects found\. Exiting/);
-
-    Console.setOutput(originalOutput);
-    process.exit = originalExit;
+    context.assert.match(getOutput(), /No projects found\. Exiting/);
 });
 
+test("BuildCommand: runAsync - project build success", async (context: TestContext) => {
+    const getExitCode = mockProcessExit(context);
+    const getOutput = mockConsoleOutput(context);
 
+    const command = new Command(CommandType.Build, [
+        { name: "project", values: ["any"] }
+    ]);
 
-test('BuildCommand: runAsync(--p) - success', async (context: TestContext) => {
-    const originalExit = process.exit;
-    const originalOutput = Console['output'];
-
-    let logOutput = StringExtensions.empty;
-    let exitCode = 0;
-
-    process.argv = ['', '', 'build', '--p', ''];
-    const command: Command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
+    const projects = [new Project("project1", "path1")];
 
-    Console.setOutput((...args: any[]) => {
-        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
-    });
-
-    process.exit = (code: number) => {
-        exitCode = code;
-        throw new Error(`exit:${code}`);
-    };
+    context.mock.method(buildCommand as any, "getProjects", () => projects);
+    context.mock.method(buildCommand as any, "buildAsync", () => void 0);
 
     let threw: Error | null = null;
-
     try {
         await buildCommand.runAsync(command);
     }
@@ -84,66 +92,18 @@ test('BuildCommand: runAsync(--p) - success', async (context: TestContext) => {
     }
 
     context.assert.ok(threw);
-    context.assert.match(threw.message, /exit:1/);
-    context.assert.match(logOutput, /No projects found\. Exiting/);
-
-    Console.setOutput(originalOutput);
-    process.exit = originalExit;
+    context.assert.match(threw.message, /exit:0/);
 });
 
-test('BuildCommand: runAsync - success', async (context: TestContext) => {
-    const originalExit = process.exit;
-    const originalOutput = Console['output'];
+test("BuildCommand: buildAsync - throws if context.ctxp missing", async (context: TestContext) => {
+    const getExitCode = mockProcessExit(context);
+    const getOutput = mockConsoleOutput(context);
 
-    let logOutput = StringExtensions.empty;
-    let exitCode = 0;
-
-    const command: Command = new Command(CommandType.Build, []);
-    const buildCommand = new BuildCommand();
-    const projects = [new Project('project1', 'path1')];
-
-    context.mock.method(buildCommand as any, 'getProjects', () => projects);
-    context.mock.method(buildCommand as any, 'buildAsync', () => void 0);
-
-    Console.setOutput((...args: any[]) => {
-        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
-    });
-
-    process.exit = (code: number) => {
-        exitCode = code;
-        return undefined as never;
-    };
-
-    await buildCommand.runAsync(command);
-
-    context.assert.strictEqual(exitCode, 0);
-
-    Console.setOutput(originalOutput);
-    process.exit = originalExit;
-});
-
-
-test('BuildCommand: build - success', async (context: TestContext) => {
-    const originalExit = process.exit;
-    const originalOutput = Console['output'];
-
-    let logOutput = StringExtensions.empty;
-    let exitCode = 0;
-    const project = new Project('project1', 'path1');
+    const project = new Project("missing-ctxp", path.join(os.tmpdir(), "ctx-missing"));
+    Directory.create(project.path);
 
     const buildCommand = new BuildCommand();
-
-    Console.setOutput((...args: any[]) => {
-        logOutput += args.map(arg => String(arg)).join(' ') + '\n';
-    });
-
-    process.exit = (code: number) => {
-        exitCode = code;
-        throw new Error(`exit:${code}`);
-    };
-
     let threw: Error | null = null;
-
     try {
         await (buildCommand as any).buildAsync(project);
     }
@@ -153,20 +113,83 @@ test('BuildCommand: build - success', async (context: TestContext) => {
 
     context.assert.ok(threw);
     context.assert.match(threw.message, /exit:1/);
-    context.assert.match(logOutput, /No context file found\. Exiting/);
-
-    Console.setOutput(originalOutput);
-    process.exit = originalExit;
+    context.assert.match(getOutput(), /No context file found\. Exiting/);
 });
 
-test('BuildCommand: copyFiles - success', (context: TestContext) => {
-    context.mock.method(Directory, 'exists', () => true);
-    context.mock.method(File, 'read', () => JSON.stringify({ files: [{ from: 'from1', to: 'to1' }] }));
-    context.mock.method(fs, 'existsSync', () => true);
-    context.mock.method(fs, 'cpSync', () => void 0);
+test("BuildCommand: buildAsync - throws if tsconfig.json missing", async (context: TestContext) => {
+    const getExitCode = mockProcessExit(context);
+    const getOutput = mockConsoleOutput(context);
 
-    const project = new Project('project1', 'path1');
+    const project = new Project("missing-tsconfig", path.join(os.tmpdir(), "ctx-tsconfig"));
+    Directory.create(project.path);
+    File.save(path.join(project.path, "context.ctxp"), "{}", true);
+
+    const buildCommand = new BuildCommand();
+    let threw: Error | null = null;
+    try {
+        await (buildCommand as any).buildAsync(project);
+    }
+    catch (error) {
+        threw = error as Error;
+    }
+
+    context.assert.ok(threw);
+    context.assert.match(threw.message, /exit:1/);
+    context.assert.match(getOutput(), /No tsconfig\.json file found\. Exiting/);
+});
+
+test("BuildCommand: copyFiles - success", (context: TestContext) => {
+    context.mock.method(File, "read", () => JSON.stringify({ files: [{ from: "from1", to: "to1" }] }));
+    context.mock.method(File, "exists", () => true);
+    context.mock.method(File, "copy", () => true);
+
+    const project = new Project("test", "dir");
+    const buildCommand = new BuildCommand();
+    context.assert.doesNotThrow(() => (buildCommand as any).copyFiles(project));
+});
+
+test("BuildCommand: compileAsync - emits valid project", async (context: TestContext) => {
+    const base = path.join(os.tmpdir(), `ctx-compile-${Date.now()}`);
+    const srcDir = path.join(base, "src");
+
+    Directory.create(srcDir);
+
+    const tsconfig = {
+        compilerOptions: {
+            outDir: "dist",
+            module: "esnext",
+            target: "esnext",
+            moduleResolution: "node",
+            rootDir: "src",
+            declaration: false,
+            noEmitOnError: false,
+            strict: true
+        },
+        include: ["src"]
+    };
+
+    File.save(path.join(base, "tsconfig.json"), JSON.stringify(tsconfig, null, 2));
+    File.save(path.join(base, "context.ctxp"), "{}");
+
+    File.save(path.join(srcDir, "index.ts"), "export const hello = 'world';");
+
+    const project = new Project("compile-test", base);
     const buildCommand = new BuildCommand();
 
-    context.assert.doesNotThrow(() => (buildCommand as any).copyFiles(project));
+    let threw: Error | null = null;
+    const originalExit = process.exit;
+    process.exit = () => { throw new Error("exit"); };
+
+    try {
+        await (buildCommand as any).compileAsync(project);
+    }
+    catch (error) {
+        threw = error as Error;
+    }
+    finally {
+        process.exit = originalExit;
+    }
+
+    context.assert.strictEqual(threw, null);
+    context.assert.ok(File.exists(path.join(base, "dist", "index.js")));
 });

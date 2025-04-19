@@ -17,7 +17,7 @@ import { TemplatesService } from "../templates/templates.service.js";
 export abstract class CommandBase {
     public abstract runAsync(command: Command): Promise<void>;
 
-    protected async checkForHelpCommandAsync(command: Command, templatesService: TemplatesService): Promise<boolean> {
+    protected async tryDisplayHelpAsync(command: Command, templatesService: TemplatesService): Promise<boolean> {
         const helpCommandName = command.args[1]?.name;
         if (helpCommandName === '-h' || helpCommandName === '--help') {
             await templatesService.displayHelpAsync();

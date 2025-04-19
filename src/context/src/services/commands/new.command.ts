@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Console, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/system";
 import { Directory, File, Path } from "@contextjs/io";
+import { Console, ObjectExtensions, ProjectTypeExtensions, StringExtensions, VersionService } from "@contextjs/system";
 import childProcess from "child_process";
 import path from "path";
 import { Command } from "../../models/command.js";
@@ -42,7 +42,7 @@ api             Web API project         A Web API project containing controllers
             return process.exit(1);
         }
 
-        if (await this.checkForHelpCommandAsync(command, templatesService!))
+        if (await this.tryDisplayHelpAsync(command, templatesService!))
             return;
 
         const name = await this.getNameAsync(command);

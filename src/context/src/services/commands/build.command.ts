@@ -6,25 +6,26 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Compiler } from "@contextjs/compiler";
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
-import fs from 'node:fs';
-import typescript from 'typescript';
+import path from "path";
+import { ExtensionsRegistrar } from "../../extensions/extensions-registrar.js";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
 import { CommandBase } from "./command-base.js";
-import { TransformersService } from "./transformers/transformers.service.js";
 
 export class BuildCommand extends CommandBase {
     public override async runAsync(command: Command): Promise<void> {
-        const projectCommand = command.args.find(arg => arg.name === 'project' || arg.name === 'p');
+        const projectCommand = command.args.find(arg => arg.name === "project" || arg.name === "-p");
         const projects = this.getProjects(projectCommand?.values || []);
 
         if (projects.length === 0) {
-            Console.writeLineError('No projects found. Exiting...');
+            Console.writeLineError("No projects found. Exiting...");
             return process.exit(1);
         }
 
+        await new ExtensionsRegistrar().registerAsync();
         await Promise.all(projects.map(project => this.buildAsync(project)));
 
         return process.exit(0);
@@ -34,19 +35,19 @@ export class BuildCommand extends CommandBase {
         try {
             Console.writeLine(`Building project: "${project.name}"...`);
 
-            if (!File.exists(`${project.path}/context.ctxp`)) {
-                Console.writeLineError('No context file found. Exiting...');
+            if (!File.exists(path.join(project.path, "context.ctxp"))) {
+                Console.writeLineError("No context file found. Exiting...");
                 return process.exit(1);
             }
 
-            if (!File.exists(`${project.path}/tsconfig.json`)) {
-                Console.writeLineError('No tsconfig.json file found. Exiting...');
+            if (!File.exists(path.join(project.path, "tsconfig.json"))) {
+                Console.writeLineError("No tsconfig.json file found. Exiting...");
                 return process.exit(1);
             }
 
             await this.compileAsync(project);
-
             this.copyFiles(project);
+
             Console.writeLineSuccess(`Project "${project.name}" built successfully.`);
         }
         catch {
@@ -55,56 +56,46 @@ export class BuildCommand extends CommandBase {
         }
     }
 
-    private copyFiles(project: Project) {
-        const contextFileContent = File.read(`${project.path}/context.ctxp`);
+    private copyFiles(project: Project): void {
+        const contextFilePath = path.join(project.path, "context.ctxp");
+        const contextFileContent = File.read(contextFilePath);
+
         if (!contextFileContent) {
-            Console.writeLineError('No context file found. Exiting...');
+            Console.writeLineError("No context file found. Exiting...");
             return process.exit(1);
         }
+
         const contextJson = JSON.parse(contextFileContent);
 
-        if (contextJson.files && contextJson.files.length > 0) {
-            contextJson.files.forEach((file: any) => {
+        if (Array.isArray(contextJson.files)) {
+            for (const file of contextJson.files) {
                 try {
-                    if (!fs.existsSync(`${project.path}/${file.from}`)) {
+                    const sourcePath = path.join(project.path, file.from);
+                    const targetPath = path.join(project.path, file.to);
+
+                    if (!File.exists(sourcePath)) {
                         Console.writeLineError(`File "${file.from}" not found. Exiting...`);
                         return process.exit(1);
                     }
-                    fs.cpSync(`${project.path}/${file.from}`, `${project.path}/${file.to}`);
+
+                    File.copy(sourcePath, targetPath);
                 }
                 catch (error: any) {
                     Console.writeLineError(`Error copying file "${file.from}" to "${file.to}".`);
                     Console.writeLineError(error);
                     return process.exit(1);
                 }
-            });
+            }
         }
     }
 
     private async compileAsync(project: Project): Promise<void> {
-        const filesDirectory = `${project.path}/src`;
-        const files = fs.readdirSync(filesDirectory, { recursive: true });
-        const filePaths: string[] = [];
+        const result = Compiler.compile(project.path);
 
-        for (const file of files) {
-            const filePath = `${filesDirectory}/${file}`;
-            if (filePath.endsWith('.ts'))
-                filePaths.push(filePath);
-        }
+        for (const diagnostic of result.diagnostics)
+            Console.writeLineError(diagnostic);
 
-        const tsConfigFile = typescript.readConfigFile(`${project.path}/tsconfig.json`, typescript.sys.readFile);
-        const parsedConfig = typescript.parseJsonConfigFileContent(tsConfigFile.config, typescript.sys, project.path);
-        const program = typescript.createProgram(filePaths, parsedConfig.options);
-        const transformersService = new TransformersService(program);
-        const emitResult = program.emit(undefined, undefined, undefined, undefined, { before: transformersService.transformers });
-
-        if (emitResult.diagnostics.length > 0) {
-            emitResult.diagnostics.forEach(diagnostic => {
-                const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-                const { line, character } = diagnostic.file?.getLineAndCharacterOfPosition(diagnostic.start!) || {};
-                Console.writeLineError(`Error at ${diagnostic.file?.fileName}(${line! + 1},${character! + 1}): ${message}`);
-            });
-            process.exit(1);
-        }
+        if (!result.success)
+            return process.exit(1);
     }
 }

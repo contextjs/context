@@ -6,28 +6,23 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import test, { TestContext } from 'node:test';
-import { FileTemplate } from '../../../src/models/file-template.js';
-import { TemplatesService } from '../../../src/services/templates/templates.service.js';
+import test, { TestContext } from "node:test";
+import { FileTemplate } from "../../../src/models/file-template.js";
+import { TemplatesService } from "../../../src/services/templates/templates.service.js";
 
-test('TemplateService: instance - success', (context: TestContext) => {
+test("TemplatesService: abstract class contract - success", (context: TestContext) => {
     class TestTemplatesService extends TemplatesService {
-        protected helpText: string;
-        public displayHelpAsync(): Promise<void> {
-            throw new Error('Method not implemented.');
-        }
-        public templates: FileTemplate[];
+        protected override readonly helpText = "Help text";
+        public override templates: FileTemplate[] = [{ name: "test", content: "test" }];
 
-        public constructor() {
-            super();
-            this.helpText = 'Help text';
-            this.templates = [{ name: 'test', content: 'test' }];
+        public override async displayHelpAsync(): Promise<void> {
+            throw new Error("Method not implemented.");
         }
     }
 
     const service = new TestTemplatesService();
 
-    context.assert.strictEqual((service as any).helpText, 'Help text');
-    context.assert.throws(() => service.displayHelpAsync(), { message: 'Method not implemented.' });
-    context.assert.deepEqual((service as any).templates, [{ name: 'test', content: 'test' }]);
+    context.assert.strictEqual((service as any).helpText, "Help text");
+    context.assert.deepEqual(service.templates, [{ name: "test", content: "test" }]);
+    context.assert.rejects(() => service.displayHelpAsync(), { message: "Method not implemented." });
 });

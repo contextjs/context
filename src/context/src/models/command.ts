@@ -10,13 +10,8 @@ import { ConsoleArgument } from "@contextjs/system";
 import { CommandType } from "./command-type.js";
 
 export class Command {
-    public readonly type: CommandType;
-    public readonly args: ConsoleArgument[];
-
-    constructor(
-        type: CommandType,
-        args: ConsoleArgument[]) {
-        this.type = type;
-        this.args = args;
-    }
+    public constructor(
+        public readonly type: CommandType,
+        public readonly args: ConsoleArgument[]
+    ) { }
 }

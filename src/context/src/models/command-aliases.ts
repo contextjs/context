@@ -6,9 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export class Project {
-    public constructor(
-        public readonly name: string,
-        public readonly path: string
-    ) { }
-}
+export const CommandAliases: Record<string, string> = {
+    "-n": "new",
+    "-b": "build",
+    "-r": "restore",
+    "-w": "watch",
+    "-v": "version"
+};

@@ -7,7 +7,8 @@
  */
 
 import { Console, ObjectExtensions } from "@contextjs/system";
-import { CommandType, CommandTypeExtensions } from "../../models/command-type.js";
+import { CommandTypeExtensions } from "../../models/command-type-extensions.js";
+import { CommandType } from "../../models/command-type.js";
 import { Command } from "../../models/command.js";
 
 export class CommandsService {

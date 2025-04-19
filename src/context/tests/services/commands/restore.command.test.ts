@@ -6,8 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Directory, File } from "@contextjs/io";
 import { Console, StringExtensions } from "@contextjs/system";
+import childProcess from "node:child_process";
+import os from "node:os";
 import test, { TestContext } from 'node:test';
+import path from "path";
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
@@ -108,7 +112,7 @@ test('RestoreCommand: runAsync - success', async (context: TestContext) => {
     context.assert.strictEqual(exitCode, 0);
 });
 
-test('RestoreCommand: restore - success', async (context: TestContext) => {
+test('RestoreCommand: restoreAsync - exits when context.ctxp is missing', async (context: TestContext) => {
     const originalExit = process.exit;
     const originalOutput = Console['output'];
 
