@@ -10,6 +10,7 @@ import { Compiler } from "@contextjs/compiler";
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import path from "path";
+import typescript from "typescript";
 import { ExtensionsRegistrar } from "../../extensions/extensions-registrar.js";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
@@ -25,13 +26,15 @@ export class BuildCommand extends CommandBase {
             return process.exit(1);
         }
 
+        const typescriptOptions = Console.parseTypescriptArguments(command.args);
+
         await new ExtensionsRegistrar().registerAsync();
-        await Promise.all(projects.map(project => this.buildAsync(project)));
+        await Promise.all(projects.map(project => this.buildAsync(project, typescriptOptions)));
 
         return process.exit(0);
     }
 
-    private async buildAsync(project: Project): Promise<void> {
+    private async buildAsync(project: Project, typescriptOptions: typescript.CompilerOptions): Promise<void> {
         try {
             Console.writeLine(`Building project: "${project.name}"...`);
 
@@ -45,13 +48,14 @@ export class BuildCommand extends CommandBase {
                 return process.exit(1);
             }
 
-            await this.compileAsync(project);
+            await this.compileAsync(project, typescriptOptions);
             this.copyFiles(project);
 
             Console.writeLineSuccess(`Project "${project.name}" built successfully.`);
         }
-        catch {
+        catch (error: any) {
             Console.writeLineError(`Error building project "${project.name}".`);
+            console.log(error);
             return process.exit(1);
         }
     }
@@ -89,11 +93,11 @@ export class BuildCommand extends CommandBase {
         }
     }
 
-    private async compileAsync(project: Project): Promise<void> {
-        const result = Compiler.compile(project.path);
+    private async compileAsync(project: Project, typescriptOptions: typescript.CompilerOptions): Promise<void> {
+        const result = Compiler.compile(project.path, { typescriptOptions: typescriptOptions });
 
         for (const diagnostic of result.diagnostics)
-            Console.writeLineError(diagnostic);
+            this.processDiagnostics(project, [diagnostic]);
 
         if (!result.success)
             return process.exit(1);

@@ -8,6 +8,7 @@
 
 import { Compiler } from "@contextjs/compiler";
 import { Console } from "@contextjs/system";
+import typescript from "typescript";
 import { ExtensionsRegistrar } from "../../extensions/extensions-registrar.js";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
@@ -23,14 +24,17 @@ export class WatchCommand extends CommandBase {
             return process.exit(1);
         }
 
+        const typescriptOptions = Console.parseTypescriptArguments(command.args);
+
         await new ExtensionsRegistrar().registerAsync();
-        await Promise.all(projects.map(project => this.watchAsync(project)));
+        await Promise.all(projects.map(project => this.watchAsync(project, typescriptOptions)));
     }
 
-    private async watchAsync(project: Project): Promise<void> {
+    private async watchAsync(project: Project, typescriptOptions: typescript.CompilerOptions): Promise<void> {
         Console.writeLineInfo(`Watching project "${project.name}" for changes...`);
 
         Compiler.watch(project.path, {
+            typescriptOptions: typescriptOptions,
             onDiagnostic: diagnostic => this.processDiagnostics(project, [diagnostic])
         });
     }

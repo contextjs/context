@@ -45,6 +45,12 @@ export declare interface ICompilerOptions {
      * Optional callback invoked for each formatted diagnostic emitted during compilation.
      */
     onDiagnostic?: (diagnostic: typescript.Diagnostic) => void;
+
+    /**
+     * Optional TypeScript compiler options that override the default ones.
+     * This can be used to customize the compilation process.
+     */
+    typescriptOptions?: typescript.CompilerOptions;
 }
 
 /**

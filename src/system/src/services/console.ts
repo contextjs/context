@@ -8,6 +8,7 @@
 
 import readline from 'node:readline';
 import { styleText } from 'node:util';
+import typescript from 'typescript';
 import { ConsoleMessage } from '../extensions/console-extensions.js';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
@@ -18,15 +19,29 @@ export class Console {
     public static parseArguments(args: string[]): ConsoleArgument[] {
         const parsedArguments: ConsoleArgument[] = [];
 
-        if (args.length == 0)
+        if (args.length === 0)
             return parsedArguments;
 
         let currentArgument: ConsoleArgument | null = null;
 
         for (const argument of args) {
-            if (argument.startsWith('-')) {
+            if (argument.startsWith("--") && argument.includes("=")) {
+                const [name, ...rest] = argument.split("=");
+                const value = rest.join("=");
+                const existing = parsedArguments.find(a => a.name === name);
+                if (existing)
+                    existing.values.push(value);
+                else
+                    parsedArguments.push(new ConsoleArgument(name, [value]));
+
+                currentArgument = null;
+                continue;
+            }
+
+            if (argument.startsWith("-")) {
                 if (!this.isValidArgument(argument)) {
-                    this.writeLineFormatted({ format: 'red', text: `Invalid argument: "${argument}".` });
+                    this.writeLineError(`Invalid argument: "${argument}".`);
+                    this.writeLineWarning("Arguments must start with a single or double dash and be followed by a name.");
                     process.exit(1);
                 }
 
@@ -49,6 +64,37 @@ export class Console {
         }
 
         return parsedArguments;
+    }
+
+    public static parseTypescriptArguments(allArgs: ConsoleArgument[], verbose: boolean = false): typescript.CompilerOptions {
+        const tsArgs: string[] = [];
+
+        for (const arg of allArgs) {
+            if (!arg.name.startsWith("--"))
+                continue;
+
+            if (arg.values.length === 0) {
+                tsArgs.push(arg.name);
+            } else {
+                tsArgs.push(arg.name, ...arg.values);
+            }
+        }
+
+        const parsed = typescript.parseCommandLine(tsArgs);
+
+        if (parsed.errors.length > 0) {
+            for (const error of parsed.errors) {
+                this.writeLineError(typescript.flattenDiagnosticMessageText(error.messageText, "\n"));
+            }
+        }
+
+        if (verbose) {
+            this.writeLineInfo("Parsed TypeScript options:");
+            for (const [key, value] of Object.entries(parsed.options))
+                this.writeLine(`  --${key}: ${JSON.stringify(value)}`);
+        }
+
+        return parsed.options;
     }
 
     public static writeLineError(message: any, ...messages: any[]): void {

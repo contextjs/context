@@ -6,6 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import typescript from "typescript";
+
 //#region Application
 
 /**
@@ -349,6 +351,13 @@ export declare class Console {
      * @returns {ConsoleArgument[]} An array of parsed console arguments.
      */
     public static parseArguments(args: string[]): ConsoleArgument[];
+
+    /**
+     * Parses console arguments into TypeScript compiler options.
+     * @param {ConsoleArgument[]} args - The arguments to parse.
+     * @returns {typescript.CompilerOptions} The parsed TypeScript compiler options.
+     */
+    public static parseTypescriptArguments(args: ConsoleArgument[]): typescript.CompilerOptions;
 
     /**
      * Writes a message to the console, in red color, and moves to the next line.
