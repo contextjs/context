@@ -12,28 +12,28 @@ import { fileURLToPath } from "node:url";
 import typescript from "typescript";
 import { Compiler } from "../../src/compiler.js";
 import { ICompilerExtension } from "../../src/interfaces/i-compiler-extension.js";
-import { CompileService } from "../../src/services/compile.service.js";
+import { BuildService } from "../../src/services/build.service.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const stubPath = path.resolve(__dirname, "../test-data");
 
-test("CompileService: compile - returns success", (context: TestContext) => {
-    const result = CompileService.compile(stubPath);
+test("BuildService: execute - returns success", (context: TestContext) => {
+    const result = BuildService.execute(stubPath);
 
     context.assert.strictEqual(typeof result.success, "boolean");
     context.assert.ok(Array.isArray(result.diagnostics));
 });
 
-test("CompileService: compile - calls onDiagnostic callback", (context: TestContext) => {
+test("BuildService: execute - calls onDiagnostic callback", (context: TestContext) => {
     let called = false;
 
-    const result = CompileService.compile(stubPath, { onDiagnostic: () => { called = true; } });
+    const result = BuildService.execute(stubPath, { onDiagnostic: () => { called = true; } });
 
     context.assert.strictEqual(typeof result.success, "boolean");
     context.assert.strictEqual(called, true);
 });
 
-test("CompileService: compile - includes registered extension transformers", (context: TestContext) => {
+test("BuildService: execute - includes registered extension transformers", (context: TestContext) => {
     let getTransformersCalled = false;
 
     const fakeExtension: ICompilerExtension = {
@@ -51,7 +51,7 @@ test("CompileService: compile - includes registered extension transformers", (co
 
     Compiler.registerExtension(fakeExtension);
 
-    const result = CompileService.compile(stubPath);
+    const result = BuildService.execute(stubPath);
 
     context.assert.strictEqual(getTransformersCalled, true);
     context.assert.strictEqual(typeof result.success, "boolean");

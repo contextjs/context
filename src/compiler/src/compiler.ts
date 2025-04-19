@@ -7,13 +7,13 @@
  */
 
 import { ICompilerExtension } from "./interfaces/i-compiler-extension.js";
-import { CompileService } from "./services/compile.service.js";
+import { BuildService } from "./services/build.service.js";
 import { ExtensionsService } from "./services/extensions.service.js";
 import { WatchService } from "./services/watch.service.js";
 
 export class Compiler {
-    public static compile = CompileService.compile;
-    public static watch = WatchService.watch;
+    public static compile = BuildService.execute;
+    public static watch = WatchService.execute;
 
     public static registerExtension(extension: ICompilerExtension): void {
         ExtensionsService.register(extension);

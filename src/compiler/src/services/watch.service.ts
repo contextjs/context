@@ -6,14 +6,14 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import typescript from "typescript";
+import typescript, { SemanticDiagnosticsBuilderProgram } from "typescript";
 import { ICompilerOptions } from "../interfaces/i-compiler-options.js";
 import { ExtensionsService } from "./extensions.service.js";
 import { ProjectsService } from "./projects.service.js";
 import { TransformersService } from "./transformers.service.js";
 
 export class WatchService {
-    public static watch(projectPath: string, options?: ICompilerOptions): void {
+    public static execute(projectPath: string, options?: ICompilerOptions): typescript.WatchOfConfigFile<SemanticDiagnosticsBuilderProgram> {
         const parsed = ProjectsService.getParsedConfig(projectPath);
 
         const createProgram = typescript.createSemanticDiagnosticsBuilderProgram;
@@ -50,6 +50,6 @@ export class WatchService {
             originalAfterProgramCreate?.(builder);
         };
 
-        typescript.createWatchProgram(host);
+        return typescript.createWatchProgram(host);
     }
 }
