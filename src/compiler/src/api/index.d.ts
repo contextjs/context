@@ -44,7 +44,7 @@ export declare interface ICompilerOptions {
     /**
      * Optional callback invoked for each formatted diagnostic emitted during compilation.
      */
-    onDiagnostic?: (diagnostic: string) => void;
+    onDiagnostic?: (diagnostic: typescript.Diagnostic) => void;
 }
 
 /**
@@ -57,9 +57,9 @@ export declare interface ICompilerResult {
     success: boolean;
 
     /**
-     * Full list of formatted diagnostic messages.
+     * Full list of diagnostic messages.
      */
-    diagnostics: string[];
+    diagnostics: typescript.Diagnostic[];
 }
 
 //#endregion
@@ -81,12 +81,12 @@ export declare class Compiler {
     public static compile(projectPath: string, options?: ICompilerOptions): ICompilerResult;
 
     /**
-     * Formats raw TypeScript diagnostic objects into clean, readable string messages.
+     * Watches a TypeScript project for changes and recompiles it when files change.
      *
-     * @param diagnostics An array of TypeScript `Diagnostic` objects.
-     * @returns An array of formatted diagnostic messages.
+     * @param projectPath Path to the root of the project (must contain a `tsconfig.json`).
+     * @param options Optional watch options including custom transformers and diagnostic hooks.
      */
-    public static formatTypescriptDiagnostics(diagnostics: typescript.Diagnostic[]): string[];
+    public static watch(projectPath: string, options?: ICompilerOptions): void;
 
     /**
      * Registers a new compiler extension.

@@ -8,12 +8,12 @@
 
 import { ICompilerExtension } from "./interfaces/i-compiler-extension.js";
 import { CompileService } from "./services/compile.service.js";
-import { DiagnosticsService } from "./services/diagnostics.service.js";
 import { ExtensionsService } from "./services/extensions.service.js";
+import { WatchService } from "./services/watch.service.js";
 
 export class Compiler {
     public static compile = CompileService.compile;
-    public static formatTypescriptDiagnostics = DiagnosticsService.formatTypescriptDiagnostics;
+    public static watch = WatchService.watch;
 
     public static registerExtension(extension: ICompilerExtension): void {
         ExtensionsService.register(extension);

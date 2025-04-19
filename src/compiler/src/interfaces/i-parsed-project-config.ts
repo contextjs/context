@@ -8,7 +8,7 @@
 
 import typescript from "typescript";
 
-export interface ICompilerResult {
-    success: boolean;
-    diagnostics: typescript.Diagnostic[];
+export interface IParsedProjectConfig {
+    configPath: string;
+    config: typescript.ParsedCommandLine;
 }
