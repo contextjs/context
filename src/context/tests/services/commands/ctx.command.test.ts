@@ -12,7 +12,7 @@ import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { CtxCommand } from "../../../src/services/commands/ctx.command.ts";
 
-test('ContextCommand: runAsync - success', async (context: TestContext) => {
+test('CtxCommand: runAsync - success', async (context: TestContext) => {
     const originalOutput = Console['output'];
     const originalExit = process.exit;
 

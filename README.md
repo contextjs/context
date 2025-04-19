@@ -6,7 +6,7 @@
 
 ## Packages  
 
-**[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)**: The base package for creating, building, and debugging projects.
+**[@contextjs/context](https://github.com/contextjs/context/tree/main/src/context)**: Official CLI for building and managing ContextJS projects.
 
 - **[@contextjs/collections](https://github.com/contextjs/context/tree/main/src/collections)**: File system utilities for reading, writing, and inspecting files, directories, and paths — with clean APIs and exception-based error handling.
 - **[@contextjs/compiler](https://github.com/contextjs/context/tree/main/src/compiler)**: TypeScript compiler with extensibility support for internal and external transformers.

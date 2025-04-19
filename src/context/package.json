@@ -1,7 +1,7 @@
 {
   "name": "@contextjs/context",
   "version": "__VERSION__",
-  "description": "ContextJS",
+  "description": "ContextJS - Command-line interface for building and managing ContextJS applications.",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
@@ -13,8 +13,17 @@
     "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/context"
   },
+  "keywords": [
+    "contextjs",
+    "cli",
+    "build",
+    "typescript",
+    "compiler",
+    "context"
+  ],
   "peerDependencies": {
     "@contextjs/system": "__VERSION__",
-    "@contextjs/io": "__VERSION__"
+    "@contextjs/io": "__VERSION__",
+    "@contextjs/compiler": "__VERSION__"
   }
 }

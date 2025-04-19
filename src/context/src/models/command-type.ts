@@ -14,24 +14,3 @@ export enum CommandType {
     Watch,
     Version
 }
-
-export class CommandTypeExtensions {
-    public static fromString(command: string): CommandType | null {
-        switch (command.toLowerCase()) {
-            case "ctx":
-                return CommandType.Ctx;
-            case "new":
-                return CommandType.New;
-            case "build":
-                return CommandType.Build;
-            case "restore":
-                return CommandType.Restore;
-            case "watch":
-                return CommandType.Watch;
-            case "version":
-                return CommandType.Version;
-            default:
-                return null;
-        }
-    }
-}

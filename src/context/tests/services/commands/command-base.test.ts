@@ -33,26 +33,53 @@ test('CommandBase: runAsync - success', async (context: TestContext) => {
 
 test('CommandBase: processDiagnostics - success', (context: TestContext) => {
     const project: Project = new Project('test', 'test');
-    const diagnostics: typescript.Diagnostic[] | readonly typescript.Diagnostic[] = [{
-        code: 0,
-        messageText: 'test',
-        category: typescript.DiagnosticCategory.Error,
-        file: undefined,
-        start: undefined,
-        length: undefined
-    }];
 
-    class TestCommand extends CommandBase {
+    const fakeFile: typescript.SourceFile = typescript.createSourceFile(
+        'test.ts',
+        'let x: number = "string";',
+        typescript.ScriptTarget.ESNext
+    );
+
+    const diagnostics: typescript.Diagnostic[] = [
+        {
+            code: 1234,
+            messageText: 'Type error',
+            category: typescript.DiagnosticCategory.Error,
+            file: fakeFile,
+            start: 13,
+            length: 1
+        },
+        {
+            code: 0,
+            messageText: 'Simple message',
+            category: typescript.DiagnosticCategory.Message,
+            file: undefined,
+            start: undefined,
+            length: undefined
+        }
+    ];
+
+    let output = '';
+    const originalOutput = Console['output'];
+    Console.setOutput((...args: any[]) => {
+        output += args.join(' ') + '\n';
+    });
+
+    const testCommand = new (class extends CommandBase {
         public async runAsync(command: Command): Promise<void> {
             this.processDiagnostics(project, diagnostics);
         }
-    }
+    })();
 
-    const testCommand = new TestCommand();
     testCommand.runAsync(new Command(CommandType.Build, []));
+
+    context.assert.match(output, /test: test\.ts \(1,14\): Type error/);
+    context.assert.match(output, /test: Simple message/);
+
+    Console.setOutput(originalOutput);
 });
 
-test('CommandBase: checkForHelpCommandAsync - success', async (context: TestContext) => {
+test('CommandBase: tryDisplayHelpAsync - success', async (context: TestContext) => {
     const expectedHelp = `The "ctx new" command creates a ContextJS project based on a template.
 Usage: ctx new [options]
 
