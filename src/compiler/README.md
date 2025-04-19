@@ -12,6 +12,7 @@
 - 🔌 Register transformers using the `ICompilerExtension` API
 - 🧩 Cleanly integrates into the ContextJS CLI (`@contextjs/context`)
 - 🧪 Full diagnostics support with clean formatting
+- ⚙️ Supports dynamic override of `tsconfig.json` settings via `typescriptOptions`
 - 📦 Designed for testability and modular build systems
 - 🛠️ No external dependencies
 
@@ -34,6 +35,20 @@ if (!result.success) {
     for (const message of result.diagnostics)
         console.error(message);
 }
+```
+
+### Override TypeScript Options
+
+You can override `tsconfig.json` compiler settings programmatically:
+
+```ts
+Compiler.compile("/absolute/project/path", {
+    typescriptOptions: {
+        target: ts.ScriptTarget.ES2022,
+        strict: true,
+        noEmitOnError: true
+    }
+});
 ```
 
 ### Registering Extensions
@@ -63,7 +78,6 @@ Compiler.registerExtension(myExtension);
 
 - 100% test coverage
 - Fully validated transformer registration, diagnostic formatting, and compilation logic
-
 
 ## 📄 API Reference
 
@@ -141,6 +155,12 @@ export declare interface ICompilerOptions {
      * Optional callback invoked for each diagnostic emitted during compilation.
      */
     onDiagnostic?: (diagnostic: typescript.Diagnostic) => void;
+
+    /**
+     * Optional TypeScript compiler options that override the default ones.
+     * Supports all valid `tsconfig.json` settings.
+     */
+    typescriptOptions?: typescript.CompilerOptions;
 }
 
 /**

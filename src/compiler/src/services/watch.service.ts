@@ -15,15 +15,16 @@ import { TransformersService } from "./transformers.service.js";
 export class WatchService {
     public static execute(projectPath: string, options?: ICompilerOptions): typescript.WatchOfConfigFile<SemanticDiagnosticsBuilderProgram> {
         const parsed = ProjectsService.getParsedConfig(projectPath);
+        const mergedOptions: typescript.CompilerOptions = { ...parsed.config.options, ...(options?.typescriptOptions ?? {}) };
 
         const createProgram = typescript.createSemanticDiagnosticsBuilderProgram;
         const host = typescript.createWatchCompilerHost(
             parsed.configPath || "tsconfig.json",
-            parsed.config.options,
+            mergedOptions,
             typescript.sys,
             createProgram,
-            (diagnostic) => { options?.onDiagnostic?.(diagnostic) },
-            (diagnostic) => { options?.onDiagnostic?.(diagnostic); }
+            diagnostic => options?.onDiagnostic?.(diagnostic),
+            diagnostic => options?.onDiagnostic?.(diagnostic)
         );
 
         const originalCreateProgram = host.createProgram;

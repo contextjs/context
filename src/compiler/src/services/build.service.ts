@@ -17,8 +17,10 @@ export class BuildService {
     public static execute(projectPath: string, options?: ICompilerOptions): ICompilerResult {
         const tsFiles = ProjectsService.getSourceFiles(projectPath);
         const parsedConfig = ProjectsService.getParsedConfig(projectPath);
+        const mergedOptions: typescript.CompilerOptions = { ...parsedConfig.config.options, ...(options?.typescriptOptions ?? {}) };
 
-        const program = typescript.createProgram(tsFiles, parsedConfig.config.options);
+        const program = typescript.createProgram(tsFiles, mergedOptions);
+
         const internal = ExtensionsService.getTransformers(program);
         const transformers = TransformersService.merge(internal, options?.transformers);
 

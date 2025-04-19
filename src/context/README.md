@@ -8,11 +8,11 @@
 
 ## ✨ Features
 
-- Unified command-line interface for managing ContextJS-based projects
-- Support for creating new projects from templates
-- Project-wide or selective build and watch support
-- Simple interface with intelligent defaults
-- Works seamlessly with all ContextJS packages
+- Unified command-line interface for managing ContextJS-based projects  
+- Support for creating new projects from templates  
+- Project-wide or selective build and watch support  
+- Supports all TypeScript compiler flags via `ctx build` and `ctx watch`  
+- Works seamlessly with all ContextJS packages  
 
 ## 📦 Installation
 
@@ -22,11 +22,11 @@ Install globally via npm:
 npm install -g @contextjs/context
 ```
 
-This will expose the `ctx` command globally in your terminal.
+This exposes the `ctx` command globally in your terminal.
 
 ## 🚀 Usage
 
-### Displaying ContextJS options
+### Displaying available options
 
 ```bash
 ctx
@@ -48,13 +48,13 @@ ctx new api -n myApi
 ctx new api --name myApi
 ```
 
-If no argument is passed for API name, current folder name will be used:
+If no argument is passed for the API name, the current folder name will be used:
 
 ```bash
 ctx new api
 ```
 
-If no argument is passed at all, the help will be displayed:
+If no arguments are passed at all, the help message will be shown:
 
 ```bash
 ctx new
@@ -74,6 +74,12 @@ Build specific projects:
 ctx build myApi1 myApi2 ...
 ```
 
+You can pass TypeScript compiler options directly:
+
+```bash
+ctx build --noEmitOnError --target ES2022
+```
+
 ### Watch
 
 Watch and rebuild all projects on file changes:
@@ -88,9 +94,15 @@ Watch specific projects:
 ctx watch myApi1 myApi2 ...
 ```
 
+You can also include TypeScript flags with `watch`:
+
+```bash
+ctx watch --moduleResolution NodeNext --strict true
+```
+
 ## 📁 Project Structure
 
-When you create a new project (e.g., `ctx new api myApi`), ContextJS generates:
+When you create a new project using `ctx new api myApi`, the following layout is generated:
 
 ```
 myApi/
@@ -101,4 +113,4 @@ myApi/
     └── main.ts
 ```
 
-Each file is preconfigured to follow ContextJS conventions and integrate with the rest of the ecosystem.
+Each file is preconfigured to follow ContextJS conventions and integrates cleanly with the rest of the ecosystem.

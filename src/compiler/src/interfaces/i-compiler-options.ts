@@ -11,4 +11,5 @@ import typescript from "typescript";
 export interface ICompilerOptions {
     transformers?: typescript.CustomTransformers;
     onDiagnostic?: (diagnostic: typescript.Diagnostic) => void;
+    typescriptOptions?: typescript.CompilerOptions;
 }
