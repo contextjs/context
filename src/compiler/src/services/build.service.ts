@@ -13,8 +13,8 @@ import { ExtensionsService } from "./extensions.service.js";
 import { ProjectsService } from "./projects.service.js";
 import { TransformersService } from "./transformers.service.js";
 
-export class CompileService {
-    public static compile(projectPath: string, options?: ICompilerOptions): ICompilerResult {
+export class BuildService {
+    public static execute(projectPath: string, options?: ICompilerOptions): ICompilerResult {
         const tsFiles = ProjectsService.getSourceFiles(projectPath);
         const parsedConfig = ProjectsService.getParsedConfig(projectPath);
 

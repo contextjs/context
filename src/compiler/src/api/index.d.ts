@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import typescript from "typescript";
+import typescript, { SemanticDiagnosticsBuilderProgram } from "typescript";
 
 //#region Interfaces
 
@@ -85,8 +85,9 @@ export declare class Compiler {
      *
      * @param projectPath Path to the root of the project (must contain a `tsconfig.json`).
      * @param options Optional watch options including custom transformers and diagnostic hooks.
+     * @returns A watch object that monitors the project for changes and recompiles as needed.
      */
-    public static watch(projectPath: string, options?: ICompilerOptions): void;
+    public static watch(projectPath: string, options?: ICompilerOptions): typescript.WatchOfConfigFile<SemanticDiagnosticsBuilderProgram>;
 
     /**
      * Registers a new compiler extension.
