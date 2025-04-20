@@ -13,8 +13,8 @@ import Config from "./config.ts";
 export default abstract class Script {
     abstract runAsync(): Promise<void>;
 
-    protected async executeCommandAsync(command: string): Promise<void> {
-        execSync(command, { stdio: 'inherit' });
+    protected async executeCommandAsync(command: string, silent: boolean = false): Promise<void> {
+        execSync(command, { stdio: silent ? 'ignore' : 'inherit' });
     }
 
     protected async writeLogAsync(message: string): Promise<void> {
