@@ -14,9 +14,7 @@ export class EnvironmentFile {
     public readonly file: string;
     public readonly environmentName: string | null;
 
-    public constructor(
-        file: string,
-        environmentName: string | null = null) {
+    public constructor(file: string, environmentName: string | null = null) {
         if (!File.exists(file))
             throw new FileNotFoundException(file);
 

@@ -4,57 +4,80 @@
 [![npm](https://badgen.net/npm/v/@contextjs/configuration-json)](https://www.npmjs.com/package/@contextjs/configuration-json)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-JSON configuration management
+> JSON-based configuration provider for ContextJS applications.
 
-### Installation
-```
+## ✨ Features
+
+- Plug-and-play JSON configuration support
+- Supports environment-specific configuration files
+- Fully integrated with `@contextjs/configuration`
+- Simple fluent API for loading files
+
+## 📦 Installation
+
+```bash
 npm i @contextjs/configuration-json
 ```
 
-### Extensions
+## 🚀 Quick Start
 
-```typescript
+```ts
+import { Application } from "@contextjs/system";
+import "@contextjs/configuration";
+import "@contextjs/configuration-json";
+
+const app = new Application();
+
+app.useConfiguration(options => {
+    options.useJsonConfiguration(json => {
+        json.useFile("appsettings.json");
+        json.useFile("appsettings.development.json", "development");
+    });
+});
+
+const port = await app.configuration.getValueAsync("App:Port");
+```
+
+## 🧩 Extensions
+
+```ts
 /**
- * Module declaration for "@contextjs/configuration".
+ * Extends ConfigurationOptions with support for JSON-based configuration.
  */
 declare module "@contextjs/configuration" {
-    /**
-     * Interface representing configuration options.
-     */
     export interface ConfigurationOptions {
         /**
-         * Adds a JSON configuration provider to the application configuration.
-         * 
-         * @param {(configurationOptions: JsonConfigurationOptions) => void} options - A callback function to configure JSON-specific options.
-         * @returns {ConfigurationOptions} - The current configuration options instance.
+         * Adds a JSON configuration provider to the application.
+         *
+         * @param options A callback to configure JSON file sources.
+         * @returns The current ConfigurationOptions instance.
          */
         useJsonConfiguration(options: (configurationOptions: JsonConfigurationOptions) => void): ConfigurationOptions;
     }
 }
 ```
 
-### Options
+## 🔧 JsonConfigurationOptions
 
-```typescript
+```ts
 /**
- * Class representing options for JSON configuration.
+ * Provides options for configuring JSON-based configuration sources.
  */
 export declare class JsonConfigurationOptions {
-
     /**
-     * Use a file for configuration.
-     * 
-     * @param {string} file - The file to use for configuration.
-     * @returns {JsonConfigurationOptions} - The instance of JsonConfigurationOptions.
+     * Registers a JSON file as a configuration source.
+     *
+     * @param file The path to the configuration file.
+     * @returns The current JsonConfigurationOptions instance.
      */
     public useFile(file: string): JsonConfigurationOptions;
 
     /**
-     * Use a file for configuration with a specific environment name.
-     * 
-     * @param {string} file - The file to use for configuration.
-     * @param {string} environmentName - The environment name.
-     * @returns {JsonConfigurationOptions} - The instance of JsonConfigurationOptions.
+     * Registers a JSON file for a specific environment.
+     *
+     * @param file The path to the configuration file.
+     * @param environmentName The target environment name (e.g., "development").
+     * @returns The current JsonConfigurationOptions instance.
      */
     public useFile(file: string, environmentName: string): JsonConfigurationOptions;
 }
