@@ -660,3 +660,31 @@ test('Console: parseTypescriptArguments - raw CLI flags (assert all)', (context:
     context.assert.strictEqual(result.moduleDetection, typescript.ModuleDetectionKind.Auto);
     context.assert.strictEqual(result.ignoreDeprecations, "true");
 });
+
+test('Console: parseTypescriptArguments - skips --transformers and -t flags', (context: TestContext) => {
+    const args = [
+        new ConsoleArgument('--target', ['ES2022']),
+        new ConsoleArgument('--transformers', ['./my-transformer.ts']),
+        new ConsoleArgument('-t', ['custom-arg'])
+    ];
+
+    const options = Console.parseTypescriptArguments(args);
+
+    context.assert.strictEqual(options.target, typescript.ScriptTarget.ES2022);
+    context.assert.strictEqual((options as any).transformers, undefined);
+});
+
+test('Console: parseTypescriptArguments - verbose mode logs skipped flags --transformers', (context: TestContext) => {
+    let output = '';
+    Console.setOutput((message: string) => output += message + '\n');
+
+    const args = [
+        new ConsoleArgument('--target', ['ES2022']),
+        new ConsoleArgument('--transformers', ['./something'])
+    ];
+
+    Console.parseTypescriptArguments(args, true);
+
+    context.assert.match(output, /Skipping custom CLI flag: --transformers/);
+    Console.resetOutput();
+});

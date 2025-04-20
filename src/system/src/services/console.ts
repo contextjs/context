@@ -66,26 +66,30 @@ export class Console {
         return parsedArguments;
     }
 
-    public static parseTypescriptArguments(allArgs: ConsoleArgument[], verbose: boolean = false): typescript.CompilerOptions {
+    public static parseTypescriptArguments(consoleArguments: ConsoleArgument[], verbose: boolean = false): typescript.CompilerOptions {
         const tsArgs: string[] = [];
 
-        for (const arg of allArgs) {
-            if (!arg.name.startsWith("--"))
+        for (const consoleArgument of consoleArguments) {
+            if (!consoleArgument.name.startsWith("--"))
                 continue;
-
-            if (arg.values.length === 0) {
-                tsArgs.push(arg.name);
-            } else {
-                tsArgs.push(arg.name, ...arg.values);
+            else if (consoleArgument.name === "--transformers" || consoleArgument.name === "-t") {
+                if (verbose)
+                    this.writeLineInfo(`Skipping custom CLI flag: ${consoleArgument.name}`);
+                continue;
             }
+
+
+            if (consoleArgument.values.length === 0)
+                tsArgs.push(consoleArgument.name);
+            else
+                tsArgs.push(consoleArgument.name, ...consoleArgument.values);
         }
 
         const parsed = typescript.parseCommandLine(tsArgs);
 
         if (parsed.errors.length > 0) {
-            for (const error of parsed.errors) {
+            for (const error of parsed.errors)
                 this.writeLineError(typescript.flattenDiagnosticMessageText(error.messageText, "\n"));
-            }
         }
 
         if (verbose) {

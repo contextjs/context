@@ -9,7 +9,10 @@
 import typescript from "typescript";
 
 export interface ICompilerOptions {
-    transformers?: typescript.CustomTransformers;
+    transformers?: {
+        before?: typescript.TransformerFactory<typescript.SourceFile>[];
+        after?: typescript.TransformerFactory<typescript.SourceFile>[];
+    };
     onDiagnostic?: (diagnostic: typescript.Diagnostic) => void;
     typescriptOptions?: typescript.CompilerOptions;
 }

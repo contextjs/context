@@ -8,6 +8,7 @@
 
 import { Console, StringExtensions } from "@contextjs/system";
 import test, { TestContext } from "node:test";
+import { File } from "@contextjs/io";
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
@@ -42,12 +43,10 @@ test("WatchCommand: runAsync - no projects", async (context: TestContext) => {
 });
 
 test("WatchCommand: runAsync - success", async (context: TestContext) => {
-    let output = StringExtensions.empty;
     const originalOutput = Console["output"];
     const originalExit = process.exit;
 
-    Console.setOutput((...args: any[]) => { output += args.map(arg => String(arg)).join(" ") + "\n"; });
-
+    Console.setOutput(() => { }); // suppress console
     process.exit = (code: number) => { throw new Error(`exit:${code}`); };
 
     const command = new Command(CommandType.Watch, []);
@@ -55,13 +54,16 @@ test("WatchCommand: runAsync - success", async (context: TestContext) => {
     const projects: Project[] = [new Project("test", "test")];
 
     context.mock.method(watchCommand as any, "getProjects", () => projects);
-
+    context.mock.method(File, "exists", () => true);
+    context.mock.method(File, "read", () => JSON.stringify({}));
+    
     const { Compiler } = await import("@contextjs/compiler");
-    context.mock.method(Compiler, "watch", () => { });
+    let called = false;
+    context.mock.method(Compiler, "watch", () => { called = true; });
 
     await watchCommand.runAsync(command);
 
-    context.assert.match(output, /Watching project "test" for changes/);
+    context.assert.strictEqual(called, true);
 
     Console.setOutput(originalOutput);
     process.exit = originalExit;

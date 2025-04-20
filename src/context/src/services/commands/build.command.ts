@@ -6,12 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Compiler } from "@contextjs/compiler";
+import { Compiler, ICompilerExtension } from "@contextjs/compiler";
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import path from "path";
 import typescript from "typescript";
-import { ExtensionsRegistrar } from "../../extensions/extensions-registrar.js";
+import { ExtensionsResolver } from "../../extensions/extensions-resolver.js";
 import { Command } from "../../models/command.js";
 import { Project } from "../../models/project.js";
 import { CommandBase } from "./command-base.js";
@@ -27,29 +27,37 @@ export class BuildCommand extends CommandBase {
         }
 
         const typescriptOptions = Console.parseTypescriptArguments(command.args);
+        const transformersArg = command.args.find(arg => arg.name === "--transformers" || arg.name === "-t");
 
-        await new ExtensionsRegistrar().registerAsync();
-        await Promise.all(projects.map(project => this.buildAsync(project, typescriptOptions)));
+        await ExtensionsResolver.registerAsync();
+        await Promise.all(projects.map(project => this.buildAsync(project, typescriptOptions, transformersArg?.values[0].split(",") ?? [])));
 
         return process.exit(0);
     }
 
-    private async buildAsync(project: Project, typescriptOptions: typescript.CompilerOptions): Promise<void> {
+    private async buildAsync(project: Project, typescriptOptions: typescript.CompilerOptions, externalTransformerPaths: string[]): Promise<void> {
         try {
             Console.writeLine(`Building project: "${project.name}"...`);
 
-            if (!File.exists(path.join(project.path, "context.ctxp"))) {
+            const contextFilePath = path.join(project.path, "context.ctxp");
+            const tsConfigPath = path.join(project.path, "tsconfig.json");
+
+            if (!File.exists(contextFilePath)) {
                 Console.writeLineError("No context file found. Exiting...");
                 return process.exit(1);
             }
 
-            if (!File.exists(path.join(project.path, "tsconfig.json"))) {
+            if (!File.exists(tsConfigPath)) {
                 Console.writeLineError("No tsconfig.json file found. Exiting...");
                 return process.exit(1);
             }
 
-            await this.compileAsync(project, typescriptOptions);
-            this.copyFiles(project);
+            const contextJson = JSON.parse(File.read(contextFilePath)!);
+            const configuredTransformers = contextJson.compilerOptions?.transformers ?? [];
+            const transformers = [...configuredTransformers, ...externalTransformerPaths]
+
+            await this.compileAsync(project, typescriptOptions, transformers);
+            this.copyFiles(project, contextJson);
 
             Console.writeLineSuccess(`Project "${project.name}" built successfully.`);
         }
@@ -60,17 +68,7 @@ export class BuildCommand extends CommandBase {
         }
     }
 
-    private copyFiles(project: Project): void {
-        const contextFilePath = path.join(project.path, "context.ctxp");
-        const contextFileContent = File.read(contextFilePath);
-
-        if (!contextFileContent) {
-            Console.writeLineError("No context file found. Exiting...");
-            return process.exit(1);
-        }
-
-        const contextJson = JSON.parse(contextFileContent);
-
+    private copyFiles(project: Project, contextJson: any): void {
         if (Array.isArray(contextJson.files)) {
             for (const file of contextJson.files) {
                 try {
@@ -93,8 +91,23 @@ export class BuildCommand extends CommandBase {
         }
     }
 
-    private async compileAsync(project: Project, typescriptOptions: typescript.CompilerOptions): Promise<void> {
-        const result = Compiler.compile(project.path, { typescriptOptions: typescriptOptions });
+    private async compileAsync(project: Project, typescriptOptions: typescript.CompilerOptions, transformers: string[]): Promise<void> {
+        const externalExtensions = await ExtensionsResolver.resolveAsync(transformers, project.path);
+
+        const program = typescript.createProgram([path.join(project.path, "tsconfig.json")], typescriptOptions ?? {});
+        const externalTransformers = externalExtensions.map(ext => ext.getTransformers(program));
+
+        const mergedTransformers = {
+            before: externalTransformers.flatMap(t => t.before ?? []),
+            after: externalTransformers.flatMap(t => t.after ?? [])
+        };
+
+        const hasTransformers = mergedTransformers.before.length > 0 || mergedTransformers.after.length > 0;
+
+        const result = Compiler.compile(project.path, {
+            typescriptOptions,
+            transformers: hasTransformers ? mergedTransformers : undefined
+        });
 
         for (const diagnostic of result.diagnostics)
             this.processDiagnostics(project, [diagnostic]);
