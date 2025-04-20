@@ -13,6 +13,7 @@
  * npm run build project1 project2 ... - builds specified projects.
  */
 
+import readline from 'node:readline';
 import Config from "./config.ts";
 import Script from "./script.ts";
 
@@ -22,6 +23,14 @@ export class Build extends Script {
         await this.createOutputDirectoriesAsync();
 
         const packageNames = await this.getPackageNamesAsync();
+
+
+        if (packageNames.length === 0) {
+            this.writeLogAsync('No packages to build.');
+            return;
+        }
+
+        await this.writeLogAsync('\r');
 
         for (const packageName of packageNames)
             await this.buildPackageAsync(packageName);
@@ -42,7 +51,7 @@ export class Build extends Script {
     }
 
     private async buildPackageAsync(packageName: string): Promise<void> {
-        await this.writeLogAsync(`\nBuilding "@contextjs/${packageName}"...`);
+        await this.writeLogAsync(`Building "@contextjs/${packageName}"...`);
 
         await this.removeDependencyAsync(packageName);
         await this.createPackageDirectoryAsync(packageName);
@@ -53,7 +62,9 @@ export class Build extends Script {
         await this.createPackageAsync(packageName);
         await this.installPackageAsync(packageName);
 
-        await this.writeLogAsync(`Building "@contextjs/${packageName}"... Done.`);
+        readline.moveCursor(process.stdout, 0, -1);
+        readline.clearLine(process.stdout, 1);
+        await this.writeLogAsync(`Building "@contextjs/${packageName}"... Done.\r`);
     }
 
     private async removeDependencyAsync(packageName: string): Promise<void> {
@@ -99,7 +110,7 @@ export class Build extends Script {
     }
 
     private async createPackageAsync(packageName: string): Promise<void> {
-        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageName} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`);
+        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageName} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`, true);
     }
 
     private async installPackageAsync(packageName: string): Promise<void> {
@@ -107,7 +118,7 @@ export class Build extends Script {
         const packageJson = JSON.parse(packageJsonFile);
         const name = packageJson.name.replace("@", "").replace("/", "-");
 
-        await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz`);
+        await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz`, true);
     }
 }
 
