@@ -16,7 +16,7 @@
 | [`@contextjs/di`](https://github.com/contextjs/context/tree/main/src/di) | TypeScript-first DI container with interface support, no decorators, and transformer-based resolution |
 | [`@contextjs/io`](https://github.com/contextjs/context/tree/main/src/io) | File system and path utilities with exception-based error handling |
 | [`@contextjs/parser`](https://github.com/contextjs/context/tree/main/src/parser) | ContextJS parser utilities |
-| [`@contextjs/routing`](https://github.com/contextjs/context/tree/main/src/routing) | Route definition and matching for ContextJS applications |
+| [`@contextjs/routing`](https://github.com/contextjs/context/tree/main/src/routing) | Declarative, extensible route matching and configuration for ContextJS-based applications. |
 | [`@contextjs/system`](https://github.com/contextjs/context/tree/main/src/system) | Core utilities for application lifecycle, console, environment, and exception handling |
 | [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) | HTTP server layer for building modular, extensible web applications |
 | [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static) | Static files middleware for the ContextJS web server |

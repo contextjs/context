@@ -17,6 +17,7 @@ export class RouteOptions {
     }
 
     public discoverRoutes(): RouteOptions;
+    public discoverRoutes(value: boolean): RouteOptions;
     public discoverRoutes(value?: boolean | null): RouteOptions {
         this.routeConfiguration.discoverRoutes = value ?? true;
         return this;

@@ -7,15 +7,18 @@
  */
 
 import { Throw } from "@contextjs/system";
+import { RouteService } from "../services/route.service.js";
 
 export class Route {
     public readonly template: string;
     public readonly name: string | null;
+    public readonly decodedTemplate: string;
 
     public constructor(template: string, name: string | null = null) {
         Throw.ifNullOrWhiteSpace(template);
 
         this.template = template;
         this.name = name;
+        this.decodedTemplate = RouteService.decode(template);
     }
 }

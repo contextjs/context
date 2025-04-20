@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { NullReferenceException } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
 import { Route } from '../../src/models/route.ts';
 
@@ -20,4 +21,10 @@ test('Route: contructor - success - without name', (context: TestContext) => {
     const route = new Route('/home/index.html');
     context.assert.strictEqual(route.template, '/home/index.html');
     context.assert.strictEqual(route.name, null);
+});
+
+test('Route: constructor - should throw if template is empty', (context: TestContext) => {
+    context.assert.throws(() => new Route(""), NullReferenceException);
+    context.assert.throws(() => new Route("   "), NullReferenceException);
+    context.assert.throws(() => new Route(null as any), NullReferenceException);
 });

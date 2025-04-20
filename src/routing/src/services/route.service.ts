@@ -7,27 +7,28 @@
  */
 
 import { StringExtensions } from "@contextjs/system";
+import { IParsedSegment } from "../interfaces/i-parsed-segment.js";
 import { Route } from "../models/route.js";
+import { SegmentKind } from "../models/segment-kind.js";
 
 export class RouteService {
     public static match(value: string, routes: Route[]): Route | null {
         if (StringExtensions.isNullOrWhiteSpace(value))
             return null;
 
-        value = RouteService.decode(value)
-            .replace(/^\/+|\/+$/g, "")
-            .split('?')[0]
-            .toLowerCase();
-
+        value = this.normalizePath(value);
+        const maxScore = value.split("/").length * 10;
         let bestMatch: Route | null = null;
         let bestScore = -1;
 
         for (const route of routes) {
-            const template = RouteService.decode(route.template).toLowerCase();
-            const score = this.getScore(value, template);
+            const score = this.getScore(value, route.decodedTemplate);
             if (score > bestScore) {
                 bestScore = score;
                 bestMatch = route;
+
+                if (score === maxScore)
+                    break;
             }
         }
 
@@ -38,56 +39,95 @@ export class RouteService {
         const valueParts = value.split("/");
         const templateParts = template.split("/");
 
-        if (valueParts.length !== templateParts.length && !template.includes("{*"))
+        const hasCatchAll = this.hasCatchAll(templateParts);
+        if (!hasCatchAll && valueParts.length > templateParts.length)
             return -1;
 
         let score = 0;
         let wildcardScore = 0;
+        let i = 0;
+        let j = 0;
 
-        for (let i = 0, j = 0; i < templateParts.length && j < valueParts.length; i++, j++) {
-            const templateSegment = templateParts[i];
-            const valueSegment = valueParts[j];
+        while (i < templateParts.length) {
+            const segment = this.parseSegment(templateParts[i]);
+            const valueSegment = j < valueParts.length ? valueParts[j] : "";
 
-            if (StringExtensions.isNullOrWhiteSpace(valueSegment) && templateSegment.endsWith("?")) {
-                score += 1;
-                continue;
+            if (segment.kind === SegmentKind.CatchAll) {
+                wildcardScore += 5;
+                break;
             }
 
-            if (StringExtensions.isNullOrWhiteSpace(valueSegment))
-                return -1;
-
-            if (templateSegment === valueSegment)
-                score += 10;
-            else if (templateSegment.startsWith("{") && templateSegment.endsWith("}")) {
-                if (templateSegment.includes("*")) {
-                    wildcardScore += 5;
-                    while (j < valueParts.length - 1)
-                        j++;
+            if (StringExtensions.isNullOrWhiteSpace(valueSegment)) {
+                if (segment.kind === SegmentKind.Optional) {
+                    score += 1;
+                    i++;
+                    continue;
                 }
-                else
-                    score += 3;
+
+                return -1;
             }
+
+            if (segment.kind === SegmentKind.Literal && segment.raw === valueSegment)
+                score += 10;
+            else if (segment.kind === SegmentKind.Optional || segment.kind === SegmentKind.Parameter)
+                score += 3;
             else
                 return -1;
+
+            i++;
+            j++;
         }
+
+        if (j < valueParts.length && !hasCatchAll)
+            return -1;
 
         return score + wildcardScore;
     }
 
-    private static decode(value: string): string {
+    public static decode(value: string): string {
         try {
-            let previousValue = value;
-            let decodedValue = decodeURIComponent(value);
+            if (!value.includes("%"))
+                return value;
 
-            while (decodedValue !== previousValue) {
-                previousValue = decodedValue;
-                decodedValue = decodeURIComponent(decodedValue);
+            let previous = value;
+            let current = decodeURIComponent(value);
+            let iterations = 0;
+
+            while (current !== previous && iterations++ < 10) {
+                previous = current;
+                current = decodeURIComponent(current);
             }
 
-            return decodedValue;
+            return current.toLowerCase();
         }
         catch {
-            return value;
+            return value.toLowerCase();
         }
+    }
+
+    private static normalizePath(value: string): string {
+        return this.decode(value)
+            .replace(/^\/+|\/+$/g, "")
+            .split('?')[0]
+            .toLowerCase();
+    }
+
+    private static parseSegment(segment: string): IParsedSegment {
+        if (!segment.startsWith("{") || !segment.endsWith("}"))
+            return { kind: SegmentKind.Literal, raw: segment };
+
+        const inner = segment.slice(1, -1);
+
+        if (inner.startsWith("*"))
+            return { kind: SegmentKind.CatchAll, raw: segment, name: inner.slice(1) };
+
+        if (inner.endsWith("?"))
+            return { kind: SegmentKind.Optional, raw: segment, name: inner.slice(0, -1) };
+
+        return { kind: SegmentKind.Parameter, raw: segment, name: inner };
+    }
+
+    private static hasCatchAll(templateParts: string[]): boolean {
+        return templateParts.some(t => this.parseSegment(t).kind === SegmentKind.CatchAll);
     }
 }
