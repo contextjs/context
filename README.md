@@ -12,7 +12,7 @@
 | [`@contextjs/collections`](https://github.com/contextjs/context/tree/main/src/collections) | Collection types like `List`, `Dictionary`, and `Stack` with clean APIs and full test coverage |
 | [`@contextjs/compiler`](https://github.com/contextjs/context/tree/main/src/compiler) | Extensible TypeScript compiler with support for internal and external transformers |
 | [`@contextjs/configuration`](https://github.com/contextjs/context/tree/main/src/configuration) | Lightweight configuration system with async providers and environment variable support |
-| [`@contextjs/configuration-json`](https://github.com/contextjs/context/tree/main/src/configuration-json) | JSON-based configuration provider for ContextJS |
+| [`@contextjs/configuration-json`](https://github.com/contextjs/context/tree/main/src/configuration-json) | JSON-based configuration provider for ContextJS applications. |
 | [`@contextjs/di`](https://github.com/contextjs/context/tree/main/src/di) | TypeScript-first DI container with interface support, no decorators, and transformer-based resolution |
 | [`@contextjs/io`](https://github.com/contextjs/context/tree/main/src/io) | File system and path utilities with exception-based error handling |
 | [`@contextjs/parser`](https://github.com/contextjs/context/tree/main/src/parser) | ContextJS parser utilities |

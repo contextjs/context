@@ -21,3 +21,19 @@ test('EnvironmentFile: constructor - success', (context: TestContext) => {
     context.assert.strictEqual(environmentFile.environmentName, null);
     context.assert.deepEqual(environmentFile.content, { key: 'value' });
 });
+
+test('EnvironmentFile: constructor - file not found', (context: TestContext) => {
+    context.mock.method(File, 'exists', () => false);
+
+    context.assert.throws(() => {
+        new EnvironmentFile("nonexistent.json");
+    });
+});
+
+test('EnvironmentFile: constructor - whitespace content returns null', (context: TestContext) => {
+    context.mock.method(File, 'exists', () => true);
+    context.mock.method(File, 'read', () => '   ');
+
+    const result = new EnvironmentFile("mock.json");
+    context.assert.strictEqual(result.content, null);
+});
