@@ -12,6 +12,7 @@
 - Support for creating new projects from templates  
 - Project-wide or selective build and watch support  
 - Supports all TypeScript compiler flags via `ctx build` and `ctx watch`  
+- Supports custom and external transformers via `--transformers` or `context.ctxp`  
 - Works seamlessly with all ContextJS packages  
 
 ## 📦 Installation
@@ -80,6 +81,22 @@ You can pass TypeScript compiler options directly:
 ctx build --noEmitOnError --target ES2022
 ```
 
+Use a custom transformer:
+
+```bash
+ctx build --transformers=./src/my-transformer.ts
+```
+
+Or define transformers in `context.ctxp`:
+
+```json
+{
+  "compilerOptions": {
+    "transformers": ["./src/my-transformer.ts"]
+  }
+}
+```
+
 ### Watch
 
 Watch and rebuild all projects on file changes:
@@ -98,6 +115,12 @@ You can also include TypeScript flags with `watch`:
 
 ```bash
 ctx watch --moduleResolution NodeNext --strict true
+```
+
+External transformers are also supported in watch mode:
+
+```bash
+ctx watch --transformers=./src/my-transformer.ts
 ```
 
 ## 📁 Project Structure

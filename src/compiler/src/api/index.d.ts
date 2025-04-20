@@ -39,7 +39,10 @@ export declare interface ICompilerOptions {
      * Additional custom transformers provided by the caller.
      * These will be merged with all registered internal extensions.
      */
-    transformers?: typescript.CustomTransformers;
+    transformers?: {
+        before?: typescript.TransformerFactory<typescript.SourceFile>[];
+        after?: typescript.TransformerFactory<typescript.SourceFile>[];
+    };
 
     /**
      * Optional callback invoked for each formatted diagnostic emitted during compilation.

@@ -12,7 +12,7 @@ import { Console } from "@contextjs/system";
 import test, { TestContext } from "node:test";
 import os from "os";
 import path from "path";
-import { ExtensionsRegistrar } from "../../src/extensions/extensions-registrar.js";
+import { ExtensionsResolver } from "../../src/extensions/extensions-resolver.js";
 
 function createTempDir(subdir: string): string {
     const dir = path.join(os.tmpdir(), `ctx-transformers-${subdir}-${Date.now()}`);
@@ -20,7 +20,7 @@ function createTempDir(subdir: string): string {
     return dir;
 }
 
-test("ExtensionsRegistrar: registerAsync() loads valid transformers", async (context: TestContext) => {
+test("ExtensionsResolver: registerAsync() loads valid transformers", async (context: TestContext) => {
     const tempDir = createTempDir("valid");
     context.after(() => Directory.delete(tempDir));
 
@@ -35,15 +35,15 @@ test("ExtensionsRegistrar: registerAsync() loads valid transformers", async (con
     const originalRegister = Compiler.registerExtension;
     Compiler.registerExtension = (ext) => registered.push(ext.name);
 
-    (ExtensionsRegistrar as any).registered = false;
-    const registrar = new ExtensionsRegistrar(tempDir);
-    await registrar.registerAsync();
+    (ExtensionsResolver as any).registered = false;
+    (ExtensionsResolver as any).transformersFolder = tempDir;
+    await ExtensionsResolver.registerAsync();
 
     context.assert.deepEqual(registered, ["test-transformer"]);
     Compiler.registerExtension = originalRegister;
 });
 
-test("ExtensionsRegistrar: skips files that do not export valid extensions", async (context: TestContext) => {
+test("ExtensionsResolver: skips files that do not export valid extensions", async (context: TestContext) => {
     const tempDir = createTempDir("invalid");
     context.after(() => Directory.delete(tempDir));
 
@@ -53,15 +53,15 @@ test("ExtensionsRegistrar: skips files that do not export valid extensions", asy
     const originalRegister = Compiler.registerExtension;
     Compiler.registerExtension = (ext) => registered.push(ext.name);
 
-    (ExtensionsRegistrar as any).registered = false;
-    const registrar = new ExtensionsRegistrar(tempDir);
-    await registrar.registerAsync();
+    (ExtensionsResolver as any).registered = false;
+    (ExtensionsResolver as any).transformersFolder = tempDir;
+    await ExtensionsResolver.registerAsync();
 
     context.assert.strictEqual(registered.length, 0);
     Compiler.registerExtension = originalRegister;
 });
 
-test("ExtensionsRegistrar: handles import errors gracefully", async (context: TestContext) => {
+test("ExtensionsResolver: handles import errors gracefully", async (context: TestContext) => {
     const tempDir = createTempDir("broken");
     context.after(() => Directory.delete(tempDir));
 
@@ -74,15 +74,15 @@ test("ExtensionsRegistrar: handles import errors gracefully", async (context: Te
             errorLogged = true;
     };
 
-    (ExtensionsRegistrar as any).registered = false;
-    const registrar = new ExtensionsRegistrar(tempDir);
-    await registrar.registerAsync();
+    (ExtensionsResolver as any).registered = false;
+    (ExtensionsResolver as any).transformersFolder = tempDir;
+    await ExtensionsResolver.registerAsync();
 
     context.assert.ok(errorLogged);
     Console.writeLineError = originalError;
 });
 
-test("ExtensionsRegistrar: loads files in sorted order", async (context: TestContext) => {
+test("ExtensionsResolver: loads files in sorted order", async (context: TestContext) => {
     const tempDir = createTempDir("sorted");
     context.after(() => Directory.delete(tempDir));
 
@@ -103,9 +103,9 @@ test("ExtensionsRegistrar: loads files in sorted order", async (context: TestCon
     const originalRegister = Compiler.registerExtension;
     Compiler.registerExtension = (ext) => registered.push(ext.name);
 
-    (ExtensionsRegistrar as any).registered = false;
-    const registrar = new ExtensionsRegistrar(tempDir);
-    await registrar.registerAsync();
+    (ExtensionsResolver as any).registered = false;
+    (ExtensionsResolver as any).transformersFolder = tempDir;
+    await ExtensionsResolver.registerAsync();
 
     context.assert.deepEqual(registered, ["A", "B"]);
     Compiler.registerExtension = originalRegister;

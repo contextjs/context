@@ -145,7 +145,7 @@ test("BuildCommand: copyFiles - success", (context: TestContext) => {
 
     const project = new Project("test", "dir");
     const buildCommand = new BuildCommand();
-    context.assert.doesNotThrow(() => (buildCommand as any).copyFiles(project));
+    context.assert.doesNotThrow(() => (buildCommand as any).copyFiles(project, {}));
 });
 
 test("BuildCommand: compileAsync - emits valid project", async (context: TestContext) => {
