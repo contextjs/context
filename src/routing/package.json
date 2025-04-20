@@ -1,11 +1,12 @@
 {
   "name": "@contextjs/routing",
   "version": "__VERSION__",
+  "description": "Declarative, fast, and extensible route matching for ContextJS applications.",
   "main": "api/index.js",
-  "description": "ContextJS - Routing module",
-  "author": "ContextJS",
-  "license": "MIT",
+  "types": "api/index.d.ts",
   "type": "module",
+  "license": "MIT",
+  "author": "ContextJS",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/contextjs/context.git",
@@ -13,5 +14,23 @@
   },
   "peerDependencies": {
     "@contextjs/system": "__VERSION__"
-  }
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "keywords": [
+    "contextjs",
+    "routing",
+    "router",
+    "route-matching",
+    "parameterized-routing",
+    "typescript",
+    "dependency-injection",
+    "path-matching",
+    "fluent-api",
+    "framework"
+  ]
 }

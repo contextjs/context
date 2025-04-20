@@ -9,43 +9,38 @@
 import "@contextjs/system";
 
 /**
- * Represents a route
+ * Represents a route with a URL template and optional name.
  */
 export declare class Route {
-
-    /** The template of the route. */
+    /** The route's URL template (e.g., "home/{id}"). */
     public readonly template: string;
 
-    /** The name of the route. Optional. */
+    /** The route's name, or null if unnamed. */
     public readonly name: string | null;
 
     /**
-     * Creates a new instance of the Route class.
-     * 
-     * @param template The template of the route.
-     * @returns A new instance of the Route class.
+     * Creates a new route.
+     * @param template The route's URL template.
      */
     public constructor(template: string);
 
     /**
-     * Creates a new instance of the Route class.
-     * 
-     * @param template The template of the route.
-     * @param name The name of the route.
-     * @returns A new instance of the Route class.
+     * Creates a new named route.
+     * @param template The route's URL template.
+     * @param name The route's name.
      */
     public constructor(template: string, name: string);
 }
 
 /**
- * Parses a route and finds the best match for the given value.
+ * Provides matching logic to resolve a route from a path.
  */
 export declare class RouteService {
     /**
-     * Finds a route that matches the given value
-     * @param value The value to parse
-     * @param routes The routes to search
-     * @returns The route that matches the value or null if no route was found
+     * Finds the best matching route for a given path.
+     * @param value The request path (e.g., "home/123").
+     * @param routes The available routes to match against.
+     * @returns The matching route, or null if no match was found.
      */
     public static match(value: string, routes: Route[]): Route | null;
 }
@@ -54,61 +49,60 @@ export declare class RouteService {
 
 declare module "@contextjs/system" {
     /**
-    * Interface for extending the Application.
-    */
+     * Adds routing configuration to the Application interface.
+     */
     export interface Application {
         /**
-         * The route configuration for the application.
+         * The current route configuration.
          */
         routeConfiguration: RouteConfiguration;
 
         /**
-         * Configures the routing options for the application.
-         * @param options A function that takes a RouteOptions object to configure routing options.
-         * @returns The current instance of the Application.
+         * Configures routing for the application.
+         * @param options A callback that receives a RouteOptions object to configure routing.
+         * @returns The current Application instance.
          */
         useRouting(options: (routeOptions: RouteOptions) => void): Application;
     }
 }
 
 /**
- * Configures the routing options for the application.
+ * Defines the routing configuration for an application.
  */
 export declare class RouteConfiguration {
     /**
-     * Indicates whether it should use routes discovery.
+     * Whether route discovery is enabled.
      */
     public discoverRoutes: boolean;
 
     /**
-     * The routes to be used.
-     * If discoverRoutes is true, this property will add the discovered routes.
+     * The list of routes for the application.
+     * When route discovery is enabled, discovered routes are added here.
      */
     public routes: Route[];
 }
 
 /**
- * RouteOptions class for configuring routing options.
- * It allows the user to specify whether to use routes discovery or to provide a list of routes, or both.
+ * Provides a fluent interface to configure routing behavior.
  */
 export declare class RouteOptions {
     /**
-     * Indicates whether to use routes discovery. This property is set to true by default.
-     * @returns {RouteOptions} - The current instance of RouteOptions.
+     * Enables route discovery.
+     * @returns The current RouteOptions instance.
      */
     public discoverRoutes(): RouteOptions;
 
     /**
-     * Sets the routes discovery option.
-     * @param value - A boolean value indicating whether to use routes discovery or not.
-     * @returns {RouteOptions} - The current instance of RouteOptions.
+     * Enables or disables route discovery.
+     * @param value True to enable discovery, false to disable.
+     * @returns The current RouteOptions instance.
      */
     public discoverRoutes(value: boolean): RouteOptions;
 
     /**
-     * Sets the routes to be used.
-     * @param routes The array of routes to be used.
-     * @returns The current instance of RouteOptions.
+     * Sets the routes to use explicitly.
+     * @param routes The routes to apply.
+     * @returns The current RouteOptions instance.
      */
     public useRoutes(routes: Route[]): RouteOptions;
 }
