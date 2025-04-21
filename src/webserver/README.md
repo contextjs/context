@@ -4,193 +4,248 @@
 [![npm](https://badgen.net/npm/v/@contextjs/webserver?cache=300)](https://www.npmjs.com/package/@contextjs/webserver)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-ContextJS Web Server
+> A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies.
 
-### Installation
-```
+## Installation
+
+```bash
 npm i @contextjs/webserver
 ```
 
+## Getting Started
+
+Register the web server using `useWebServer`:
+
+```ts
+import { Application } from "@contextjs/system";
+import { WebServerOptions } from "@contextjs/webserver";
+
+app.useWebServer((options: WebServerOptions) => {
+    options.http.enabled = true;
+    options.http.port = 5000;
+});
+```
+
+You can register middleware by calling:
+
+```ts
+options.useMiddleware({
+    name: "logger",
+    version: "1.0.0",
+    async onRequestAsync(context, next) {
+        console.log(`${context.request.httpMethod} ${context.request.url}`);
+        await next();
+    }
+});
+```
+
+## Features
+
+- HTTP and HTTPS support with configurable ports and timeouts
+- Middleware pipeline with `onRequestAsync` and optional `onErrorAsync`
+- Full access to parsed `HttpRequest` and `HttpResponse` objects
+- Graceful shutdown handling for `SIGINT` and `SIGTERM`
+- Built-in MIME type utility and strong typing across APIs
+
+## API Reference
 
 ### Extensions
 
-```typescript
-declare module "@contextjs/system"
-{
+```ts
+declare module "@contextjs/system" {
     export interface Application {
         /**
-         * Adds ContextJS webserver to the application.
-         * @param options The webserver options.
-         * @returns The current instance of the application.
+         * Adds the ContextJS web server to the application.
+         * @param configure The configuration delegate used to set server options.
+         * @returns The current Application instance.
          */
-        useWebServer(options: (webserverOptions: WebServerOptions) => void): Application;
+        useWebServer(configure: (webserverOptions: WebServerOptions) => void): Application;
     }
 }
+```
 
-/** Represents the webserver options. */
+### Options
+
+```ts
+/** Represents configuration options for the web server. */
 export declare class WebServerOptions {
+    /** HTTP configuration. */
+    public http: {
+        enabled: boolean;
+        port?: number;
+        timeout?: number; // In milliseconds, default: 120_000 (2 min)
+    };
 
-    /** The http options. */
-    public http: { enabled: boolean; port?: number; };
-
-    /** The https options. */
-    public https: { enabled: boolean; port?: number; certificate?: SSLCertificate; };
+    /** HTTPS configuration. */
+    public https: {
+        enabled: boolean;
+        port?: number;
+        timeout?: number; // In milliseconds, default: 120_000 (2 min)
+        certificate?: SSLCertificate;
+    };
 
     /**
-     * Adds a middleware to the webserver.
-     * 
+     * Adds a middleware component to the web server pipeline.
      * @param middleware The middleware to add.
-     * @returns The current instance of the WebServerOptions.
+     * @returns The current WebServerOptions instance.
      */
-    public useMiddleware(middleware: IMiddleware): WebServerOptions
+    public useMiddleware(middleware: IMiddleware): WebServerOptions;
 }
 ```
 
 ### Interfaces
 
-```typescript
-/** Represents the webserver HttpContext generic interface. */
+```ts
+/** Represents the context object for a web server request. */
 export declare interface IHttpContext {
-    /** The context http request. */
+    /** The incoming HTTP request. */
     request: IHttpRequest;
 
-    /** The context http response. */
+    /** The outgoing HTTP response. */
     response: IHttpResponse;
 }
 
-/** Interface for server request */
-export interface IHttpRequest {
-    /** Gets the http version. */
+/** Represents an HTTP request. */
+export declare interface IHttpRequest {
+    /** The HTTP version of the request. */
     readonly httpVersion: string;
 
-    /** Gets the request headers. */
+    /** The request headers. */
     readonly headers: HttpHeader[];
 
-    /** Gets request method. */
+    /** The HTTP method (e.g., GET, POST). */
     readonly httpMethod: string | null;
 
-    /** Gets the Url. */
+    /** The full request URL. */
     readonly url: string | null;
 
-    /** Gets the host. */
+    /** The value of the `Host` header. */
     readonly host: string | null;
 
-    /** Gets the status code. */
+    /** The response status code, if known. */
     readonly statusCode: number | null;
 
-    /** Gets the status message. */
+    /** The response status message, if known. */
     readonly statusMessage: string | null;
 }
 
-/**
- * Represents a server response.
- * @interface
- */
+/** Represents an HTTP response. */
 export declare interface IHttpResponse {
-    /** Gets or sets the status code. */
+    /** Gets or sets the HTTP status code. */
     statusCode: number;
 
     /**
-     * Writes text to the response body.
+     * Writes a string to the response body.
      * @param text The text to write.
-     * @param encoding The encoding of the text. Optional.
+     * @param encoding Optional encoding (default: "utf-8").
      */
     write(text: string, encoding?: BufferEncoding): void;
 
     /**
-     * Streams a file to the response.
-     * @param filePath The file path.
+     * Streams a file from disk to the response.
+     * @param filePath The path to the file to stream.
      */
     streamAsync(filePath: string): Promise<void>;
 
-    /** 
-     * Sets a response header. 
-     * 
+    /**
+     * Sets a header on the response.
      * @param name The name of the header.
      * @param value The value of the header.
-    */
+     */
     setHeader(name: string, value: number | string | string[]): void;
 }
 
-/**
- * Represents the interface used by all server middleware.
- */
-export interface IMiddleware {
-    /** Gets or sets the middleware name. */
+/** Represents a middleware component in the web server pipeline. */
+export declare interface IMiddleware {
+    /** The name of the middleware component. */
     name: string;
 
-    /** Gets or sets the middleware version. */
+    /** The version of the middleware component. */
     version: string;
 
-    /** Event that will be executed on server request. */
+    /**
+     * Invoked for each incoming request.
+     * @param httpContext The HTTP context for the current request.
+     * @param next A function to call the next middleware in the pipeline.
+     */
     onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void>;
 
-    /** Event that will be execute on server error */
+    /**
+     * Invoked when an error occurs in the request pipeline.
+     * @param exception The error that occurred.
+     */
     onErrorAsync?(exception: any): Promise<void>;
 }
 ```
 
-### Classes
+### Core Classes
 
-```typescript
-/** Represents the webserver class. */
+```ts
+/** Represents the ContextJS web server. */
 export declare class WebServer {
-    /** Initializes a new instance of the WebServer class. */
+    /**
+     * Initializes a new instance of the WebServer class.
+     * @param options The web server configuration.
+     */
     constructor(options: WebServerOptions);
 
     /**
-     * Event that will be emited on server error
-     * @param exception 
+     * Optional event triggered when an unhandled exception occurs.
+     * @param exception The error that occurred.
      */
-    public onErrorAsync?(exception: any): Promise<void>;
+    public onErrorAsync?(exception: unknown): Promise<void>;
 
     /**
-     * Adds middleware to the webserver.
-     * 
+     * Optional event triggered when a request socket times out.
+     */
+    public onTimeoutAsync?(): Promise<void>;
+
+    /**
+     * Adds a middleware to the web server.
      * @param middleware The middleware to add.
-     * @returns The current instance of webserver.
+     * @returns The current WebServer instance.
      */
     public useMiddleware(middleware: IMiddleware): WebServer;
 
-    /** Runs the server */
+    /** Starts the server. */
     public startAsync(): Promise<void>;
 
-    /** Stops the server */
+    /** Stops the server. */
     public stopAsync(): Promise<void>;
 
-    /** Restarts the server */
+    /** Restarts the server. */
     public restartAsync(): Promise<void>;
 
-    /** Returns true if the server is listening on http. */
+    /** Disposes and shuts down the server completely. */
+    public disposeAsync(): Promise<void>;
+
+    /** Returns true if the HTTP server is currently listening. */
     public listeningOnHttp(): boolean;
 
-    /** Returns true if the server is listening on https. */
+    /** Returns true if the HTTPS server is currently listening. */
     public listeningOnHttps(): boolean;
+
+    /** Returns true if either HTTP or HTTPS server is running. */
+    public isRunning(): boolean;
 }
 
-/**
- * Represents a HTTP header.
- */
+/** Represents a single HTTP header. */
 export declare class HttpHeader {
     /**
-     * Initializes a new instance of HttpHeader.
+     * Initializes a new instance of the HttpHeader class.
      * @param name The name of the header.
      * @param value The value of the header.
-     * 
-     * @throws Exception When the "name" parameter is null or empty or whitespace.
-     * @throws Exception When the "value" parameter is null or undefined.
+     * @throws Exception if name is null, empty, or value is undefined.
      */
-    public constructor(name: string, value: number | string | string[]);
+    constructor(name: string, value: number | string | string[]);
 }
 
-/**
- * Provides a list of MIME types.
- */
+/** Provides MIME type resolution based on file extensions. */
 export declare class MimeTypes {
     /**
-     * Gets the MIME type for the specified extension.
-     * @param extension The extension.
-     * @returns The MIME type.
+     * Gets the MIME type associated with the given file extension.
+     * @param extension The file extension (without the dot).
+     * @returns The MIME type or null if unknown.
      */
     public static get(extension: string): string | null;
 }
@@ -198,44 +253,27 @@ export declare class MimeTypes {
 
 ### Exceptions
 
-```typescript
-/**
- * Represents an exception that is thrown when a certificate key is invalid.
- */
+```ts
+/** Thrown when an SSL certificate key is invalid or unreadable. */
 export declare class InvalidCertificateKeyException extends Exception {
-    /**
-     * Initializes a new instance of the InvalidCertificateKeyException class.
-     * @param name The name of the certificate key.
-     */
-    public constructor(name: string);
+    constructor(name: string);
 }
 
-/**
- * Represents an exception that is thrown when a certificate is invalid.
- */
+/** Thrown when an SSL certificate file is invalid or unreadable. */
 export declare class InvalidCertificateException extends Exception {
-    /**
-     * Initializes a new instance of the InvalidCertificateException class.
-     * @param name The name of the certificate.
-     */
-    public constructor(name: string);
+    constructor(name: string);
 }
 
-/**
- * Represents an exception that is thrown when a middleware already exists.
- */
+/** Thrown when a middleware component with the same name already exists. */
 export declare class MiddlewareExistsException extends Exception {
-    /**
-     * Initializes a new instance of the MiddlewareExistsException class.
-     * @param name The name of the middleware.
-     */
-    public constructor(name: string);
+    constructor(name: string);
 }
 ```
 
 ### Types
 
-```typescript
+```ts
+/** Represents the text encoding used when writing to a response. */
 export declare type BufferEncoding =
     | "ascii"
     | "utf8"
@@ -249,9 +287,12 @@ export declare type BufferEncoding =
     | "latin1"
     | "hex";
 
-/** Represents an SSL certificate. */
+/** Represents an SSL certificate pair used for HTTPS. */
 export declare type SSLCertificate = {
+    /** Path to the certificate key file. */
     key: string;
+
+    /** Path to the public certificate file. */
     certificate: string;
-}
+};
 ```

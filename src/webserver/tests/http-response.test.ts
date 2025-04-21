@@ -8,9 +8,9 @@
 
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { test, TestContext } from 'node:test';
-import { HttpResponse } from '../../src/http-response';
-import { HttpResponseBuffer } from '../../src/models/http-response-buffer';
-import { IHttpResponse } from '../../src/models/interfaces/i-http-response';
+import { HttpResponse } from '../src/http-response';
+import { IHttpResponse } from '../src/interfaces/i-http-response';
+import { HttpResponseBuffer } from '../src/models/http-response-buffer';
 
 test('end_Success', (context: TestContext) => {
     const incomingMessage: IncomingMessage = new IncomingMessage(null!);
@@ -51,5 +51,41 @@ test('setHeader_Success', (context: TestContext) => {
 
     httpResponse.setHeader('Content-Type', 'text/plain');
 
-    context.assert.strictEqual((httpResponse as any).headers[0].name, 'Content-Type');
+    const responseHeaders = (httpResponse as any);
+    const header = responseHeaders.headers.get('Content-Type');
+
+    context.assert.strictEqual(header.value, 'text/plain');
+});
+
+test('HttpResponse: appendHeader combines multiple values', (context: TestContext) => {
+    const response = new HttpResponse({ setHeader: () => { }, end: () => { } } as any);
+    response.appendHeader('Set-Cookie', 'a=1');
+    response.appendHeader('Set-Cookie', 'b=2');
+
+    const header = (response as any).headers.get('Set-Cookie');
+    context.assert.deepStrictEqual(header?.value, ['a=1', 'b=2']);
+});
+
+test('HttpResponse: flush - success', (context: TestContext) => {
+    const written: any[] = [];
+    const headersSet: Record<string, any> = {};
+
+    const mockServerResponse = {
+        headersSent: false,
+        statusCode: 0,
+        setHeader: (name: string, value: any) => headersSet[name] = value,
+        write: (value: any, encoding?: BufferEncoding) => written.push({ value, encoding }),
+        end: () => written.push('end')
+    };
+
+    const response = new HttpResponse(mockServerResponse as any);
+    response.setHeader('X-Test', 'value');
+    response.write('Hello World', 'utf8');
+    response.flush();
+
+    context.assert.equal(mockServerResponse.statusCode, 200);
+    context.assert.deepEqual(headersSet, { 'X-Test': 'value' });
+    context.assert.deepEqual(written, [
+        { value: 'Hello World', encoding: 'utf8' }
+    ]);
 });

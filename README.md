@@ -54,6 +54,12 @@ ctx build
 |--------|-------------|
 | [`@contextjs/routing`](https://github.com/contextjs/context/tree/main/src/routing) | Advanced router supporting literal, parameter, optional, and wildcard segments with a scoring-based matcher |
 
+## Web Server
+
+| Package | Description |
+|--------|-------------|
+| [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) | A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies. |
+
 ## Ecosystem Principles
 
 - **Modular structure**: All packages reside under `src/<package>` and expose public APIs via `api/index.ts`
@@ -65,7 +71,6 @@ ctx build
 
 ## Coming Soon
 
-- [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) – Web server layer for building modular, extensible web applications  
 - [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static) – Static files middleware for the ContextJS web server  
 <br>
 

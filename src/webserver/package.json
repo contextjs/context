@@ -2,7 +2,8 @@
   "name": "@contextjs/webserver",
   "version": "__VERSION__",
   "main": "api/index.js",
-  "description": "ContextJS - Web Server",
+  "types": "api/index.d.ts",
+  "description": "A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies.",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
@@ -11,8 +12,30 @@
     "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/webserver"
   },
+  "keywords": [
+    "contextjs",
+    "webserver",
+    "http",
+    "https",
+    "server",
+    "framework",
+    "middleware",
+    "application",
+    "superfast",
+    "typesafe",
+    "typescript",
+    "lightweight",
+    "extensible"
+  ],
   "peerDependencies": {
     "@contextjs/system": "__VERSION__",
-    "@contextjs/io": "__VERSION__"
+    "@contextjs/io": "__VERSION__",
+    "@contextjs/collections": "__VERSION__"
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
   }
 }

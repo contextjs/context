@@ -15,4 +15,5 @@ export interface IHttpRequest {
     readonly url: string | null;
     readonly statusCode: number | null;
     readonly statusMessage: string | null;
+    readonly host: string | null;
 }

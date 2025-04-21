@@ -14,4 +14,5 @@ export interface IMiddleware {
 
     onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void>;
     onErrorAsync?(exception: any): Promise<void>;
+    onTimeoutAsync?(): Promise<void>;
 }

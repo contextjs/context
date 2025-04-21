@@ -39,14 +39,14 @@ import { Dictionary } from '@contextjs/collections';
 
 const dictionary = new Dictionary<string, number>();
 
-dictionary.add("apple", 1);
-dictionary.add("banana", 2);
+dictionary.set("apple", 1);
+dictionary.set("banana", 2);
 
 console.log(dictionary.get("apple"));    // 1
 console.log(dictionary.has("banana"));   // true
 console.log(dictionary.has("cherry"));   // false
 
-dictionary.remove("banana");
+dictionary.delete("banana");
 console.log(dictionary.count);           // 1
 
 dictionary.clear();
@@ -157,11 +157,11 @@ console.log(stack.isEmpty);   // true
  */
 export declare class Dictionary<TKey, TValue> {
     /**
-     * Adds an item to the dictionary.
+     * Adds or replaces an item to the dictionary.
      * @param key The key of the item.
      * @param item The item to add. 
      */
-    public add(key: TKey, item: TValue): void;
+    public set(key: TKey, item: TValue): void;
 
     /**
      * Gets an item from the dictionary.
@@ -181,7 +181,7 @@ export declare class Dictionary<TKey, TValue> {
      * Removes an item from the dictionary.
      * @param key The key of the item to remove.
      */
-    public remove(key: TKey): void;
+    public delete(key: TKey): void;
 
     /**
      * Clears all items from the dictionary.
@@ -191,17 +191,17 @@ export declare class Dictionary<TKey, TValue> {
     /**
      * Gets all values in the dictionary.
      */
-    public get values(): TValue[];
+    public values(): TValue[];
 
     /**
      * Gets all keys in the dictionary.
      */
-    public get keys(): TKey[];
+    public keys(): TKey[];
 
     /**
      * Gets the number of items in the dictionary.
      */
-    public get count(): number;
+    public count(): number;
 }
 
 /**

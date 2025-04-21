@@ -11,7 +11,7 @@ import { Throw } from "@contextjs/system";
 export class HttpHeader {
     public constructor(
         public readonly name: string,
-        public readonly value: number | string | string[]) {
+        public value: number | string | string[]) {
         Throw.ifNullOrWhiteSpace(name);
         Throw.ifNullOrUndefined(value);
     }

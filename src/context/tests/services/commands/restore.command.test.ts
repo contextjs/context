@@ -6,12 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Directory, File } from "@contextjs/io";
 import { Console, StringExtensions } from "@contextjs/system";
-import childProcess from "node:child_process";
-import os from "node:os";
 import test, { TestContext } from 'node:test';
-import path from "path";
 import { CommandType } from "../../../src/models/command-type.ts";
 import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
@@ -92,22 +88,30 @@ test('RestoreCommand: runAsync(--p) - success', async (context: TestContext) => 
 });
 
 test('RestoreCommand: runAsync - success', async (context: TestContext) => {
+    const originalConsoleLog = console.log;
+    const originalProcessExit = process.exit;
+
     let logOutput = StringExtensions.empty;
-    let exitCode = 0;
-    const command: Command = new Command(CommandType.Restore, []);
+    let exitCode = -1;
+
+    const command = new Command(CommandType.Restore, []);
     const restoreCommand = new RestoreCommand();
     const projects = [new Project('project1', 'path1')];
 
     context.mock.method(restoreCommand as any, 'getProjects', () => projects);
     context.mock.method(restoreCommand as any, 'restoreAsync', () => void 0);
 
-    console.log = (message: string) => logOutput = message;
-    process.exit = (code: number) => {
-        exitCode = code;
-        return undefined as never;
-    };
+    console.log = (message: string) => { logOutput = message; };
+    process.exit = (code: number) => { exitCode = code; throw new Error(`process.exit(${code})`); };
+    context.after(() => { console.log = originalConsoleLog; process.exit = originalProcessExit; });
 
-    await restoreCommand.runAsync(command);
+    try {
+        await restoreCommand.runAsync(command);
+    }
+    catch (error: any) {
+        if (!error.message.startsWith("process.exit("))
+            throw error;
+    }
 
     context.assert.strictEqual(exitCode, 0);
 });
