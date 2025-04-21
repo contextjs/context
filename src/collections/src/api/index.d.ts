@@ -7,57 +7,59 @@
  */
 
 /**
- * Represents a dictionary (key-value map) data structure.
- * @template TKey The type of keys in the dictionary.
- * @template TValue The type of values in the dictionary.
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
+
 export declare class Dictionary<TKey, TValue> {
     /**
-     * Adds an item to the dictionary.
-     * @param key The key of the item.
-     * @param item The item to add. 
+     * Adds or updates a key-value pair in the dictionary.
+     * @param key The key to set.
+     * @param value The value associated with the key.
      */
-    public add(key: TKey, item: TValue): void;
+    set(key: TKey, value: TValue): void;
 
     /**
-     * Gets an item from the dictionary.
-     * @param key The key of the item.
-     * @returns The item or null if not found.
+     * Retrieves the value associated with the specified key.
+     * Returns `null` if the key is not present.
+     * @param key The key to retrieve.
      */
-    public get(key: TKey): TValue | null;
+    get(key: TKey): TValue | null;
 
     /**
-     * Checks if the dictionary contains a key.
+     * Determines whether the dictionary contains the specified key.
      * @param key The key to check.
-     * @returns True if the key exists, otherwise false.
      */
-    public has(key: TKey): boolean;
+    has(key: TKey): boolean;
 
     /**
-     * Removes an item from the dictionary.
-     * @param key The key of the item to remove.
+     * Removes the value associated with the specified key, if present.
+     * @param key The key to remove.
      */
-    public remove(key: TKey): void;
+    delete(key: TKey): void;
 
     /**
-     * Clears all items from the dictionary.
+     * Removes all entries from the dictionary.
      */
-    public clear(): void;
+    clear(): void;
 
     /**
-     * Gets all values in the dictionary.
+     * Returns an array of all values in the dictionary.
      */
-    public get values(): TValue[];
+    values(): TValue[];
 
     /**
-     * Gets all keys in the dictionary.
+     * Returns an array of all keys in the dictionary.
      */
-    public get keys(): TKey[];
+    keys(): TKey[];
 
     /**
-     * Gets the number of items in the dictionary.
+     * Gets the total number of entries in the dictionary.
      */
-    public get count(): number;
+    count(): number;
 }
 
 /**

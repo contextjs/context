@@ -9,8 +9,8 @@
 export class Dictionary<TKey, TValue> {
     private readonly map = new Map<TKey, TValue>();
 
-    public add(key: TKey, item: TValue): void {
-        this.map.set(key, item);
+    public set(key: TKey, value: TValue): void {
+        this.map.set(key, value);
     }
 
     public get(key: TKey): TValue | null {
@@ -21,7 +21,7 @@ export class Dictionary<TKey, TValue> {
         return this.map.has(key);
     }
 
-    public remove(key: TKey): void {
+    public delete(key: TKey): void {
         this.map.delete(key);
     }
 
@@ -29,15 +29,15 @@ export class Dictionary<TKey, TValue> {
         this.map.clear();
     }
 
-    public get values(): TValue[] {
+    public values(): TValue[] {
         return Array.from(this.map.values());
     }
 
-    public get keys(): TKey[] {
+    public keys(): TKey[] {
         return Array.from(this.map.keys());
     }
 
-    public get count(): number {
+    public count(): number {
         return this.map.size;
     }
 }

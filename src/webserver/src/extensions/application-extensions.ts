@@ -17,7 +17,7 @@ declare module "@contextjs/system" {
     }
 }
 
-Application.prototype.useWebServer = function (options: (configurationOptions: WebServerOptions) => void): Application {
+Application.prototype.useWebServer = function (options: (webserverOptions: WebServerOptions) => void): Application {
 
     Throw.ifNullOrUndefined(options);
 

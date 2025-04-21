@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { test, TestContext } from 'node:test';
+import test, { TestContext } from 'node:test';
 import { MiddlewareExistsException } from '../../src/exceptions/middleware-exists.exception.js';
 
-test('MiddlewareExistsException - contructor - success', async (context: TestContext) => {
+test('MiddlewareExistsException: constructor', async (context: TestContext) => {
     const name = 'test-name';
     const exception = new MiddlewareExistsException(name);
 

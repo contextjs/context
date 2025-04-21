@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { test, TestContext } from 'node:test';
+import test, { TestContext } from 'node:test';
 import { InvalidCertificateKeyException } from '../../src/exceptions/invalid-certificate-key.exception.js';
 
-test('InvalidCertificateKeyException - contructor - success', async (context: TestContext) => {
+test('InvalidCertificateKeyException: constructor', async (context: TestContext) => {
     const name = 'test-key-name';
     const exception = new InvalidCertificateKeyException(name);
 

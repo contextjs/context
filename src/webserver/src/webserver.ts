@@ -1,14 +1,7 @@
-/**
- * @license
- * Copyright ContextJS All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found at https://github.com/contextjs/context/blob/main/LICENSE
- */
-
 import { File } from "@contextjs/io";
-import { Console, Exception, Throw } from "@contextjs/system";
-import { IncomingMessage, Server, ServerResponse } from "http";
+import { Console, Throw } from "@contextjs/system";
+import { IncomingMessage, Server, ServerResponse } from "node:http";
+import { Socket } from "node:net";
 import { InvalidCertificateKeyException } from "./exceptions/invalid-certificate-key.exception.js";
 import { InvalidCertificateException } from "./exceptions/invalid-certificate.exception.js";
 import { MiddlewareExistsException } from "./exceptions/middleware-exists.exception.js";
@@ -19,17 +12,20 @@ import { HttpResponse } from "./http-response.js";
 import { IMiddleware } from "./interfaces/i-middleware.js";
 
 export class WebServer {
-
     private middleware: IMiddleware[] = [];
     private options: WebServerOptions;
     private httpServer: Server | null = null;
     private httpsServer: Server | null = null;
+    private gracefulShutdownAttached = false;
 
-    public onErrorAsync?(exception: any): Promise<void>;
+    public onErrorAsync?(exception: unknown): Promise<void>;
+    public onTimeoutAsync?(): Promise<void>;
 
-    constructor(options: WebServerOptions) {
+    public constructor(options: WebServerOptions) {
         Throw.ifNullOrUndefined(options);
+
         this.options = options;
+        this.options.webServer = this;
     }
 
     public useMiddleware(middleware: IMiddleware): WebServer {
@@ -38,32 +34,39 @@ export class WebServer {
             throw new MiddlewareExistsException(middleware.name);
 
         this.middleware.push(middleware);
-
         return this;
     }
 
     public async startAsync(): Promise<void> {
         await this.createHttpServerAsync();
         await this.createHttpsServerAsync();
+
+        this.attachGracefulShutdownIfNeeded();
     }
 
     public async stopAsync(): Promise<void> {
-        if (this.httpServer && this.httpServer.listening) {
-            Console.writeLineInfo("Context Web Server is stopping [http]");
+        if (this.httpServer?.listening) {
+            Console.writeLineInfo("ContextJS Web Server is stopping [http]");
             this.httpServer.close();
         }
 
-        if (this.httpsServer && this.httpsServer.listening) {
-            Console.writeLineInfo("Context Web Server is stopping [https]");
+        if (this.httpsServer?.listening) {
+            Console.writeLineInfo("ContextJS Web Server is stopping [https]");
             this.httpsServer.close();
         }
     }
 
     public async restartAsync(): Promise<void> {
-        Console.writeLineInfo("Context Web Server is restarting.");
-
+        Console.writeLineInfo("ContextJS Web Server is restarting.");
         await this.stopAsync();
         await this.startAsync();
+    }
+
+    public async disposeAsync(): Promise<void> {
+        await this.stopAsync();
+        this.middleware = [];
+        this.httpServer = null;
+        this.httpsServer = null;
     }
 
     public listeningOnHttp(): boolean {
@@ -74,24 +77,44 @@ export class WebServer {
         return this.httpsServer?.listening || false;
     }
 
+    public isRunning(): boolean {
+        return this.listeningOnHttp() || this.listeningOnHttps();
+    }
+
+    private attachGracefulShutdownIfNeeded(): void {
+        if (this.gracefulShutdownAttached)
+            return;
+
+        const shutdown = async () => {
+            Console.writeLineInfo("Received termination signal. Shutting down ContextJS web server...");
+            await this.disposeAsync();
+            process.exit(0);
+        };
+
+        process.on("SIGINT", shutdown);
+        process.on("SIGTERM", shutdown);
+
+        this.gracefulShutdownAttached = true;
+    }
+
     private async createHttpServerAsync(): Promise<void> {
         if (!this.options.http.enabled)
             return;
 
-        var http = await import('http');
-        this.httpServer = http.createServer();
-
-        this.httpServer.on('request', async (request: IncomingMessage, response: ServerResponse) => await this.parseRequestAsync(request, response));
-        this.httpServer.on('error', async (exception: Exception) => await this.parseExceptionAsync(this.httpsServer, exception));
+        this.httpServer = (await import("http")).createServer();
+        this.httpServer.on("request", this.parseRequestAsync.bind(this));
+        this.httpServer.on("error", this.parseExceptionAsync.bind(this));
+        this.httpServer.on("timeout", this.handleTimeoutAsync.bind(this));
+        this.httpServer.setTimeout(this.options.http.timeout);
 
         const port = this.options.http.port || 80;
         this.httpServer.listen(port);
-        Console.writeLineInfo(`Context Web Server is listening on port ${port} [http]`);
+        Console.writeLineInfo(`ContextJS Web Server is listening on port ${port} [http]`);
     }
 
     private async createHttpsServerAsync(): Promise<void> {
         if (!this.options.https.enabled)
-            return
+            return;
 
         Throw.ifNullOrUndefined(this.options.https.certificate);
 
@@ -103,41 +126,51 @@ export class WebServer {
         if (!certificate)
             throw new InvalidCertificateException(this.options.https.certificate!.certificate);
 
-        var https = await import('https');
-        this.httpsServer = https.createServer({ key: key, cert: certificate });
-
-        this.httpsServer.on('request', async (request: IncomingMessage, response: ServerResponse) => await this.parseRequestAsync(request, response));
-        this.httpsServer.on('error', async (exception: Error) => await this.parseExceptionAsync(this.httpsServer, exception));
+        this.httpsServer = (await import("https")).createServer({ key: key, cert: certificate } as import("https").ServerOptions);
+        this.httpsServer.on("request", this.parseRequestAsync.bind(this));
+        this.httpsServer.on("error", this.parseExceptionAsync.bind(this));
+        this.httpsServer.on("timeout", this.handleTimeoutAsync.bind(this));
+        this.httpsServer.setTimeout(this.options.https.timeout);
 
         const port = this.options.https.port || 443;
         this.httpsServer.listen(port);
-        Console.writeLineInfo(`Context Web Server is listening on port ${port} [https]`);
+        Console.writeLineInfo(`ContextJS Web Server is listening on port ${port} [https]`);
     }
 
     private async parseRequestAsync(request: IncomingMessage, response: ServerResponse): Promise<void> {
         try {
-            var httpContext = new HttpContext(new HttpRequest(request), new HttpResponse(response));
-            httpContext.response.setHeader('Server', 'ContextJS');
-            let executeNextMiddleware = false;
+            const httpContext = new HttpContext(new HttpRequest(request), new HttpResponse(response));
 
-            for (let i = 0; i < this.middleware.length; i++) {
-                if (i == 0 || executeNextMiddleware) {
-                    executeNextMiddleware = false;
-                    await this.middleware[i].onRequestAsync(httpContext, async () => { executeNextMiddleware = true; });
-                }
-                else
-                    break;
-            }
+            let index = 0;
+            const next = async (): Promise<void> => {
+                if (index < this.middleware.length)
+                    await this.middleware[index++].onRequestAsync(httpContext, next);
+            };
 
-            httpContext.response.setHeader('Server', 'ContextJS');
-            httpContext.response.end();
+            await next();
+
+            this.finalizeResponse(httpContext);
         }
-        catch (exception: any) {
-            await this.parseExceptionAsync(null, exception);
+        catch (exception: unknown) {
+            await this.parseExceptionAsync(exception);
         }
     }
 
-    private async parseExceptionAsync(server: Server | null, exception: Exception): Promise<void> {
+    private finalizeResponse(httpContext: HttpContext): void {
+        if ((httpContext.response as any).serverResponse.writableEnded)
+            return;
+
+        httpContext.response.setHeader("Server", "ContextJS");
+        httpContext.response.end();
+    }
+
+    private async parseExceptionAsync(exception: unknown): Promise<void> {
         await this.onErrorAsync?.(exception);
+    }
+
+    private async handleTimeoutAsync(socket: Socket): Promise<void> {
+        await this.onTimeoutAsync?.();
+        Console.writeLineInfo("ContextJS Web Server timed out.");
+        socket.destroy();
     }
 }

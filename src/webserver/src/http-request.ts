@@ -20,17 +20,17 @@ export class HttpRequest implements IHttpRequest {
     public readonly statusMessage: string | null;
     public readonly host: string | null;
 
-    constructor(incomingMessage: IncomingMessage) {
+    public constructor(incomingMessage: IncomingMessage) {
         Throw.ifNullOrUndefined(incomingMessage);
 
-        for (var item in incomingMessage.headers)
-            this.headers.push(new HttpHeader(item, incomingMessage.headers[item] ?? StringExtensions.empty));
+        for (const name in incomingMessage.headers)
+            this.headers.push(new HttpHeader(name, incomingMessage.headers[name] ?? StringExtensions.empty));
 
         this.httpVersion = incomingMessage.httpVersion;
-        this.httpMethod = incomingMessage.method || null;
-        this.url = incomingMessage.url || null;
-        this.statusCode = incomingMessage.statusCode || null;
-        this.statusMessage = incomingMessage.statusMessage || null;
-        this.host = incomingMessage.headers.host || null;
+        this.httpMethod = incomingMessage.method ?? null;
+        this.url = incomingMessage.url ?? null;
+        this.statusCode = incomingMessage.statusCode ?? null;
+        this.statusMessage = incomingMessage.statusMessage ?? null;
+        this.host = incomingMessage.headers.host ?? null;
     }
 }
