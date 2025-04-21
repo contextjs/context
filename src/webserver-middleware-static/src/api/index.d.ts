@@ -17,18 +17,16 @@ declare module "@contextjs/webserver" {
     }
 }
 
-/**
- * Static files middleware options
- */
 export declare class StaticFilesOptions {
-
     /**
-     * Get or set the public folder. Default is "public"
+     * Gets or sets the public folder from which static files are served.
+     * Defaults to `"public"`.
      */
     public publicFolder: string;
 
     /**
-     * Get or set the file extensions. If empty, the middleware will serve all files.
+     * Gets or sets the list of allowed file extensions.
+     * If empty, all file types are allowed.
      */
     public fileExtensions: string[];
 }

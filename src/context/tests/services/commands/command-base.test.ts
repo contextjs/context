@@ -6,7 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { File } from "@contextjs/io";
 import { Console, StringExtensions } from '@contextjs/system';
+import fs from "node:fs";
 import test, { TestContext } from 'node:test';
 import typescript from "typescript";
 import { CommandType } from "../../../src/models/command-type.ts";
@@ -113,4 +115,52 @@ api             Web API project         A Web API project containing controllers
 
     Console.setOutput(originalOutput);
     process.exit = originalExit;
+});
+
+test("CommandBase: getProjects - filters by projectNames", async (context: TestContext) => {
+    const projectPath = "/fake/project";
+    const mockDirEntry = {
+        name: "context.ctxp",
+        isFile: () => true,
+        isDirectory: () => false,
+        path: projectPath,
+        parentPath: projectPath
+    };
+
+    context.mock.method(fs, "readdirSync", () => [mockDirEntry]);
+    context.mock.method(File, "read", () => JSON.stringify({ name: "my-app" }));
+
+    const testCommand = new (class extends CommandBase {
+        public async runAsync(command: Command): Promise<void> {
+            const projects = this.getProjects(["my-app"]);
+            context.assert.strictEqual(projects.length, 1);
+            context.assert.strictEqual(projects[0].name, "my-app");
+            context.assert.strictEqual(projects[0].path, projectPath);
+        }
+    })();
+
+    await testCommand.runAsync(new Command(CommandType.Build, []));
+});
+
+test("CommandBase: getProjects - excludes non-matching names", async (context: TestContext) => {
+    const projectPath = "/fake/project";
+    const mockDirEntry = {
+        name: "context.ctxp",
+        isFile: () => true,
+        isDirectory: () => false,
+        path: projectPath,
+        parentPath: projectPath
+    };
+
+    context.mock.method(fs, "readdirSync", () => [mockDirEntry]);
+    context.mock.method(File, "read", () => JSON.stringify({ name: "my-app" }));
+
+    const testCommand = new (class extends CommandBase {
+        public async runAsync(command: Command): Promise<void> {
+            const projects = this.getProjects(["other-app"]);
+            context.assert.strictEqual(projects.length, 0);
+        }
+    })();
+
+    await testCommand.runAsync(new Command(CommandType.Build, []));
 });
