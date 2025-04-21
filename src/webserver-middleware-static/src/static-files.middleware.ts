@@ -7,6 +7,7 @@
  */
 
 import { File } from "@contextjs/io";
+import { StringExtensions } from "@contextjs/system";
 import { IHttpContext, IMiddleware, MimeTypes } from "@contextjs/webserver";
 import path from "node:path";
 
@@ -17,26 +18,26 @@ export class StaticFilesMiddleware implements IMiddleware {
     public fileExtensions: string[] = [];
 
     public async onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void> {
-        if (!httpContext.request.url) {
+        const requestUrl = httpContext.request.url;
+        if (StringExtensions.isNullOrWhiteSpace(requestUrl)) {
             httpContext.response.statusCode = 500;
             httpContext.response.write("Internal Server Error: Invalid request URL.");
+            return;
         }
-        else {
-            var safeUrl = path.normalize(httpContext.request.url).replace(/^(\.\.[\/\\])+/, '');
-            let fileExtension = path.extname(safeUrl).slice(1);
 
-            if (this.fileExtensions.length == 0 || this.fileExtensions.includes(fileExtension)) {
-                const mimeType = fileExtension
-                    ? MimeTypes.get(fileExtension) ?? "text/plain"
-                    : "text/plain";
-                httpContext.response.setHeader("Content-Type", mimeType);
+        const safeUrl = path.normalize(requestUrl).replace(/^(\.\.[\/\\])+/, '');
+        const fileExtension = path.extname(safeUrl).slice(1).toLowerCase();
 
-                const filePath = path.join(this.publicFolder, safeUrl);
-                if (File.exists(filePath))
-                    await httpContext.response.streamAsync(filePath);
-                else
-                    httpContext.response.statusCode = 404;
-            }
-        }
+        if (this.fileExtensions.length > 0 && !this.fileExtensions.includes(fileExtension))
+            return await next();
+
+        const filePath = path.join(this.publicFolder, safeUrl);
+        if (!File.exists(filePath))
+            return await next();
+
+        const mimeType = MimeTypes.get(fileExtension) ?? "text/plain";
+        httpContext.response.setHeader("Content-Type", mimeType);
+
+        await httpContext.response.streamAsync(filePath);
     }
 }

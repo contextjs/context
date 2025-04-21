@@ -1,8 +1,9 @@
 {
   "name": "@contextjs/webserver-middleware-static",
   "version": "__VERSION__",
+  "description": "Static files middleware for the ContextJS webserver.",
   "main": "api/index.js",
-  "description": "ContextJS - WebServer static middleware",
+  "types": "api/index.d.ts",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
@@ -11,7 +12,23 @@
     "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/webserver-middleware-static"
   },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
   "peerDependencies": {
     "@contextjs/webserver": "__VERSION__"
-  }
+  },
+  "keywords": [
+    "contextjs",
+    "webserver",
+    "middleware",
+    "static",
+    "files",
+    "http",
+    "serve",
+    "typescript"
+  ]
 }

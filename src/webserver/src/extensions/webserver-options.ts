@@ -16,7 +16,7 @@ export class WebServerOptions {
     public https: { enabled: boolean; port?: number; certificate?: SSLCertificate; timeout?: number };
 
     constructor() {
-        this.http = { enabled: true, port: 5000, timeout: 120_000 }; // 2 min
+        this.http = { enabled: true, port: 5000, timeout: 120_000 };
         this.https = { enabled: false, timeout: 120_000 };
     }
 

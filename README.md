@@ -58,7 +58,8 @@ ctx build
 
 | Package | Description |
 |--------|-------------|
-| [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) | A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies. |
+| [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) | A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies |
+| [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static) | Static files middleware for the ContextJS web server |
 
 ## Ecosystem Principles
 
@@ -68,10 +69,5 @@ ctx build
 - **Documentation**: All modules include clean README files with badges, usage, and API references
 - **Extensibility**: Compiler and CLI support transformers and extensions (internal and external)
 - **Transformers**: Auto-discovered from `.transformers/` folders and injected at compile time
-
-## Coming Soon
-
-- [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static) – Static files middleware for the ContextJS web server  
-<br>
 
 > All packages follow [MIT](https://github.com/contextjs/context/blob/main/LICENSE) licensing and are actively maintained under the [ContextJS GitHub organization](https://github.com/contextjs/context).

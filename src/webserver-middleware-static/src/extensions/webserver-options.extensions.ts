@@ -6,9 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { ObjectExtensions } from "@contextjs/system";
 import { WebServerOptions } from "@contextjs/webserver";
 import { StaticFilesMiddleware } from "../static-files.middleware.js";
-import { StaticFilesOptions } from "../static-files.options.js";
+import { StaticFilesOptions } from "./static-files.options.js";
 
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
@@ -18,7 +19,9 @@ declare module "@contextjs/webserver" {
 
 WebServerOptions.prototype.useStaticFiles = function (options: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions {
     const staticFilesOptions = new StaticFilesOptions();
-    options(staticFilesOptions);
+
+    if (!ObjectExtensions.isNullOrUndefined(options))
+        options(staticFilesOptions);
 
     const staticFilesMiddleware = new StaticFilesMiddleware();
     staticFilesMiddleware.publicFolder = staticFilesOptions.publicFolder;
