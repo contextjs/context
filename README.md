@@ -63,7 +63,7 @@ ctx build
 
 ## Ecosystem Principles
 
-- **Modular structure**: All packages reside under `src/<package>` and expose public APIs via `api/index.ts`
+- **Modular structure**: All packages expose public APIs via `api/index.ts`
 - **Test coverage**: 100% unit test coverage enforced across all packages (`node:test`)
 - **Test design**: Structured by class/method using `context.assert`
 - **Documentation**: All modules include clean README files with badges, usage, and API references
