@@ -9,6 +9,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import Config from "./config.ts";
+import type PackageInfo from "./package-info.ts";
 
 export default abstract class Script {
     abstract runAsync(): Promise<void>;
@@ -21,11 +22,22 @@ export default abstract class Script {
         console.log(message);
     }
 
-    protected async getPackageNamesAsync(): Promise<string[]> {
+    protected async getPackageDescriptorsAsync(): Promise<Map<string, string[]>> {
         const packageNames = process.argv.slice(2);
-        return packageNames.length > 0
-            ? packageNames
-            : Config.packages;
+
+        if (packageNames.length > 0) {
+            const packageDescriptors = new Map<string, string[]>([]);
+            for (const packageName of packageNames) {
+                if (Config.packageDescriptors.has(packageName))
+                    packageDescriptors.set(packageName, Config.packageDescriptors.get(packageName) ?? []);
+                else
+                    throw new Error(`Package ${packageName} not found in configuration.`);
+            }
+
+            return packageDescriptors;
+        }
+
+        return Config.packageDescriptors;
     }
 
     protected async createDirectoryAsync(directoryName: string): Promise<void> {
@@ -54,12 +66,20 @@ export default abstract class Script {
         fs.writeFileSync(filePath, content);
     }
 
-    protected async copyDeclarationsFileAsync(packageName: string): Promise<void> {
-        await this.createDirectoryAsync(`${Config.buildFolder}/${packageName}/api`);
-        await this.copyFileAsync(`src/${packageName}/src/api/index.d.ts`, `${Config.buildFolder}/${packageName}/api/index.d.ts`);
+    protected async copyDeclarationsFileAsync(packageInfo: PackageInfo): Promise<void> {
+        const packagePath = packageInfo.path
+            ? `${packageInfo.path}/${packageInfo.name}`
+            : packageInfo.name;
+
+        await this.createDirectoryAsync(`${Config.buildFolder}/${packageInfo.name}/api`);
+        await this.copyFileAsync(`src/${packagePath}/src/api/index.d.ts`, `${Config.buildFolder}/${packageInfo.name}/api/index.d.ts`);
     }
 
-    protected async copyReadmeFileAsync(packageName: string): Promise<void> {
-        await this.copyFileAsync(`src/${packageName}/README.md`, `${Config.buildFolder}/${packageName}/README.md`);
+    protected async copyReadmeFileAsync(packageInfo: PackageInfo): Promise<void> {
+        const packagePath = packageInfo.path
+            ? `${packageInfo.path}/${packageInfo.name}`
+            : packageInfo.name;
+
+        await this.copyFileAsync(`src/${packagePath}/README.md`, `${Config.buildFolder}/${packageInfo.name}/README.md`);
     }
 }

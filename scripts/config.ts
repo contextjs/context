@@ -12,18 +12,16 @@ export default class Config {
     public static version: string = "0.4.8";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
-    public static packages: string[] = [
-        "system",
-        "io",
-        "collections",
-        "configuration",
-        "configuration-json",
-        "di",
-        "routing",
-        "webserver",
-        "webserver-middleware-static",
-        "parser",
-        "compiler",
-        "context"
-    ];
+    public static packageDescriptors: Map<string, string[]> = new Map<string, string[]>([
+        ["system", []],
+        ["io", []],
+        ["collections", []],
+        ["configuration", ["configuration", "configuration-json"]],
+        ["di", []],
+        ["routing", []],
+        ["webserver", ["webserver", "webserver-middleware-static"]],
+        ["compiler", []],
+        ["context", []],
+        ["view", ["view-parser"]]
+    ]);
 }

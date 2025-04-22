@@ -6,15 +6,16 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import type PackageInfo from '../../../scripts/package-info.ts';
 import Script from '../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageName: string = "compiler";
+    private readonly packageInfo: PackageInfo = { name: "compiler" };
 
     public override async runAsync(): Promise<void> {
-        await this.copyDeclarationsFileAsync(this.packageName);
-        await this.copyReadmeFileAsync(this.packageName);
-        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
+        await this.copyDeclarationsFileAsync(this.packageInfo);
+        await this.copyReadmeFileAsync(this.packageInfo);
+        await this.executeCommandAsync(`cd src/${this.packageInfo.name} && tsc`);
     }
 }
 

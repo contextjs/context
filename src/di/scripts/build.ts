@@ -7,16 +7,17 @@
  */
 
 import path from 'node:path';
+import type PackageInfo from '../../../scripts/package-info.ts';
 import Script from '../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageName: string = "di";
+    private readonly packageInfo: PackageInfo = { name: "di" };
     private targetDir = path.resolve("src", "context", "src", "transformers");
 
     public override async runAsync(): Promise<void> {
-        await this.copyDeclarationsFileAsync(this.packageName);
-        await this.copyReadmeFileAsync(this.packageName);
-        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
+        await this.copyDeclarationsFileAsync(this.packageInfo);
+        await this.copyReadmeFileAsync(this.packageInfo);
+        await this.executeCommandAsync(`cd src/${this.packageInfo.name} && tsc`);
         await this.copyTransformersToContext();
         await this.generateCompilerExtension();
     }

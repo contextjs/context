@@ -15,6 +15,7 @@
 
 import readline from 'node:readline';
 import Config from "./config.ts";
+import type PackageInfo from './package-info.ts';
 import Script from "./script.ts";
 
 export class Build extends Script {
@@ -22,20 +23,17 @@ export class Build extends Script {
         await this.npmInstallAsync();
         await this.createOutputDirectoriesAsync();
 
-        const packageNames = await this.getPackageNamesAsync();
+        const packageDescriptors = await this.getPackageDescriptorsAsync();
 
-
-        if (packageNames.length === 0) {
+        if (packageDescriptors.size === 0) {
             this.writeLogAsync('No packages to build.');
             return;
         }
 
         await this.writeLogAsync('\r');
 
-        for (const packageName of packageNames)
-            await this.buildPackageAsync(packageName);
-
-        await this.afterBuildAsync(packageNames)
+        await this.executeActionAsync(packageDescriptors, this.buildPackageAsync.bind(this));
+        await this.executeActionAsync(packageDescriptors, this.afterBuildAsync.bind(this));
     }
 
     private async npmInstallAsync(): Promise<void> {
@@ -50,75 +48,94 @@ export class Build extends Script {
         await this.createDirectoryAsync(Config.packagesFolder);
     }
 
-    private async buildPackageAsync(packageName: string): Promise<void> {
-        await this.writeLogAsync(`Building "@contextjs/${packageName}"...`);
+    private async buildPackageAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.writeLogAsync(`Building "@contextjs/${packageInfo.name}"...`);
 
-        await this.removeDependencyAsync(packageName);
-        await this.createPackageDirectoryAsync(packageName);
-        await this.copyPackageFileAsync(packageName);
-        await this.copyLicenseFileAsync(packageName);
-        await this.writeVersionAsync(packageName);
-        await this.buildAsync(packageName);
-        await this.createPackageAsync(packageName);
-        await this.installPackageAsync(packageName);
+        await this.removeDependencyAsync(packageInfo);
+        await this.createPackageDirectoryAsync(packageInfo);
+        await this.copyPackageFileAsync(packageInfo);
+        await this.copyLicenseFileAsync(packageInfo);
+        await this.writeVersionAsync(packageInfo);
+        await this.buildAsync(packageInfo);
+        await this.createPackageAsync(packageInfo);
+        await this.installPackageAsync(packageInfo);
 
         readline.moveCursor(process.stdout, 0, -1);
         readline.clearLine(process.stdout, 1);
-        await this.writeLogAsync(`Building "@contextjs/${packageName}"... Done.\r`);
+        await this.writeLogAsync(`Building "@contextjs/${packageInfo.name}"... Done.\r`);
     }
 
-    private async removeDependencyAsync(packageName: string): Promise<void> {
-        await this.executeCommandAsync(`npm pkg delete dependencies.@contextjs/${packageName}`);
+    private async afterBuildAsync(packageInfo: PackageInfo): Promise<void> {
+        const packagePath = packageInfo.path
+            ? `${packageInfo.path}/${packageInfo.name}`
+            : packageInfo.name;
+
+        if (await this.pathExistsAsync(`src/${packagePath}/scripts/after-build.ts`))
+            await import(`../src/${packagePath}/scripts/after-build.ts`);
     }
 
-    private async createPackageDirectoryAsync(packageName: string): Promise<void> {
-        const directoryName = `${Config.buildFolder}/${packageName}`;
+    private async removeDependencyAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.executeCommandAsync(`npm pkg delete dependencies.@contextjs/${packageInfo.name}`);
+    }
+
+    private async createPackageDirectoryAsync(packageInfo: PackageInfo): Promise<void> {
+        const directoryName = `${Config.buildFolder}/${packageInfo.name}`;
 
         await this.removeDirectoryAsync(directoryName);
         await this.createDirectoryAsync(directoryName);
     }
 
-    private async copyPackageFileAsync(packageName: string): Promise<void> {
-        const packageFilePath = `src/${packageName}/package.json`;
+    private async copyPackageFileAsync(packageInfo: PackageInfo): Promise<void> {
+        const packageFilePath = packageInfo.path
+            ? `src/${packageInfo.path}/${packageInfo.name}/package.json`
+            : `src/${packageInfo.name}/package.json`;
+
         if (await this.pathExistsAsync(packageFilePath) === false)
-            throw new Error(`Missing package.json in "${packageName}" package.`);
+            throw new Error(`Missing package.json in "${packageFilePath}" package.`);
 
-        await this.copyFileAsync(packageFilePath, `${Config.buildFolder}/${packageName}/package.json`);
+        await this.copyFileAsync(packageFilePath, `${Config.buildFolder}/${packageInfo.name}/package.json`);
     }
 
-    private async copyLicenseFileAsync(packageName: string): Promise<void> {
-        await this.copyFileAsync('LICENSE', `${Config.buildFolder}/${packageName}/LICENSE`);
+    private async copyLicenseFileAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.copyFileAsync('LICENSE', `${Config.buildFolder}/${packageInfo.name}/LICENSE`);
     }
 
-    private async writeVersionAsync(packageName: string): Promise<void> {
-        const packageFilePath = `${Config.buildFolder}/${packageName}/package.json`;
+    private async writeVersionAsync(packageInfo: PackageInfo): Promise<void> {
+        const packageFilePath = `${Config.buildFolder}/${packageInfo.name}/package.json`;
         let packageFileContent = await this.readFileAsync(packageFilePath);
         packageFileContent = packageFileContent.replace(/__VERSION__/g, Config.version);
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }
 
-    private async buildAsync(packageName: string): Promise<void> {
-        if (await this.pathExistsAsync(`src/${packageName}/scripts/build.ts`))
-            await import(`../src/${packageName}/scripts/build.ts`);
+    private async buildAsync(packageInfo: PackageInfo): Promise<void> {
+        const path = packageInfo.path
+            ? `${packageInfo.path}/${packageInfo.name}`
+            : packageInfo.name;
+
+        if (await this.pathExistsAsync(`src/${path}/scripts/build.ts`))
+            await import(`../src/${path}/scripts/build.ts`);
     }
 
-    private async afterBuildAsync(packageNames: string[]): Promise<void> {
-        for (const packageName of packageNames) {
-            if (await this.pathExistsAsync(`src/${packageName}/scripts/after-build.ts`))
-                await import(`../src/${packageName}/scripts/after-build.ts`);
-        }
+    private async createPackageAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageInfo.name} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`, true);
     }
 
-    private async createPackageAsync(packageName: string): Promise<void> {
-        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageName} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`, true);
-    }
-
-    private async installPackageAsync(packageName: string): Promise<void> {
-        const packageJsonFile = await this.readFileAsync(`${Config.buildFolder}/${packageName}/package.json`);
+    private async installPackageAsync(packageInfo: PackageInfo): Promise<void> {
+        const packageJsonFile = await this.readFileAsync(`${Config.buildFolder}/${packageInfo.name}/package.json`);
         const packageJson = JSON.parse(packageJsonFile);
         const name = packageJson.name.replace("@", "").replace("/", "-");
 
         await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz`, true);
+    }
+
+    private async executeActionAsync(packageDescriptors: Map<string, string[]>, action: Function): Promise<void> {
+        for (const packageDescriptor of packageDescriptors) {
+            if (packageDescriptor[1].length === 0)
+                await action({ name: packageDescriptor[0] });
+            else
+                for (const packagePath of packageDescriptor[1])
+                    await action({ name: packagePath, path: packageDescriptor[0] });
+        }
     }
 }
 

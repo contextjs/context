@@ -7,23 +7,23 @@
  */
 
 import Config from '../../../scripts/config.ts';
+import type PackageInfo from '../../../scripts/package-info.ts';
 import Script from '../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageName: string = "system";
+    private readonly packageInfo: PackageInfo = { name: "system" };
 
     public override async runAsync(): Promise<void> {
-        await this.copyDeclarationsFileAsync(this.packageName);
-        await this.copyReadmeFileAsync(this.packageName);
+        await this.copyDeclarationsFileAsync(this.packageInfo);
+        await this.copyReadmeFileAsync(this.packageInfo);
         await this.setVersionAsync();
+        await this.executeCommandAsync(`cd src/${this.packageInfo.name} && tsc`);
     }
 
     private async setVersionAsync() {
-        const file = (await this.readFileAsync(`src/${this.packageName}/src/services/version.service.ts`))
+        const file = (await this.readFileAsync(`src/${this.packageInfo.name}/src/services/version.service.ts`))
             .replace(/private static readonly version: string = ".*";/, `private static readonly version: string = "${Config.version}";`);
-        await this.writeFileAsync(`src/${this.packageName}/src/services/version.service.ts`, file);
-
-        await this.executeCommandAsync(`cd src/${this.packageName} && tsc`);
+        await this.writeFileAsync(`src/${this.packageInfo.name}/src/services/version.service.ts`, file);
     }
 }
 
