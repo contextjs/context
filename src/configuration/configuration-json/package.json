@@ -1,0 +1,34 @@
+{
+  "name": "@contextjs/configuration-json",
+  "version": "__VERSION__",
+  "description": "JSON-based configuration provider for ContextJS applications.",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/configuration/configuration-json"
+  },
+  "keywords": [
+    "contextjs",
+    "configuration",
+    "json",
+    "provider",
+    "settings",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/configuration": "__VERSION__",
+    "@contextjs/io": "__VERSION__"
+  }
+}

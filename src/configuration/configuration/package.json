@@ -1,0 +1,33 @@
+{
+  "name": "@contextjs/configuration",
+  "version": "__VERSION__",
+  "description": "Lightweight configuration system for ContextJS applications, featuring async providers and environment variable support.",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/configuration/configuration"
+  },
+  "keywords": [
+    "contextjs",
+    "configuration",
+    "config",
+    "settings",
+    "environment",
+    "provider",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  }
+}
