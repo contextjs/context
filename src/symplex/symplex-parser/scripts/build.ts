@@ -10,7 +10,7 @@ import type PackageInfo from '../../../../scripts/package-info.ts';
 import Script from '../../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageInfo: PackageInfo = { name: "view-parser", path: "view" };
+    private readonly packageInfo: PackageInfo = { name: "symplex-parser", path: "symplex" };
 
     public override async runAsync(): Promise<void> {
         await this.copyDeclarationsFileAsync(this.packageInfo);

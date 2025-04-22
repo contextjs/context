@@ -22,6 +22,6 @@ export default class Config {
         ["webserver", ["webserver", "webserver-middleware-static"]],
         ["compiler", []],
         ["context", []],
-        ["view", ["view-parser"]]
+        ["symplex", ["symplex-parser"]]
     ]);
 }

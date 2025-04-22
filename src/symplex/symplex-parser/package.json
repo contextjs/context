@@ -1,7 +1,7 @@
 {
-  "name": "@contextjs/view-parser",
+  "name": "@contextjs/symplex-parser",
   "version": "__VERSION__",
-  "description": "ContextJS - view-parser",
+  "description": "ContextJS - Symplex template engine parser",
   "author": "ContextJS",
   "license": "MIT",
   "type": "module",
@@ -9,10 +9,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/contextjs/context.git",
-    "directory": "src/view/view-parser"
+    "directory": "src/symplex/symplex-parser"
   },
   "config": {
-    "id": "view-parser"
+    "id": "symplex-parser"
   },
   "peerDependencies": {
     "@contextjs/system": "__VERSION__",

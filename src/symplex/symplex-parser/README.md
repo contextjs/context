@@ -1,7 +1,7 @@
-# @contextjs/view-parser
+# @contextjs/symplex-parser
 
 [![Tests](https://github.com/contextjs/context/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/contextjs/context/actions/workflows/tests.yaml)
-[![npm](https://badgen.net/npm/v/@contextjs/view-parser?cache=300)](https://www.npmjs.com/package/@contextjs/view-parser)
+[![npm](https://badgen.net/npm/v/@contextjs/symplex-parser?cache=300)](https://www.npmjs.com/package/@contextjs/symplex-parser)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
 ContextJS parser
@@ -9,7 +9,7 @@ ContextJS parser
 ### Installation
 
 ```
-npm i @contextjs/view-parser
+npm i @contextjs/symplex-parser
 ```
 
 ### Parser

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "../../../_build/view-parser"
+        "outDir": "../../../_build/symplex-parser"
     },
     "extends": "../../../tsconfig-base.json",
     "exclude": [
