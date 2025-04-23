@@ -16,6 +16,7 @@ export default class Config {
         ["system", []],
         ["io", []],
         ["collections", []],
+        ["text", []],
         ["configuration", ["configuration", "configuration-json"]],
         ["di", []],
         ["routing", []],

@@ -41,6 +41,12 @@ ctx build
 | [`@contextjs/collections`](https://github.com/contextjs/context/tree/main/src/collections) | Generic, high-performance data structures: `List`, `Queue`, `Stack`, `Dictionary`, `HashSet` |
 | [`@contextjs/io`](https://github.com/contextjs/context/tree/main/src/io) | Filesystem abstraction with `File`, `Directory`, async read/write, and path utilities |
 
+## Text
+
+| Package | Description |
+|--------|-------------|
+| [`@contextjs/text`](https://github.com/contextjs/context/tree/main/src/text) | String manipulation utilities, including a segment-based `StringBuilder` with fluent chaining, formatting, and cloning support |
+
 ## Configuration
 
 | Package | Description |
