@@ -1,0 +1,34 @@
+{
+  "name": "@contextjs/text",
+  "version": "__VERSION__",
+  "description": "String manipulation utilities for ContextJS applications",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/contextjs/context.git",
+    "directory": "src/text"
+  },
+  "keywords": [
+    "text",
+    "contextjs",
+    "context",
+    "contextjs-text",
+    "text utilities"
+  ],
+  "peerDependencies": {
+    "@contextjs/system": "__VERSION__"
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "files": [
+    "api"
+  ]
+}
