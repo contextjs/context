@@ -4,29 +4,24 @@
 [![npm](https://badgen.net/npm/v/@contextjs/system?cache=300)](https://www.npmjs.com/package/@contextjs/system)
 [![License](https://badgen.net/static/license/MIT)](https://github.com/contextjs/context/blob/main/LICENSE)
 
-> A zero-dependency system utility library for the ContextJS ecosystem, providing application lifecycle, environment detection, console formatting, exception handling, and core extensions — all written with full type safety.
-
----
+> A zero-dependency system utility library for the ContextJS ecosystem, providing application lifecycle, environment detection, console formatting, exception handling, property extraction (`nameof()`), and core extensions — all written with full type safety.
 
 ## ✨ Features
 
 - **Application lifecycle management** with `onRun()` hooks
 - **Environment detection** with development/production/test/staging support
 - **Console formatting** with ANSI styles and argument parsing
-- **Typed exceptions** like `NullReferenceException`
+- **Typed exceptions** like `NullReferenceException` and `InvalidExpressionException`
+- **Safe property extraction** via `nameof()` for both lambdas and keys
 - **Core helpers** for object and string manipulation with type guards
 - **Type-safe utility `Throw` guard methods**
 - **Fully tested**, 100% coverage, no dependencies
-
----
 
 ## 📆 Installation
 
 ```bash
 npm i @contextjs/system
 ```
-
----
 
 ## 🚀 Quick Start
 
@@ -57,7 +52,14 @@ Run with:
 node app.js --environment production
 ```
 
----
+## 🔍 nameof() Example
+
+```ts
+const property = nameof(() => user.name); // "name"
+const key = nameof<Config>('port');       // "port"
+```
+
+Throws `InvalidExpressionException` if the lambda is not a valid property accessor.
 
 ## 🎨 Console Formatting
 
@@ -69,8 +71,6 @@ Console.writeLineInfo('ℹ Info');
 
 Console.writeLineFormatted({ format: ['bold', 'green'], text: 'Styled' });
 ```
-
----
 
 ## 📚 Common Utilities
 
@@ -97,8 +97,6 @@ if (!ObjectExtensions.isNullOrUndefined(value)) {
 }
 ```
 
----
-
 ## 🧪 Testing
 
 This library is fully covered with unit tests using Node's native `test` module.
@@ -107,11 +105,10 @@ Test coverage includes:
 - Environment parsing
 - Console formatting
 - String/object helpers
-- Throw guard behavior
+- Exception and guard behavior
 - Version display
 - Application lifecycle execution
-
----
+- Property name extraction via `nameof()`
 
 ## 💡 Philosophy
 
@@ -187,6 +184,11 @@ export declare class StringExtensions {
      * Represents an empty string.
      */
     public static readonly empty: string;
+
+    /**
+     * Represents a new line, platform-specific.
+     */
+    public static readonly newLine: string;
 
     /**
      * Checks if the given string is null or empty.
@@ -499,25 +501,101 @@ export declare class VersionService {
      */
     public static get(): string;
 }
+
+/**
+ * Returns the name of a property as a string.
+ *
+ * This utility supports two forms:
+ * - Passing a string literal that matches a key of the specified type.
+ * - Passing a lambda expression that accesses a property.
+ *
+ * @example
+ * nameof<Person>("firstName");               // "firstName"
+ * nameof(() => person.age);                  // "age"
+ *
+ * @template T The target type whose key or property is being referenced.
+ * @param expr A string literal of a key in type T, or a lambda accessing a property.
+ * @returns The extracted property name.
+ * @throws {InvalidExpressionException} If the lambda expression is invalid or cannot be parsed.
+ */
+export declare function nameof<T>(expr: keyof T): string;
+export declare function nameof<T>(expr: () => T): string;
+export declare function nameof<T>(expr: keyof T | (() => T)): string;
 ```
 
 ### Exceptions
 
 ```typescript
 /**
- * Represents an exception with a custom message.
+ * Represents a general-purpose application exception.
  */
 export declare class Exception extends Error {
     /**
-     * Creates an instance of Exception.
-     * @param {string} message - The error message.
+     * Initializes a new instance of the Exception class.
+     * @param message The error message.
+     * @param options Optional error options.
      */
-    constructor(message: string);
+    constructor(message: string, options?: ErrorOptions);
 }
 
+/**
+ * Represents a generic system-level exception.
+ */
+export declare class SystemException extends Exception {
+    /**
+     * Initializes a new instance of the SystemException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
 
 /**
- * Represents an exception that occurs when a null reference is encountered.
+ * Represents an exception thrown when an argument is invalid.
  */
-export declare class NullReferenceException extends Exception { }
+export declare class ArgumentException extends SystemException {
+    /**
+     * Initializes a new instance of the ArgumentException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when an argument is out of range.
+ */
+export declare class ArgumentOutOfRangeException extends ArgumentException {
+    /**
+     * Initializes a new instance of the ArgumentOutOfRangeException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when a null value is encountered unexpectedly.
+ */
+export declare class NullReferenceException extends Exception {
+    /**
+     * Initializes a new instance of the NullReferenceException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when a provided expression is not valid for extraction.
+ */
+export declare class InvalidExpressionException extends SystemException {
+    /**
+     * Creates a new instance of the InvalidExpressionException class.
+     *
+     * @param message The error message that explains the reason for the exception.
+     * @param options Optional error options.
+     */
+    constructor(message: string, options?: ErrorOptions);
+}
 ```

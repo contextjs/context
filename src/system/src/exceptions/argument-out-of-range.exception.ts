@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { SystemException } from "./system.exception.js";
+import { ArgumentException } from "./argument.exception.js";
 
-export class NullReferenceException extends SystemException {
+export class ArgumentOutOfRangeException extends ArgumentException {
     public constructor(message?: string, options?: ErrorOptions) {
-        super(message ?? "The specified reference is null or undefined.", options);
-        this.name = NullReferenceException.name;
+        super(message ?? "The specified argument is out of range.", options);
+        this.name = ArgumentOutOfRangeException.name;
     }
 }

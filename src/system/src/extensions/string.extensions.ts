@@ -6,10 +6,13 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import os from "node:os";
+
 export class StringExtensions {
     private static readonly lineBreaks = ['\r', '\n', '\u0085', '\u2028', '\u2029'];
 
     public static readonly empty: string = "";
+    public static readonly newLine: string = os.EOL;
 
     public static isNullOrEmpty(value: string | null | undefined): value is null | undefined | "" {
         return value === null || value === undefined || value === StringExtensions.empty;

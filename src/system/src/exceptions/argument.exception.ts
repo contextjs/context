@@ -8,9 +8,9 @@
 
 import { SystemException } from "./system.exception.js";
 
-export class NullReferenceException extends SystemException {
+export class ArgumentException extends SystemException {
     public constructor(message?: string, options?: ErrorOptions) {
-        super(message ?? "The specified reference is null or undefined.", options);
-        this.name = NullReferenceException.name;
+        super(message ?? "The specified argument is invalid.", options);
+        this.name = ArgumentException.name;
     }
 }
