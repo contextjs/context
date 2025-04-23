@@ -41,21 +41,77 @@ export declare class Application {
 //#region Exceptions
 
 /**
- * Represents an exception with a custom message.
+ * Represents a general-purpose application exception.
  */
 export declare class Exception extends Error {
     /**
-     * Creates an instance of Exception.
-     * @param {string} message - The error message.
+     * Initializes a new instance of the Exception class.
+     * @param message The error message.
+     * @param options Optional error options.
      */
-    constructor(message: string);
+    constructor(message: string, options?: ErrorOptions);
 }
 
+/**
+ * Represents a generic system-level exception.
+ */
+export declare class SystemException extends Exception {
+    /**
+     * Initializes a new instance of the SystemException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
 
 /**
- * Represents an exception that occurs when a null reference is encountered.
+ * Represents an exception thrown when an argument is invalid.
  */
-export declare class NullReferenceException extends Exception { }
+export declare class ArgumentException extends SystemException {
+    /**
+     * Initializes a new instance of the ArgumentException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when an argument is out of range.
+ */
+export declare class ArgumentOutOfRangeException extends ArgumentException {
+    /**
+     * Initializes a new instance of the ArgumentOutOfRangeException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when a null value is encountered unexpectedly.
+ */
+export declare class NullReferenceException extends Exception {
+    /**
+     * Initializes a new instance of the NullReferenceException class.
+     * @param message The error message.
+     * @param options Optional error options.
+     */
+    constructor(message?: string, options?: ErrorOptions);
+}
+
+/**
+ * Represents an exception thrown when a provided expression is not valid for extraction.
+ */
+export declare class InvalidExpressionException extends SystemException {
+    /**
+     * Creates a new instance of the InvalidExpressionException class.
+     *
+     * @param message The error message that explains the reason for the exception.
+     * @param options Optional error options.
+     */
+    constructor(message: string, options?: ErrorOptions);
+}
 
 //#endregion
 
@@ -95,6 +151,11 @@ export declare class StringExtensions {
      * Represents an empty string.
      */
     public static readonly empty: string;
+
+    /**
+     * Represents a new line, platform-specific.
+     */
+    public static readonly newLine: string;
 
     /**
      * Checks if the given string is null or empty.
@@ -470,5 +531,25 @@ export declare class VersionService {
      */
     public static get(): string;
 }
+
+/**
+ * Returns the name of a property as a string.
+ *
+ * This utility supports two forms:
+ * - Passing a string literal that matches a key of the specified type.
+ * - Passing a lambda expression that accesses a property.
+ *
+ * @example
+ * nameof<Person>("firstName");               // "firstName"
+ * nameof(() => person.age);                  // "age"
+ *
+ * @template T The target type whose key or property is being referenced.
+ * @param expr A string literal of a key in type T, or a lambda accessing a property.
+ * @returns The extracted property name.
+ * @throws {InvalidExpressionException} If the lambda expression is invalid or cannot be parsed.
+ */
+export declare function nameof<T>(expr: keyof T): string;
+export declare function nameof<T>(expr: () => T): string;
+export declare function nameof<T>(expr: keyof T | (() => T)): string;
 
 //#endregion
