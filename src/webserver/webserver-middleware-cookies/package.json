@@ -1,7 +1,7 @@
 {
   "name": "@contextjs/webserver-middleware-cookies",
   "version": "__VERSION__",
-  "description": "Static files middleware for the ContextJS webserver.",
+  "description": "Cookies middleware for the ContextJS webserver.",
   "main": "api/index.js",
   "types": "api/index.d.ts",
   "author": "ContextJS",
@@ -19,14 +19,14 @@
     }
   },
   "peerDependencies": {
-    "@contextjs/webserver": "__VERSION__"
+    "@contextjs/webserver": "__VERSION__",
+    "@contextjs/collections": "__VERSION__"
   },
   "keywords": [
     "contextjs",
     "webserver",
     "middleware",
-    "static",
-    "files",
+    "cookies",
     "http",
     "serve",
     "typescript"

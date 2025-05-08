@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Dictionary } from "@contextjs/collections";
 import "@contextjs/webserver";
 
 /**
@@ -13,8 +14,28 @@ import "@contextjs/webserver";
  */
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
-        useCookies(options: (cookieOptions: CookieOptions) => void): WebServerOptions;
+        useCookies(): WebServerOptions;
     }
+    export interface IHttpRequest {
+        cookies: CookieCollection;
+    }
+    export interface IHttpResponse {
+        cookies: CookieCollection;
+    }
+}
+
+export declare class CookieCollection extends Dictionary<string, Cookie> { }
+
+export declare class Cookie {
+
+    public name: string;
+    public value: string;
+    public options: CookieOptions;
+
+    public constructor(name: string);
+    public constructor(name: string, value: string);
+    public constructor(name: string, value: string, options?: CookieOptions);
+    public constructor(name: string, value?: string, options?: CookieOptions);
 }
 
 export declare class CookieOptions {

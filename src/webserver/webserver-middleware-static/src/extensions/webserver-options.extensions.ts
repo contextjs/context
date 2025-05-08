@@ -27,7 +27,7 @@ WebServerOptions.prototype.useStaticFiles = function (options: (staticFilesOptio
     staticFilesMiddleware.publicFolder = staticFilesOptions.publicFolder;
     staticFilesMiddleware.fileExtensions = staticFilesOptions.fileExtensions;
 
-    this.useMiddleware(staticFilesMiddleware);
+    this.webServer.useMiddleware(staticFilesMiddleware);
 
     return this;
 };

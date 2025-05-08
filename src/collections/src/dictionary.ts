@@ -30,6 +30,9 @@ export class Dictionary<TKey, TValue> {
     }
 
     public values(): TValue[] {
+        if (this.map.size === 0) 
+            return [];
+        
         return Array.from(this.map.values());
     }
 

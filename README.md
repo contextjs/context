@@ -64,8 +64,8 @@ ctx build
 
 | Package | Description |
 |--------|-------------|
-| [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver) | A superfast, lightweight, extensible HTTP/HTTPS web server, designed with clean object-oriented principles and zero runtime dependencies |
-| [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver-middleware-static) | Static files middleware for the ContextJS web server |
+| [`@contextjs/webserver`](https://github.com/contextjs/context/tree/main/src/webserver/webserver) | High-performance, TypeScript-first HTTP/HTTPS server built directly on raw TCP sockets for maximum throughput, and zero runtime dependencies. Supports HTTP/2 with automatic HTTP/1.1 fallback, pooled contexts for minimal GC, and a robust middleware pipeline. |
+| [`@contextjs/webserver-middleware-static`](https://github.com/contextjs/context/tree/main/src/webserver/webserver-middleware-static) | Static files middleware for the ContextJS web server |
 
 ## Ecosystem Principles
 

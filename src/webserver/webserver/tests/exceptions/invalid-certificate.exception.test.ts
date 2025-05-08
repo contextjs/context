@@ -8,11 +8,30 @@
 
 import test, { TestContext } from 'node:test';
 import { InvalidCertificateException } from '../../src/exceptions/invalid-certificate.exception.js';
+import { WebServerException } from '../../src/exceptions/webserver.exception.js';
 
-test('InvalidCertificateException: constructor', async (context: TestContext) => {
-    const name = 'test-name';
-    const exception = new InvalidCertificateException(name);
+test('InvalidCertificateException: instance and inheritance', (context: TestContext) => {
+    const exception = new InvalidCertificateException('myCert');
+
+    context.assert.ok(exception instanceof InvalidCertificateException);
+    context.assert.ok(exception instanceof WebServerException);
+    context.assert.ok(exception instanceof Error);
+});
+
+test('InvalidCertificateException: name property', (context: TestContext) => {
+    const exception = new InvalidCertificateException('foo');
 
     context.assert.strictEqual(exception.name, 'InvalidCertificateException');
-    context.assert.strictEqual(exception.message, `Invalid certificate: ${name}`);
+});
+
+test('InvalidCertificateException: message formatting', (context: TestContext) => {
+    const exception = new InvalidCertificateException('serverCert');
+
+    context.assert.strictEqual(exception.message, 'Invalid certificate: serverCert');
+});
+
+test('InvalidCertificateException: toString output', (context: TestContext) => {
+    const exception = new InvalidCertificateException('certA');
+
+    context.assert.strictEqual(exception.toString(), 'InvalidCertificateException: Invalid certificate: certA');
 });
