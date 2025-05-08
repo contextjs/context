@@ -7,27 +7,24 @@
  */
 
 import { Application, Throw } from "@contextjs/system";
-import { WebServerOptions } from "./webserver-options.js";
+import { WebServerOptions } from "../options/webserver-options.js";
 import { WebServer } from "../webserver.js";
 
 declare module "@contextjs/system" {
     export interface Application {
         useWebServer(options: (webserverOptions: WebServerOptions) => void): Application;
-        webserver: WebServer | null;
+        webServer: WebServer;
     }
 }
 
 Application.prototype.useWebServer = function (options: (webserverOptions: WebServerOptions) => void): Application {
-
     Throw.ifNullOrUndefined(options);
 
-    const webserverOptions = new WebServerOptions();
-    const webServer = new WebServer(webserverOptions);
-    webserverOptions.webServer = webServer;
-
+    let webserverOptions = new WebServerOptions();
+    this.webServer = webserverOptions.webServer = new WebServer(webserverOptions);
     options(webserverOptions);
-    this.onRun(async () => await webServer.startAsync());
-    this.webserver = webServer;
+
+    this.onRun(async () => await this.webServer.startAsync());
 
     return this;
 }

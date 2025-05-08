@@ -9,7 +9,7 @@
  */
 
 export default class Config {
-    public static version: string = "0.4.8";
+    public static version: string = "0.5.0-alpha.1";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packageDescriptors: Map<string, string[]> = new Map<string, string[]>([

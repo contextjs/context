@@ -25,7 +25,8 @@
     "typesafe",
     "typescript",
     "lightweight",
-    "extensible"
+    "extensible",
+    "fast"
   ],
   "peerDependencies": {
     "@contextjs/system": "__VERSION__",

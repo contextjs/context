@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "../../../_build/webserver-middleware-static",
+        "outDir": "../../../_build/webserver-middleware-cookies",
     },
     "extends": "../../../tsconfig-base.json",
     "exclude": [

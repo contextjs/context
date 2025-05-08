@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { WebServerException } from "./webserver.exception.js";
 
-export class MiddlewareExistsException extends Exception {
-    public constructor(name: string) {
-        super(`The specified middleware already exists: ${name}`);
+export class MiddlewareExistsException extends WebServerException {
+    public constructor(name: string, options?: ErrorOptions) {
+        super(`Middleware "${name}" already exists.`, options);
         this.name = MiddlewareExistsException.name;
     }
 }

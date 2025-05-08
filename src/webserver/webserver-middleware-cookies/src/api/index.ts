@@ -7,4 +7,6 @@
  */
 
 export * from "../extensions/webserver-options.extensions.js";
-export * from "../extensions/static-files.options.js";
+export * from "../models/cookie.collection.js";
+export * from "../models/cookie.js";
+export * from "../models/cookie.options.js";

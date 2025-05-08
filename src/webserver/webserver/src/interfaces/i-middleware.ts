@@ -6,13 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { IHttpContext } from "../interfaces/i-http-context.js";
+import { HttpContext } from "../models/http-context.js";
 
 export interface IMiddleware {
     name: string;
-    version: string;
+    version?: string;
 
-    onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void>;
-    onErrorAsync?(exception: any): Promise<void>;
-    onTimeoutAsync?(): Promise<void>;
+    onRequest(httpContext: HttpContext, next?: () => Promise<void> | void): Promise<void> | void;
 }

@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { WebServerException } from "./webserver.exception.js";
 
-export class InvalidCertificateKeyException extends Exception {
+export class InvalidCertificateKeyException extends WebServerException {
     public constructor(name: string) {
         super(`Invalid certificate key: ${name}`);
         this.name = InvalidCertificateKeyException.name;

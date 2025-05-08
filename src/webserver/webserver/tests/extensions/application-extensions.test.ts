@@ -6,74 +6,42 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application } from "@contextjs/system";
-import { test, TestContext } from 'node:test';
-import { MiddlewareExistsException } from "../../src/exceptions/middleware-exists.exception.ts";
-import '../../src/extensions/application-extensions.ts';
-import { IMiddleware } from "../../src/interfaces/i-middleware.ts";
-import { IHttpContext } from "../../src/interfaces/i-http-context.ts";
+import { Application } from '@contextjs/system';
+import test, { TestContext } from 'node:test';
+import '../../src/extensions/application-extensions.js';
+import { WebServer } from '../../src/webserver.js';
 
-test('useWebServer', (context: TestContext) => {
-    const app = new Application();
-    app.useWebServer(() => { });
+test('Application: useWebServer: throws when options callback is null or undefined', (context: TestContext) => {
+    const application = new Application();
 
-    context.assert.notStrictEqual(app.webserver, null);
+    context.assert.throws(() => (application as any).useWebServer(null), Error);
+    context.assert.throws(() => (application as any).useWebServer(undefined), Error);
 });
 
-test('useWebServer_Success', (context: TestContext) => {
-    const app = new Application();
+test('Application: useWebServer: returns the application instance and sets webserver property', (context: TestContext) => {
+    const application = new Application();
+    const returnedApplication = application.useWebServer(opts => { });
 
-    app.useWebServer(options => {
-        options.http.enabled = true;
-        options.http.port = 8080;
-    });
-
-    context.assert.notStrictEqual(app.webserver, null);
+    context.assert.strictEqual(returnedApplication, application);
+    context.assert.ok(application.webServer instanceof WebServer);
 });
 
-test('useMiddleware_Success', (context: TestContext) => {
-    const app = new Application();
-    class Middleware implements IMiddleware {
-        name: string;
-        version: string;
+test('Application: useWebServer: invokes startAsync on runAsync', async (context: TestContext) => {
+    const application = new Application();
 
-        onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void> {
-            throw new Error("Method not implemented.");
-        }
+    let started = false;
+    const original = WebServer.prototype.startAsync;
+    WebServer.prototype.startAsync = function (): Promise<void[]> {
+        started = true; return Promise.resolve([]);
+    };
 
-        onErrorAsync?(exception: any): Promise<void> {
-            throw new Error("Method not implemented.");
-        }
+    try {
+        application.useWebServer(opts => { });
+        await application.runAsync();
+
+        context.assert.ok(started);
     }
-
-    app.useWebServer(options => {
-        options.http.enabled = true;
-        options.http.port = 8080;
-        options.useMiddleware(new Middleware());
-    });
-
-    context.assert.notStrictEqual(app.webserver, null);
-});
-
-test('useMiddleware_AlreadyExists', (context: TestContext) => {
-    const app = new Application();
-    class Middleware implements IMiddleware {
-        name: string = "Middleware";
-        version: string;
-
-        onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void> {
-            throw new Error("Method not implemented.");
-        }
-
-        onErrorAsync?(exception: any): Promise<void> {
-            throw new Error("Method not implemented.");
-        }
+    finally {
+        WebServer.prototype.startAsync = original;
     }
-
-    context.assert.throws(() => app.useWebServer(options => {
-        options.http.enabled = true;
-        options.http.port = 8080;
-        options.useMiddleware(new Middleware());
-        options.useMiddleware(new Middleware());
-    }), MiddlewareExistsException);
 });
