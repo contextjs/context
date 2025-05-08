@@ -7,7 +7,7 @@
  */
 
 import Config from "./config.ts";
-import PackageInfo from "./package-info.ts";
+import type PackageInfo from "./package-info.ts";
 import Script from "./script.ts";
 
 export class Release extends Script {
