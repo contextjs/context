@@ -87,13 +87,14 @@ app.useWebServer(options => {
   // HTTP on port 8080
   options.http.port = 8080;
   options.onEvent = e => console.log(`[WebServer:${e.type}]`, e.detail);
-  options.useMiddleware({
+});
+
+app.webServer.useMiddleware({
     name: "logger",
     onRequest(ctx, next) {
       console.log(`${ctx.request.method} ${ctx.request.path}`);
       return next?.();
     }
-  });
 });
 
 await app.runAsync();
@@ -263,13 +264,6 @@ export declare class WebServerOptions {
         http?: HttpWebServerOptions,
         https?: HttpsWebServerOptions,
         onEvent?: (event: WebServerEvent) => void);
-
-    /**
-     * Shortcut to register middleware directly on the configured WebServer.
-     * @param middleware The middleware implementation.
-     * @returns The WebServerOptions instance for chaining.
-     */
-    public useMiddleware(middleware: IMiddleware): this;
 }
 
 /**

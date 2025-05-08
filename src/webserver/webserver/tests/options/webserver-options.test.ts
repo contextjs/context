@@ -7,11 +7,10 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { WebServerOptions } from '../../src/options/webserver-options.js';
 import { GeneralWebServerOptions } from '../../src/options/general-webserver-options.js';
 import { HttpWebServerOptions } from '../../src/options/http-webserver-options.js';
 import { HttpsWebServerOptions } from '../../src/options/https-webserver-options.js';
-import { IMiddleware } from '../../src/interfaces/i-middleware.js';
+import { WebServerOptions } from '../../src/options/webserver-options.js';
 
 test('WebServerOptions: default constructor initializes defaults', (context: TestContext) => {
     const opts = new WebServerOptions();
@@ -35,16 +34,4 @@ test('WebServerOptions: constructor assigns provided instances and callback', (c
     context.assert.strictEqual(opts.http, customHttp);
     context.assert.strictEqual(opts.https, customHttps);
     context.assert.strictEqual(opts.onEvent, callback);
-});
-
-test('WebServerOptions: useMiddleware calls webServer.useMiddleware and returns self', (context: TestContext) => {
-    const opts = new WebServerOptions();
-    const dummyMiddleware: IMiddleware = { name: 'm1', onRequest: () => { } } as any;
-
-    let calledWith: IMiddleware | null = null;
-    opts.webServer = { useMiddleware: (mw: IMiddleware) => { calledWith = mw; } } as any;
-    const ret = opts.useMiddleware(dummyMiddleware);
-    
-    context.assert.strictEqual(calledWith, dummyMiddleware);
-    context.assert.strictEqual(ret, opts);
 });

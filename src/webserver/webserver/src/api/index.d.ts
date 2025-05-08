@@ -96,13 +96,6 @@ export declare class WebServerOptions {
         http?: HttpWebServerOptions,
         https?: HttpsWebServerOptions,
         onEvent?: (event: WebServerEvent) => void);
-
-    /**
-     * Shortcut to register middleware directly on the configured WebServer.
-     * @param middleware The middleware implementation.
-     * @returns The WebServerOptions instance for chaining.
-     */
-    public useMiddleware(middleware: IMiddleware): this;
 }
 
 /**
