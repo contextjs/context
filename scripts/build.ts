@@ -127,16 +127,6 @@ export class Build extends Script {
 
         await this.executeCommandAsync(`npm install ./${Config.packagesFolder}/${name}-${Config.version}.tgz`, true);
     }
-
-    private async executeActionAsync(packageDescriptors: Map<string, string[]>, action: Function): Promise<void> {
-        for (const packageDescriptor of packageDescriptors) {
-            if (packageDescriptor[1].length === 0)
-                await action({ name: packageDescriptor[0] });
-            else
-                for (const packagePath of packageDescriptor[1])
-                    await action({ name: packagePath, path: packageDescriptor[0] });
-        }
-    }
 }
 
 const builer = new Build();
