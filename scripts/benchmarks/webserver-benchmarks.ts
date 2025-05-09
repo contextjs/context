@@ -1,8 +1,8 @@
 import { HttpContext, WebServer, WebServerOptions } from "@contextjs/webserver";
 import autocannon from 'autocannon';
+import { execSync } from "child_process";
 import express from "express";
 import fastify from "fastify";
-import { execSync } from "child_process";
 import fs from "node:fs/promises";
 import http from "node:http";
 import { join } from "path";
@@ -95,13 +95,11 @@ class Benchmark {
             extendedMetricsTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
 
         await this.updateReadmeSectionAsync(`\n\n### Summary\n${markdownTable}\n\n### Extended Metrics\n${extendedMetricsTable}`);
-        await this.stopAsync();
-
         if (this.pushReadme)
             this.commitAndPushReadme();
 
-        console.log("All done.");
-        process.exit(0);
+
+        await this.stopAsync();
     }
 
     private async updateReadmeSectionAsync(markdownSection: string) {
