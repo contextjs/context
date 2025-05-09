@@ -1,8 +1,5 @@
 name: Tests
 
-permissions:
-  contents: write
-
 on:
   push:
     branches: [ main ]
@@ -40,5 +37,17 @@ jobs:
       env:
         FORCE_COLOR: true
 
-    - name: WebServer Benchmarks
-      run: npm run webserver-benchmarks:ci
+    - name: Run WebServer Benchmarks
+      if: github.event_name == 'push'
+      run: npm run webserver-benchmarks
+
+    - name: Create Benchmarks Pull Request
+      uses: peter-evans/create-pull-request@v7
+      with:
+        title: "chore: update benchmarks"
+        commit-message: "chore: update benchmarks"
+        branch: benchmark/${{ github.run_number }}
+        body: "Auto-generated benchmarks update."
+        labels: auto-benchmark
+        add-paths: |
+          README.md
