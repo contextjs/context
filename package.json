@@ -12,7 +12,7 @@
         "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.ts\"",
         "release": "node scripts/release.ts",
         "webserver-benchmarks": "node scripts/benchmarks/webserver-benchmarks.ts",
-        "webserver-benchmarks:ci": "node scripts/benchmarks/webserver-benchmarks.ts --push"
+        "webserver-benchmarks:ci": "node --no-warnings scripts/benchmarks/webserver-benchmarks.ts --push "
     },
     "repository": {
         "type": "git",

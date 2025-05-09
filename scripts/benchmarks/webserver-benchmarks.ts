@@ -98,7 +98,6 @@ class Benchmark {
         if (this.pushReadme)
             this.commitAndPushReadme();
 
-
         await this.stopAsync();
     }
 
