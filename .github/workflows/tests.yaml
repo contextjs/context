@@ -38,4 +38,4 @@ jobs:
         FORCE_COLOR: true
 
     - name: WebServer Benchmarks
-      run: npm run webserver-benchmarks
+      run: npm run webserver-benchmarks:ci

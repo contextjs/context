@@ -31,7 +31,7 @@ class Benchmark {
     private DURATION_SECONDS = 10;
     private servers: Server[] = [];
 
-    public constructor() {
+    public constructor(private readonly pushReadme: boolean) {
         this.initializeServers();
     }
 
@@ -93,8 +93,10 @@ class Benchmark {
             extendedMetricsTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
 
         await this.updateReadmeSectionAsync(`\n\n### Summary\n${markdownTable}\n\n### Extended Metrics\n${extendedMetricsTable}`);
-        await this.commitAndPushReadme();
         await this.stopAsync();
+
+        if (this.pushReadme)
+            this.commitAndPushReadme();
 
         console.log("All done.");
         process.exit(0);
@@ -119,7 +121,6 @@ class Benchmark {
         exec(`git commit -m "chore: update benchmarks [skip ci]"`);
         exec(`git push origin main`);
     }
-
 
     private async startWebServer(server: Server): Promise<void> {
         const webServerOptions = new WebServerOptions();
@@ -274,4 +275,7 @@ class Benchmark {
     }
 }
 
-await new Benchmark().executeAsync();
+const args = process.argv.slice(2);
+
+const runner = new Benchmark(args.includes('--push'));
+await runner.executeAsync();
