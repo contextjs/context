@@ -77,3 +77,8 @@ ctx build
 - **Transformers**: Auto-discovered from `.transformers/` folders and injected at compile time
 
 > All packages follow [MIT](https://github.com/contextjs/context/blob/main/LICENSE) licensing and are actively maintained under the [ContextJS GitHub organization](https://github.com/contextjs/context).
+
+## WebServer Benchmarks
+
+<!-- BENCHMARKS:START -->
+<!-- BENCHMARKS:END -->
