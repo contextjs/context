@@ -30,8 +30,10 @@ class Benchmark {
     private PIPELINING_FACTOR = 1;
     private DURATION_SECONDS = 10;
     private servers: Server[] = [];
+    private readonly pushReadme: boolean;
 
-    public constructor(private readonly pushReadme: boolean) {
+    public constructor(pushReadme) {
+        this.pushReadme = pushReadme;
         this.initializeServers();
     }
 
