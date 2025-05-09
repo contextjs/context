@@ -117,6 +117,8 @@ class Benchmark {
     }
 
     private commitAndPushReadme() {
+        console.log("Committing and pushing README.md...");
+        
         exec(`git config user.name "github-actions[bot]"`);
         exec(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
         exec(`git add README.md`);
