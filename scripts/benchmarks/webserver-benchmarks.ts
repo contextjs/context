@@ -2,7 +2,7 @@ import { HttpContext, WebServer, WebServerOptions } from "@contextjs/webserver";
 import autocannon from 'autocannon';
 import express from "express";
 import fastify from "fastify";
-import { exec } from "node:child_process";
+import { execSync } from "child_process";
 import fs from "node:fs/promises";
 import http from "node:http";
 import { join } from "path";
@@ -118,12 +118,12 @@ class Benchmark {
 
     private commitAndPushReadme() {
         console.log("Committing and pushing README.md...");
-        
-        exec(`git config user.name "github-actions[bot]"`);
-        exec(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
-        exec(`git add README.md`);
-        exec(`git commit -m "chore: update benchmarks [skip ci]"`);
-        exec(`git push origin main`);
+
+        execSync(`git config user.name "github-actions[bot]"`);
+        execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
+        execSync(`git add README.md`);
+        execSync(`git commit -m "chore: update benchmarks [skip ci]"`);
+        execSync(`git push origin main`);
     }
 
     private async startWebServer(server: Server): Promise<void> {
