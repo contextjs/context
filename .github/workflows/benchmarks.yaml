@@ -45,6 +45,5 @@ jobs:
         commit-message: "chore: update benchmarks"
         branch: benchmark/${{ github.run_number }}
         body: "Auto-generated benchmarks update."
-        labels: auto-benchmark
         add-paths: |
           README.md
