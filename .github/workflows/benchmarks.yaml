@@ -39,7 +39,7 @@ jobs:
       run: npm run webserver-benchmarks:ci
 
     - name: Create Benchmarks Pull Request
-      id: cpr
+      id: benchmark
       uses: peter-evans/create-pull-request@v7
       with:
         author: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
@@ -51,10 +51,17 @@ jobs:
         add-paths: |
           README.md
 
+    - name: Auto-approve Benchmarks PR
+      if: steps.benchmark.outputs.pull-request-number
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh pr review ${{ steps.benchmark.outputs.pull-request-number }} --approve
+
     - name: Auto-Merge
-      if: steps.cpr.outputs.pull-request-operation == 'created'
+      if: steps.benchmark.outputs.pull-request-operation == 'created'
       uses: peter-evans/enable-pull-request-automerge@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+        pull-request-number: ${{ steps.benchmark.outputs.pull-request-number }}
         merge-method: merge
