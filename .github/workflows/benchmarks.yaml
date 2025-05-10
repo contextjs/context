@@ -25,7 +25,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        persist-credentials: true
+        persist-credentials: false
+        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
 
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -41,9 +42,11 @@ jobs:
     - name: Create Benchmarks Pull Request
       uses: peter-evans/create-pull-request@v7
       with:
+        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
         title: "chore: update benchmarks"
         commit-message: "chore: update benchmarks"
         branch: benchmark/${{ github.run_number }}
         body: "Auto-generated benchmarks update."
+        labels: auto-benchmark
         add-paths: |
           README.md
