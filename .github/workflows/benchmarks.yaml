@@ -49,3 +49,6 @@ jobs:
         body: "Auto-generated benchmarks update."
         add-paths: |
           README.md
+
+    - name: Enable Pull Request Automerge
+      run: gh pr merge benchmark/${{ github.run_number }} --admin --delete-branch --squash
