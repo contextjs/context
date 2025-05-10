@@ -27,11 +27,12 @@ jobs:
       with:
         persist-credentials: false
         token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
+        fetch-depth: 0
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+    - name: Fix origin URL to use PAT
+      run: |
+        git remote remove origin
+        git remote add origin https://contextjs-bot:${{ secrets.CONTEXTJS_BENCHMARKS }}@github.com/contextjs/context.git
 
     - name: Build
       run: npm run build
