@@ -51,14 +51,7 @@ jobs:
         add-paths: |
           README.md
 
-    - name: Auto approve Benchmarks PR
-      if: steps.cpr.outputs.pull-request-operation == 'created'
-      run: |
-        gh pr review ${{ steps.cpr.outputs.pull-request-number }} --approve
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Enable Auto-Merge in Merge Queue
+    - name: Auto-Merge
       if: steps.cpr.outputs.pull-request-operation == 'created'
       uses: peter-evans/enable-pull-request-automerge@v3
       with:
