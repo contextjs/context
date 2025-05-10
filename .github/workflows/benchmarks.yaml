@@ -56,5 +56,4 @@ jobs:
       run: |
         gh pr merge benchmark/${{ github.run_number }} \
           --admin \
-          --delete-branch \
           --squash
