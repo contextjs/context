@@ -58,3 +58,9 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         pull-request-number: ${{ steps.benchmark.outputs.pull-request-number }}
         merge-method: merge
+
+    - name: Auto approve
+      if: steps.benchmark.outputs.pull-request-operation == 'created'
+      run: gh pr review --approve "${{ steps.benchmark.outputs.pull-request-number }}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
