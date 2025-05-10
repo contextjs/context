@@ -1,6 +1,5 @@
 import { HttpContext, WebServer, WebServerOptions } from "@contextjs/webserver";
 import autocannon from 'autocannon';
-import { execSync } from "child_process";
 import express from "express";
 import fastify from "fastify";
 import fs from "node:fs/promises";
@@ -30,10 +29,8 @@ class Benchmark {
     private PIPELINING_FACTOR = 1;
     private DURATION_SECONDS = 10;
     private servers: Server[] = [];
-    private readonly pushReadme: boolean;
 
-    public constructor(pushReadme) {
-        this.pushReadme = pushReadme;
+    public constructor() {
         this.initializeServers();
     }
 
@@ -95,9 +92,6 @@ class Benchmark {
             extendedMetricsTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
 
         await this.updateReadmeSectionAsync(`\n\n### Summary\n${markdownTable}\n\n### Extended Metrics\n${extendedMetricsTable}`);
-        if (this.pushReadme)
-            this.commitAndPushReadme();
-
         await this.stopAsync();
     }
 
@@ -111,16 +105,6 @@ class Benchmark {
         );
 
         await fs.writeFile(readmePath, updated, "utf8");
-    }
-
-    private commitAndPushReadme() {
-        console.log("Committing and pushing README.md...");
-
-        execSync(`git config user.name "github-actions[bot]"`);
-        execSync(`git config user.email "github-actions[bot]@users.noreply.github.com"`);
-        execSync(`git add README.md`);
-        execSync(`git commit -m "chore: update benchmarks [skip ci]"`);
-        execSync(`git push origin main`);
     }
 
     private async startWebServer(server: Server): Promise<void> {
@@ -276,7 +260,5 @@ class Benchmark {
     }
 }
 
-const args = process.argv.slice(2);
-
-const runner = new Benchmark(args.includes('--push'));
+const runner = new Benchmark();
 await runner.executeAsync();

@@ -1,0 +1,44 @@
+name: Benchmarks
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+  
+env:
+  NODE_VERSION: "23.x"
+
+jobs:
+  run:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Run WebServer Benchmarks
+      run: npm run webserver-benchmarks
+
+    - name: Create Benchmarks Pull Request
+      uses: peter-evans/create-pull-request@v7
+      with:
+        title: "chore: update benchmarks"
+        commit-message: "chore: update benchmarks"
+        branch: benchmark/${{ github.run_number }}
+        body: "Auto-generated benchmarks update."
+        labels: auto-benchmark
+        add-paths: |
+          README.md
