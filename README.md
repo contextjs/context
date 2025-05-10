@@ -81,4 +81,23 @@ ctx build
 ## WebServer Benchmarks
 
 <!-- BENCHMARKS:START -->
+
+
+### Summary
+| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
+|--------|---------|--------------|-------------------|--------|
+| ContextJS | 13392.27 | 52.61 | 2.39 | 294.67 |
+| Node.js Raw HTTP | 10747.2 | 58.9 | 1.92 | 367.67 |
+| Fastify | 10085.6 | 60.81 | 1.8 | 387.33 |
+| Express | 4660.33 | 91.51 | 1.11 | 577.33 |
+
+
+### Extended Metrics
+| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
+|--------|-------------|------------|--------------|--------------------|----------------|-------------------------|-----|
+| ContextJS | 1000 | 1 | 10.16 | 344.83 | 616.08 | 0.11 | 401754 |
+| Node.js Raw HTTP | 1000 | 1 | 10.17 | 365.98 | 376.27 | 0.07 | 322397 |
+| Fastify | 1000 | 1 | 10.18 | 371.64 | 418.23 | 0.07 | 302556 |
+| Express | 1000 | 1 | 10.23 | 445.93 | 254.66 | 0.06 | 139796 |
+
 <!-- BENCHMARKS:END -->
