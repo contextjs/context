@@ -42,6 +42,7 @@ jobs:
     - name: Create Benchmarks Pull Request
       uses: peter-evans/create-pull-request@v7
       with:
+        author: contextjs-bot
         token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
         title: "chore: update benchmarks"
         commit-message: "chore: update benchmarks"
