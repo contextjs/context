@@ -39,6 +39,7 @@ jobs:
       run: npm run webserver-benchmarks:ci
 
     - name: Create Benchmarks Pull Request
+      id: cpr
       uses: peter-evans/create-pull-request@v7
       with:
         author: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
