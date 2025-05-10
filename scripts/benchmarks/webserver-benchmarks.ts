@@ -23,9 +23,9 @@ class Server {
 }
 
 class Benchmark {
-    private ENABLE_WARMUP = true;
-    private ITERATIONS = 3;
-    private CONCURRENCY = 1000;
+    private ENABLE_WARMUP = false;
+    private ITERATIONS = 1;
+    private CONCURRENCY = 500;
     private PIPELINING_FACTOR = 1;
     private DURATION_SECONDS = 10;
     private servers: Server[] = [];
