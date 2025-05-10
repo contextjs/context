@@ -25,8 +25,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        persist-credentials: false
-        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
+        persist-credentials: true
 
     - name: Setup Node
       uses: actions/setup-node@v4
@@ -37,13 +36,13 @@ jobs:
       run: npm run build
 
     - name: Run WebServer Benchmarks
-      run: npm run webserver-benchmarks
+      run: npm run webserver-benchmarks:ci
 
     - name: Create Benchmarks Pull Request
       uses: peter-evans/create-pull-request@v7
       with:
-        author: contextjs-bot
-        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
+        author: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
+        committer: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
         title: "chore: update benchmarks"
         commit-message: "chore: update benchmarks"
         branch: benchmark/${{ github.run_number }}
