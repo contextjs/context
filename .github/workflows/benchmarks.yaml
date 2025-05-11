@@ -8,6 +8,7 @@ on:
   workflow_run:
     workflows: ["Tests"]
     types: ["completed"]
+    branches: ["main"]
 
 env:
   NODE_VERSION: "23.x"
