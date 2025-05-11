@@ -191,16 +191,16 @@ class Benchmark {
         samples: number,
         concurrency: number): Promise<{
             name: string;
-            requests: number;
-            latency: number;
-            throughput: number;
-            errors: number;
+            requests: string;
+            latency: string;
+            throughput: string;
+            errors: string;
             connections: number;
             pipelining: number;
-            duration: number;
-            latencyStdDev: number;
-            requestsStdDev: number;
-            throughputStdDev: number;
+            duration: string;
+            latencyStdDev: string;
+            requestsStdDev: string;
+            throughputStdDev: string;
             totalRequests: number;
         }> {
         const all = {
@@ -229,16 +229,16 @@ class Benchmark {
 
         return {
             name: name,
-            requests: this.average(all.requests),
-            latency: this.average(all.latency),
-            throughput: this.average(all.throughput),
-            errors: this.average(all.errors),
+            requests: this.average(all.requests).toFixed(2),
+            latency: this.average(all.latency).toFixed(2),
+            throughput: this.average(all.throughput).toFixed(2),
+            errors: this.average(all.errors).toFixed(2),
             connections: last.connections,
             pipelining: last.pipelining,
             duration: last.duration,
-            latencyStdDev: last.latency.stddev,
-            requestsStdDev: last.requests.stddev,
-            throughputStdDev: this.bytesToMB(last.throughput.stddev),
+            latencyStdDev: last.latency.stddev.toFixed(2),
+            requestsStdDev: last.requests.stddev.toFixed(2),
+            throughputStdDev: this.bytesToMB(last.throughput.stddev).toFixed(2),
             totalRequests: sum(requests),
         };
     }
