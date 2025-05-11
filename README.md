@@ -84,12 +84,13 @@ ctx build
 
 ### Summary
 <!-- BENCHMARKS_SUMMARY:START -->
-| Server              | Req/sec      | Latency (ms) | Throughput (MB/s) | Errors |
-| ------------------- | ------------ | ------------ | ----------------- | ------ |
-| ContextJS           | 15 226.93    | 32.59        | 2.72              | 0      |
-| Node.js Raw HTTP    | 12 792.53    | 38.88        | 2.28              | 0      |
-| Fastify             | 11 984.27    | 41.57        | 2.14              | 0      |
-| Express             | 5 260        | 87.09        | 1.26              | 43.33  |
+| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
+|--------|--------:|-------------:|------------------:|-------:|
+| ContextJS | 13675.73 | 36.35 | 2.44 | 0 |
+| Node.js Raw HTTP | 11517.07 | 43.22 | 2.05 | 0 |
+| Fastify | 10934.4 | 45.58 | 1.95 | 0 |
+| Express | 5003.33 | 89.56 | 1.2 | 55.67 |
+
 <!-- BENCHMARKS_SUMMARY:END -->
 **Column descriptions**:
 
@@ -100,12 +101,13 @@ ctx build
 
 ### Extended Metrics
 <!-- BENCHMARKS_EXTENDED:START -->
-| Server           | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
-| ---------------- | ----------- | ---------- | ------------ | ------------------ | -------------- | ----------------------- | -------------- |
-| ContextJS        | 500         | 1          | 10.11        | 105.67             | 276.61         | 0.05                    | 456 750        |
-| Node.js Raw HTTP | 500         | 1          | 10.13        | 137.50             | 194.56         | 0.03                    | 383 750        |
-| Fastify          | 500         | 1          | 10.13        | 153.50             | 323.25         | 0.06                    | 359 500        |
-| Express          | 500         | 1          | 10.19        | 412.10             | 168.32         | 0.04                    | 157 779        |
+| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
+|--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|
+| ContextJS | 500 | 1 | 10.13 | 124.94 | 291.07 | 0.05 | 410250 |
+| Node.js Raw HTTP | 500 | 1 | 10.1 | 158.78 | 209.42 | 0.04 | 345500 |
+| Fastify | 500 | 1 | 10.13 | 173.53 | 288.49 | 0.05 | 328000 |
+| Express | 500 | 1 | 10.22 | 422.9 | 175.72 | 0.04 | 150074 |
+
 <!-- BENCHMARKS_EXTENDED:END -->
 **Extended column descriptions**:
 
