@@ -42,6 +42,7 @@ jobs:
       id: benchmark
       uses: peter-evans/create-pull-request@v7
       with:
+        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
         author: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
         committer: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
         title: "chore: update benchmarks"
@@ -55,7 +56,7 @@ jobs:
       if: steps.benchmark.outputs.pull-request-operation == 'created'
       uses: peter-evans/enable-pull-request-automerge@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
         pull-request-number: ${{ steps.benchmark.outputs.pull-request-number }}
         merge-method: merge
 
@@ -63,4 +64,4 @@ jobs:
       if: steps.benchmark.outputs.pull-request-operation == 'created'
       run: gh pr review --approve "${{ steps.benchmark.outputs.pull-request-number }}"
       env:
-        GH_TOKEN: ${{ secrets.CONTEXTJS_BENCHMARKS }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
