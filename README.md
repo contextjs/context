@@ -80,24 +80,39 @@ ctx build
 
 ## WebServer Benchmarks
 
-<!-- BENCHMARKS:START -->
-
+> Below are the results of our WebServer benchmark suite, which compares throughput and latency across four different Node.js–based HTTP servers. Each test is run on GitHub Actions' "ubuntu-latest" virtual machine, using the same test suite and configuration. The benchmarks target a minimal server that responds with a 200 OK status and a short body of "OK" They use **500 concurrent connections**, a **pipelining factor of 1**, and run for **10 seconds**, with a warmup phase, and results averaged over three runs.
 
 ### Summary
-| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
-|--------|---------|--------------|-------------------|--------|
-| ContextJS | 13302.4 | 37.4 | 2.37 | 0 |
-| Node.js Raw HTTP | 12100.8 | 41.02 | 2.16 | 0 |
-| Fastify | 11200 | 44.53 | 2 | 0 |
-| Express | 4862.8 | 90.7 | 1.16 | 61 |
+<!-- BENCHMARKS_SUMMARY:START -->
+| Server              | Req/sec      | Latency (ms) | Throughput (MB/s) | Errors |
+| ------------------- | ------------ | ------------ | ----------------- | ------ |
+| ContextJS           | 15 226.93    | 32.59        | 2.72              | 0      |
+| Node.js Raw HTTP    | 12 792.53    | 38.88        | 2.28              | 0      |
+| Fastify             | 11 984.27    | 41.57        | 2.14              | 0      |
+| Express             | 5 260        | 87.09        | 1.26              | 43.33  |
+<!-- BENCHMARKS_SUMMARY:END -->
+**Column descriptions**:
 
+- **Req/sec** — Average number of HTTP requests served per second.  
+- **Latency (ms)** — Median (50th percentile) response time in milliseconds.  
+- **Throughput (MB/s)** — Average data transferred per second.  
+- **Errors** — Total connection-level failures (e.g. resets, refusals).
 
 ### Extended Metrics
-| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
-|--------|-------------|------------|--------------|--------------------|----------------|-------------------------|-----|
-| ContextJS | 500 | 1 | 10.14 | 140.57 | 1139.94 | 0.2 | 133000 |
-| Node.js Raw HTTP | 500 | 1 | 10.1 | 154.97 | 825.63 | 0.15 | 121000 |
-| Fastify | 500 | 1 | 10.13 | 171.73 | 531.58 | 0.09 | 112000 |
-| Express | 500 | 1 | 10.18 | 427.74 | 195.19 | 0.05 | 48619 |
+<!-- BENCHMARKS_EXTENDED:START -->
+| Server           | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
+| ---------------- | ----------- | ---------- | ------------ | ------------------ | -------------- | ----------------------- | -------------- |
+| ContextJS        | 500         | 1          | 10.11        | 105.67             | 276.61         | 0.05                    | 456 750        |
+| Node.js Raw HTTP | 500         | 1          | 10.13        | 137.50             | 194.56         | 0.03                    | 383 750        |
+| Fastify          | 500         | 1          | 10.13        | 153.50             | 323.25         | 0.06                    | 359 500        |
+| Express          | 500         | 1          | 10.19        | 412.10             | 168.32         | 0.04                    | 157 779        |
+<!-- BENCHMARKS_EXTENDED:END -->
+**Extended column descriptions**:
 
-<!-- BENCHMARKS:END -->
+- **Connections** — Number of simultaneous TCP connections opened.  
+- **Pipelining** — Number of requests pipelined per connection.  
+- **Duration (s)** — Total benchmark runtime in seconds.  
+- **Latency Stdev (ms)** — Standard deviation of response latency.  
+- **Requests Stdev** — Standard deviation of the requests/sec across samples.  
+- **Throughput Stdev (MB/s)** — Standard deviation of throughput.  
+- **Total Requests** — Sum of all successful 2xx responses across all iterations.

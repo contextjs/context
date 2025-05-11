@@ -23,8 +23,8 @@ class Server {
 }
 
 class Benchmark {
-    private ENABLE_WARMUP = false;
-    private ITERATIONS = 1;
+    private ENABLE_WARMUP = true;
+    private ITERATIONS = 3;
     private CONCURRENCY = 500;
     private PIPELINING_FACTOR = 1;
     private DURATION_SECONDS = 10;
@@ -83,26 +83,31 @@ class Benchmark {
         for (const server of this.servers)
             results.push(await this.runBenchmark(server.name, `http://${server.host}:${server.port}`, this.ITERATIONS, this.CONCURRENCY));
 
-        let markdownTable = "| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |\n|--------|---------|--------------|-------------------|--------|\n";
+        let summaryTable = "| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |\n|--------|--------:|-------------:|------------------:|-------:|\n";
         for (const result of results)
-            markdownTable += `| ${result.name} | ${result.requests} | ${result.latency} | ${result.throughput} | ${result.errors} |\n`;
+            summaryTable += `| ${result.name} | ${result.requests} | ${result.latency} | ${result.throughput} | ${result.errors} |\n`;
 
-        let extendedMetricsTable = "| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |\n|--------|-------------|------------|--------------|--------------------|----------------|-------------------------|-----|\n";
+        let extendedTable = "| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |\n|--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|\n";
         for (const result of results)
-            extendedMetricsTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
+            extendedTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
 
-        await this.updateReadmeSectionAsync(`\n\n### Summary\n${markdownTable}\n\n### Extended Metrics\n${extendedMetricsTable}`);
+        await this.updateReadmeSectionAsync(summaryTable, extendedTable);
         await this.stopAsync();
     }
 
-    private async updateReadmeSectionAsync(markdownSection: string) {
+    private async updateReadmeSectionAsync(summaryTable: string, extendedTable: string) {
         const readmePath = join(process.cwd(), "README.md");
         let content = await fs.readFile(readmePath, "utf8");
 
-        const updated = content.replace(
-            /<!-- BENCHMARKS:START -->[\s\S]*?<!-- BENCHMARKS:END -->/,
-            `<!-- BENCHMARKS:START -->\n${markdownSection}\n<!-- BENCHMARKS:END -->`
-        );
+        const updated = content
+            .replace(
+                /<!-- BENCHMARKS_SUMMARY:START -->[\s\S]*?<!-- BENCHMARKS_SUMMARY:END -->/,
+                `<!-- BENCHMARKS_SUMMARY:START -->\n${summaryTable}\n<!-- BENCHMARKS_SUMMARY:END -->`
+            )
+            .replace(
+                /<!-- BENCHMARKS_EXTENDED:START -->[\s\S]*?<!-- BENCHMARKS_EXTENDED:END -->/,
+                `<!-- BENCHMARKS_EXTENDED:START -->\n${extendedTable}\n<!-- BENCHMARKS_EXTENDED:END -->`
+            );
 
         await fs.writeFile(readmePath, updated, "utf8");
     }
