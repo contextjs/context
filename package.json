@@ -8,8 +8,8 @@
     "type": "module",
     "scripts": {
         "build": "node scripts/build.ts",
-        "test": "glob -c \"tsx --test \" \"./**/*.test.ts\"",
-        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./**/*.test.ts\"",
+        "test": "glob -c \"tsx --test \" \"./src/**/*.test.ts\"",
+        "test:coverage": "glob -c \"tsx --test --experimental-test-coverage\" \"./src/**/*.test.ts\"",
         "release": "node scripts/release.ts",
         "webserver-benchmarks": "node scripts/benchmarks/webserver-benchmarks.ts",
         "webserver-benchmarks:ci": "node --no-warnings scripts/benchmarks/webserver-benchmarks.ts"

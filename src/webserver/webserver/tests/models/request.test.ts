@@ -11,7 +11,7 @@ import { Readable } from 'stream';
 import { HeaderCollection } from '../../src/models/header.collection.js';
 import { Request } from '../../src/models/request.js';
 
-test('Request.initialize sets all fields and returns this', (context: TestContext) => {
+test('Request: initialize sets all fields and returns this', (context: TestContext) => {
     const req = new Request();
     const headers = new HeaderCollection();
     headers.set('X-Test', 'value');
@@ -25,7 +25,7 @@ test('Request.initialize sets all fields and returns this', (context: TestContex
     context.assert.strictEqual(req.body, body);
 });
 
-test('Request.reset clears fields and returns this', (context: TestContext) => {
+test('Request: reset clears fields and returns this', (context: TestContext) => {
     const req = new Request();
     const headers = new HeaderCollection();
     headers.set('Header', 'v');
@@ -40,7 +40,7 @@ test('Request.reset clears fields and returns this', (context: TestContext) => {
     context.assert.ok(!req.headers.has('Header'));
 });
 
-test('Request.reset does not replace the headers instance', (context: TestContext) => {
+test('Request: reset does not replace the headers instance', (context: TestContext) => {
     const req = new Request();
     const headers = new HeaderCollection();
     req.initialize('PUT', '/x', headers, new Readable({ read() { } }));

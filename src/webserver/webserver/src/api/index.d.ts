@@ -358,6 +358,25 @@ export declare class HttpContext {
     public readonly response: Response;
 }
 
+export declare class MimeTypes {
+
+    /**
+     * Lookup a MIME type based on file extension.
+     * @param extension File extension to look up.
+     * @param defaultType Optional default MIME type if not found.
+     * @returns The corresponding MIME type or null if not found.
+     */
+    public static get(extension: string): string | null;
+
+    /**
+     * Lookup a MIME type based on file extension with a default fallback.
+     * @param extension File extension to look up.
+     * @param defaultType Default MIME type if not found.
+     * @returns The corresponding MIME type or the default if not found.
+     */
+    public static get(extension: string, defaultType: string | null): string | null;
+}
+
 //#endregion
 
 //#region Exceptions

@@ -31,6 +31,7 @@ export * from "../models/http-context.js";
 export * from "../models/http1-response.js";
 export * from "../models/request.js";
 export * from "../models/webserver-event.js";
+export * from "../models/mime-types.js";
 
 export * from "../extensions/application-extensions.js";
 export * from "../webserver.js";
