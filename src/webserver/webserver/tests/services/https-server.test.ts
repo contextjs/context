@@ -37,7 +37,7 @@ test('HttpsServer: startAsync and stopAsync complete without hanging', async (co
     context.assert.ok(events.some(e => e.type === 'info' && /fully stopped/.test(e.detail)));
 });
 
-test('Default middleware: writes "hello" via Http2Response', (context: TestContext): void => {
+test('HttpsServer: Default middleware: writes "hello" via Http2Response', (context: TestContext): void => {
     const fakeStream = new PassThrough();
     const fakeHttp2Stream = {
         respond: (_headers: Record<string, any>): void => { },

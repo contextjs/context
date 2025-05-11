@@ -13,7 +13,7 @@ import { Http1Response } from '../../src/models/http1-response.js';
 import { Http2Response } from '../../src/models/http2-response.js';
 import { Response } from '../../src/models/response.js';
 
-test('Response.initialize(): returns this and delegates to correct implementation', (context: TestContext) => {
+test('Respons: initialize(): returns this and delegates to correct implementation', (context: TestContext) => {
     let http1InitializeCalled = false;
     let http2InitializeCalled = false;
 
@@ -43,7 +43,7 @@ test('Response.initialize(): returns this and delegates to correct implementatio
     }
 });
 
-test('Response.reset(): returns this and delegates', (context: TestContext) => {
+test('Response: reset(): returns this and delegates', (context: TestContext) => {
     const responseFacade = new Response();
     let http1ResetCalled = false;
 
@@ -73,7 +73,7 @@ test('Response.reset(): returns this and delegates', (context: TestContext) => {
     }
 });
 
-test('Fluent methods setConnectionClose, setHeader, setStatus return this', (context: TestContext) => {
+test('Response: Fluent methods setConnectionClose, setHeader, setStatus return this', (context: TestContext) => {
     const responseFacade = new Response();
     const fakeSocket = { cork() { }, write() { }, uncork() { } } as unknown as Socket;
     responseFacade.initialize(fakeSocket);
@@ -109,7 +109,7 @@ test('Fluent methods setConnectionClose, setHeader, setStatus return this', (con
     }
 });
 
-test('Response.send(): delegates to underlying send()', (context: TestContext) => {
+test('Response: send(): delegates to underlying send()', (context: TestContext) => {
     const responseFacade = new Response();
     let http1SendCalled = false;
     let http2SendCalled = false;
@@ -136,7 +136,7 @@ test('Response.send(): delegates to underlying send()', (context: TestContext) =
     }
 });
 
-test('Response.stream(): delegates to underlying stream()', (context: TestContext) => {
+test('Response: stream(): delegates to underlying stream()', (context: TestContext) => {
     const responseFacade = new Response();
     let http1StreamCalled = false;
     let http2StreamCalled = false;
