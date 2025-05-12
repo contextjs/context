@@ -183,6 +183,30 @@ export declare class File {
      * @returns true if the file exists; otherwise, false.
      */
     public static exists(file: string): boolean;
+
+    /**
+     * Gets the name of the file.
+     * @param file The file to check.
+     * @returns The name of the file, or null if the file does not exist.
+     * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+     */
+    public static getName(file: string): string | null;
+
+    /**
+     * Gets the directory of the file.
+     * @param file The file to check.
+     * @returns The directory of the file, or null if the file does not exist.
+     * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+     */
+    public static getDirectory(file: string): string | null;
+
+    /**
+     * Gets the extension of the file.
+     * @param file The file to check.
+     * @returns The extension of the file, or null if the file does not exist.
+     * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+     */
+    public static getExtension(file: string): string | null;
 }
 
 /**
@@ -209,6 +233,14 @@ export declare class Path {
      * @returns true if the path is a file; otherwise, false.
      */
     public static isFile(path: string): boolean;
+
+    /**
+     * Normalizes the specified path.
+     * @param path The path to normalize.
+     * @returns The normalized path.
+     * @throws {NullReferenceException} When the path string is null or contains only empty spaces.
+     */
+    public static normalize(path: string): string;
 }
 
 //#endregion
