@@ -43,6 +43,16 @@ if (Directory.exists("logs"))
     Directory.delete("logs");
 ```
 
+These custom exceptions are thrown by the `File` and `Directory` APIs:
+
+| Exception                  | Thrown When                                      |
+|---------------------------|--------------------------------------------------|
+| `FileExistsException`     | File already exists and `overwrite = false`      |
+| `FileNotFoundException`   | File does not exist during read/rename/delete    |
+| `DirectoryExistsException`| Directory already exists on rename               |
+| `PathNotFoundException`   | Path does not exist for directory/file operations |
+| `NullReferenceException`  | Input path is null or whitespace (from system)   |
+
 ## API Reference
 
 ### Directory
@@ -57,9 +67,6 @@ static methods for creating, renaming and deleting directories and subdirectorie
  */
 public static create(directory: string): boolean;
 
-```
-
-```ts
 /**
  * Renames a directory.
  * @param oldDirectory The old directory name.
@@ -71,9 +78,7 @@ public static create(directory: string): boolean;
  * @throws {DirectoryExistsException} When the newDirectory already exists.
  */
 public static rename(oldDirectory: string, newDirectory: string): boolean;
-```
 
-```ts
 /**
  * Deletes a directory.
  * @param directory The directory to delete.
@@ -81,9 +86,7 @@ public static rename(oldDirectory: string, newDirectory: string): boolean;
  * @throws {NullReferenceException} When the string is null or contains only empty spaces.
  */
 public static delete(directory: string): boolean;
-```
 
-```ts
 /**
  * Determines whether the specified directory exists.
  * @param directory The directory to check.
@@ -91,9 +94,7 @@ public static delete(directory: string): boolean;
  * @throws {NullReferenceException} When the directory string is null or contains only empty spaces.
  */
 public static exists(directory: string): boolean;
-```
 
-```ts
 /**
  * Determines whether the specified directory is empty.
  * @param directory The directory to check.
@@ -101,25 +102,23 @@ public static exists(directory: string): boolean;
  * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
  */
 public static isEmpty(directory: string): boolean;
-```  
 
-```ts
-    /**
-     * Lists the files in a directory.
-     * @param directory The directory to list files from.
-     * @returns An array of file paths in the directory.
-     * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
-     */
-    public static listFiles(directory: string): string[];
+/**
+ * Lists the files in a directory.
+ * @param directory The directory to list files from.
+ * @returns An array of file paths in the directory.
+ * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
+ */
+public static listFiles(directory: string): string[];
 
-    /**
-     * Lists the files in a directory.
-     * @param directory The directory to list files from.
-     * @param recursive true to list files recursively; otherwise, false.
-     * @returns An array of file paths in the directory.
-     * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
-     */
-    public static listFiles(directory: string, recursive: boolean): string[];
+/**
+ * Lists the files in a directory.
+ * @param directory The directory to list files from.
+ * @param recursive true to list files recursively; otherwise, false.
+ * @returns An array of file paths in the directory.
+ * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
+ */
+public static listFiles(directory: string, recursive: boolean): string[];
 ```
 
 ### File 
@@ -133,9 +132,7 @@ static methods for creating, renaming, editing and deleting files.
  * @throws {FileNotFoundException} When the file does not exist.
  */
 public static read(file: string): string | null;
-```
 
-```ts
 /**
  * Saves content to a file.
  * @param file The file to save to.
@@ -145,9 +142,7 @@ public static read(file: string): string | null;
  * @throws {FileExistsException} When the file already exists.
  */
 public static save(file: string, content: string): boolean;
-```
 
-```ts
 /**
  * Saves content to a file.
  * @param file The file to save to.
@@ -158,9 +153,7 @@ public static save(file: string, content: string): boolean;
  * @throws {FileExistsException} When the file already exists and overwrite is false.
  */
 public static save(file: string, content: string, overwrite: boolean): boolean;
-```
 
-```ts
 /**
  * Renames a file.
  * @param oldFile The old file name.
@@ -172,9 +165,7 @@ public static save(file: string, content: string, overwrite: boolean): boolean;
  * @throws {FileExistsException} When the newFile already exists.
  */
 public static rename(oldFile: string, newFile: string): boolean;
-```
 
-```ts
 /**
  * Deletes a file.
  * @param file The file to delete.
@@ -182,28 +173,48 @@ public static rename(oldFile: string, newFile: string): boolean;
  * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
  */
 public static delete(file: string): boolean;
-```
 
-```ts
 /**
-     * Copies a file.
-     * @param source The source file path.
-     * @param target The target file path.
-     * @returns true if the file was copied; otherwise, false.
-     * @throws {NullReferenceException} When the source or target string is null or contains only empty spaces.
-     * @throws {FileNotFoundException} When the source file does not exist.
-     * @throws {FileExistsException} When the target file already exists.
-     */
-    public static copy(source: string, target: string): boolean;
-```
+ * Copies a file.
+ * @param source The source file path.
+ * @param target The target file path.
+ * @returns true if the file was copied; otherwise, false.
+ * @throws {NullReferenceException} When the source or target string is null or contains only empty spaces.
+ * @throws {FileNotFoundException} When the source file does not exist.
+ * @throws {FileExistsException} When the target file already exists.
+ */
+public static copy(source: string, target: string): boolean;
 
-```ts
 /**
  * Determines whether the specified file exists.
  * @param file The file to check.
  * @returns true if the file exists; otherwise, false.
  */
 public static exists(file: string): boolean;
+
+/**
+ * Gets the name of the file.
+ * @param file The file to check.
+ * @returns The name of the file, or null if the file does not exist.
+ * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+ */
+public static getName(file: string): string | null;
+
+/**
+ * Gets the directory of the file.
+ * @param file The file to check.
+ * @returns The directory of the file, or null if the file does not exist.
+ * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+ */
+public static getDirectory(file: string): string | null;
+
+/**
+ * Gets the extension of the file.
+ * @param file The file to check.
+ * @returns The extension of the file, or null if the file does not exist.
+ * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+ */
+public static getExtension(file: string): string | null;
 ```
 
 
@@ -217,24 +228,28 @@ static methods regarding file or directory path information
  * @returns true if the path exists; otherwise, false.
  */
 public static exists(path: string): boolean;
-```
 
-```ts
 /**
  * Determines whether the specified path is a directory.
  * @param path The path to check.
  * @returns true if the path is a directory; otherwise, false.
  */
 public static isDirectory(path: string): boolean;
-```
 
-```ts
 /**
  * Determines whether the specified path is a file.
  * @param path The path to check.
  * @returns true if the path is a file; otherwise, false.
  */
 public static isFile(path: string): boolean;
+
+/**
+ * Normalizes the specified path.
+ * @param path The path to normalize.
+ * @returns The normalized path.
+ * @throws {NullReferenceException} When the path string is null or contains only empty spaces.
+ */
+public static normalize(path: string): string;
 ```
 
 ### Exceptions
@@ -250,9 +265,7 @@ export declare class FileExistsException extends Exception {
      */
     public constructor(file: string);
 }
-```
 
-```ts
 /**
  * Represents an exception that occurs when a file is not found.
  */
@@ -263,9 +276,7 @@ export declare class FileNotFoundException extends Exception {
      */
     public constructor(file: string);
 }
-```
 
-```ts
 /**
  * Represents an exception that occurs when a path is not found.
  */
@@ -277,15 +288,3 @@ export declare class PathNotFoundException extends Exception {
     public constructor(path: string);
 }
 ```
-
-## ❗ Exceptions
-
-These custom exceptions are thrown by the `File` and `Directory` APIs:
-
-| Exception                  | Thrown When                                      |
-|---------------------------|--------------------------------------------------|
-| `FileExistsException`     | File already exists and `overwrite = false`      |
-| `FileNotFoundException`   | File does not exist during read/rename/delete    |
-| `DirectoryExistsException`| Directory already exists on rename               |
-| `PathNotFoundException`   | Path does not exist for directory/file operations |
-| `NullReferenceException`  | Input path is null or whitespace (from system)   |

@@ -134,3 +134,61 @@ test('File: copy - throws FileExistsException', (context: TestContext) => {
     File.save(target, 'b');
     context.assert.throws(() => File.copy(source, target));
 });
+
+test('File: getName - returns basename when file exists', (context: TestContext) => {
+    const file = path.join(base, 'dir1/dir2/file.TXT');
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'x');
+    context.assert.strictEqual(File.getName(file), 'file.TXT');
+});
+
+test('File: getName - returns null when file does not exist', (context: TestContext) => {
+    const missing = path.join(base, 'no-such-file.txt');
+    context.assert.strictEqual(File.getName(missing), null);
+});
+
+test('File: getName - throws on null or whitespace', (context: TestContext) => {
+    context.assert.throws(() => File.getName(StringExtensions.empty));
+    context.assert.throws(() => File.getName('   '));
+});
+
+test('File: getDirectory - returns dirname when file exists', (context: TestContext) => {
+    const file = path.join(base, 'a/b/c.txt');
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'y');
+    context.assert.strictEqual(File.getDirectory(file), path.normalize(path.dirname(file)));
+});
+
+test('File: getDirectory - returns null when file does not exist', (context: TestContext) => {
+    const missing = path.join(base, 'a/b/nope.txt');
+    context.assert.strictEqual(File.getDirectory(missing), null);
+});
+
+test('File: getDirectory - throws on null or whitespace', (context: TestContext) => {
+    context.assert.throws(() => File.getDirectory(StringExtensions.empty));
+    context.assert.throws(() => File.getDirectory('	'));
+});
+
+test('File: getExtension - returns extension (lowercased) when file exists', (context: TestContext) => {
+    const file = path.join(base, 'sample.Ext1');
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'z');
+    context.assert.strictEqual(File.getExtension(file), 'ext1');
+});
+
+test('File: getExtension - returns empty string when file has no extension', (context: TestContext) => {
+    const file = path.join(base, 'README');
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, 'r');
+    context.assert.strictEqual(File.getExtension(file), '');
+});
+
+test('File: getExtension - returns null when file does not exist', (context: TestContext) => {
+    const missing = path.join(base, 'ghost.');
+    context.assert.strictEqual(File.getExtension(missing), null);
+});
+
+test('File: getExtension - throws on null or whitespace', (context: TestContext) => {
+    context.assert.throws(() => File.getExtension(StringExtensions.empty));
+    context.assert.throws(() => File.getExtension(' '));
+});

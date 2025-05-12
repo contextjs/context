@@ -77,11 +77,40 @@ export class File {
             Directory.create(dirname);
 
         copyFileSync(source, target);
-        
+
         return true;
     }
 
     public static exists(file: string): boolean {
         return Path.isFile(file);
+    }
+
+    public static getName(file: string): string | null {
+        Throw.ifNullOrWhiteSpace(file);
+
+        if (this.exists(file))
+            return path.basename(file);
+
+        return null;
+    }
+
+    public static getDirectory(file: string): string | null {
+        Throw.ifNullOrWhiteSpace(file);
+
+        if (this.exists(file))
+            return path.dirname(file);
+
+        return null;
+    }
+
+    public static getExtension(file: string): string | null {
+        Throw.ifNullOrWhiteSpace(file);
+
+        if (this.exists(file)){
+            const normalizedPath = Path.normalize(file);
+            return path.extname(normalizedPath).slice(1).toLowerCase();
+        }
+
+        return null;
     }
 }
