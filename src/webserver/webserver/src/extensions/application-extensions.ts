@@ -20,11 +20,10 @@ declare module "@contextjs/system" {
 Application.prototype.useWebServer = function (options: (webserverOptions: WebServerOptions) => void): Application {
     Throw.ifNullOrUndefined(options);
 
-    let webserverOptions = new WebServerOptions();
-    options(webserverOptions);
-    const webServer = new WebServer(webserverOptions);
-    this.webServer = webServer;
-    webserverOptions.webServer = webServer;
+    let webServerOptions = new WebServerOptions();
+    const webServer = new WebServer(webServerOptions);
+    this.webServer = webServerOptions.webServer = webServer;
+    options(webServerOptions);
 
     this.onRun(async () => await this.webServer.startAsync());
 

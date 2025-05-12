@@ -11,6 +11,7 @@ import { GeneralWebServerOptions } from '../../src/options/general-webserver-opt
 import { HttpWebServerOptions } from '../../src/options/http-webserver-options.js';
 import { HttpsWebServerOptions } from '../../src/options/https-webserver-options.js';
 import { WebServerOptions } from '../../src/options/webserver-options.js';
+import { IMiddleware } from '../../src/interfaces/i-middleware.js';
 
 test('WebServerOptions: default constructor initializes defaults', (context: TestContext) => {
     const opts = new WebServerOptions();
@@ -34,4 +35,16 @@ test('WebServerOptions: constructor assigns provided instances and callback', (c
     context.assert.strictEqual(opts.http, customHttp);
     context.assert.strictEqual(opts.https, customHttps);
     context.assert.strictEqual(opts.onEvent, callback);
+});
+
+test('WebServerOptions: useMiddleware method calls webServer.useMiddleware', (context: TestContext) => {
+    const webServerOptions = new WebServerOptions();
+    const middleware: IMiddleware = {
+        name: 'testMiddleware',
+        onRequest: (context) => { }
+    };
+
+    webServerOptions.webServer = { useMiddleware: (mw: IMiddleware) => { context.assert.strictEqual(mw, middleware); }, } as any;
+
+    webServerOptions.useMiddleware(middleware);
 });

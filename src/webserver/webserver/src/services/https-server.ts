@@ -137,8 +137,7 @@ export class HttpsServer extends ServerBase {
             this.sockets.delete(socket);
         }
 
-        const sessionCount = this.sessions.size;
-        this.options.onEvent({ type: "info", detail: `Destroying ${sessionCount} HTTP/2 session(s)` });
+        this.options.onEvent({ type: "info", detail: `Destroying all sessions` });
         for (const session of this.sessions) {
             session.destroy();
             this.sessions.delete(session);
@@ -147,11 +146,5 @@ export class HttpsServer extends ServerBase {
         await once(this.tlsServer, "close");
 
         this.options.onEvent({ type: "info", detail: `${this.label} fully stopped` });
-    }
-
-
-    public async restartAsync(): Promise<void> {
-        await this.stopAsync();
-        await this.startAsync();
     }
 }
