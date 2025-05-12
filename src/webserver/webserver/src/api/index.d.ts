@@ -30,11 +30,24 @@ declare module "@contextjs/system" {
  * Core HTTP/HTTPS server for handling requests and middleware pipeline.
  */
 export declare class WebServer {
+
+    /**
+     * Create a new WebServer with the given configuration options.
+     */
+    public constructor();
+
     /**
      * Create a new WebServer with the given configuration options.
      * @param options The WebServerOptions to apply settings and certificates.
      */
     public constructor(options: WebServerOptions);
+
+    /**
+     * Set or update the WebServer configuration options.
+     * @param options The WebServerOptions to apply settings and certificates.
+     * @returns The WebServer instance for chaining.
+     */
+    public setOptions(options: WebServerOptions): this;
 
     /**
      * Register a middleware component to be invoked on each request.
@@ -96,6 +109,13 @@ export declare class WebServerOptions {
         http?: HttpWebServerOptions,
         https?: HttpsWebServerOptions,
         onEvent?: (event: WebServerEvent) => void);
+
+    /**
+     * Register a middleware component to be invoked on each request.
+     * @param middleware The middleware implementation.
+     * @returns The WebServerOptions instance for chaining.
+     **/
+    public useMiddleware(middleware: IMiddleware): this;
 }
 
 /**

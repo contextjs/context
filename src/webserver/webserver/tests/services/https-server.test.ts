@@ -254,23 +254,3 @@ test('HttpsServer: TLS server callback handles h2 and fallback protocols', (cont
 
     tls.createServer = originalTlsCreate;
 });
-
-test('HttpsServer: restartAsync calls stopAsync and startAsync in order', async (context: TestContext) => {
-    const options = new WebServerOptions(
-      { maximumHeaderSize: 1024, httpContextPoolSize: 1, idleSocketsTimeout: 100 } as any,
-      { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
-      { enabled: true, port: 0, host: 'localhost', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
-      () => {}
-    );
-  
-    class RestartTestServer extends HttpsServer {
-      public callSequence: string[] = [];
-      override async stopAsync()  { this.callSequence.push('stop'); }
-      override async startAsync() { this.callSequence.push('start'); }
-    }
-  
-    const server = new RestartTestServer(options);
-    await server.restartAsync();
-  
-    context.assert.deepStrictEqual(server.callSequence, ['stop', 'start']);
-  });

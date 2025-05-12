@@ -235,7 +235,7 @@ class Benchmark {
             errors: this.average(all.errors).toFixed(2),
             connections: last.connections,
             pipelining: last.pipelining,
-            duration: last.duration,
+            duration: last.duration.toFixed(2),
             latencyStdDev: last.latency.stddev.toFixed(2),
             requestsStdDev: last.requests.stddev.toFixed(2),
             throughputStdDev: this.bytesToMB(last.throughput.stddev).toFixed(2),

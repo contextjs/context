@@ -20,12 +20,6 @@ export class HttpServer extends ServerBase {
         this.configure();
     }
 
-    public async restartAsync(): Promise<void> {
-        this.options.onEvent({ type: "info", detail: `Restarting ${this.label}` });
-        await this.stopAsync();
-        await this.startAsync();
-    }
-
     public async startAsync(): Promise<void> {
         this.server.listen(this.options.http.port, this.options.http.host);
         this.setIdleSocketsInterval();

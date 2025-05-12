@@ -30,4 +30,10 @@ export class WebServerOptions {
         this.https = https ?? new HttpsWebServerOptions();
         this.onEvent = onEvent ?? (() => { });
     }
+
+    public useMiddleware(middleware: IMiddleware): this {
+        this.webServer.useMiddleware(middleware);
+
+        return this;
+    }
 }

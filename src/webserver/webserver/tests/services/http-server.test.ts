@@ -131,22 +131,6 @@ test('HttpServer: stopAsync destroys sockets on timeout', async (context: TestCo
     context.assert.ok(wasDestroyed);
 });
 
-test('HttpServer: restartAsync invokes overridden stopAsync and startAsync and logs restarting', async (context: TestContext) => {
-    const events: WebServerEvent[] = [];
-    const options = { ...defaultOptions, onEvent: e => events.push(e) } as any;
-
-    class RestartOnlyServer extends TestHttpServer {
-        public calls: string[] = [];
-        override async stopAsync() { this.calls.push('stop'); }
-        override async startAsync() { this.calls.push('start'); }
-    }
-
-    const server = new RestartOnlyServer(options);
-    await server.restartAsync();
-
-    context.assert.deepStrictEqual((server as any).calls, ['stop', 'start']);
-});
-
 test('HttpServer: configure tracks and cleans up connections and removes old listeners', (context: TestContext) => {
     const handled: Socket[] = [];
     class ConfigHttpServer extends TestHttpServer {

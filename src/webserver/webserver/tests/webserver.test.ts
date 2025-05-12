@@ -7,72 +7,160 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { WebServerOptions } from '../src/options/webserver-options.js';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import type { IMiddleware } from '../src/interfaces/i-middleware.js';
+import { WebServerOptions } from '../src/options/webserver-options.js';
+import { HttpServer } from '../src/services/http-server.js';
+import { HttpsServer } from '../src/services/https-server.js';
 import { WebServer } from '../src/webserver.js';
 
-class FakeServer {
-    public started = false;
-    public stopped = false;
-    public restarted = false;
-    public middleware: IMiddleware[] = [];
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const KEY_PATH = resolve(__dirname, './fixtures/test-key.pem');
+const CERT_PATH = resolve(__dirname, './fixtures/test-cert.pem');
 
-    constructor(_opts: WebServerOptions) { }
-
-    useMiddleware(mw: IMiddleware) {
-        this.middleware.push(mw);
+function stubHttpsConstructor() {
+    (HttpsServer.prototype as any).useMiddleware = function (mw: IMiddleware) {
+        (this as any)._applied = ((this as any)._applied || []).concat(mw);
         return this;
-    }
-
-    async startAsync(): Promise<void> {
-        this.started = true;
-    }
-
-    async stopAsync(): Promise<void> {
-        this.stopped = true;
-    }
-
-    async restartAsync(): Promise<void> {
-        this.restarted = true;
-    }
+    };
+    (HttpsServer.prototype as any).startAsync = async function () {
+        (this as any).started = true;
+    };
 }
 
-test('WebServer: start/stop/restart only http when https disabled', async (context: TestContext) => {
-    const options = new WebServerOptions();
-    const server = new WebServer(options);
-    (server as any).httpServer = new FakeServer(options);
-    (server as any).httpsServer = undefined;
+function stubHttpConstructor() {
+    (HttpServer.prototype as any).useMiddleware = function (mw: IMiddleware) {
+        (this as any)._applied = ((this as any)._applied || []).concat(mw);
+        return this;
+    };
+    (HttpServer.prototype as any).startAsync = async function () {
+        (this as any).started = true;
+    };
+}
 
+test('WebServer: startAsync twice throws', async (t: TestContext) => {
+    const origHttpStart = HttpServer.prototype.startAsync;
+    const origHttpsStart = HttpsServer.prototype.startAsync;
+    HttpServer.prototype.startAsync = async function () { (this as any).started = true; };
+    HttpsServer.prototype.startAsync = async function () { (this as any).started = true; };
+
+    const server = new WebServer(new WebServerOptions());
     await server.startAsync();
-    context.assert.ok((server as any).httpServer.started, 'httpServer should have started');
-    context.assert.strictEqual((server as any).httpsServer, undefined, 'httpsServer should be disabled');
+
+    await t.assert.rejects(() => server.startAsync(), { message: /already started/ });
+
+    HttpServer.prototype.startAsync = origHttpStart;
+    HttpsServer.prototype.startAsync = origHttpsStart;
 
     await server.stopAsync();
-    context.assert.ok((server as any).httpServer.stopped, 'httpServer should have stopped');
+});
+
+test('WebServer: start/stop only HTTP when HTTPS disabled', async (context: TestContext) => {
+    const origHttpStart = HttpServer.prototype.startAsync;
+    const origHttpStop = HttpServer.prototype.stopAsync;
+    HttpServer.prototype.startAsync = async function () { (this as any).started = true; };
+    HttpServer.prototype.stopAsync = async function () { (this as any).stopped = true; };
+
+    const server = new WebServer(new WebServerOptions());
+    await server.startAsync();
+
+    const httpSrv = (server as any).httpServer as HttpServer & { started?: boolean, stopped?: boolean };
+    context.assert.ok(httpSrv?.started, 'httpServer should have started');
+    context.assert.strictEqual((server as any).httpsServer, undefined, 'httpsServer must be undefined');
+
+    await server.stopAsync();
+    context.assert.ok(httpSrv?.stopped, 'httpServer should have stopped');
+
+    HttpServer.prototype.startAsync = origHttpStart;
+    HttpServer.prototype.stopAsync = origHttpStop;
+});
+
+test('WebServer: stopAsync clears server references', async (t: TestContext) => {
+    const origHttpStart = HttpServer.prototype.startAsync;
+    HttpServer.prototype.startAsync = async function () { };
+
+    const server = new WebServer(new WebServerOptions());
+    await server.startAsync();
+    await server.stopAsync();
+
+    t.assert.strictEqual((server as any).httpServer, undefined, 'httpServer should be undefined after stop');
+
+    HttpServer.prototype.startAsync = origHttpStart;
+});
+
+test('WebServer: restartAsync re-creates and starts new servers', async (t: TestContext) => {
+    const origHttpStart = HttpServer.prototype.startAsync;
+    const origHttpStop = HttpServer.prototype.stopAsync;
+    HttpServer.prototype.startAsync = async function () { (this as any).started = true; };
+    HttpServer.prototype.stopAsync = async function () { (this as any).stopped = true; };
+
+    const server = new WebServer(new WebServerOptions());
+    await server.startAsync();
+    const first = (server as any).httpServer;
 
     await server.restartAsync();
-    context.assert.ok((server as any).httpServer.restarted, 'httpServer should have restarted');
+    const second = (server as any).httpServer;
+
+    t.assert.notStrictEqual(second, first, 'restartAsync should allocate a fresh server');
+    t.assert.ok((second as any).started, 'new server should have been started');
+
+    await server.stopAsync();
+
+    HttpServer.prototype.startAsync = origHttpStart;
+    HttpServer.prototype.stopAsync = origHttpStop;
 });
 
-test('WebServer: delegates useMiddleware to both servers', (context: TestContext) => {
-    const options = new WebServerOptions();
-    const server = new WebServer(options);
+test('WebServer: delegates useMiddleware to both HTTP and HTTPS', async (t: TestContext) => {
+    const opts = new WebServerOptions();
+    opts.http.enabled = true;
+    opts.https.enabled = true;
+    opts.https.certificate = { cert: CERT_PATH, key: KEY_PATH };
 
-    const fakeHttp = new FakeServer(options);
-    const fakeHttps = new FakeServer(options);
-    (server as any).httpServer = fakeHttp;
-    (server as any).httpsServer = fakeHttps;
+    stubHttpConstructor();
+    stubHttpsConstructor();
 
-    const middleware: IMiddleware = { name: 'm1', onRequest: () => { } };
-    server.useMiddleware(middleware);
+    const server = new WebServer(opts);
+    const mw: IMiddleware = { name: 'm1', onRequest: () => { } };
+    server.useMiddleware(mw);
 
-    context.assert.strictEqual(fakeHttp.middleware.includes(middleware), true, 'httpServer should receive middleware');
-    context.assert.strictEqual(fakeHttps.middleware.includes(middleware), true, 'httpsServer should receive middleware');
+    await server.startAsync();
+
+    const httpSrv = (server as any).httpServer as any;
+    const httpsSrv = (server as any).httpsServer as any;
+
+    t.assert.ok(httpSrv._applied.includes(mw), 'middleware should be applied to HTTP');
+    t.assert.ok(httpsSrv._applied.includes(mw), 'middleware should be applied to HTTPS');
 });
+
 
 test('WebServer: dispose removes signal handlers safely', (context: TestContext) => {
     const options = new WebServerOptions();
     const server = new WebServer(options);
 
     context.assert.doesNotThrow(() => { server.dispose(); server.dispose(); });
+});
+
+test('WebServer: setOptions sets options and applies middleware', async (context: TestContext) => {
+    const opts = new WebServerOptions();
+    opts.http.enabled = true;
+    opts.https.enabled = true;
+    opts.https.certificate = { cert: CERT_PATH, key: KEY_PATH };
+
+    stubHttpConstructor();
+    stubHttpsConstructor();
+
+    const server = new WebServer(new WebServerOptions());
+    server.setOptions(opts);
+
+    const mw: IMiddleware = { name: 'm1', onRequest: () => { } };
+    server.useMiddleware(mw);
+
+    await server.startAsync();
+
+    const httpSrv = (server as any).httpServer as any;
+    const httpsSrv = (server as any).httpsServer as any;
+
+    context.assert.ok(httpSrv._applied.includes(mw), 'middleware should be applied to HTTP');
+    context.assert.ok(httpsSrv._applied.includes(mw), 'middleware should be applied to HTTPS');
 });
