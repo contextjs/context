@@ -88,29 +88,19 @@ export class File {
     public static getName(file: string): string | null {
         Throw.ifNullOrWhiteSpace(file);
 
-        if (this.exists(file))
-            return path.basename(file);
-
-        return null;
+        return path.basename(file);
     }
 
     public static getDirectory(file: string): string | null {
         Throw.ifNullOrWhiteSpace(file);
 
-        if (this.exists(file))
-            return path.dirname(file);
-
-        return null;
+        return path.dirname(file);
     }
 
     public static getExtension(file: string): string | null {
         Throw.ifNullOrWhiteSpace(file);
 
-        if (this.exists(file)){
-            const normalizedPath = Path.normalize(file);
-            return path.extname(normalizedPath).slice(1).toLowerCase();
-        }
-
-        return null;
+        const normalizedPath = Path.normalize(file);
+        return path.extname(normalizedPath).slice(1).toLowerCase();
     }
 }

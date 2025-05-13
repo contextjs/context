@@ -30,6 +30,40 @@ const server = new WebServer(options => {
 await server.listenAsync();
 ```
 
+Or use it in Application:
+
+```ts
+import { Application } from "@contextjs/system";
+import "@contextjs/webserver";
+import { WebServerOptions } from "@contextjs/webserver";
+import "@contextjs/webserver-middleware-static";
+
+const application = new Application();
+
+application.useWebServer((options: WebServerOptions) => {
+    options.useStaticFiles(staticFileOptions => {
+        staticFileOptions.publicFolder = "/path-to-your-public-folder";
+        // Allow only these file types
+        staticFileOptions.fileExtensions = ["html", "js", "css"];
+        // staticFileOptions.fileExtensions = []; // Allow all file types
+    })
+    options.onEvent = (event) => console.log(event.type, event.detail);
+
+    options.useMiddleware({
+        name: "benchmark",
+        version: "1.0.0",
+        onRequest: async (context) => {
+            context.response
+                .setHeader("Content-Type", "text/plain; charset=utf-8")
+                .setHeader("X-Custom", "benchmark")
+                .send("OK");
+        }
+    });
+});
+
+await application.runAsync();
+```
+
 ## API Reference
 
 ### WebServerOptions Extension

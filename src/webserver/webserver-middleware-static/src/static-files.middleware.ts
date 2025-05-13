@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { File } from "@contextjs/io";
+import { File, Path } from "@contextjs/io";
 import { StringExtensions } from "@contextjs/system";
-import { HttpContext, IMiddleware } from "@contextjs/webserver";
+import { HttpContext, IMiddleware, MimeTypes } from "@contextjs/webserver";
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
@@ -23,14 +23,14 @@ export class StaticFilesMiddleware implements IMiddleware {
         const requestUrl = httpContext.request.path;
         if (StringExtensions.isNullOrWhiteSpace(requestUrl)) {
             httpContext.response.statusCode = 500;
-            httpContext.response.send("Internal Server Error: Invalid request URL.");
+            httpContext.response.send("Server Error: Invalid request URL.");
             return;
         }
 
-        const safeUrl = path.normalize(requestUrl).replace(/^(\.\.[\/\\])+/, '');
-        const fileExtension = path.extname(safeUrl).slice(1).toLowerCase();
+        const safeUrl = Path.normalize(requestUrl);
+        const fileExtension = File.getExtension(safeUrl);
 
-        if (this.fileExtensions.length > 0 && !this.fileExtensions.includes(fileExtension))
+        if (!fileExtension || (this.fileExtensions.length > 0 && !this.fileExtensions.includes(fileExtension)))
             return await next();
 
         const filePath = path.join(this.publicFolder, safeUrl);
@@ -38,12 +38,10 @@ export class StaticFilesMiddleware implements IMiddleware {
             return await next();
 
         const info = await stat(filePath);
-        const mimeType = "image/png"; //MimeTypes.get(path.extname(filePath).slice(1).toLowerCase()) || "application/octet-stream";
+        const mimeType = MimeTypes.get(fileExtension) ?? "text/plain";
         httpContext.response
             .setHeader("Content-Type", mimeType)
             .setHeader("Content-Length", info.size)
             .stream(createReadStream(filePath));
-
-        return;
     }
 }
