@@ -354,13 +354,19 @@ export declare class Response {
      * Send a complete body as Buffer or string and close connection.
      * @param body Payload to send.
      */
-    public send(body: Buffer | string): void;
+    public sendAsync(body: Buffer | string): Promise<void>;
 
     /**
      * Stream a readable stream directly to the client.
      * @param stream Node.js Readable stream.
      */
-    public stream(stream: NodeJS.ReadableStream): void;
+    public streamAsync(stream: NodeJS.ReadableStream): Promise<void>;
+
+    /**
+     * Add a callback to be invoked when the response ends.
+     * @returns The Response instance for chaining.
+     */
+    public onEnd(callback: () => void | Promise<void>): this;
 }
 
 /**

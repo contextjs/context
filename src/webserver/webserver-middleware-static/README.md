@@ -73,9 +73,9 @@ declare module "@contextjs/webserver" {
     export interface WebServerOptions {
         /**
          * Registers middleware to serve static files.
-         * @param options Callback used to configure static file behavior.
+         * @param configure Callback used to configure static file behavior.
          */
-        useStaticFiles(options: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
+        useStaticFiles(configure: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
     }
 }
 ```

@@ -169,12 +169,13 @@ test('ServerBase: dispatchRequestAsync sends 500 on middleware exception', async
     const fakeResponse = {
         setStatus: (code: number, _: string) => { sentStatus = code; return fakeResponse; },
         setHeader: (name: string, value: string) => { sentHeaderName = name; sentHeaderValue = value; return fakeResponse; },
-        send: (body: string) => { sentBody = body; }
+        sendAsync: async (body: string) => { sentBody = body; }
     };
     const contextObj = new HttpContext();
     (contextObj as any).response = fakeResponse;
 
     await server.dispatchRequestAsync(contextObj);
+
     context.assert.strictEqual(sentStatus, 500);
     context.assert.strictEqual(sentHeaderName, 'Content-Type');
     context.assert.strictEqual(sentHeaderValue, 'text/plain');

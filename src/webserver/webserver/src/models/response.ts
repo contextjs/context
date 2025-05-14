@@ -15,8 +15,11 @@ export class Response {
     private http1 = new Http1Response();
     private http2 = new Http2Response();
     private response: Http1Response | Http2Response = this.http1;
+    private onEndCallbacks: Array<() => void | Promise<void>> = [];
 
     public initialize(target: Socket | ServerHttp2Stream): this {
+        this.onEndCallbacks = [];
+
         if (this.isHttp2Stream(target)) {
             this.http2.initialize(target as ServerHttp2Stream);
             this.response = this.http2;
@@ -31,6 +34,7 @@ export class Response {
 
     public reset(): this {
         this.response.reset();
+        this.onEndCallbacks = [];
 
         return this;
     }
@@ -53,11 +57,24 @@ export class Response {
         return this;
     }
 
-    public send(body: string | Buffer) {
+    public onEnd(callback: () => void | Promise<void>): this {
+        this.onEndCallbacks.push(callback);
+
+        return this;
+    }
+
+    private async invokeOnEnd(): Promise<void> {
+        for (const callback of this.onEndCallbacks)
+            await callback();
+    }
+
+    public async sendAsync(body: string | Buffer): Promise<void> {
+        await this.invokeOnEnd();
         this.response.send(body);
     }
 
-    public stream(bodyStream: NodeJS.ReadableStream) {
+    public async streamAsync(bodyStream: NodeJS.ReadableStream): Promise<void> {
+        await this.invokeOnEnd();
         this.response.stream(bodyStream);
     }
 

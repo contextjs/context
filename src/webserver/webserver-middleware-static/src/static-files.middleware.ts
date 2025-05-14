@@ -23,7 +23,7 @@ export class StaticFilesMiddleware implements IMiddleware {
         const requestUrl = httpContext.request.path;
         if (StringExtensions.isNullOrWhiteSpace(requestUrl)) {
             httpContext.response.statusCode = 500;
-            httpContext.response.send("Server Error: Invalid request URL.");
+            await httpContext.response.sendAsync("Server Error: Invalid request URL.");
             return;
         }
 
@@ -39,9 +39,9 @@ export class StaticFilesMiddleware implements IMiddleware {
 
         const info = await stat(filePath);
         const mimeType = MimeTypes.get(fileExtension) ?? "text/plain";
-        httpContext.response
+        await httpContext.response
             .setHeader("Content-Type", mimeType)
             .setHeader("Content-Length", info.size)
-            .stream(createReadStream(filePath));
+            .streamAsync(createReadStream(filePath));
     }
 }

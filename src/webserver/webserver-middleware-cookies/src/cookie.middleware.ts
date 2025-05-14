@@ -7,68 +7,51 @@
  */
 
 import { ObjectExtensions } from "@contextjs/system";
-import { IHttpContext, IMiddleware } from "@contextjs/webserver";
+import { HttpContext, IMiddleware } from "@contextjs/webserver";
 import { CookieCollection } from "./models/cookie.collection.js";
+import { Cookie } from "./models/cookie.js";
 
 export class CookieMiddleware implements IMiddleware {
-    public name: string = "CookiesMiddleware";
-    public version: string = "1.0.0";
-    public description: string = "Middleware for handling cookies in HTTP requests and responses.";
+    public name = "CookiesMiddleware";
+    public version = "1.0.0";
+    public description = "Middleware for handling cookies in HTTP requests and responses.";
 
-    public async onRequestAsync(httpContext: IHttpContext, next: () => Promise<void>): Promise<void> {
-        if (httpContext.request.url == "/favicon.ico" || httpContext.request.httpMethod?.toLowerCase() == "options")
-            return;
-        console.log("1");
-
+    public async onRequest(httpContext: HttpContext, next: () => Promise<void>): Promise<void> {
+        httpContext.request.cookies = new CookieCollection();
         httpContext.response.cookies = new CookieCollection();
-        console.log("2");
-        httpContext.response.onEndAsync.add(this.endAsync.bind(this));
-        console.log("3");
+
         this.parseRequestCookies(httpContext);
-        console.log("4");
+
+        httpContext.response.onEnd(() => {
+            for (const cookie of httpContext.response.cookies.values())
+                httpContext.response.setHeader("Set-Cookie", cookie.toString());
+        });
 
         await next();
     }
 
-    private parseRequestCookies(httpContext: IHttpContext): void {
-        var result = new CookieCollection();
-        console.log("3.1");
-        const cookieHeader = httpContext.request.headers.find(t => t.name == "cookie")
-        console.log("3.2");
+    private parseRequestCookies(httpContext: HttpContext): void {
+        const cookieHeader = httpContext.request.headers.get("cookie");
+
         if (ObjectExtensions.isNullOrUndefined(cookieHeader))
-            return
+            return;
 
-        console.log("3.3");
-        console.log(cookieHeader);
-        console.log("3.4");
+        const result = new CookieCollection();
 
-        let cookiesArray: string[] = cookieHeader.value instanceof String
-            ? (cookieHeader.value as string).split(";")
-            : cookieHeader.value instanceof Array
-                ? cookieHeader.value as string[]
-                : [cookieHeader.value as string];
+        for (const pair of cookieHeader.split(";")) {
+            const index = pair.indexOf("=");
+            const rawName = index >= 0 ? pair.slice(0, index) : pair;
+            const rawValue = index >= 0 ? pair.slice(index + 1) : "";
 
-        // cookiesArray.forEach((element: string) => {
-        //     var m = / *([^=]+)=(.*)/.exec(element);
-        //     if (m) {
-        //         result.set(m[1], decodeURIComponent(m[2]));
-        //     }
-        // });
+            const name = rawName.trim();
+            const value = rawValue.trim();
+
+            if (name) {
+                const decoded = decodeURIComponent(value);
+                result.set(name, new Cookie(name, decoded));
+            }
+        }
 
         httpContext.request.cookies = result;
-        console.log("3.5");
-    }
-
-    private async endAsync(httpContext: IHttpContext): Promise<void> {
-        var cookiesArray: string[] = [];
-
-        for (let cookie of httpContext.response.cookies.values()) {
-            cookiesArray.push(cookie.toString());
-        }
-
-        if (cookiesArray.length > 0) {
-            httpContext.response.setHeader("Set-Cookie", cookiesArray);
-        }
-        console.log("5");
     }
 }

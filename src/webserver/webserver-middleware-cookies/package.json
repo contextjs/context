@@ -1,7 +1,7 @@
 {
   "name": "@contextjs/webserver-middleware-cookies",
   "version": "__VERSION__",
-  "description": "Cookies middleware for the ContextJS webserver.",
+  "description": "Middleware for ContextJS WebServer that transparently handles HTTP cookies in requests and responses.",
   "main": "api/index.js",
   "types": "api/index.d.ts",
   "author": "ContextJS",

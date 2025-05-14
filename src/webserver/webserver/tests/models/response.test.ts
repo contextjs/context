@@ -109,7 +109,7 @@ test('Response: Fluent methods setConnectionClose, setHeader, setStatus return t
     }
 });
 
-test('Response: send(): delegates to underlying send()', (context: TestContext) => {
+test('Response: sendAsync(): delegates to underlying send()', async (context: TestContext) => {
     const responseFacade = new Response();
     let http1SendCalled = false;
     let http2SendCalled = false;
@@ -121,13 +121,13 @@ test('Response: send(): delegates to underlying send()', (context: TestContext) 
 
     try {
         const fakeSocket = { cork() { }, write() { }, uncork() { } } as unknown as Socket;
-        responseFacade.initialize(fakeSocket).send('foo');
+        await responseFacade.initialize(fakeSocket).sendAsync('foo');
         context.assert.ok(http1SendCalled && !http2SendCalled, 'Http1Response.send should be called');
 
         http1SendCalled = false;
         http2SendCalled = false;
         const fakeHttp2Stream = { respond() { }, end() { } } as ServerHttp2Stream;
-        responseFacade.initialize(fakeHttp2Stream).send(Buffer.from('bar'));
+        await responseFacade.initialize(fakeHttp2Stream).sendAsync(Buffer.from('bar'));
         context.assert.ok(!http1SendCalled && http2SendCalled, 'Http2Response.send should be called');
     }
     finally {
@@ -136,7 +136,7 @@ test('Response: send(): delegates to underlying send()', (context: TestContext) 
     }
 });
 
-test('Response: stream(): delegates to underlying stream()', (context: TestContext) => {
+test('Response: stream(): delegates to underlying stream()', async (context: TestContext) => {
     const responseFacade = new Response();
     let http1StreamCalled = false;
     let http2StreamCalled = false;
@@ -149,17 +149,52 @@ test('Response: stream(): delegates to underlying stream()', (context: TestConte
     try {
         const readableStream = { once() { }, pipe() { } } as unknown as NodeJS.ReadableStream;
         const fakeSocket = { cork() { }, write() { }, uncork() { } } as unknown as Socket;
-        responseFacade.initialize(fakeSocket).stream(readableStream);
+        await responseFacade.initialize(fakeSocket).streamAsync(readableStream);
         context.assert.ok(http1StreamCalled && !http2StreamCalled, 'Http1Response.stream should be called');
 
         http1StreamCalled = false;
         http2StreamCalled = false;
         const fakeHttp2Stream = { respond() { }, end() { }, destroy() { } } as ServerHttp2Stream;
-        responseFacade.initialize(fakeHttp2Stream).stream(readableStream);
+        await responseFacade.initialize(fakeHttp2Stream).streamAsync(readableStream);
         context.assert.ok(!http1StreamCalled && http2StreamCalled, 'Http2Response.stream should be called');
     }
     finally {
         Http1Response.prototype.stream = originalHttp1Stream;
         Http2Response.prototype.stream = originalHttp2Stream;
+    }
+});
+
+test('Response: onEnd callback is invoked before sendAsync', async (context: TestContext) => {
+    let called = false;
+    const response = new Response();
+    const fakeSocket = { cork() { }, write() { }, uncork() { } } as unknown as Socket;
+
+    await response
+        .initialize(fakeSocket)
+        .onEnd(() => { called = true; })
+        .sendAsync('hello');
+
+    context.assert.ok(called, 'onEnd callback should have been called before sendAsync');
+});
+
+test('Response: onEnd callback is invoked before streamAsync', async (context: TestContext) => {
+    let called = false;
+    const response = new Response();
+    const fakeSocket = { cork() { }, write() { }, uncork() { } } as unknown as Socket;
+    const fakeStream = {} as unknown as NodeJS.ReadableStream;
+
+    const originalHttp1Stream = Http1Response.prototype.stream;
+    Http1Response.prototype.stream = function (_: any) { };
+
+    try {
+        await response
+            .initialize(fakeSocket)
+            .onEnd(async () => { called = true; })
+            .streamAsync(fakeStream);
+
+        context.assert.ok(called, 'onEnd callback should have been called before streamAsync');
+    }
+    finally {
+        Http1Response.prototype.stream = originalHttp1Stream;
     }
 });

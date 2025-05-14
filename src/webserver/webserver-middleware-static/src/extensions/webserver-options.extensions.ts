@@ -13,15 +13,15 @@ import { StaticFilesOptions } from "./static-files.options.js";
 
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
-        useStaticFiles(options: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
+        useStaticFiles(configure: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
     }
 }
 
-WebServerOptions.prototype.useStaticFiles = function (options: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions {
+WebServerOptions.prototype.useStaticFiles = function (configure: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions {
     const staticFilesOptions = new StaticFilesOptions();
 
-    if (!ObjectExtensions.isNullOrUndefined(options))
-        options(staticFilesOptions);
+    if (!ObjectExtensions.isNullOrUndefined(configure))
+        configure(staticFilesOptions);
 
     const staticFilesMiddleware = new StaticFilesMiddleware();
     staticFilesMiddleware.publicFolder = staticFilesOptions.publicFolder;

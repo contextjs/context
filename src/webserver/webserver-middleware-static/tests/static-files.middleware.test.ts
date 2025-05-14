@@ -31,10 +31,10 @@ function createContext(requestPath) {
                 headers[name] = value;
                 return this;
             },
-            send(body: any) {
+            sendAsync(body: any) {
                 this.body = body;
             },
-            stream(readable: any) {
+            streamAsync(readable: any) {
                 readable.on('data', (chunk: any) => sentData += chunk.toString());
                 readable.on('end', () => {
                     httpContext._streamResult = sentData;

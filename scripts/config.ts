@@ -9,7 +9,7 @@
  */
 
 export default class Config {
-    public static version: string = "0.5.0-alpha.1";
+    public static version: string = "0.5.1-alpha.1";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packageDescriptors: Map<string, string[]> = new Map<string, string[]>([
@@ -20,7 +20,7 @@ export default class Config {
         ["configuration", ["configuration", "configuration-json"]],
         ["di", []],
         ["routing", []],
-        ["webserver", ["webserver", "webserver-middleware-static"]],
+        ["webserver", ["webserver", "webserver-middleware-static", "webserver-middleware-cookies"]],
         ["compiler", []],
         ["context", []],
         ["symplex", ["symplex-parser"]]
