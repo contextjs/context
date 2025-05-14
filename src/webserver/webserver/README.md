@@ -12,15 +12,18 @@ Designed to integrate seamlessly into the ContextJS ecosystem or run standalone.
 
 1. [Installation](#installation)  
 2. [Features](#features) 
-3. [Quick Start](#quick-start)  
+3. [Benchmarks](#benchmarks)  
+   - [Summary](#summary)  
+   - [Extended Metrics](#extended-metrics)
+4. [Quick Start](#quick-start)  
    - [Standalone Usage](#standalone-usage)  
    - [Application Integration](#application-integration)  
-4. [Basic Middleware Example](#basic-middleware-example)  
-5. [Streaming a File](#streaming-a-file)  
-6. [Configuration Reference](#configuration-reference)  
-7. [API Reference](#api-reference)  
-8. [Events](#events)  
-9. [Exceptions](#exceptions)  
+5. [Basic Middleware Example](#basic-middleware-example)  
+6. [Streaming a File](#streaming-a-file)  
+7. [Configuration Reference](#configuration-reference)  
+8. [API Reference](#api-reference)  
+9. [Events](#events)  
+10. [Exceptions](#exceptions)  
 
 ## Installation
 
@@ -38,6 +41,47 @@ npm i @contextjs/webserver
 - **Lifecycle events** (`info`, `warning`, `error`) for observability  
 - **TypeScript declarations** with full JSDoc support  
 - **Zero dependencies** for maximum performance and minimal footprint
+
+## Benchmarks
+
+> Below are the results of our WebServer benchmark suite, which compares throughput and latency across four different Node.js–based HTTP servers. Each test is run on GitHub Actions' provided "ubuntu-latest" runner. The benchmarks target a minimal server that responds with a 200 OK status and a short body of "OK" They use **500 concurrent connections**, a **pipelining factor of 1**, and run for **10 seconds**, with a warmup phase, and results averaged over three runs.
+
+### Summary
+<!-- BENCHMARKS_SUMMARY:START -->
+| Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
+|--------|--------:|-------------:|------------------:|-------:|
+| ContextJS | 27953.60 | 66.59 | 4.98 | 1400.00 |
+| Node.js Raw HTTP | 27744.00 | 67.05 | 4.95 | 1400.00 |
+| Fastify | 26281.60 | 70.81 | 4.69 | 1400.00 |
+| Express | 11038.40 | 168.13 | 2.64 | 1400.00 |
+
+<!-- BENCHMARKS_SUMMARY:END -->
+**Column descriptions**:
+
+- **Req/sec** — Average number of HTTP requests served per second.  
+- **Latency (ms)** — Median (50th percentile) response time in milliseconds.  
+- **Throughput (MB/s)** — Average data transferred per second.  
+- **Errors** — Total connection-level failures (e.g. resets, refusals).
+
+### Extended Metrics
+<!-- BENCHMARKS_EXTENDED:START -->
+| Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
+|--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|
+| ContextJS | 500 | 1 | 10.05 | 56.64 | 2960.86 | 0.53 | 279516 |
+| Node.js Raw HTTP | 500 | 1 | 10.03 | 56.76 | 2436.56 | 0.43 | 277442 |
+| Fastify | 500 | 1 | 10.03 | 59.65 | 2087.50 | 0.37 | 262798 |
+| Express | 500 | 1 | 10.05 | 140.44 | 932.48 | 0.22 | 110394 |
+
+<!-- BENCHMARKS_EXTENDED:END -->
+**Extended column descriptions**:
+
+- **Connections** — Number of simultaneous TCP connections opened.  
+- **Pipelining** — Number of requests pipelined per connection.  
+- **Duration (s)** — Total benchmark runtime in seconds.  
+- **Latency Stdev (ms)** — Standard deviation of response latency.  
+- **Requests Stdev** — Standard deviation of the requests/sec across samples.  
+- **Throughput Stdev (MB/s)** — Standard deviation of throughput.  
+- **Total Requests** — Sum of all successful 2xx responses across all iterations.
 
 ## Quick Start
 
