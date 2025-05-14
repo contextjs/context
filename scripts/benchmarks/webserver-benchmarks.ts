@@ -121,11 +121,11 @@ class Benchmark {
             name: "benchmark",
             version: "1.0.0",
             onRequest: async (context: HttpContext) => {
-                context.response
+                await context.response
                     .setHeader("Content-Type", "text/plain; charset=utf-8")
                     .setHeader("X-Custom", "benchmark")
                     .setHeader("Keep-Alive", "timeout=72")
-                    .send("OK");
+                    .sendAsync("OK");
             }
         });
         await webServer.startAsync();
