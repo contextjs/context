@@ -59,7 +59,7 @@ export abstract class ServerBase {
             httpContext.response
                 .setStatus(500, "Internal Server Error")
                 .setHeader("Content-Type", "text/plain")
-                .send("Internal Server Error");
+                .sendAsync("Internal Server Error");
         }
     }
 
@@ -186,7 +186,7 @@ export abstract class ServerBase {
             record.lastActive = Date.now();
     }
 
-    private compileMiddleware(): (ctx: HttpContext) => Promise<void> {
+    private compileMiddleware(): (httpContext: HttpContext) => Promise<void> {
         const middlewareList = this.middleware.values();
         let executor: (httpContext: HttpContext) => Promise<void> = async () => { };
 

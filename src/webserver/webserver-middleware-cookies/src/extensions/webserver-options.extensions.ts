@@ -8,8 +8,17 @@
 
 import { WebServerOptions } from "@contextjs/webserver";
 import { CookieMiddleware } from "../cookie.middleware.js";
+import { CookieCollection } from "../models/cookie.collection.js";
 
 declare module "@contextjs/webserver" {
+    export interface Request {
+        cookies: CookieCollection;
+    }
+
+    export interface Response {
+        cookies: CookieCollection;
+    }
+
     export interface WebServerOptions {
         useCookies(): WebServerOptions;
     }

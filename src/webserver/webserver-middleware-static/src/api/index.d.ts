@@ -13,7 +13,7 @@ import "@contextjs/webserver";
  */
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
-        useStaticFiles(options: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
+        useStaticFiles(configure: (staticFilesOptions: StaticFilesOptions) => void): WebServerOptions;
     }
 }
 

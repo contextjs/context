@@ -59,10 +59,10 @@ server.useMiddleware({
   async onRequest(ctx, next) {
     const { request, response } = ctx;
     if (request.path === "/" && request.method === "GET") {
-      response
+      await response
         .setStatus(200)
         .setHeader("Content-Type", "text/plain; charset=utf-8")
-        .send("Hello, ContextJS!");
+        .sendAsync("Hello, ContextJS!");
       return;
     }
     await next();
@@ -84,7 +84,6 @@ import "@contextjs/webserver"; // module augmentation
 const app = new Application();
 
 app.useWebServer(options => {
-  // HTTP on port 8080
   options.http.port = 8080;
   options.onEvent = e => console.log(`[WebServer:${e.type}]`, e.detail);
 });
@@ -130,9 +129,9 @@ server.useMiddleware({
   async onRequest(ctx, next) {
     if (ctx.request.path.startsWith("/assets/")) {
       const filePath = path.join(__dirname, ctx.request.path);
-      ctx.response
+      await ctx.response
         .setHeader("Content-Type", "application/octet-stream")
-        .stream(createReadStream(filePath));
+        .streamAsync(createReadStream(filePath));
       return;
     }
     await next?.();
@@ -504,13 +503,13 @@ export declare class Response {
      * Send a complete body as Buffer or string and close connection.
      * @param body Payload to send.
      */
-    public send(body: Buffer | string): void;
+    public sendAsync(body: Buffer | string): Promise<void>;
 
     /**
      * Stream a readable stream directly to the client.
      * @param stream Node.js Readable stream.
      */
-    public stream(stream: NodeJS.ReadableStream): void;
+    public streamAsync(stream: NodeJS.ReadableStream): Promise<void>;
 }
 
 /**
