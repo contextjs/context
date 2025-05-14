@@ -91,12 +91,13 @@ class Benchmark {
         for (const result of results)
             extendedTable += `| ${result.name} | ${result.connections} | ${result.pipelining} | ${result.duration} | ${result.latencyStdDev} | ${result.requestsStdDev} | ${result.throughputStdDev} | ${result.totalRequests} |\n`;
 
-        await this.updateReadmeSectionAsync(summaryTable, extendedTable);
+        await this.updateReadmeSectionAsync("src/webserver/webserver/README.md", summaryTable, extendedTable);
+        await this.updateReadmeSectionAsync("README.md", summaryTable, extendedTable);
         await this.stopAsync();
     }
 
-    private async updateReadmeSectionAsync(summaryTable: string, extendedTable: string) {
-        const readmePath = join(process.cwd(), "README.md");
+    private async updateReadmeSectionAsync(file: string, summaryTable: string, extendedTable: string) {
+        const readmePath = join(process.cwd(), file);
         let content = await fs.readFile(readmePath, "utf8");
 
         const updated = content
