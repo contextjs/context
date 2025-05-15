@@ -9,6 +9,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'README.md'
+      - 'src/webserver/webserver/README.md'
   
 env:
   NODE_VERSION: "23.x"
