@@ -10,7 +10,6 @@ import { EventEmitter } from 'node:events';
 import { Socket } from 'node:net';
 import { PassThrough } from 'node:stream';
 import test, { TestContext } from 'node:test';
-import { WebServerEvent } from '../../src/models/webserver-event.js';
 import type { WebServerOptions } from '../../src/options/webserver-options.js';
 import { HttpServer } from '../../src/services/http-server.js';
 
@@ -82,7 +81,8 @@ test('HttpServer: startAsync succeeds and logs listening', async (context: TestC
 
     await server.startAsync();
     context.assert.ok((server as any).server.listening);
-    context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('Starting')));
+    context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('starting')));
+    context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('listening')));
 
     await server.stopAsync();
 });
@@ -102,7 +102,7 @@ test('HttpServer: startAsync throws when listen() throws', async (context: TestC
     const server = new ErrorHttpServer(options);
 
     await context.assert.rejects(() => server.startAsync(), { message: 'fail' });
-    context.assert.strictEqual(events.length, 0);
+    context.assert.strictEqual(events.length, 1);
 });
 
 test('HttpServer: stopAsync with no sockets logs immediate shutdown', async (context: TestContext) => {

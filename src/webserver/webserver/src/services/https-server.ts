@@ -63,12 +63,12 @@ export class HttpsServer extends ServerBase {
             context.response.setConnectionClose(false);
 
             Promise.resolve(this.dispatchRequestAsync(context))
-                .catch((err) => this.options.onEvent({ type: "error", detail: err }))
+                .catch((error) => this.options.onEvent({ type: "error", detail: error }))
                 .finally(() => this.httpContextPool.release(context));
 
-            stream.on("error", (err) => {
-                this.options.onEvent({ type: "error", detail: err });
-                stream.destroy(err);
+            stream.on("error", (error) => {
+                this.options.onEvent({ type: "error", detail: error });
+                stream.destroy(error);
             });
 
             stream.once("aborted", () => {
@@ -77,7 +77,7 @@ export class HttpsServer extends ServerBase {
             });
         });
 
-        this.httpsServer.on("error", (err) => this.options.onEvent({ type: "error", detail: err }));
+        this.httpsServer.on("error", (error) => this.options.onEvent({ type: "error", detail: error }));
 
         const tlsOpts: TlsOptions = { key, cert, ALPNProtocols: ["h2", "http/1.1"] } as TlsOptions;
         this.tlsServer = tls.createServer(tlsOpts, (socket: TLSSocket) => {
@@ -91,7 +91,7 @@ export class HttpsServer extends ServerBase {
                 this.handleSocket(socket);
         });
 
-        this.tlsServer.on("error", (err) => this.options.onEvent({ type: "error", detail: err }));
+        this.tlsServer.on("error", (error) => this.options.onEvent({ type: "error", detail: error }));
     }
 
     public async startAsync(): Promise<void> {
@@ -103,6 +103,8 @@ export class HttpsServer extends ServerBase {
                 ? { reusePort: true }
                 : {})
         };
+
+        this.options.onEvent({ type: "info", detail: `${this.label} is starting...` });
 
         this.tlsServer.listen(listenOptions);
 
@@ -117,7 +119,7 @@ export class HttpsServer extends ServerBase {
         }
 
         this.setIdleSocketsInterval();
-        this.options.onEvent({ type: "info", detail: `${this.label} listening on ${listenOptions.host}:${listenOptions.port}` });
+        this.options.onEvent({ type: "info", detail: `${this.label} listening on https://${listenOptions.host}:${listenOptions.port}` });
     }
 
     public async stopAsync(): Promise<void> {
