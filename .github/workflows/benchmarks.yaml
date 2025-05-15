@@ -52,6 +52,7 @@ jobs:
         body: "Auto-generated benchmarks update."
         add-paths: |
           README.md
+          src/webserver/webserver/README.md
 
     - name: Auto-Merge
       if: steps.benchmark.outputs.pull-request-operation == 'created'
