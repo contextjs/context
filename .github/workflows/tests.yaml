@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'README.md'
+      - 'src/webserver/webserver/README.md'
   pull_request:
     branches: [ main ]
     paths-ignore:
