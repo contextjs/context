@@ -9,7 +9,7 @@
 import { Throw } from "@contextjs/system";
 import { RouteService } from "../services/route.service.js";
 
-export class Route {
+export class RouteInfo {
     public readonly template: string;
     public readonly name: string | null;
     public readonly decodedTemplate: string;

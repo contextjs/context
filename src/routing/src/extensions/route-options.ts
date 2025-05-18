@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Route } from "../models/route.js";
+import { RouteInfo } from "../models/route-info.js";
 import { RouteConfiguration } from "./route-configuration.js";
 
 export class RouteOptions {
@@ -23,7 +23,7 @@ export class RouteOptions {
         return this;
     }
 
-    public useRoutes(routes: Route[]): RouteOptions {
+    public useRoutes(routes: RouteInfo[]): RouteOptions {
         this.routeConfiguration.routes = routes;
         return this;
     }

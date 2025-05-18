@@ -9,7 +9,7 @@
 import test, { TestContext } from "node:test";
 import { RouteConfiguration } from "../../src/extensions/route-configuration.js";
 import { RouteOptions } from "../../src/extensions/route-options.js";
-import { Route } from "../../src/models/route.js";
+import { RouteInfo } from "../../src/models/route-info.js";
 
 test("RouteOptions: discoverRoutes() should enable discovery by default", (context: TestContext) => {
     const config = new RouteConfiguration();
@@ -38,8 +38,8 @@ test("RouteOptions: discoverRoutes(true) should enable discovery", (context: Tes
 test("RouteOptions: useRoutes() should replace existing routes", (context: TestContext) => {
     const config = new RouteConfiguration();
     const options = new RouteOptions(config);
-    const route1 = new Route("/r1");
-    const route2 = new Route("/r2", "name");
+    const route1 = new RouteInfo("/r1");
+    const route2 = new RouteInfo("/r2", "name");
 
     options.useRoutes([route1, route2]);
 

@@ -8,23 +8,23 @@
 
 import { NullReferenceException } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
-import { Route } from '../../src/models/route.ts';
+import { RouteInfo } from '../../src/models/route-info.ts';
 
 test('Route: contructor - success - with name', (context: TestContext) => {
-    const route = new Route('/home/index.html', 'home');
+    const route = new RouteInfo('/home/index.html', 'home');
 
     context.assert.strictEqual(route.template, '/home/index.html');
     context.assert.strictEqual(route.name, 'home');
 });
 
 test('Route: contructor - success - without name', (context: TestContext) => {
-    const route = new Route('/home/index.html');
+    const route = new RouteInfo('/home/index.html');
     context.assert.strictEqual(route.template, '/home/index.html');
     context.assert.strictEqual(route.name, null);
 });
 
 test('Route: constructor - should throw if template is empty', (context: TestContext) => {
-    context.assert.throws(() => new Route(""), NullReferenceException);
-    context.assert.throws(() => new Route("   "), NullReferenceException);
-    context.assert.throws(() => new Route(null as any), NullReferenceException);
+    context.assert.throws(() => new RouteInfo(""), NullReferenceException);
+    context.assert.throws(() => new RouteInfo("   "), NullReferenceException);
+    context.assert.throws(() => new RouteInfo(null as any), NullReferenceException);
 });
