@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Compiler, ICompilerExtension } from "@contextjs/compiler";
+import { Compiler } from "@contextjs/compiler";
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import path from "path";
@@ -92,20 +92,33 @@ export class BuildCommand extends CommandBase {
     }
 
     private async compileAsync(project: Project, typescriptOptions: typescript.CompilerOptions, transformers: string[]): Promise<void> {
+        const tsConfigPath = path.join(project.path, "tsconfig.json");
+        const parsedCommandLine = typescript.getParsedCommandLineOfConfigFile(
+            tsConfigPath,
+            typescriptOptions,
+            {
+                useCaseSensitiveFileNames: typescript.sys.useCaseSensitiveFileNames,
+                readFile: typescript.sys.readFile,
+                readDirectory: typescript.sys.readDirectory,
+                fileExists: typescript.sys.fileExists,
+                getCurrentDirectory: typescript.sys.getCurrentDirectory,
+                onUnRecoverableConfigFileDiagnostic: diagnostic => console.error("Config error:", diagnostic.messageText)
+            }
+        );
+
+        if (!parsedCommandLine) {
+            Console.writeLineError("Failed to parse tsconfig.json");
+            return process.exit(1);
+        }
+
         const externalExtensions = await ExtensionsResolver.resolveAsync(transformers, project.path);
-
-        const program = typescript.createProgram([path.join(project.path, "tsconfig.json")], typescriptOptions ?? {});
+        const program = typescript.createProgram({ rootNames: parsedCommandLine.fileNames, options: parsedCommandLine.options });
         const externalTransformers = externalExtensions.map(ext => ext.getTransformers(program));
-
-        const mergedTransformers = {
-            before: externalTransformers.flatMap(t => t.before ?? []),
-            after: externalTransformers.flatMap(t => t.after ?? [])
-        };
-
+        const mergedTransformers = { before: externalTransformers.flatMap(t => t.before ?? []), after: externalTransformers.flatMap(t => t.after ?? []) };
         const hasTransformers = mergedTransformers.before.length > 0 || mergedTransformers.after.length > 0;
 
         const result = Compiler.compile(project.path, {
-            typescriptOptions,
+            typescriptOptions: parsedCommandLine.options,
             transformers: hasTransformers ? mergedTransformers : undefined
         });
 

@@ -8,22 +8,18 @@
 
 import { NullReferenceException } from '@contextjs/system';
 import test, { TestContext } from 'node:test';
-import { Route } from '../../src/models/route.ts';
+import { RouteInfo } from '../../src/models/route-info.ts';
 import { RouteService } from '../../src/services/route.service.ts';
 
 test('RouteService: match - invalid route', (context: TestContext) => {
-    const route = new Route('home/{id}', 'homeDetails');
+    const route = new RouteInfo('home/{id}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/invalid', [route]);
 
     context.assert.strictEqual(foundRoute, null);
 });
 
-test('RouteService: match - throws NullreferenceException', (context: TestContext) => {
-    context.assert.throws(() => { new Route('', 'homeDetails') }, NullReferenceException);
-});
-
 test('RouteService: match - template with special characters', (context: TestContext) => {
-    const route = new Route('home/{id}/details', 'homeDetails');
+    const route = new RouteInfo('home/{id}/details', 'homeDetails');
     const foundRoute = RouteService.match('home/123/details', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -31,30 +27,22 @@ test('RouteService: match - template with special characters', (context: TestCon
 });
 
 test('RouteService: match - template with query string', (context: TestContext) => {
-    const route = new Route('home/{id}', 'homeDetails');
+    const route = new RouteInfo('home/{id}', 'homeDetails');
     const foundRoute = RouteService.match('home/123?query=string', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
     context.assert.strictEqual(foundRoute!.template, route.template);
 });
 
-test('RouteService: match - template with multiple optional parameters', (context: TestContext) => {
-    const route = new Route('home/{id?}/{name?}', 'homeDetails');
-    const foundRoute = RouteService.match('home/123/john', [route]);
-
-    context.assert.notStrictEqual(foundRoute, null);
-    context.assert.strictEqual(foundRoute!.template, route.template);
-});
-
 test('RouteService: match - template with optional parameter', (context: TestContext) => {
-    const route = new Route('home/{id?}', 'homeDetails');
+    const route = new RouteInfo('home/{id?}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john', [route]);
 
     context.assert.strictEqual(foundRoute, null);
 });
 
 test('RouteService: match - template with multiple required parameters', (context: TestContext) => {
-    const route = new Route('home/{id}/{name}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{name}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -62,23 +50,15 @@ test('RouteService: match - template with multiple required parameters', (contex
 });
 
 test('RouteService: match - template with mixed parameters', (context: TestContext) => {
-    const route = new Route('home/{id}/{name?}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{name?}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
     context.assert.strictEqual(foundRoute!.template, route.template);
 });
 
-test('RouteService: match - template with mixed parameters and wildcard', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
-    const foundRoute = RouteService.match('home/123/john/details', [route]);
-
-    context.assert.notStrictEqual(foundRoute, null);
-    context.assert.strictEqual(foundRoute!.template, route.template);
-});
-
 test('RouteService: match - template with mixed parameters and wildcard - partial match', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -86,7 +66,7 @@ test('RouteService: match - template with mixed parameters and wildcard - partia
 });
 
 test('RouteService: match - template with mixed parameters and wildcard - partial match - query string', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details?query=string', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -95,51 +75,36 @@ test('RouteService: match - template with mixed parameters and wildcard - partia
 
 
 test('RouteService: match - template with mixed parameters and wildcard - partial match - valid route', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details/invalid', [route]);
 
     context.assert.strictEqual(foundRoute, route);
 });
 
 test('RouteService: match - template with mixed parameters and wildcard - partial match - trailing slash', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details/', [route]);
 
     context.assert.strictEqual(foundRoute, route);
 });
 
 test('RouteService: match - template with mixed parameters and wildcard - partial match - no trailing slash', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details', [route]);
 
     context.assert.strictEqual(foundRoute, route);
 });
 
 test('RouteService: match - template with mixed parameters and wildcard - partial match - encoded URI', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home%2F123/john/details', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
     context.assert.strictEqual(foundRoute!.template, route.template);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 test('RouteService: match - success', (context: TestContext) => {
-    const route = new Route('home/index.html', 'home');
+    const route = new RouteInfo('home/index.html', 'home');
     const foundRoute = RouteService.match("home/index.html", [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -159,12 +124,12 @@ test('RouteService: match - empty routes', (context: TestContext) => {
 });
 
 test('RouteService: match - no match', (context: TestContext) => {
-    const route = new Route('home/index.html', 'home');
+    const route = new RouteInfo('home/index.html', 'home');
     context.assert.strictEqual(RouteService.match('home/about.html', [route]), null);
 });
 
 test('RouteService: match - wildcard match', (context: TestContext) => {
-    const route = new Route('home/{*}', 'home');
+    const route = new RouteInfo('home/{*}', 'home');
     const foundRoute = RouteService.match('home/about.html', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -172,7 +137,7 @@ test('RouteService: match - wildcard match', (context: TestContext) => {
 });
 
 test('RouteService: match - optional parameter match', (context: TestContext) => {
-    const route = new Route('home/{id?}', 'home');
+    const route = new RouteInfo('home/{id?}', 'home');
     const foundRoute = RouteService.match('home/123', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -180,7 +145,7 @@ test('RouteService: match - optional parameter match', (context: TestContext) =>
 });
 
 test('RouteService: match - required parameter match', (context: TestContext) => {
-    const route = new Route('home/{id}', 'home');
+    const route = new RouteInfo('home/{id}', 'home');
     const foundRoute = RouteService.match('home/123', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -188,8 +153,8 @@ test('RouteService: match - required parameter match', (context: TestContext) =>
 });
 
 test('RouteService: match - multiple routes', (context: TestContext) => {
-    const route1 = new Route('home/{id}', 'home');
-    const route2 = new Route('home/{*}', 'homeWildcard');
+    const route1 = new RouteInfo('home/{id}', 'home');
+    const route2 = new RouteInfo('home/{*}', 'homeWildcard');
     const foundRoute = RouteService.match('home/about.html', [route1, route2]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -197,7 +162,7 @@ test('RouteService: match - multiple routes', (context: TestContext) => {
 });
 
 test('RouteService: match - multiple segments', (context: TestContext) => {
-    const route = new Route('home/{id}/details', 'homeDetails');
+    const route = new RouteInfo('home/{id}/details', 'homeDetails');
     const foundRoute = RouteService.match('home/123/details', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -205,21 +170,21 @@ test('RouteService: match - multiple segments', (context: TestContext) => {
 });
 
 test('RouteService: match - no trailing slash', (context: TestContext) => {
-    const route = new Route('home/{id}', 'homeDetails');
+    const route = new RouteInfo('home/{id}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/', [route]);
 
     context.assert.strictEqual(foundRoute, route);
 });
 
 test('RouteService: match - trailing slash', (context: TestContext) => {
-    const route = new Route('home/{id}/', 'homeDetails');
+    const route = new RouteInfo('home/{id}/', 'homeDetails');
     const foundRoute = RouteService.match('home/123', [route]);
 
     context.assert.strictEqual(foundRoute, null);
 });
 
 test('RouteService: match - query string', (context: TestContext) => {
-    const route = new Route('home/{id}', 'homeDetails');
+    const route = new RouteInfo('home/{id}', 'homeDetails');
     const foundRoute = RouteService.match('home/123?query=string', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -227,7 +192,7 @@ test('RouteService: match - query string', (context: TestContext) => {
 });
 
 test('RouteService: match - encoded URI', (context: TestContext) => {
-    const route = new Route('home/{id}', 'homeDetails');
+    const route = new RouteInfo('home/{id}', 'homeDetails');
     const foundRoute = RouteService.match('home%2F123', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -235,11 +200,11 @@ test('RouteService: match - encoded URI', (context: TestContext) => {
 });
 
 test('RouteService: match - throws NullreferenceException', (context: TestContext) => {
-    context.assert.throws(() => { new Route('', 'homeDetails') }, NullReferenceException);
+    context.assert.throws(() => { new RouteInfo('', 'homeDetails') }, NullReferenceException);
 });
 
 test('RouteService: match - template with multiple optional parameters', (context: TestContext) => {
-    const route = new Route('home/{id?}/{name?}', 'homeDetails');
+    const route = new RouteInfo('home/{id?}/{name?}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -247,7 +212,7 @@ test('RouteService: match - template with multiple optional parameters', (contex
 });
 
 test('RouteService: match - template with optional parameter missing', (context: TestContext) => {
-    const route = new Route('home/{id?}/{name?}', 'homeDetails');
+    const route = new RouteInfo('home/{id?}/{name?}', 'homeDetails');
     const foundRoute = RouteService.match('home', [route]);
 
     context.assert.notStrictEqual(foundRoute, null);
@@ -255,7 +220,7 @@ test('RouteService: match - template with optional parameter missing', (context:
 });
 
 test('RouteService: match - template with mixed parameters and wildcard', (context: TestContext) => {
-    const route = new Route('home/{id}/{*}', 'homeDetails');
+    const route = new RouteInfo('home/{id}/{*}', 'homeDetails');
     const foundRoute = RouteService.match('home/123/john/details?query=string', [route]);
 
     context.assert.strictEqual(foundRoute, route);

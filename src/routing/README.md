@@ -24,14 +24,14 @@ npm i @contextjs/routing
 
 ```ts
 import { Application } from "@contextjs/system";
-import { Route } from "@contextjs/routing";
+import { RouteInfo } from "@contextjs/routing";
 
 const app = new Application();
 
 app.useRouting(r => {
     r.useRoutes([
-        new Route("home/{id}", "home"),
-        new Route("home/{id?}/details", "homeDetails")
+        new RouteInfo("home/{id}", "home"),
+        new RouteInfo("home/{id?}/details", "homeDetails")
     ]);
 });
 ```
@@ -42,8 +42,8 @@ app.useRouting(r => {
 import { RouteService } from "@contextjs/routing";
 
 const route = RouteService.match("home/123/details", [
-    new Route("home/{id}"),
-    new Route("home/{id?}/details")
+    new RouteInfo("home/{id}"),
+    new RouteInfo("home/{id?}/details")
 ]);
 
 console.log(route?.template); // "home/{id?}/details"
@@ -51,13 +51,24 @@ console.log(route?.template); // "home/{id?}/details"
 
 ## 📘 API Reference
 
-### `Route`
+### Decorator
+
+```ts
+/**
+ * Decorates a method as a route handler.
+ * @param template The URL template for the route.
+ * @param name The name of the route (optional).
+ */
+export declare function Route(template: string, name?: string): MethodDecorator;
+```
+
+### `RouteInfo`
 
 Represents a route with a URL template and optional name.
 
 ```ts
-new Route(template: string);
-new Route(template: string, name: string);
+new RouteInfo(template: string);
+new RouteInfo(template: string, name: string);
 ```
 
 - `template`: The route’s URL template (e.g., `"users/{id}"`)
@@ -68,11 +79,11 @@ new Route(template: string, name: string);
 Provides matching logic to resolve a route from a path.
 
 ```ts
-RouteService.match(path: string, routes: Route[]): Route | null
+RouteService.match(path: string, routes: RouteInfo[]): RouteInfo | null
 ```
 
 - `path`: Request path (e.g., `"users/42"`)
-- `routes`: Array of `Route` instances to search
+- `routes`: Array of `RouteInfo` instances to search
 - **Returns**: the best match or `null` if no match
 
 ### `Application.useRouting`
@@ -96,7 +107,7 @@ Defines the routing configuration for an application.
 ```ts
 interface RouteConfiguration {
     discoverRoutes: boolean;
-    routes: Route[];
+    routes: RouteInfo[];
 }
 ```
 
@@ -108,9 +119,9 @@ interface RouteConfiguration {
 Fluent configuration API for routing.
 
 ```ts
-routeOptions.discoverRoutes();                // enable
-routeOptions.discoverRoutes(false);          // disable
-routeOptions.useRoutes([new Route("x")]);    // assign routes
+routeOptions.discoverRoutes();                   // enable
+routeOptions.discoverRoutes(false);              // disable
+routeOptions.useRoutes([new RouteInfo("x")]);    // assign routes
 ```
 
 ---

@@ -9,9 +9,16 @@
 import "@contextjs/system";
 
 /**
+ * Decorates a method as a route handler.
+ * @param template The URL template for the route.
+ * @param name The name of the route (optional).
+ */
+export declare function Route(template: string, name?: string): MethodDecorator;
+
+/**
  * Represents a route with a URL template and optional name.
  */
-export declare class Route {
+export declare class RouteInfo {
     /** The route's URL template (e.g., "home/{id}"). */
     public readonly template: string;
 
@@ -21,15 +28,9 @@ export declare class Route {
     /**
      * Creates a new route.
      * @param template The route's URL template.
-     */
-    public constructor(template: string);
-
-    /**
-     * Creates a new named route.
-     * @param template The route's URL template.
      * @param name The route's name.
      */
-    public constructor(template: string, name: string);
+    public constructor(template: string, name?: string | null);
 }
 
 /**
@@ -42,7 +43,7 @@ export declare class RouteService {
      * @param routes The available routes to match against.
      * @returns The matching route, or null if no match was found.
      */
-    public static match(value: string, routes: Route[]): Route | null;
+    public static match(value: string, routes: RouteInfo[]): RouteInfo | null;
 }
 
 //#region Extensions
@@ -79,7 +80,7 @@ export declare class RouteConfiguration {
      * The list of routes for the application.
      * When route discovery is enabled, discovered routes are added here.
      */
-    public routes: Route[];
+    public routes: RouteInfo[];
 }
 
 /**
@@ -104,7 +105,7 @@ export declare class RouteOptions {
      * @param routes The routes to apply.
      * @returns The current RouteOptions instance.
      */
-    public useRoutes(routes: Route[]): RouteOptions;
+    public useRoutes(routes: RouteInfo[]): RouteOptions;
 }
 
 //#endregion

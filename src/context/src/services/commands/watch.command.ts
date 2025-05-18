@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Compiler, ICompilerExtension } from "@contextjs/compiler";
+import { Compiler } from "@contextjs/compiler";
 import { File } from "@contextjs/io";
 import { Console } from "@contextjs/system";
 import path from "path";
@@ -31,13 +31,11 @@ export class WatchCommand extends CommandBase {
 
         await ExtensionsResolver.registerAsync();
 
-        await Promise.all(
-            projects.map(project => this.watchAsync(
-                project,
-                typescriptOptions,
-                transformersArg?.values[0].split(",") ?? []
-            ))
-        );
+        await Promise.all(projects.map(project => this.watchAsync(
+            project,
+            typescriptOptions,
+            transformersArg?.values[0].split(",") ?? []
+        )));
     }
 
     private async watchAsync(project: Project, typescriptOptions: typescript.CompilerOptions, externalTransformerPaths: string[]): Promise<void> {
@@ -48,7 +46,6 @@ export class WatchCommand extends CommandBase {
             Console.writeLineError(`No context file found for "${project.name}". Exiting...`);
             return process.exit(1);
         }
-
         if (!File.exists(tsConfigPath)) {
             Console.writeLineError(`No tsconfig.json file found for "${project.name}". Exiting...`);
             return process.exit(1);
@@ -56,28 +53,35 @@ export class WatchCommand extends CommandBase {
 
         const contextJson = JSON.parse(File.read(contextFilePath)!);
         const configuredTransformers = contextJson.compilerOptions?.transformers ?? [];
-        const transformers = [...configuredTransformers, ...externalTransformerPaths];
+        const transformerIds = [...configuredTransformers, ...externalTransformerPaths];
 
-        const resolvedExtensions = await ExtensionsResolver.resolveAsync(transformers, project.path);
+        const extensions = await ExtensionsResolver.resolveAsync(transformerIds, project.path);
+
+        const parsed = typescript.getParsedCommandLineOfConfigFile(
+            tsConfigPath,
+            typescriptOptions,
+            {
+                useCaseSensitiveFileNames: typescript.sys.useCaseSensitiveFileNames,
+                readDirectory: typescript.sys.readDirectory,
+                fileExists: typescript.sys.fileExists,
+                readFile: typescript.sys.readFile,
+                getCurrentDirectory: typescript.sys.getCurrentDirectory,
+                onUnRecoverableConfigFileDiagnostic: diagnostic => Console.writeLineError(`tsconfig parse error: ${diagnostic.messageText}`)
+            }
+        );
+        if (!parsed) {
+            Console.writeLineError("Failed to parse tsconfig.json for watch.");
+            return process.exit(1);
+        }
+
+        const program = typescript.createProgram({ rootNames: parsed.fileNames, options: parsed.options });
+        const external = extensions.map(extension => extension.getTransformers(program));
+        const mergedTransformers = { before: external.flatMap(t => t.before ?? []), after: external.flatMap(t => t.after ?? []) };
 
         Compiler.watch(project.path, {
-            typescriptOptions,
-            transformers: this.mergeTransformers(resolvedExtensions),
+            typescriptOptions: parsed.options,
+            transformers: mergedTransformers,
             onDiagnostic: diagnostic => this.processDiagnostics(project, [diagnostic])
         });
-    }
-
-    private mergeTransformers(resolvedExtensions: ICompilerExtension[]): {
-        before: typescript.TransformerFactory<typescript.SourceFile>[];
-        after: typescript.TransformerFactory<typescript.SourceFile>[];
-    } {
-        const program = typescript.createProgram([], {});
-
-        const externalTransformers = resolvedExtensions.map(extension => extension.getTransformers(program));
-
-        return {
-            before: externalTransformers.flatMap(t => t.before ?? []),
-            after: externalTransformers.flatMap(t => t.after ?? [])
-        };
     }
 }

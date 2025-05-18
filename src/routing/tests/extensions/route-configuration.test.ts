@@ -8,7 +8,7 @@
 
 import test, { TestContext } from "node:test";
 import { RouteConfiguration } from "../../src/extensions/route-configuration.js";
-import { Route } from "../../src/models/route.js";
+import { RouteInfo } from "../../src/models/route-info.js";
 
 test("RouteConfiguration: should initialize with empty route list", (context: TestContext) => {
     const config = new RouteConfiguration();
@@ -26,7 +26,7 @@ test("RouteConfiguration: should allow setting discoverRoutes", (context: TestCo
 
 test("RouteConfiguration: should allow pushing routes manually", (context: TestContext) => {
     const config = new RouteConfiguration();
-    const route = new Route("/test");
+    const route = new RouteInfo("/test");
 
     config.routes.push(route);
 

@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Route } from "../models/route.js";
+import { RouteInfo } from "../models/route-info.js";
 
 export class RouteConfiguration {
     public discoverRoutes: boolean = false;
-    public routes: Route[] = [];
+    public routes: RouteInfo[] = [];
 }
