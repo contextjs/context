@@ -27,13 +27,7 @@ import { Application } from "@contextjs/system";
 import { RouteInfo } from "@contextjs/routing";
 
 const app = new Application();
-
-app.useRouting(r => {
-    r.useRoutes([
-        new RouteInfo("home/{id}", "home"),
-        new RouteInfo("home/{id?}/details", "homeDetails")
-    ]);
-});
+app.useRouting();
 ```
 
 ## 🔍 Matching Example
@@ -41,10 +35,7 @@ app.useRouting(r => {
 ```ts
 import { RouteService } from "@contextjs/routing";
 
-const route = RouteService.match("home/123/details", [
-    new RouteInfo("home/{id}"),
-    new RouteInfo("home/{id?}/details")
-]);
+const route = RouteService.match("home/123/details", [...routeDefinitions]);
 
 console.log(route?.template); // "home/{id?}/details"
 ```
@@ -79,11 +70,11 @@ new RouteInfo(template: string, name: string);
 Provides matching logic to resolve a route from a path.
 
 ```ts
-RouteService.match(path: string, routes: RouteInfo[]): RouteInfo | null
+public static match(value: string, routes: RouteDefinition[]): RouteDefinition | null;
 ```
 
 - `path`: Request path (e.g., `"users/42"`)
-- `routes`: Array of `RouteInfo` instances to search
+- `routes`: Array of `RouteDefinition` instances to search
 - **Returns**: the best match or `null` if no match
 
 ### `Application.useRouting`
@@ -91,40 +82,35 @@ RouteService.match(path: string, routes: RouteInfo[]): RouteInfo | null
 Adds routing configuration to the ContextJS `Application`.
 
 ```ts
-app.useRouting(options => {
-    options.discoverRoutes();
-    options.useRoutes([...]);
-});
+app.useRouting();
 ```
 
-- `routeConfiguration`: Access the app's `RouteConfiguration` directly
-- `useRouting(fn)`: Configures routing using a fluent builder
 
-### `RouteConfiguration`
-
-Defines the routing configuration for an application.
-
+### `RouteDefinition`
 ```ts
-interface RouteConfiguration {
-    discoverRoutes: boolean;
-    routes: RouteInfo[];
+/**
+ * Represents a route definition, including the import path, class reference, method name, and route information.
+ */
+export declare class RouteDefinition<T extends RouteInfo = RouteInfo> {
+    /** The path to the module where the route is defined. */
+    public importPath: string;
+    /** The class reference for the route handler. */
+    public classReference: Function | null;
+    /** The name of the method in the class that handles the route. */
+    public methodName: string | null;
+    /** The route information. */
+    public route: T;
+
+    /**
+     * Creates a new route definition.
+     * @param importPath The path to the module where the route is defined.
+     * @param classReference The class reference for the route handler.
+     * @param methodName The name of the method in the class that handles the route.
+     * @param route The route information.
+     */
+    constructor(importPath: string, classReference: Function | null, methodName: string | null, route: T);
 }
 ```
-
-- `discoverRoutes`: Enables auto-discovery of routes (if supported)
-- `routes`: The configured or discovered routes
-
-### `RouteOptions`
-
-Fluent configuration API for routing.
-
-```ts
-routeOptions.discoverRoutes();                   // enable
-routeOptions.discoverRoutes(false);              // disable
-routeOptions.useRoutes([new RouteInfo("x")]);    // assign routes
-```
-
----
 
 ## 🧪 Testing
 

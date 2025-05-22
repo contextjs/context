@@ -1,4 +1,3 @@
-
 /**
  * @license
  * Copyright ContextJS All Rights Reserved.
@@ -7,31 +6,47 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import assert from "node:assert";
+import test from "node:test";
+import "reflect-metadata";
+
 import { Application } from "@contextjs/system";
-import test, { TestContext } from "node:test";
 import "../../src/extensions/application-extensions.js";
-import { RouteConfiguration } from "../../src/extensions/route-configuration.js";
-import { RouteOptions } from "../../src/extensions/route-options.js";
+import { RouteDefinition } from "../../src/models/route-definition.js";
+import { RouteInfo } from "../../src/models/route-info.js";
+import { RouteDiscoveryService } from "../../src/services/route-discovery-service.js";
 
-test("Application: useRouting() should initialize routeConfiguration", (context: TestContext) => {
-    const app = new Application();
-    app.useRouting(() => { });
-    context.assert.ok(app.routeConfiguration);
-    context.assert.strictEqual(app.routeConfiguration instanceof RouteConfiguration, true);
-});
+test("Application: useRouting registers onRun handler that populates app.routes", async () => {
+    const originalDiscover = RouteDiscoveryService.discoverRoutesAsync;
+    try {
+        class DummyController {
+            async dummyMethod() { return "ok"; }
+        }
+        const dummyRouteInfo = new RouteInfo("/dummy", "dummyName");
+        const dummyRoutes = [
+            new RouteDefinition(
+                "file:///dummy/path/controller.js",
+                DummyController,
+                DummyController.prototype.dummyMethod,
+                dummyRouteInfo
+            )
+        ];
+        RouteDiscoveryService.discoverRoutesAsync = async () => dummyRoutes;
 
-test("Application: useRouting() should invoke builder callback", (context: TestContext) => {
-    let called = false;
-    const app = new Application();
-    app.useRouting(() => { called = true; });
-    context.assert.strictEqual(called, true);
-});
+        const app = new Application();
+        assert.strictEqual((app as any).routes, undefined);
 
-test("Application: useRouting() should configure RouteOptions with RouteConfiguration", (context: TestContext) => {
-    let received: RouteOptions | null = null;
-    const app = new Application();
-    app.useRouting(opts => received = opts);
-    context.assert.ok(received);
-    context.assert.strictEqual(Object.getPrototypeOf(received)?.constructor?.name, "RouteOptions");
+        app.useRouting();
+        await app.runAsync();
 
+        assert.deepStrictEqual(
+            (app as any).routes,
+            dummyRoutes,
+            "app.routes should equal the stubbed dummyRoutes"
+        );
+    }
+    finally {
+
+        RouteDiscoveryService.discoverRoutesAsync = originalDiscover;
+    }
 });

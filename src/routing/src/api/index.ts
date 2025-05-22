@@ -9,9 +9,9 @@
 export * from "../decorators/route.decorator.js";
 
 export * from "../extensions/application-extensions.js";
-export * from "../extensions/route-configuration.js";
-export * from "../extensions/route-options.js";
 
 export * from "../models/route-info.js";
+export * from "../models/route-definition.js";
 
 export * from "../services/route.service.js";
+export * from "../services/route-discovery-service.js";

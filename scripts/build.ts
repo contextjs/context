@@ -13,6 +13,8 @@
  * npm run build project1 project2 ... - builds specified projects.
  */
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import readline from 'node:readline';
 import Config from "./config.ts";
 import type PackageInfo from './package-info.ts';
@@ -37,9 +39,21 @@ export class Build extends Script {
     }
 
     private async npmInstallAsync(): Promise<void> {
-        if (await this.pathExistsAsync('node_modules') === false) {
-            this.writeLogAsync('Installing npm packages...');
-            this.executeCommandAsync('npm pkg delete dependencies && npm update');
+        if (!(await this.pathExistsAsync('node_modules'))) {
+            this.writeLogAsync('Installing npm packages…');
+
+            const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+            const packageJsonContent = await fs.readFile(packageJsonPath, 'utf-8');
+            const parsedPackage = JSON.parse(packageJsonContent);
+            if (parsedPackage.dependencies) {
+                for (const name of Object.keys(parsedPackage.dependencies)) {
+                    if (name.startsWith('@contextjs'))
+                        delete parsedPackage.dependencies[name];
+                }
+                await fs.writeFile(packageJsonPath, JSON.stringify(parsedPackage, null, 2) + '\n');
+            }
+
+            await this.executeCommandAsync('npm update');
         }
     }
 
