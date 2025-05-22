@@ -6,22 +6,18 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/system";
-import { RouteConfiguration } from "./route-configuration.js";
-import { RouteOptions } from "./route-options.js";
+import { Application } from "@contextjs/system";
+import { RouteDefinition } from "../models/route-definition.js";
+import { RouteDiscoveryService } from "../services/route-discovery-service.js";
 
 declare module "@contextjs/system" {
     export interface Application {
-        routeConfiguration: RouteConfiguration;
-        useRouting(options: (routeOptions: RouteOptions) => void): Application;
+        routes: RouteDefinition[];
+        useRouting(): Application;
     }
 }
 
-Application.prototype.useRouting = function (options: (routeOptions: RouteOptions) => void): Application {
-    Throw.ifNullOrUndefined(options);
-
-    this.routeConfiguration = new RouteConfiguration();
-    options(new RouteOptions(this.routeConfiguration));
-
+Application.prototype.useRouting = function (): Application {
+    this.onRun(async () => this.routes = await RouteDiscoveryService.discoverRoutesAsync());
     return this;
 }

@@ -8,6 +8,24 @@
 
 import "@contextjs/system";
 
+declare module "@contextjs/system" {
+    /**
+     * Adds routing configuration to the Application interface.
+     */
+    export interface Application {
+        /**
+         * The list of routes defined in the application.
+         */
+        routes: RouteDefinition[];
+
+        /**
+         * Configures routing for the application.
+         * @returns The current Application instance.
+         */
+        useRouting(): Application;
+    }
+}
+
 /**
  * Decorates a method as a route handler.
  * @param template The URL template for the route.
@@ -34,78 +52,37 @@ export declare class RouteInfo {
 }
 
 /**
+ * Represents a route definition, including the import path, class reference, method name, and route information.
+ */
+export declare class RouteDefinition<T extends RouteInfo = RouteInfo> {
+    /** The path to the module where the route is defined. */
+    public importPath: string;
+    /** The class reference for the route handler. */
+    public classReference: Function | null;
+    /** The name of the method in the class that handles the route. */
+    public methodName: string | null;
+    /** The route information. */
+    public route: T;
+
+    /**
+     * Creates a new route definition.
+     * @param importPath The path to the module where the route is defined.
+     * @param classReference The class reference for the route handler.
+     * @param methodName The name of the method in the class that handles the route.
+     * @param route The route information.
+     */
+    constructor(importPath: string, classReference: Function | null, methodName: string | null, route: T);
+}
+
+/**
  * Provides matching logic to resolve a route from a path.
  */
 export declare class RouteService {
     /**
      * Finds the best matching route for a given path.
      * @param value The request path (e.g., "home/123").
-     * @param routes The available routes to match against.
-     * @returns The matching route, or null if no match was found.
+     * @param routes The available route definitions to match against.
+     * @returns The matching route definition, or null if no match was found.
      */
-    public static match(value: string, routes: RouteInfo[]): RouteInfo | null;
+    public static match(value: string, routes: RouteDefinition[]): RouteDefinition | null;
 }
-
-//#region Extensions
-
-declare module "@contextjs/system" {
-    /**
-     * Adds routing configuration to the Application interface.
-     */
-    export interface Application {
-        /**
-         * The current route configuration.
-         */
-        routeConfiguration: RouteConfiguration;
-
-        /**
-         * Configures routing for the application.
-         * @param options A callback that receives a RouteOptions object to configure routing.
-         * @returns The current Application instance.
-         */
-        useRouting(options: (routeOptions: RouteOptions) => void): Application;
-    }
-}
-
-/**
- * Defines the routing configuration for an application.
- */
-export declare class RouteConfiguration {
-    /**
-     * Whether route discovery is enabled.
-     */
-    public discoverRoutes: boolean;
-
-    /**
-     * The list of routes for the application.
-     * When route discovery is enabled, discovered routes are added here.
-     */
-    public routes: RouteInfo[];
-}
-
-/**
- * Provides a fluent interface to configure routing behavior.
- */
-export declare class RouteOptions {
-    /**
-     * Enables route discovery.
-     * @returns The current RouteOptions instance.
-     */
-    public discoverRoutes(): RouteOptions;
-
-    /**
-     * Enables or disables route discovery.
-     * @param value True to enable discovery, false to disable.
-     * @returns The current RouteOptions instance.
-     */
-    public discoverRoutes(value: boolean): RouteOptions;
-
-    /**
-     * Sets the routes to use explicitly.
-     * @param routes The routes to apply.
-     * @returns The current RouteOptions instance.
-     */
-    public useRoutes(routes: RouteInfo[]): RouteOptions;
-}
-
-//#endregion

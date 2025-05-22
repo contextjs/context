@@ -8,24 +8,24 @@
 
 import { StringExtensions } from "@contextjs/system";
 import { IParsedSegment } from "../interfaces/i-parsed-segment.js";
-import { RouteInfo } from "../models/route-info.js";
+import { RouteDefinition } from "../models/route-definition.js";
 import { SegmentKind } from "../models/segment-kind.js";
 
 export class RouteService {
-    public static match(value: string, routes: RouteInfo[]): RouteInfo | null {
+    public static match(value: string, routeDefinitions: RouteDefinition[]): RouteDefinition | null {
         if (StringExtensions.isNullOrWhiteSpace(value))
             return null;
 
         value = this.normalizePath(value);
         const maxScore = value.split("/").length * 10;
-        let bestMatch: RouteInfo | null = null;
+        let bestMatch: RouteDefinition | null = null;
         let bestScore = -1;
 
-        for (const route of routes) {
-            const score = this.getScore(value, route.decodedTemplate);
+        for (const routeDefinition of routeDefinitions) {
+            const score = this.getScore(value, routeDefinition.route.decodedTemplate);
             if (score > bestScore) {
                 bestScore = score;
-                bestMatch = route;
+                bestMatch = routeDefinition;
 
                 if (score === maxScore)
                     break;
