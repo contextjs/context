@@ -21,13 +21,13 @@
     "devDependencies": {
         "@types/autocannon": "^7.12.7",
         "@types/express": "^5.0.1",
-        "@types/node": "^22.13.10",
-        "autocannon": "8.0.0",
+        "@types/node": "^22.15.18",
+        "autocannon": "^8.0.0",
         "express": "5.1.0",
-        "fastify": "5.3.2",
-        "glob": "^11.0.0",
-        "tsx": "^4.19.3",
-        "typescript": "^5.8.2"
+        "fastify": "5.3.3",
+        "glob": "^11.0.2",
+        "tsx": "^4.19.4",
+        "typescript": "^5.8.3"
     },
     "engines": {
         "node": "23.x"
@@ -46,6 +46,7 @@
         "@contextjs/text": "file:_packages/contextjs-text-0.5.1-alpha.1.tgz",
         "@contextjs/webserver": "file:_packages/contextjs-webserver-0.5.1-alpha.1.tgz",
         "@contextjs/webserver-middleware-cookies": "file:_packages/contextjs-webserver-middleware-cookies-0.5.1-alpha.1.tgz",
-        "@contextjs/webserver-middleware-static": "file:_packages/contextjs-webserver-middleware-static-0.5.1-alpha.1.tgz"
+        "@contextjs/webserver-middleware-static": "file:_packages/contextjs-webserver-middleware-static-0.5.1-alpha.1.tgz",
+        "reflect-metadata": "^0.2.2"
     }
 }
