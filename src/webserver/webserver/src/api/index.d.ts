@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { SystemException } from "@contextjs/system";
+import { Application, SystemException } from "@contextjs/system";
 
 /**
  * Augment the base Application to integrate ContextJS WebServer.
@@ -19,6 +19,7 @@ declare module "@contextjs/system" {
          * @returns The Application instance for chaining.
          */
         useWebServer(options: (webserverOptions: WebServerOptions) => void): Application;
+
         /**
          * The active WebServer instance attached to the application.
          */
@@ -27,9 +28,19 @@ declare module "@contextjs/system" {
 }
 
 /**
+ * HTTP verb types for routing and middleware.
+ */
+export declare type HttpVerb = "GET" | "POST" | "PUT" | "DELETE";
+
+/**
  * Core HTTP/HTTPS server for handling requests and middleware pipeline.
  */
 export declare class WebServer {
+
+    /**
+     * The application instance associated with the WebServer.
+     */
+    public application: Application;
 
     /**
      * Create a new WebServer with the given configuration options.
@@ -373,6 +384,7 @@ export declare class Response {
  * Combined HTTP context providing request and response objects.
  */
 export declare class HttpContext {
+    
     /**
      * Parsed incoming request information.
      */

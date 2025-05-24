@@ -238,9 +238,19 @@ declare module "@contextjs/system" {
 }
 
 /**
+ * HTTP verb types for routing and middleware.
+ */
+export declare type HttpVerb = "GET" | "POST" | "PUT" | "DELETE";
+
+/**
  * Core HTTP/HTTPS server for handling requests and middleware pipeline.
  */
 export declare class WebServer {
+    /**
+     * The application instance associated with the WebServer.
+     */
+    public application: Application;
+
     /**
      * Create a new WebServer with the given configuration options.
      * @param options The WebServerOptions to apply settings and certificates.

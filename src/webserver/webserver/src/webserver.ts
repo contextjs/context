@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { Application, Throw } from "@contextjs/system";
 import { IMiddleware } from "./interfaces/i-middleware.js";
 import { WebServerOptions } from "./options/webserver-options.js";
 import { HttpServer } from "./services/http-server.js";
@@ -18,6 +18,8 @@ export class WebServer {
     private options: WebServerOptions;
     private middleware: IMiddleware[] = [];
     private readonly sigHandler: () => Promise<void[]>;
+
+    public application!: Application;
 
     public constructor(options: WebServerOptions) {
         if (!options.http.enabled && !options.https.enabled)
