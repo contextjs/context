@@ -12,21 +12,20 @@ import { DependencyInjectionOptions } from "./dependency-injection-options.js";
 
 declare module "@contextjs/system" {
     export interface Application {
-        useDependencyInjection(options: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application;
+        useDependencyInjection(options?: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application;
         services: ServiceCollection;
     }
 }
 
-Application.prototype.useDependencyInjection = function (options: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application {
-    Throw.ifNullOrUndefined(options);
-
+Application.prototype.useDependencyInjection = function (options?: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application {
     const dependencyInjectionOptions = new DependencyInjectionOptions();
-    options(dependencyInjectionOptions);
+    options?.(dependencyInjectionOptions);
 
     if (ObjectExtensions.isNullOrUndefined(this.services))
         this.services = new ServiceCollection();
 
-    this.services.onResolve = dependencyInjectionOptions.onResolve;
+    if (!ObjectExtensions.isNullOrUndefined(dependencyInjectionOptions.onResolve))
+        this.services.onResolve = dependencyInjectionOptions.onResolve;
 
     return this;
 }
