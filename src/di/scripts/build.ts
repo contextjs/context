@@ -37,6 +37,7 @@ export class Build extends Script {
 import typescript from "typescript";
 import { serviceCollectionTransformer } from "./service-collection.transformer.js";
 import { serviceResolverTransformer } from "./service-resolver.transformer.js";
+import { paramTypesRewriter } from "./metadata-type.transformer.js";
 
 export default {
     name: "@contextjs/di",
@@ -50,7 +51,7 @@ export default {
                 }, program),
                 serviceResolverTransformer
             ],
-            after: null
+            after: [paramTypesRewriter(program)]
         };
     }
 };`;
@@ -70,6 +71,11 @@ export default {
         await this.copyFileAsync(
             "src/di/scripts/transformers/service-resolver.transformer.ts",
             path.join(this.targetDir, "service-resolver.transformer.ts")
+        );
+
+        await this.copyFileAsync(
+            "src/di/scripts/transformers/metadata-type.transformer.ts",
+            path.join(this.targetDir, "metadata-type.transformer.ts")
         );
     }
 }
