@@ -28,7 +28,7 @@ declare module "@contextjs/system" {
          * @param options - A function that takes a DependencyInjectionOptions object to configure the dependency injection system.
          * @returns The current instance of the Application with dependency injection configured.
          */
-        useDependencyInjection(options: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application;
+        useDependencyInjection(options?: (dependencyInjectionOptions: DependencyInjectionOptions) => void): Application;
 
         /**
          * The collection of services registered in the dependency injection system.
@@ -130,40 +130,68 @@ export declare class ServiceCollection {
     /**
      * Creates an instance of ServiceCollection.
      **/
-    constructor();
+    public constructor();
 
     /**
      * Adds a service to the collection with a singleton lifetime.
      * @type {TImplementation} - The implementation type of the service.
      **/
-    addSingleton<TImplementation>(): void;
+    public addSingleton<TImplementation>(): void;
 
     /**
      * Adds a service to the collection with a singleton lifetime.
      * @type {TInterface} - The interface type of the service.
      * @type {TImplementation} - The implementation type of the service.
      **/
-    addSingleton<TInterface, TImplementation>(): void;
+    public addSingleton<TInterface, TImplementation>(): void;
 
     /**
      * Adds a service to the collection with a transient lifetime.
      * @type {TImplementation} - The implementation type of the service.
      **/
-    addTransient<TImplementation>(): void;
+    public addTransient<TImplementation>(): void;
 
     /**
      * Adds a service to the collection with a transient lifetime.
      * @type {TInterface} - The interface type of the service.
      * @type {TImplementation} - The implementation type of the service.
      **/
-    addTransient<TInterface, TImplementation>(): void;
+    public addTransient<TInterface, TImplementation>(): void;
 
     /**
      * Resolves a service from the collection by its type
      * @type {T} - The type of the service to resolve.
      * @returns The resolved service instance, or null if not found.
      **/
-    resolve<T>(): T | null;
+    public resolve<T>(): T | null;
+
+    /**
+     * Resolves a service from the collection by its name.
+     * @type {T} - The type of the service to resolve.
+     * @param name - The name of the service to resolve.
+     * @returns The resolved service instance, or null if not found.
+     **/
+    public resolve<T>(name: string): T | null;
+
+    /**
+     * Sets a service in the collection.
+     * @param name - The name of the service.
+     * @param service - The service to set.
+     * @param lifetime - The lifetime of the service.
+     * @param type - The type of the service.
+     * @param parameters - The constructor parameters of the service.
+     * @returns void
+     */
+    public readonly dependenciesAccessor: {
+        set: (
+            name: string,
+            service: {
+                lifetime: ServiceLifetime;
+                type: any;
+                parameters: { name: string; type: any }[];
+            }
+        ) => void;
+    };
 }
 
 //#endregion

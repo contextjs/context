@@ -6,149 +6,174 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import path from 'path';
 import typescript from 'typescript';
 
 export function serviceCollectionTransformer(methods: Record<string, string>, program: typescript.Program): typescript.TransformerFactory<typescript.SourceFile> {
     return (context: typescript.TransformationContext) => {
         return (sourceFile: typescript.SourceFile) => {
-            const visitor = (node: typescript.Node): typescript.Node => {
-                if (typescript.isCallExpression(node) &&
-                    typescript.isPropertyAccessExpression(node.expression)) {
-                    const methodName = node.expression.name.text;
-                    const lifetime = methods[methodName];
-                    if (!lifetime)
-                        return typescript.visitEachChild(node, visitor, context);
+            const importsMap = new Map<string, string>();
+            const getModuleSpecifier = (fromFile: string, toFile: string) => {
+                let moduleRelativePath = path.relative(path.dirname(fromFile), toFile).replace(/\\/g, '/');
+                if (!moduleRelativePath.startsWith('.'))
+                    moduleRelativePath = './' + moduleRelativePath;
 
-                    const typeArguments = node.typeArguments;
-                    if (!typeArguments || typeArguments.length === 0)
-                        return node;
+                return moduleRelativePath.replace(/\.ts$/, '.js');
+            };
 
-                    let interfaceType: typescript.TypeNode;
-                    let implementationType: typescript.TypeNode;
+            const visitNode = (currentNode: typescript.Node): typescript.Node => {
+                if (typescript.isCallExpression(currentNode) && typescript.isPropertyAccessExpression(currentNode.expression)) {
+                    const registrationMethod = currentNode.expression.name.text;
+                    const lifetimeValue = methods[registrationMethod];
+                    if (!lifetimeValue)
+                        return typescript.visitEachChild(currentNode, visitNode, context);
 
-                    if (typeArguments.length === 1)
-                        interfaceType = implementationType = typeArguments[0];
-                    else if (typeArguments.length >= 2) {
-                        interfaceType = typeArguments[0];
-                        implementationType = typeArguments[1];
+                    const genericArgs = currentNode.typeArguments;
+                    if (!genericArgs || genericArgs.length === 0)
+                        return currentNode;
+
+                    let abstractTypeNode: typescript.TypeNode;
+                    let concreteTypeNode: typescript.TypeNode;
+
+                    if (genericArgs.length === 1)
+                        abstractTypeNode = concreteTypeNode = genericArgs[0];
+                    else if (genericArgs.length >= 2) {
+                        abstractTypeNode = genericArgs[0];
+                        concreteTypeNode = genericArgs[1];
                     }
                     else
-                        return node;
+                        return currentNode;
 
-                    const interfaceName = interfaceType.getText(sourceFile).trim();
-                    const implementationName = implementationType.getText(sourceFile).trim();
+                    const interfaceId = abstractTypeNode.getText(sourceFile).trim();
+                    const implementationId = concreteTypeNode.getText(sourceFile).trim();
 
                     let classDeclaration: typescript.ClassDeclaration | undefined;
                     for (const file of program.getSourceFiles()) {
                         if (!file.isDeclarationFile) {
-                            const match = file.statements.find((t) => typescript.isClassDeclaration(t) && t.name?.text === implementationName);
-                            if (match) {
-                                classDeclaration = match as typescript.ClassDeclaration;
+                            const statement = file.statements.find((statement) => typescript.isClassDeclaration(statement) && statement.name?.text === implementationId);
+                            if (statement) {
+                                classDeclaration = statement as typescript.ClassDeclaration;
                                 break;
                             }
                         }
                     }
 
                     if (!classDeclaration)
-                        console.warn(`Could not find class declaration for "${implementationName}". Constructor metadata will be omitted.`);
+                        console.warn(`Could not find class declaration for "${implementationId}". Constructor metadata will be omitted.`);
 
-                    let typeExpression: typescript.Expression = typescript.factory.createStringLiteral(implementationName);
-                    if (typescript.isTypeReferenceNode(implementationType)) {
-                        const typeName = typescript.isIdentifier(implementationType.typeName)
-                            ? implementationType.typeName.text
-                            : implementationType.typeName.getText(sourceFile);
+                    let stringLiteral: typescript.Expression = typescript.factory.createStringLiteral(implementationId);
+                    if (typescript.isTypeReferenceNode(concreteTypeNode)) {
+                        const concreteName = typescript.isIdentifier(concreteTypeNode.typeName)
+                            ? concreteTypeNode.typeName.text
+                            : concreteTypeNode.typeName.getText(sourceFile);
 
-                        const type = program.getTypeChecker().getTypeFromTypeNode(implementationType);
-                        const symbol = type.getSymbol();
+                        const concreteType = program.getTypeChecker().getTypeFromTypeNode(concreteTypeNode);
+                        let symbol = program.getTypeChecker().getSymbolAtLocation(concreteTypeNode.typeName)!;
 
-                        if (symbol && symbol.declarations && symbol.declarations.some((t) => typescript.isInterfaceDeclaration(t)))
-                            typeExpression = typescript.factory.createStringLiteral(symbol.name);
+                        if (symbol.flags & typescript.SymbolFlags.Alias)
+                            symbol = program.getTypeChecker().getAliasedSymbol(symbol);
+
+                        const classDeclaration = symbol.declarations?.find(typescript.isClassDeclaration);
+                        if (classDeclaration)
+                            importsMap.set(concreteName, getModuleSpecifier(sourceFile.fileName, classDeclaration.getSourceFile().fileName));
+
+                        const interfaceSymbol = concreteType.getSymbol();
+                        if (interfaceSymbol && interfaceSymbol.declarations && interfaceSymbol.declarations.some((d) => typescript.isInterfaceDeclaration(d)))
+                            stringLiteral = typescript.factory.createStringLiteral(interfaceSymbol.name);
                         else
-                            typeExpression = typescript.factory.createIdentifier(typeName);
+                            stringLiteral = typescript.factory.createIdentifier(concreteName);
                     }
 
-                    const parameters: typescript.Expression[] = [];
+                    const constructorParameters: typescript.Expression[] = [];
 
                     if (classDeclaration) {
-                        const constructor = classDeclaration.members.find(typescript.isConstructorDeclaration);
-                        if (constructor) {
-                            for (const parameter of constructor.parameters) {
-                                let name: string;
-                                if (typescript.isIdentifier(parameter.name))
-                                    name = parameter.name.text;
-                                else if ('escapedText' in parameter.name)
-                                    name = String(parameter.name.escapedText);
+                        const constructorDeclaration = classDeclaration.members.find(typescript.isConstructorDeclaration);
+                        if (constructorDeclaration) {
+                            for (const constructorParameter of constructorDeclaration.parameters) {
+                                let parameterName: string;
+                                if (typescript.isIdentifier(constructorParameter.name))
+                                    parameterName = constructorParameter.name.text;
+                                else if ('escapedText' in constructorParameter.name)
+                                    parameterName = String(constructorParameter.name.escapedText);
                                 else
-                                    name = parameter.name.getText(sourceFile);
+                                    parameterName = constructorParameter.name.getText(sourceFile);
 
-                                let parameterTypeExpression: typescript.Expression = typescript.factory.createIdentifier("undefined");
+                                let parameterIdentifier: typescript.Expression = typescript.factory.createIdentifier('undefined');
+                                if (constructorParameter.type) {
+                                    if (typescript.isTypeReferenceNode(constructorParameter.type)) {
+                                        const parameterTypeName = typescript.isIdentifier(constructorParameter.type.typeName)
+                                            ? constructorParameter.type.typeName.text
+                                            : constructorParameter.type.typeName.getText(sourceFile);
 
-                                if (parameter.type) {
-                                    if (typescript.isTypeReferenceNode(parameter.type)) {
-                                        const typeName = typescript.isIdentifier(parameter.type.typeName)
-                                            ? parameter.type.typeName.text
-                                            : parameter.type.typeName.getText(sourceFile);
+                                        const parameterType = program.getTypeChecker().getTypeFromTypeNode(constructorParameter.type);
+                                        const parameterSymbol = parameterType.getSymbol();
 
-                                        const type = program.getTypeChecker().getTypeFromTypeNode(parameter.type);
-                                        const symbol = type.getSymbol();
-
-                                        if (symbol && symbol.declarations && symbol.declarations.some(t => typescript.isInterfaceDeclaration(t)))
-                                            parameterTypeExpression = typescript.factory.createStringLiteral(symbol.name);
+                                        if (parameterSymbol && parameterSymbol.declarations && parameterSymbol.declarations.some((declaration) => typescript.isInterfaceDeclaration(declaration)))
+                                            parameterIdentifier = typescript.factory.createStringLiteral(parameterSymbol.name);
                                         else
-                                            parameterTypeExpression = typescript.factory.createIdentifier(typeName);
+                                            parameterIdentifier = typescript.factory.createIdentifier(parameterTypeName);
+
                                     }
-                                    else if (parameter.type.kind >= typescript.SyntaxKind.FirstKeyword && parameter.type.kind <= typescript.SyntaxKind.LastKeyword) {
-                                        const keywordName = typescript.SyntaxKind[parameter.type.kind];
-                                        const typeName = keywordName.replace(/Keyword$/, "");
-                                        parameterTypeExpression = typescript.factory.createIdentifier(typeName);
+                                    else if (constructorParameter.type.kind >= typescript.SyntaxKind.FirstKeyword && constructorParameter.type.kind <= typescript.SyntaxKind.LastKeyword) {
+                                        const keywordName = typescript.SyntaxKind[constructorParameter.type.kind];
+                                        const typeName = keywordName.replace(/Keyword$/, '');
+                                        parameterIdentifier = typescript.factory.createIdentifier(typeName);
                                     }
                                 }
 
-                                parameters.push(
-                                    typescript.factory.createObjectLiteralExpression([
-                                        typescript.factory.createPropertyAssignment(
-                                            "name",
-                                            typescript.factory.createStringLiteral(name)
-                                        ),
-                                        typescript.factory.createPropertyAssignment("type", parameterTypeExpression),
-                                    ])
-                                );
+                                constructorParameters.push(typescript.factory.createObjectLiteralExpression([
+                                    typescript.factory.createPropertyAssignment('name', typescript.factory.createStringLiteral(parameterName)),
+                                    typescript.factory.createPropertyAssignment('type', parameterIdentifier),
+                                ]));
                             }
                         }
                     }
 
-                    const serviceObject = typescript.factory.createObjectLiteralExpression(
-                        [
-                            typescript.factory.createPropertyAssignment("lifetime", typescript.factory.createStringLiteral(lifetime)),
-                            typescript.factory.createPropertyAssignment("type", typeExpression),
-                            typescript.factory.createPropertyAssignment(
-                                "parameters",
-                                typescript.factory.createArrayLiteralExpression(parameters, true)
-                            ),
-                        ],
-                        true
-                    );
+                    const serviceDescriptor = typescript.factory.createObjectLiteralExpression([
+                        typescript.factory.createPropertyAssignment('lifetime', typescript.factory.createStringLiteral(lifetimeValue)),
+                        typescript.factory.createPropertyAssignment('type', stringLiteral),
+                        typescript.factory.createPropertyAssignment('parameters', typescript.factory.createArrayLiteralExpression(constructorParameters, true)),
+                    ], true);
 
                     return typescript.factory.createCallExpression(
                         typescript.factory.createPropertyAccessExpression(
                             typescript.factory.createPropertyAccessExpression(
-                                node.expression.expression,
-                                typescript.factory.createIdentifier("dependenciesAccessor")
+                                currentNode.expression.expression,
+                                typescript.factory.createIdentifier('dependenciesAccessor')
                             ),
-                            typescript.factory.createIdentifier("set")
+                            typescript.factory.createIdentifier('set')
                         ),
                         undefined,
                         [
-                            typescript.factory.createStringLiteral(interfaceName),
-                            serviceObject
+                            typescript.factory.createStringLiteral(interfaceId),
+                            serviceDescriptor,
                         ]
                     );
                 }
 
-                return typescript.visitEachChild(node, visitor, context);
+                return typescript.visitEachChild(currentNode, visitNode, context);
             };
 
-            return typescript.visitNode(sourceFile, visitor, typescript.isSourceFile);
+            const updatedSourceFile = typescript.visitNode(sourceFile, visitNode, typescript.isSourceFile);
+
+            const existingImports = new Set<string>();
+            for (const statement of updatedSourceFile.statements) {
+                if (typescript.isImportDeclaration(statement) && statement.importClause?.namedBindings && typescript.isNamedImports(statement.importClause.namedBindings))
+                    for (const element of statement.importClause.namedBindings.elements)
+                        existingImports.add(element.name.text);
+            }
+
+            const importDeclarations: typescript.ImportDeclaration[] = [];
+            for (const [name, modulePath] of importsMap) {
+                const importDeclClause = typescript.factory.createImportClause(
+                    false,
+                    undefined,
+                    typescript.factory.createNamedImports([typescript.factory.createImportSpecifier(false, undefined, typescript.factory.createIdentifier(name))])
+                );
+                importDeclarations.push(typescript.factory.createImportDeclaration(undefined, importDeclClause, typescript.factory.createStringLiteral(modulePath), undefined));
+            }
+
+            return typescript.factory.updateSourceFile(updatedSourceFile, [...importDeclarations, ...updatedSourceFile.statements]);
         };
     };
 }
