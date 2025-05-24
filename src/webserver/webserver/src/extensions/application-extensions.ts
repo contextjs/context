@@ -23,6 +23,7 @@ Application.prototype.useWebServer = function (options: (webserverOptions: WebSe
     let webServerOptions = new WebServerOptions();
     const webServer = new WebServer(webServerOptions);
     this.webServer = webServerOptions.webServer = webServer;
+    this.webServer.application = this;
     options(webServerOptions);
 
     this.onRun(async () => await this.webServer.startAsync());
