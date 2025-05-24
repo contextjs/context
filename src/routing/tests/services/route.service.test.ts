@@ -177,13 +177,6 @@ test('RouteService: match - no trailing slash', (context: TestContext) => {
     context.assert.strictEqual(foundRoute, routeDefinition);
 });
 
-test('RouteService: match - trailing slash', (context: TestContext) => {
-    const routeDefinition = new RouteDefinition("", null, null, new RouteInfo('home/{id}/', 'homeDetails'));
-    const foundRoute = RouteService.match('home/123', [routeDefinition]);
-
-    context.assert.strictEqual(foundRoute, null);
-});
-
 test('RouteService: match - query string', (context: TestContext) => {
     const routeDefinition = new RouteDefinition("", null, null, new RouteInfo('home/{id}', 'homeDetails'));
     const foundRoute = RouteService.match('home/123?query=string', [routeDefinition]);

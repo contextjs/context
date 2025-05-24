@@ -36,8 +36,8 @@ export class RouteService {
     }
 
     private static getScore(value: string, template: string): number {
-        const valueParts = value.split("/");
-        const templateParts = template.split("/");
+        const valueParts = value.split("/").filter(part => part.length > 0);
+        const templateParts = template.split("/").filter(part => part.length > 0);
 
         const hasCatchAll = this.hasCatchAll(templateParts);
         if (!hasCatchAll && valueParts.length > templateParts.length)

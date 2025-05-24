@@ -43,6 +43,9 @@ export declare class RouteInfo {
     /** The route's name, or null if unnamed. */
     public readonly name: string | null;
 
+    /** The decoded version of the route's template.*/
+    public readonly decodedTemplate: string;
+
     /**
      * Creates a new route.
      * @param template The route's URL template.
@@ -59,8 +62,8 @@ export declare class RouteDefinition<T extends RouteInfo = RouteInfo> {
     public importPath: string;
     /** The class reference for the route handler. */
     public classReference: Function | null;
-    /** The name of the method in the class that handles the route. */
-    public methodName: string | null;
+    /** The method in the class that handles the route. */
+    public methodReference: Function | null;
     /** The route information. */
     public route: T;
 
@@ -68,10 +71,10 @@ export declare class RouteDefinition<T extends RouteInfo = RouteInfo> {
      * Creates a new route definition.
      * @param importPath The path to the module where the route is defined.
      * @param classReference The class reference for the route handler.
-     * @param methodName The name of the method in the class that handles the route.
+     * @param methodReference The method in the class that handles the route.
      * @param route The route information.
      */
-    constructor(importPath: string, classReference: Function | null, methodName: string | null, route: T);
+    constructor(importPath: string, classReference: Function | null, methodReference: Function | null, route: T);
 }
 
 /**
