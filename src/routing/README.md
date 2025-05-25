@@ -91,24 +91,44 @@ app.useRouting();
 /**
  * Represents a route definition, including the import path, class reference, method name, and route information.
  */
-export declare class RouteDefinition<T extends RouteInfo = RouteInfo> {
-    /** The path to the module where the route is defined. */
-    public importPath: string;
-    /** The class reference for the route handler. */
-    public classReference: Function | null;
-    /** The method in the class that handles the route. */
-    public methodReference: Function | null;
-    /** The route information. */
-    public route: T;
+export class RouteDefinition<T extends RouteInfo = RouteInfo> {
+    /**
+     * The import path of the module where the route is defined.
+     */
+    public readonly importPath: string;
+
+    /**
+     * The class name of the route handler, or null if not applicable.
+     * This is typically used for class-based controllers.
+     */
+    public readonly className: string | null;
+
+    /**
+     * The method name of the route handler, or null if not applicable.
+     * This is typically used for class-based controllers.
+     */
+    public readonly methodName: string | null;
+
+    /**
+     * Indicates whether the method name is asynchronous.
+     * This is determined by checking if the method's constructor name is "AsyncFunction".
+     */
+    public readonly isMethodNameAsync: boolean;
+
+    /**
+     * The route information, which includes the URL template and name.
+     */
+    public readonly route: T;
 
     /**
      * Creates a new route definition.
      * @param importPath The path to the module where the route is defined.
-     * @param classReference The class reference for the route handler.
-     * @param methodReference The method in the class that handles the route.
+     * @param className The class name of the route handler, or null if not applicable.
+     * @param methodName The method name of the route handler, or null if not applicable.
+     * @param isMethodNameAsync Indicates if the method is asynchronous.
      * @param route The route information.
      */
-    constructor(importPath: string, classReference: Function | null, methodReference: Function | null, route: T);
+    public constructor(importPath: string, className: string | null, methodName: string | null, isMethodNameAsync: boolean, route: T);
 }
 ```
 

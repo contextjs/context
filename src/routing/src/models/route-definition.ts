@@ -9,19 +9,17 @@
 import { RouteInfo } from "./route-info.js";
 
 export class RouteDefinition<T extends RouteInfo = RouteInfo> {
-    public importPath: string;
-    public classReference: Function | null;
-    public methodReference: Function | null;
-    public route: T;
+    public readonly importPath: string;
+    public readonly className: string | null;
+    public readonly methodName: string | null;
+    public readonly isMethodNameAsync: boolean = false;
+    public readonly route: T;
 
-    constructor(
-        importPath: string,
-        classReference: Function | null,
-        methodReference: Function | null,
-        route: T) {
+    constructor(importPath: string, className: string | null, methodName: string | null, isMethodNameAsync: boolean, route: T) {
         this.importPath = importPath;
-        this.classReference = classReference;
-        this.methodReference = methodReference;
+        this.className = className;
+        this.methodName = methodName;
+        this.isMethodNameAsync = isMethodNameAsync;
         this.route = route;
     }
 }

@@ -8,15 +8,16 @@
 
 import { Readable } from "node:stream";
 import { HeaderCollection } from "./header.collection.js";
+import { HttpVerb } from "./http-verb.js";
 
 export class Request {
-    public method!: string;
+    public method!: HttpVerb;
     public path!: string;
     public headers: HeaderCollection = new HeaderCollection();
     public body!: Readable;
 
     public initialize(
-        method: string,
+        method: HttpVerb,
         path: string,
         headers: HeaderCollection,
         body: Readable): this {

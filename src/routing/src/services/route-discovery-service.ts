@@ -13,6 +13,7 @@ import { cwd } from "process";
 import "reflect-metadata";
 import typescript from "typescript";
 import { pathToFileURL } from "url";
+import { ROUTE_META } from "../decorators/route.decorator.js";
 import { RouteDefinition } from "../models/route-definition.js";
 import { RouteInfo } from "../models/route-info.js";
 
@@ -49,14 +50,14 @@ export class RouteDiscoveryService {
                         continue;
 
                     const methodHandler = exportedClass.prototype[propName];
-                    const template = Reflect.getMetadata("template", methodHandler);
+                    if (!Reflect.hasMetadata(ROUTE_META, methodHandler))
+                        continue;
 
-                    if (!ObjectExtensions.isNullOrUndefined(template)) {
-                        const name = Reflect.getMetadata("name", methodHandler);
-                        const routeInfo = new RouteInfo(template, name);
+                    const { template, name } = Reflect.getMetadata(ROUTE_META, methodHandler) as { template: string, name?: string };
+                    const routeInfo = new RouteInfo(template, name);
+                    const isAsync = methodHandler.constructor.name === "AsyncFunction"
 
-                        routeDefinitions.push(new RouteDefinition(importPath, exportedClass, methodHandler, routeInfo));
-                    }
+                    routeDefinitions.push(new RouteDefinition(importPath, exportedClass.name, propName, isAsync, routeInfo));
                 }
             }
         }
