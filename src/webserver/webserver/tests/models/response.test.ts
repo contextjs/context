@@ -198,3 +198,72 @@ test('Response: onEnd callback is invoked before streamAsync', async (context: T
         Http1Response.prototype.stream = originalHttp1Stream;
     }
 });
+
+test('Response: endAsync delegates to Http1Response.end()', async (context: TestContext) => {
+    let http1EndCalled = false;
+    const origHttp1End = Http1Response.prototype.end;
+    Http1Response.prototype.end = function () { http1EndCalled = true; };
+
+    try {
+        const resp = new Response();
+        const fakeSocket = { cork() { }, write() { }, uncork() { }, end() { } } as any as Socket;
+        await resp.initialize(fakeSocket).endAsync();
+        context.assert.ok(http1EndCalled, 'Http1Response.end should have been called');
+    } finally {
+        Http1Response.prototype.end = origHttp1End;
+    }
+});
+
+test('Response: endAsync delegates to Http2Response.end()', async (context: TestContext) => {
+    let http2EndCalled = false;
+    const origHttp2End = Http2Response.prototype.end;
+    Http2Response.prototype.end = function () { http2EndCalled = true; };
+
+    try {
+        const resp = new Response();
+        const fakeHttp2 = { respond() { }, end() { } } as any as ServerHttp2Stream;
+        await resp.initialize(fakeHttp2).endAsync();
+        context.assert.ok(http2EndCalled, 'Http2Response.end should have been called');
+    } finally {
+        Http2Response.prototype.end = origHttp2End;
+    }
+});
+
+test('Response: onEnd callback is invoked before endAsync', async (context: TestContext) => {
+    let called = false;
+    const resp = new Response();
+    const fakeSocket = { cork() { }, write() { }, uncork() { }, end() { } } as any as Socket;
+
+    await resp
+        .initialize(fakeSocket)
+        .onEnd(() => { called = true; })
+        .endAsync();
+
+    context.assert.ok(called, 'onEnd callback should have been invoked before endAsync');
+});
+
+test('Response: onEnd callback is invoked before endAsync even if async', async (context: TestContext) => {
+    let called = false;
+    const resp = new Response();
+    const fakeSocket = { cork() { }, write() { }, uncork() { }, end() { } } as any as Socket;
+
+    await resp
+        .initialize(fakeSocket)
+        .onEnd(async () => { called = true; })
+        .endAsync();
+
+    context.assert.ok(called, 'async onEnd callback should have been awaited before endAsync');
+});
+
+test('Response: reset clears onEnd callbacks', async (context: TestContext) => {
+    let called = false;
+    const resp = new Response();
+    const fakeSocket = { cork() { }, write() { }, uncork() { }, end() { } } as any as Socket;
+
+    resp.initialize(fakeSocket)
+        .onEnd(() => { called = true; })
+        .reset();
+
+    await resp.sendAsync('ignored');
+    context.assert.ok(!called, 'onEnd callbacks should have been cleared by reset()');
+});

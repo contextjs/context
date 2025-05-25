@@ -110,4 +110,19 @@ export class Http2Response {
         stream.once("error", err => { this.http2Stream.destroy(err); });
         stream.pipe(this.http2Stream);
     }
+
+    public end(): void {
+        if (this.responseSent)
+            throw new ResponseSentException();
+
+        const outHeaders: OutgoingHttpHeaders = { ":status": this.statusCode };
+        for (const [key, value] of this.headers.entries())
+            if (!Http2Response.FORBIDDEN_HEADERS.has(key.toLowerCase()))
+                outHeaders[key] = value;
+
+        this.http2Stream.respond(outHeaders);
+        this.http2Stream.end();
+
+        this.responseSent = true;
+    }
 }

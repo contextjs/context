@@ -108,3 +108,73 @@ test('Http2Response: stream: calls respond and pipes into stream', (context: Tes
     context.assert.strictEqual(seenHeaders!['X-Flag'], 'yes');
     context.assert.strictEqual(pipedTo, fakeStream, 'stream should pipe into HTTP/2 stream');
 });
+
+test('Http2Response: end writes headers and ends without payload', (context: TestContext) => {
+    let seenHeaders: Record<string, unknown> | null = null;
+    let didEnd = false;
+    const fakeStream = {
+        respond: (h: Record<string, unknown>) => { seenHeaders = h; },
+        end: () => { didEnd = true; }
+    } as any;
+
+    const response = new Http2Response().initialize(fakeStream);
+    response.setStatus(204, 'No Content')
+        .setHeader('X-Custom', 'foo')
+        .end();
+
+    context.assert.ok(seenHeaders, 'respond should have been called');
+    context.assert.strictEqual(seenHeaders![':status'], 204);
+    context.assert.strictEqual(seenHeaders!['X-Custom'], 'foo');
+    context.assert.ok(didEnd, 'end() should have been called on the stream');
+});
+
+test('Http2Response: end skips forbidden headers', (context: TestContext) => {
+    let seen: Record<string, unknown> = {};
+    const fakeStream = {
+        respond: (h: Record<string, unknown>) => { seen = h; },
+        end: () => { }
+    } as any;
+
+    const response = new Http2Response().initialize(fakeStream);
+    response.setHeader('connection', 'close')
+        .setHeader('Allowed', 'yes')
+        .end();
+
+    context.assert.ok(!('connection' in seen), 'forbidden header "connection" must be omitted');
+    context.assert.strictEqual(seen['Allowed'], 'yes');
+});
+
+test('Http2Response: end throws on second end', (context: TestContext) => {
+    const fakeStream = { respond: () => { }, end: () => { } } as any;
+    const response = new Http2Response().initialize(fakeStream);
+    response.end();
+    context.assert.throws(() => response.end(), ResponseSentException);
+});
+
+test('Http2Response: send or stream after end both throw', (context: TestContext) => {
+    const fakeStream1 = { respond: () => { }, end: () => { } } as any;
+    const resp1 = new Http2Response().initialize(fakeStream1);
+    resp1.end();
+    context.assert.throws(() => resp1.send('x'), ResponseSentException);
+
+    const fakeStream2 = { respond: () => { }, end: () => { } } as any;
+    const resp2 = new Http2Response().initialize(fakeStream2);
+    resp2.end();
+    context.assert.throws(() => resp2.stream(new (class extends Array { }) as any), ResponseSentException);
+});
+
+test('Http2Response: reset allows end again', (context: TestContext) => {
+    let count = 0;
+    const fakeStream = {
+        respond: () => { count += 1; },
+        end: () => { count += 1; }
+    } as any;
+
+    const response = new Http2Response().initialize(fakeStream);
+    response.end();
+    context.assert.throws(() => response.end(), ResponseSentException);
+
+    response.reset();
+    context.assert.doesNotThrow(() => response.end());
+    context.assert.strictEqual(count, 4);
+});

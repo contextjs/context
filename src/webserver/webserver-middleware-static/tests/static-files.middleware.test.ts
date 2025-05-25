@@ -40,6 +40,10 @@ function createContext(requestPath) {
                     httpContext._streamResult = sentData;
                     endCallback();
                 });
+            },
+            setStatus(code: number, message: string) {
+                this.statusCode = code;
+                this.statusMessage = message;
             }
         },
         _streamResult: "",

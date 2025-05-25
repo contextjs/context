@@ -50,6 +50,9 @@ export class Http1Response {
     }
 
     public setStatus(code: number, message: string): this {
+        if (this.responseSent)
+            throw new ResponseSentException();
+        
         this.statusCode = code;
         this.statusMessage = message;
 
@@ -81,6 +84,19 @@ export class Http1Response {
         this.socket.write(bodyBuffer);
         this.socket.uncork();
 
+        this.responseSent = true;
+    }
+
+    public end(): void {
+        if (this.responseSent)
+            throw new ResponseSentException();
+
+        const headerBuffer = this.createHeaderBuffer(false);
+        this.socket.cork();
+        this.socket.write(headerBuffer);
+        this.socket.uncork();
+        this.socket.end();
+        
         this.responseSent = true;
     }
 
@@ -134,7 +150,7 @@ export class Http1Response {
         return statusBuffer;
     }
 
-    private getBufferLength(length: number): Buffer {
+    private getBufferLength(length: number = 0): Buffer {
         let lengthBuffer = this.lengthBuffers.get(length);
         if (lengthBuffer !== undefined)
             return lengthBuffer;
