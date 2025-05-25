@@ -564,6 +564,12 @@ export declare class Response {
      * @param stream Node.js Readable stream.
      */
     public streamAsync(stream: NodeJS.ReadableStream): Promise<void>;
+
+    /**
+     * End the response, invoking all onEnd callbacks.
+     * @returns A promise that resolves when the response is fully sent.
+     */
+    public endAsync(): Promise<void>;
 }
 
 /**

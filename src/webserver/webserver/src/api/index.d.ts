@@ -331,21 +331,6 @@ export declare class Request {
  */
 export declare class Response {
     /**
-     * Modifiable collection of response headers.
-     */
-    public headers: HeaderCollection;
-
-    /**
-     * HTTP status code to send (e.g., 200, 404).
-     */
-    public statusCode: number;
-
-    /**
-     * HTTP status message corresponding to the status code.
-     */
-    public statusMessage: string;
-
-    /**
      * Set status code and optional reason phrase.
      * @param code Numeric HTTP status code.
      * @param message Optional reason phrase (default from code).
@@ -378,13 +363,19 @@ export declare class Response {
      * @returns The Response instance for chaining.
      */
     public onEnd(callback: () => void | Promise<void>): this;
+
+    /**
+     * End the response, invoking all onEnd callbacks.
+     * @returns A promise that resolves when the response is fully sent.
+     */
+    public endAsync(): Promise<void>;
 }
 
 /**
  * Combined HTTP context providing request and response objects.
  */
 export declare class HttpContext {
-    
+
     /**
      * Parsed incoming request information.
      */

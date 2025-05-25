@@ -228,3 +228,72 @@ test('Http1Response: send then stream and stream then send both throw ResponseSe
     context.assert.throws(() => response2.send('Y'), ResponseSentException);
     context.assert.throws(() => response1.stream(new Readable({ read() { this.push(null); } })), ResponseSentException);
 });
+
+test('Http1Response: end writes only header and ends socket', (context: TestContext) => {
+    const writes: Buffer[] = [];
+    let didEnd = false;
+    const dummySocket = {
+        cork: () => { },
+        write: (data: Buffer) => { writes.push(data); },
+        uncork: () => { },
+        end: () => { didEnd = true; }
+    } as any;
+
+    const response = new Http1Response().initialize(dummySocket);
+    response.end();
+
+    // exactly one write (the header), and socket.end() was called
+    context.assert.strictEqual(writes.length, 1);
+    context.assert.ok(
+        writes[0].includes(BufferExtensions.create('HTTP/1.1 200 OK\r\n')),
+        'status line must be present'
+    );
+    context.assert.ok(didEnd, 'socket.end() should have been invoked');
+});
+
+test('Http1Response: end honors setConnectionClose(true)', (context: TestContext) => {
+    const writes: Buffer[] = [];
+    let didEnd = false;
+    const dummySocket = {
+        cork: () => { },
+        write: (b: Buffer) => { writes.push(b); },
+        uncork: () => { },
+        end: () => { didEnd = true; }
+    } as any;
+
+    const response = new Http1Response()
+        .initialize(dummySocket)
+        .setConnectionClose(true);
+
+    response.end();
+
+    const header = writes[0];
+    context.assert.ok(
+        header.includes(BufferExtensions.create('Connection: close\r\n')),
+        'Connection: close must appear in header'
+    );
+    context.assert.ok(didEnd, 'socket.end() should have been invoked');
+});
+
+test('Http1Response: end throws ResponseSentException on second end', (context: TestContext) => {
+    const dummySocket = { cork: () => { }, write: () => { }, uncork: () => { }, end: () => { } } as any;
+    const response = new Http1Response().initialize(dummySocket);
+
+    response.end();
+    context.assert.throws(() => response.end(), ResponseSentException);
+});
+
+test('Http1Response: send/stream after end both throw', (context: TestContext) => {
+    const socket1 = { cork: () => { }, write: () => { }, uncork: () => { }, end: () => { } } as any;
+    const resp1 = new Http1Response().initialize(socket1);
+    resp1.end();
+    context.assert.throws(() => resp1.send('X'), ResponseSentException);
+
+    const socket2 = new PassThrough() as any;
+    socket2.cork = () => { };
+    socket2.uncork = () => { };
+    socket2.end = () => { };
+    const resp2 = new Http1Response().initialize(socket2);
+    resp2.end();
+    context.assert.throws(() => resp2.stream(new Readable({ read() { this.push(null); } })), ResponseSentException);
+});

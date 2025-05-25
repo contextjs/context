@@ -22,7 +22,7 @@ export class StaticFilesMiddleware implements IMiddleware {
     public async onRequest(httpContext: HttpContext, next: () => Promise<void> | void): Promise<void> {
         const requestUrl = httpContext.request.path;
         if (StringExtensions.isNullOrWhiteSpace(requestUrl)) {
-            httpContext.response.statusCode = 500;
+            httpContext.response.setStatus(500, "Server Error");
             await httpContext.response.sendAsync("Server Error: Invalid request URL.");
             return;
         }

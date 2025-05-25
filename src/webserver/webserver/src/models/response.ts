@@ -78,6 +78,11 @@ export class Response {
         this.response.stream(bodyStream);
     }
 
+    public async endAsync(): Promise<void> {
+        await this.invokeOnEnd();
+        this.response.end();
+    }
+
     private isHttp2Stream(target: any): target is ServerHttp2Stream {
         return typeof (target as ServerHttp2Stream).respond === "function" &&
             typeof (target as ServerHttp2Stream).end === "function";
