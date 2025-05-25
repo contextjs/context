@@ -17,6 +17,7 @@ import { HeaderCollection } from "../models/header.collection.js";
 import { HttpContextPool } from "../models/http-context-pool.js";
 import { HttpContext } from "../models/http-context.js";
 import { HeaderParser } from "./header-parser.js";
+import { HttpVerb } from "../models/http-verb.js";
 
 enum ParseState {
     HEADER,
@@ -157,7 +158,7 @@ export abstract class ServerBase {
         }, this.options.general.idleSocketsTimeout);
     }
 
-    private parseRequestHeaders(headerBuffer: Buffer, headers: HeaderCollection): { method: string; path: string; headers: HeaderCollection } {
+    private parseRequestHeaders(headerBuffer: Buffer, headers: HeaderCollection): { method: HttpVerb; path: string; headers: HeaderCollection } {
         const text = headerBuffer.toString("ascii");
         const [requestLine, ...lines] = text.split("\r\n");
         const [method, path] = requestLine.split(" ");
@@ -167,7 +168,7 @@ export abstract class ServerBase {
                 headers.set(line.slice(0, lineIndex).trim(), line.slice(lineIndex + 1).trim());
         }
 
-        return { method, path, headers };
+        return { method: method as HttpVerb, path, headers };
     }
 
     private shouldCloseConnection(headers: HeaderCollection): boolean {

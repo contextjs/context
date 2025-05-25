@@ -15,6 +15,7 @@ import { InvalidCertificateKeyException } from "../exceptions/invalid-certificat
 import { InvalidCertificateException } from "../exceptions/invalid-certificate.exception.js";
 import type { WebServerOptions } from "../options/webserver-options.js";
 import { ServerBase } from "./server-base.js";
+import { HttpVerb } from "../models/http-verb.js";
 
 export class HttpsServer extends ServerBase {
     private readonly label = "ContextJS Web Server [https]";
@@ -47,7 +48,7 @@ export class HttpsServer extends ServerBase {
         });
 
         this.httpsServer.on("stream", (stream, headers: IncomingHttpHeaders) => {
-            const method = (headers[":method"] as string) || "GET";
+            const method = (headers[":method"] as HttpVerb) || "GET";
             const path = (headers[":path"] as string) || "/";
 
             const context = this.httpContextPool.acquire();

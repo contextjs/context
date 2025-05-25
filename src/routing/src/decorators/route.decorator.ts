@@ -6,12 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ObjectExtensions } from '@contextjs/system';
+export const ROUTE_META = Symbol("contextjs:routing:route");
 
 export function Route(template: string, name?: string): MethodDecorator {
     return (target, propertyKey, descriptor) => {
-        Reflect.defineMetadata('template', template, descriptor.value!);
-        if (!ObjectExtensions.isNullOrUndefined(name))
-            Reflect.defineMetadata('name', name, descriptor.value!);
+        Reflect.defineMetadata(ROUTE_META, { template, name }, descriptor.value!);
     };
 }

@@ -10,6 +10,7 @@ import { ServerHttp2Stream } from "http2";
 import { Socket } from "net";
 import { Readable } from "stream";
 import { HeaderCollection } from "./header.collection.js";
+import { HttpVerb } from "./http-verb.js";
 import { Request } from "./request.js";
 import { Response } from "./response.js";
 
@@ -18,7 +19,7 @@ export class HttpContext {
     public readonly response = new Response();
 
     public initialize(
-        method: string,
+        method: HttpVerb,
         path: string,
         headers: HeaderCollection,
         target: Socket | ServerHttp2Stream,
