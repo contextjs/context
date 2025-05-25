@@ -176,6 +176,5 @@ test('Http2Response: reset allows end again', (context: TestContext) => {
 
     response.reset();
     context.assert.doesNotThrow(() => response.end());
-    // respond() + end() twice: initial end + after reset end
     context.assert.strictEqual(count, 4);
 });

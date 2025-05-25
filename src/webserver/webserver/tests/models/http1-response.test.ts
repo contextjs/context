@@ -242,12 +242,8 @@ test('Http1Response: end writes only header and ends socket', (context: TestCont
     const response = new Http1Response().initialize(dummySocket);
     response.end();
 
-    // exactly one write (the header), and socket.end() was called
     context.assert.strictEqual(writes.length, 1);
-    context.assert.ok(
-        writes[0].includes(BufferExtensions.create('HTTP/1.1 200 OK\r\n')),
-        'status line must be present'
-    );
+    context.assert.ok(writes[0].includes(BufferExtensions.create('HTTP/1.1 200 OK\r\n')), 'status line must be present');
     context.assert.ok(didEnd, 'socket.end() should have been invoked');
 });
 
@@ -268,10 +264,7 @@ test('Http1Response: end honors setConnectionClose(true)', (context: TestContext
     response.end();
 
     const header = writes[0];
-    context.assert.ok(
-        header.includes(BufferExtensions.create('Connection: close\r\n')),
-        'Connection: close must appear in header'
-    );
+    context.assert.ok(header.includes(BufferExtensions.create('Connection: close\r\n')), 'Connection: close must appear in header');
     context.assert.ok(didEnd, 'socket.end() should have been invoked');
 });
 
