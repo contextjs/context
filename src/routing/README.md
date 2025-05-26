@@ -110,10 +110,10 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
     public readonly methodName: string | null;
 
     /**
-     * Indicates whether the method name is asynchronous.
-     * This is determined by checking if the method's constructor name is "AsyncFunction".
+     * Indicates whether the method is asynchronous.
+     * This is determined by checking if the method's constructor is "AsyncFunction".
      */
-    public readonly isMethodNameAsync: boolean;
+    public readonly isAsync: boolean;
 
     /**
      * The route information, which includes the URL template and name.
@@ -125,10 +125,36 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
      * @param importPath The path to the module where the route is defined.
      * @param className The class name of the route handler, or null if not applicable.
      * @param methodName The method name of the route handler, or null if not applicable.
-     * @param isMethodNameAsync Indicates if the method is asynchronous.
+     * @param isAsync Indicates if the method is asynchronous.
      * @param route The route information.
      */
-    public constructor(importPath: string, className: string | null, methodName: string | null, isMethodNameAsync: boolean, route: T);
+    public constructor(importPath: string, className: string | null, methodName: string | null, isAsync: boolean, route: T);
+}
+```
+
+### `PasedRoute`
+```ts
+/**
+ * Represents a parsed route, including the route definition and any parameters extracted from the path.
+ */
+export declare class ParsedRoute {
+    /**
+     * The route definition that was matched.
+     */
+    public readonly definition: RouteDefinition;
+
+    /**
+     * The parameters extracted from the route path.
+     * This is a dictionary where keys are parameter names and values are their corresponding values.
+     */
+    public readonly parameters: Dictionary<string, any>;
+
+    /**
+     * Creates a new parsed route.
+     * @param definition The route definition that was matched.
+     * @param parameters The parameters extracted from the route path.
+     */
+    public constructor(definition: RouteDefinition, parameters: Dictionary<string, any>);
 }
 ```
 
