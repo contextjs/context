@@ -12,14 +12,14 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
     public readonly importPath: string;
     public readonly className: string | null;
     public readonly methodName: string | null;
-    public readonly isMethodNameAsync: boolean = false;
+    public readonly isAsync: boolean = false;
     public readonly route: T;
 
-    constructor(importPath: string, className: string | null, methodName: string | null, isMethodNameAsync: boolean, route: T) {
+    constructor(importPath: string, className: string | null, methodName: string | null, isAsync: boolean, route: T) {
         this.importPath = importPath;
         this.className = className;
         this.methodName = methodName;
-        this.isMethodNameAsync = isMethodNameAsync;
+        this.isAsync = isAsync;
         this.route = route;
     }
 }

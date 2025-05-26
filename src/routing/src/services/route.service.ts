@@ -6,13 +6,15 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/system";
+import { Dictionary } from "@contextjs/collections";
+import { ObjectExtensions, StringExtensions } from "@contextjs/system";
 import { IParsedSegment } from "../interfaces/i-parsed-segment.js";
+import { ParsedRoute } from "../models/parsed-route.js";
 import { RouteDefinition } from "../models/route-definition.js";
 import { SegmentKind } from "../models/segment-kind.js";
 
 export class RouteService {
-    public static match(value: string, routeDefinitions: RouteDefinition[]): RouteDefinition | null {
+    public static match(value: string, routeDefinitions: RouteDefinition[]): ParsedRoute | null {
         if (StringExtensions.isNullOrWhiteSpace(value))
             return null;
 
@@ -32,7 +34,39 @@ export class RouteService {
             }
         }
 
-        return bestMatch;
+        return this.parseRoute(value, bestMatch);
+    }
+
+    private static parseRoute(value: string, routeDefinition: RouteDefinition | null): ParsedRoute | null {
+        if (ObjectExtensions.isNullOrUndefined(routeDefinition))
+            return null;
+
+        const parameters = new Dictionary<string, any>();
+        const valueParts = value.split("/").filter(p => p.length > 0);
+        const templateParts = routeDefinition.route.decodedTemplate
+            .split("/")
+            .filter(p => p.length > 0);
+
+        let i = 0, j = 0;
+        while (i < templateParts.length) {
+            const segment = this.parseSegment(templateParts[i]);
+            const part = j < valueParts.length ? valueParts[j] : null;
+
+            if (segment.kind === SegmentKind.CatchAll) {
+                const rest = valueParts.slice(j).join("/");
+                if (segment.name)
+                    parameters.set(segment.name, rest);
+                break;
+            }
+
+            if ((segment.kind === SegmentKind.Parameter || segment.kind === SegmentKind.Optional) && segment.name)
+                parameters.set(segment.name, part || null);
+
+            i++;
+            j++;
+        }
+
+        return new ParsedRoute(routeDefinition, parameters);
     }
 
     private static getScore(value: string, template: string): number {
