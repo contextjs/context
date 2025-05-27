@@ -18,6 +18,7 @@ import { HttpContextPool } from "../models/http-context-pool.js";
 import { HttpContext } from "../models/http-context.js";
 import { HeaderParser } from "./header-parser.js";
 import { HttpVerb } from "../models/http-verb.js";
+import { Protocol } from "../models/protocol.js";
 
 enum ParseState {
     HEADER,
@@ -64,7 +65,7 @@ export abstract class ServerBase {
         }
     }
 
-    protected handleSocket(socket: Socket): void {
+    protected handleSocket(socket: Socket, protocol: Protocol, port: number): void {
         const parser = new HeaderParser(this.options.general.maximumHeaderSize);
         let state = ParseState.HEADER;
         let remainingBodyBytes = 0;
@@ -110,8 +111,10 @@ export abstract class ServerBase {
                     bodyStream = new PassThrough();
                     activeRequests++;
 
+                    const host = headers.get("host") || socket.remoteAddress || "unknown";
+
                     const shouldClose = this.shouldCloseConnection(headers);
-                    context.initialize(method, path, headers, socket, bodyStream!);
+                    context.initialize(protocol, host, port, method, path, headers, socket, bodyStream!);
                     context.response.setConnectionClose(shouldClose);
 
                     try {

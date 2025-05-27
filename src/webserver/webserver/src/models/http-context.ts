@@ -13,18 +13,22 @@ import { HeaderCollection } from "./header.collection.js";
 import { HttpVerb } from "./http-verb.js";
 import { Request } from "./request.js";
 import { Response } from "./response.js";
+import { Protocol } from "./protocol.js";
 
 export class HttpContext {
     public readonly request = new Request();
     public readonly response = new Response();
 
     public initialize(
+        protocol: Protocol,
+        host: string,
+        port: number,
         method: HttpVerb,
         path: string,
         headers: HeaderCollection,
         target: Socket | ServerHttp2Stream,
         body: Readable): this {
-        this.request.initialize(method, path, headers, body);
+        this.request.initialize(protocol, host, port, method, path, headers, body);
         this.response.initialize(target);
 
         return this;

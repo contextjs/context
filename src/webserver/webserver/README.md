@@ -243,6 +243,12 @@ declare module "@contextjs/system" {
 export declare type HttpVerb = "GET" | "POST" | "PUT" | "DELETE";
 
 /**
+ * Protocol types for network communication.
+ * Used to distinguish between HTTP and HTTPS.
+ */
+export declare type Protocol = "HTTP" | "HTTPS";
+
+/**
  * Core HTTP/HTTPS server for handling requests and middleware pipeline.
  */
 export declare class WebServer {
@@ -503,19 +509,45 @@ export declare class HeaderCollection {
  */
 export declare class Request {
     /**
+     * Protocol used for the request (HTTP or HTTPS).
+     */
+    public protocol: Protocol;
+
+    /**
+     * Hostname or IP address of the request origin.
+     */
+    public host: string;
+
+    /**
+     * Port number of the request origin.
+     */
+    public port: number;
+
+    /**
      * HTTP method (GET, POST, etc.).
      */
     public readonly method: string;
 
     /**
-     * URL path of the request.
-     */
-    public readonly path: string;
-
-    /**
      * Parsed request headers.
      */
     public readonly headers: HeaderCollection;
+
+    /**
+     * The path of the request, excluding query parameters.
+     */
+    public get path(): string;
+
+    /**
+     * The raw query string from the request URL.
+     */
+    public get rawQuery(): string;
+
+    /**
+     * Parsed query parameters as a dictionary.
+     * Keys are parameter names, values are single or array of values.
+     */
+    public get queryParams(): Dictionary<string, string | string[]>;
 }
 
 /**

@@ -77,7 +77,7 @@ export class HttpServer extends ServerBase {
         this.server.on("connection", (socket: Socket) => {
             this.sockets.set(socket, { lastActive: Date.now() });
             socket.once("close", () => this.sockets.delete(socket));
-            this.handleSocket(socket);
+            this.handleSocket(socket, "HTTP", this.options.http.port);
         });
     }
 }

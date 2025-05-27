@@ -49,31 +49,45 @@ export class HttpsServer extends ServerBase {
 
         this.httpsServer.on("stream", (stream, headers: IncomingHttpHeaders) => {
             const method = (headers[":method"] as HttpVerb) || "GET";
-            const path = (headers[":path"] as string) || "/";
+            const fullPath = (headers[":path"] as string) || "/";
+
+            let authority = (headers[":authority"] as string) || "";
+            let host: string;
+            let port: number;
+            if (authority) {
+                const [h, p] = authority.split(":");
+                host = h;
+                port = p ? parseInt(p, 10) : this.options.https.port;
+            }
+            else {
+                host = this.options.https.host ?? "localhost";
+                port = this.options.https.port;
+            }
 
             const context = this.httpContextPool.acquire();
-            for (const [name, value] of Object.entries(headers)) {
-                if (name.startsWith(":") || value == null)
-                    continue;
+            context.request.initialize("HTTPS", host, port, method, fullPath, context.request.headers, stream);
 
-                context.request.headers.set(name, Array.isArray(value) ? value.join(", ") : (value as string));
+            for (const [name, raw] of Object.entries(headers)) {
+                if (name.startsWith(":") || raw == null)
+                    continue;
+                context.request.headers.set(name, Array.isArray(raw) ? raw.join(", ") : raw);
             }
 
             const hasBody = !!headers["content-length"] || ["POST", "PUT", "PATCH"].includes(method);
-            context.initialize(method, path, context.request.headers, stream, hasBody ? stream : null!);
+            const bodyStream = hasBody ? stream : null;
+            context.initialize("HTTPS", host, port, method, fullPath, context.request.headers, stream, bodyStream!);
             context.response.setConnectionClose(false);
 
             Promise.resolve(this.dispatchRequestAsync(context))
-                .catch((error) => this.options.onEvent({ type: "error", detail: error }))
+                .catch(err => this.options.onEvent({ type: "error", detail: err }))
                 .finally(() => this.httpContextPool.release(context));
 
-            stream.on("error", (error) => {
-                this.options.onEvent({ type: "error", detail: error });
-                stream.destroy(error);
+            stream.on("error", err => {
+                this.options.onEvent({ type: "error", detail: err });
+                stream.destroy(err);
             });
-
             stream.once("aborted", () => {
-                this.options.onEvent({ type: "warning", detail: "Client aborted the request" });
+                this.options.onEvent({ type: "warning", detail: "Client aborted request" });
                 stream.destroy();
             });
         });
@@ -89,7 +103,7 @@ export class HttpsServer extends ServerBase {
             if (socket.alpnProtocol === "h2")
                 this.httpsServer.emit("secureConnection", socket);
             else
-                this.handleSocket(socket);
+                this.handleSocket(socket, "HTTPS", this.options.https.port);
         });
 
         this.tlsServer.on("error", (error) => this.options.onEvent({ type: "error", detail: error }));

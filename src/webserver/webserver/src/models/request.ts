@@ -6,35 +6,99 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Dictionary } from "@contextjs/collections";
+import { ObjectExtensions, StringExtensions } from "@contextjs/system";
 import { Readable } from "node:stream";
 import { HeaderCollection } from "./header.collection.js";
 import { HttpVerb } from "./http-verb.js";
+import type { Protocol } from "./protocol.js";
 
 export class Request {
+    public protocol!: Protocol;
+    public host!: string;
+    public port!: number;
     public method!: HttpVerb;
-    public path!: string;
     public headers: HeaderCollection = new HeaderCollection();
     public body!: Readable;
 
+    private fullPath!: string;
+    private parsedQuery?: Dictionary<string, string | string[]>;
+
     public initialize(
+        protocol: Protocol,
+        host: string,
+        port: number,
         method: HttpVerb,
-        path: string,
+        fullPath: string,
         headers: HeaderCollection,
         body: Readable): this {
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
         this.method = method;
-        this.path = path;
+        this.fullPath = fullPath;
         this.headers = headers;
         this.body = body;
+
+        this.parsedQuery = undefined;
 
         return this;
     }
 
     public reset(): this {
+        this.protocol = undefined!;
+        this.host = undefined!;
+        this.port = undefined!;
         this.method = undefined!;
-        this.path = undefined!;
-        this.headers.clear();
+        this.fullPath = undefined!;
         this.body = undefined!;
+        this.parsedQuery = undefined;
+
+        this.headers.clear();
 
         return this;
+    }
+
+    public get path(): string {
+        const index = this.fullPath.indexOf("?");
+        return index >= 0
+            ? this.fullPath.slice(0, index)
+            : this.fullPath;
+    }
+
+    public get rawQuery(): string {
+        const index = this.fullPath.indexOf("?");
+        return index >= 0
+            ? this.fullPath.slice(index + 1)
+            : "";
+    }
+
+    public get queryParams(): Dictionary<string, string | string[]> {
+        if (!ObjectExtensions.isNullOrUndefined(this.parsedQuery))
+            return this.parsedQuery;
+
+        const result = new Dictionary<string, string | string[]>();
+
+        if (StringExtensions.isNullOrWhiteSpace(this.rawQuery))
+            return result;
+
+        for (const part of this.rawQuery.split("&")) {
+            if (!StringExtensions.isNullOrWhiteSpace(part))
+                continue;
+
+            const [key, value = ""] = part.split("=").map(decodeURIComponent);
+            if (!result.has(key))
+                result.set(key, value);
+            else {
+                const currentValue = result.get(key)!;
+                if (Array.isArray(currentValue))
+                    currentValue.push(value);
+                else
+                    result.set(key, [currentValue, value]);
+            }
+        }
+
+        this.parsedQuery = result;
+        return result;
     }
 }
