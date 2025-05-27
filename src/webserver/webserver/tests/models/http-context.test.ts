@@ -14,67 +14,72 @@ import { HttpContext } from '../../src/models/http-context.js';
 import { Request } from '../../src/models/request.js';
 import { Response } from '../../src/models/response.js';
 
-test('HttpContext.initialize: calls Request.initialize and Response.initialize, returns this', (context: TestContext) => {
-    const ctx = new HttpContext();
+test('HttpContext: initialize delegates to Request.initialize and Response.initialize, returns this', (context: TestContext) => {
+    const httpContext = new HttpContext();
 
-    let reqCalled = false;
-    let reqArgs: unknown[] = [];
-    const origReqInit = Request.prototype.initialize;
-    Request.prototype.initialize = function (method: string, path: string, headers: HeaderCollection, body: Readable) {
-        reqCalled = true;
-        reqArgs = [method, path, headers, body];
+    let requestCalled = false;
+    let requestArguments: unknown[] = [];
+    const originalRequestInitializer = Request.prototype.initialize;
+    Request.prototype.initialize = function (
+        method: unknown,
+        path: unknown,
+        headers: unknown,
+        body: unknown,
+        protocol: unknown,
+        host: unknown,
+        port: unknown) {
+        requestCalled = true;
+        requestArguments = [method, path, headers, body, protocol, host, port];
         return this;
     };
 
-    let resCalled = false;
-    let resArg: unknown;
-    const origResInit = Response.prototype.initialize;
-    Response.prototype.initialize = function (target: Socket) {
-        resCalled = true;
-        resArg = target;
+    let responseCalled = false;
+    let responseArgument: unknown;
+    const originalResponseInitializer = Response.prototype.initialize;
+    Response.prototype.initialize = function (target: unknown) {
+        responseCalled = true;
+        responseArgument = target;
         return this;
     };
 
     try {
         const headers = new HeaderCollection();
         const dummyTarget = {} as Socket;
-        const dummyBody = new Readable({ read() { /* no-op */ } });
+        const dummyBody = new Readable({ read() { } });
 
-        const result = ctx.initialize('GET', '/test', headers, dummyTarget, dummyBody);
-        context.assert.strictEqual(result, ctx);
-        context.assert.ok(reqCalled);
-        context.assert.deepStrictEqual(reqArgs, ['GET', '/test', headers, dummyBody]);
-        context.assert.ok(resCalled);
-        context.assert.strictEqual(resArg, dummyTarget);
+        const result = httpContext.initialize('HTTPS', 'example.com', 8443, 'GET', '/test', headers, dummyTarget, dummyBody);
+
+        context.assert.strictEqual(result, httpContext);
+        context.assert.ok(requestCalled, 'Request.initialize should have been called');
+        context.assert.deepStrictEqual(requestArguments, ['HTTPS', 'example.com', 8443, 'GET', '/test', headers, dummyBody]);
+        context.assert.ok(responseCalled, 'Response.initialize should have been called');
+        context.assert.strictEqual(responseArgument, dummyTarget);
     }
     finally {
-        Request.prototype.initialize = origReqInit;
-        Response.prototype.initialize = origResInit;
+        Request.prototype.initialize = originalRequestInitializer;
+        Response.prototype.initialize = originalResponseInitializer;
     }
 });
 
-test('HttpContext.reset: calls Request.reset and Response.reset, returns this', (context: TestContext) => {
-    const ctx = new HttpContext();
+test('HttpContext: reset: delegates to Request.reset and Response.reset, returns this', (context: TestContext) => {
+    const httpContext = new HttpContext();
+    let requestReset = false;
+    const originalRequestReset = Request.prototype.reset;
+    Request.prototype.reset = function () { requestReset = true; return this; };
 
-    let reqReset = false;
-    const origReqReset = Request.prototype.reset;
-    Request.prototype.reset = function () {
-        reqReset = true;
-        return this;
-    };
-
-    let resReset = false;
-    const origResReset = Response.prototype.reset;
-    Response.prototype.reset = function () { resReset = true; return this; };
+    let responseReset = false;
+    const originalResponseReset = Response.prototype.reset;
+    Response.prototype.reset = function () { responseReset = true; return this; };
 
     try {
-        const result = ctx.reset();
-        context.assert.strictEqual(result, ctx);
-        context.assert.ok(reqReset);
-        context.assert.ok(resReset);
+        const result = httpContext.reset();
+
+        context.assert.strictEqual(result, httpContext);
+        context.assert.ok(requestReset, 'Request.reset should have been called');
+        context.assert.ok(responseReset, 'Response.reset should have been called');
     }
     finally {
-        Request.prototype.reset = origReqReset;
-        Response.prototype.reset = origResReset;
+        Request.prototype.reset = originalRequestReset;
+        Response.prototype.reset = originalResponseReset;
     }
 });

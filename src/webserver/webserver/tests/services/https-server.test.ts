@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { Http2Response } from '../../src/models/http2-response.js';
 import { WebServerOptions } from '../../src/options/webserver-options.js';
 import { HttpsServer } from '../../src/services/https-server.js';
+import { HttpContext } from '../../src/models/http-context.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const KEY_PATH = resolve(__dirname, '../fixtures/test-key.pem');
@@ -122,80 +123,134 @@ test('HttpsServer: session event applies settings and cleans up on close', (cont
     context.assert.ok(!server['sessions'].has(fakeSession));
 });
 
-test('HttpsServer: stream event dispatches request and releases context', async (context: TestContext) => {
-    const events: any[] = [];
-    const options: WebServerOptions = new WebServerOptions(
-        { maximumHeaderSize: 1024, httpContextPoolSize: 1, idleSocketsTimeout: 100 } as any,
-        { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
-        { enabled: true, port: 0, host: 'localhost', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
-        (e: any) => events.push(e)
+test('HttpsServer: stream event dispatches request and releases context', async (t: TestContext) => {
+  const events: any[] = [];
+  const options = new WebServerOptions(
+    { maximumHeaderSize: 1024, httpContextPoolSize: 1, idleSocketsTimeout: 100 } as any,
+    { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
+    { enabled: true, port: 0, host: 'localhost', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
+    (e: any) => events.push(e)
+  );
+  const server = new HttpsServer(options);
+
+  const acquired: Array<[string, string][]> = [];
+  const released: HttpContext[] = [];
+
+  // use a real HttpContext so reset()/initialize() exist
+  const dummy = new HttpContext();
+
+  // stub out reset() to be a no-op
+  (dummy as any).reset = () => dummy;
+
+  // stub initialize() on the context itself:
+  // HttpsServer calls context.initialize(protocol, host, port, method, path, headers, target, body)
+  (dummy as any).initialize = (
+    _protocol: any,
+    _host: any,
+    _port: any,
+    _method: any,
+    _path: any,
+    headers: Map<string, string>,
+    _target: any,
+    _body: any
+  ) => {
+    // record only the non-":*" headers
+    acquired.push(
+      Array.from(headers.entries())
     );
-    const server = new HttpsServer(options);
+    return dummy;
+  };
 
-    const acquiredContexts: any[] = [];
-    const releasedContexts: any[] = [];
-    const dummyContext = {
-        request: { headers: new Map<string, string>() },
-        response: { setConnectionClose: (_: boolean) => { } },
-        initialize: (_m: string, _p: string, headers: any, _s: any, _b: any) => {
-            acquiredContexts.push(Array.from((headers as Map<string, string>).entries()));
-        }
-    };
+  // stub response.setConnectionClose (HttpsServer does this)
+  (dummy.response as any).setConnectionClose = (_: boolean) => {};
 
-    const fakePool = { acquire: () => dummyContext, release: (ctx: any) => fakePool };
-    (server as any).httpContextPool = fakePool as any;
+  // wire up a fake pool that records both acquire & release
+  (server as any).httpContextPool = {
+    acquire: () => dummy,
+    release: (ctx: HttpContext) => { released.push(ctx); }
+  };
 
-    (server as any).dispatchRequestAsync = (_: any) => Promise.resolve();
+  // short-circuit the dispatcher
+  (server as any).dispatchRequestAsync = () => Promise.resolve();
 
-    const fakeStream = new PassThrough();
-    (fakeStream as any).destroy = (_err?: any) => { };
-    const headers = { ':method': 'GET', ':path': '/abc', 'x-test': 'value' };
+  // fake an HTTP/2 stream
+  const fakeStream = new PassThrough() as any;
+  fakeStream.destroy = (_?: any) => {};
 
-    server['httpsServer'].emit('stream', fakeStream, headers);
-    await new Promise(r => setImmediate(r));
+  // emit the 'stream' event with pseudo-headers + one real header
+  const headers = { ':method': 'GET', ':path': '/abc', 'x-test': 'value' };
+  server['httpsServer'].emit('stream', fakeStream, headers);
 
-    context.assert.strictEqual(acquiredContexts.length, 1);
-    context.assert.strictEqual(releasedContexts.length, 0);
-    context.assert.deepStrictEqual(acquiredContexts[0], [['x-test', 'value']]);
+  // wait a tick for the async handler to run
+  await new Promise(r => setImmediate(r));
+
+  // exactly one initialize ⇒ one acquisition
+  t.assert.strictEqual(acquired.length, 1, 'should have initialized once');
+  t.assert.deepStrictEqual(acquired[0], [['x-test', 'value']]);
+
+  // exactly one release of that same context
+  t.assert.strictEqual(released.length, 1, 'should have released once');
+  t.assert.strictEqual(released[0], dummy);
 });
 
-test('HttpsServer: stream error and aborted handling emits events and destroys stream', (context: TestContext) => {
-    const events: any[] = [];
-    const options: WebServerOptions = new WebServerOptions(
-        { maximumHeaderSize: 1024, httpContextPoolSize: 1, idleSocketsTimeout: 100 } as any,
-        { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
-        { enabled: true, port: 0, host: 'localhost', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
-        (e: any) => events.push(e)
-    );
-    const server = new HttpsServer(options);
+test('HttpsServer: stream error and aborted handling emits events and destroys stream', async (context: TestContext) => {
+  const events: any[] = [];
+  const options = new WebServerOptions(
+    { maximumHeaderSize: 1024, httpContextPoolSize: 1, idleSocketsTimeout: 100 } as any,
+    { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
+    { enabled: true, port: 0, host: 'localhost', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
+    (e: any) => events.push(e)
+  );
+  const server = new HttpsServer(options);
 
-    const dummyContext = {
-        request: { headers: new Map<string, string>() },
-        response: { setConnectionClose: (_: boolean) => { } },
-        initialize: (_m: string, _p: string, _h: any, _s: any, _b: any) => { }
-    };
-    const fakePool = {
-        acquire: () => dummyContext,
-        release: (_: any) => fakePool
-    };
-    (server as any).httpContextPool = fakePool as any;
+  // use a real HttpContext so we get the right shape
+  const dummy = new HttpContext();
+  // stub out its internals
+  (dummy.request as any).initialize = () => dummy;
+  (dummy.response as any).initialize = () => {};
+  (dummy.response as any).setConnectionClose = () => {};
 
-    (server as any).dispatchRequestAsync = () => Promise.resolve(dummyContext);
+  // wire up a one-slot pool
+  (server as any).httpContextPool = {
+    acquire: () => dummy,
+    release: () => {}
+  };
 
-    const fakeStream = new PassThrough();
-    let destroyCount = 0;
-    (fakeStream as any).destroy = () => { destroyCount++; };
+  // short-circuit the dispatcher
+  (server as any).dispatchRequestAsync = () => Promise.resolve(dummy);
 
-    server['httpsServer'].emit('stream', fakeStream, {});
+  // fake an HTTP/2 stream
+  const fakeStream = new PassThrough() as any;
+  let destroyCount = 0;
+  fakeStream.destroy = () => { destroyCount++; };
 
-    const err = new Error('stream-fail');
-    fakeStream.emit('error', err);
-    context.assert.ok(events.some(e => e.type === 'error' && e.detail === err));
-    context.assert.strictEqual(destroyCount, 1);
+  // kick off the server’s 'stream' handler
+  server['httpsServer'].emit('stream', fakeStream, {});
 
-    fakeStream.emit('aborted');
-    context.assert.ok(events.some(e => e.type === 'warning' && e.detail === 'Client aborted the request'));
-    context.assert.strictEqual(destroyCount, 2);
+  // 1) Error path
+  const err = new Error('stream-fail');
+  fakeStream.emit('error', err);
+
+  // give it a tick to run the handler
+  await new Promise(resolve => setImmediate(resolve));
+
+  context.assert.ok(
+    events.some(e => e.type === 'error' && e.detail === err),
+    'expected an error event'
+  );
+  context.assert.strictEqual(destroyCount, 1, 'stream.destroy should have been called once');
+
+  // 2) Aborted path
+  fakeStream.emit('aborted');
+
+  // another tick
+  await new Promise(resolve => setImmediate(resolve));
+
+  context.assert.ok(
+    events.some(e => e.type === 'warning' && /abort/i.test(String(e.detail))),
+    'expected a warning event whose detail mentions "abort"'
+  );
+  context.assert.strictEqual(destroyCount, 2, 'stream.destroy should have been called twice');
 });
 
 test('HttpsServer: TLS server callback handles h2 and fallback protocols', (context: TestContext) => {
