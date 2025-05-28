@@ -7,26 +7,32 @@
  */
 
 import { Directory, File, Path } from "@contextjs/io";
-import { ObjectExtensions, StringExtensions } from "@contextjs/system";
+import { RouteDefinition } from "@contextjs/routing";
+import { StringExtensions } from "@contextjs/system";
 import path from "path";
 import { cwd } from "process";
 import "reflect-metadata";
 import typescript from "typescript";
 import { pathToFileURL } from "url";
-import { ROUTE_META } from "../decorators/route.decorator.js";
-import { RouteDefinition } from "../models/route-definition.js";
-import { RouteInfo } from "../models/route-info.js";
+import { getControllerMetadata } from "../decorators/controller.decorator.js";
+import { ControllerDefinition } from "../models/controller-definition.js";
+import { VerbRouteDiscoveryService } from "./verb-route-discovery-service.js";
 
-export class RouteDiscoveryService {
-    public static async discoverRoutesAsync(): Promise<RouteDefinition[]> {
+export class ControllerDiscoveryService {
+    public static async discoverAsync(): Promise<{ controllers: ControllerDefinition[], routes: RouteDefinition[] }> {
         const currentDirectory = path.join(cwd(), this.getCurrentDirectory());
         const entryFile = Path.normalize(process.argv[1]);
         const files = Directory
             .listFiles(currentDirectory, true)
-            .filter(f => File.getExtension(f) === "js" || File.getExtension(f) === "mjs")
-            .filter(f => Path.normalize(f) !== entryFile);
+            .filter(fileName => {
+                const ext = File.getExtension(fileName);
+                return ext === "js" || ext === "mjs" || ext === "cjs";
+            })
+            .filter(fileName => Path.normalize(fileName) !== entryFile);
 
+        const controllerDefinitions: ControllerDefinition[] = [];
         const routeDefinitions: RouteDefinition[] = [];
+
         for (const file of files) {
             const importPath = pathToFileURL(Path.normalize(file)).href;
 
@@ -41,27 +47,21 @@ export class RouteDiscoveryService {
 
             for (const exportName of Object.keys(importedFile)) {
                 const exportedClass = importedFile[exportName];
-
                 if (typeof exportedClass !== "function")
                     continue;
 
-                for (const propName of Object.getOwnPropertyNames(exportedClass.prototype)) {
-                    if (propName === "constructor")
-                        continue;
+                const controllerMeta = getControllerMetadata(exportedClass);
+                if (!controllerMeta)
+                    continue;
 
-                    const methodHandler = exportedClass.prototype[propName];
-                    if (!Reflect.hasMetadata(ROUTE_META, methodHandler))
-                        continue;
+                const definition = new ControllerDefinition(exportName, exportedClass, Reflect.getMetadata("controller:template", exportedClass));
 
-                    const { template, name } = Reflect.getMetadata(ROUTE_META, methodHandler) as { template: string, name?: string };
-                    const routeInfo = new RouteInfo(template, name);
-
-                    routeDefinitions.push(new RouteDefinition(importPath, exportedClass.name, propName, routeInfo));
-                }
+                controllerDefinitions.push(definition);
+                routeDefinitions.push(...await VerbRouteDiscoveryService.discoverAsync(importedFile, importPath, definition));
             }
         }
 
-        return routeDefinitions;
+        return { controllers: controllerDefinitions, routes: routeDefinitions }
     }
 
     private static getCurrentDirectory(): string {

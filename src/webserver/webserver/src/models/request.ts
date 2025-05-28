@@ -22,6 +22,8 @@ export class Request {
     public body!: Readable;
 
     private fullPath!: string;
+    private _path?: string;
+    private _rawQuery?: string;
     private parsedQuery?: Dictionary<string, string | string[]>;
 
     public initialize(
@@ -60,30 +62,38 @@ export class Request {
     }
 
     public get path(): string {
-        const index = this.fullPath.indexOf("?");
-        return index >= 0
-            ? this.fullPath.slice(0, index)
-            : this.fullPath;
+        if (StringExtensions.isNullOrWhiteSpace(this._path)) {
+            const index = this.fullPath.indexOf("?");
+            return index >= 0
+                ? this.fullPath.slice(0, index)
+                : this.fullPath;
+        }
+
+        return this._path;
     }
 
     public get rawQuery(): string {
-        const index = this.fullPath.indexOf("?");
-        return index >= 0
-            ? this.fullPath.slice(index + 1)
-            : "";
+        if (StringExtensions.isNullOrWhiteSpace(this._rawQuery)) {
+            const index = this.fullPath.indexOf("?");
+            return index >= 0
+                ? this.fullPath.slice(index + 1)
+                : "";
+        }
+
+        return this._rawQuery;
     }
 
     public get queryParams(): Dictionary<string, string | string[]> {
         if (!ObjectExtensions.isNullOrUndefined(this.parsedQuery))
             return this.parsedQuery;
 
+        const rawQuery = this.rawQuery;
         const result = new Dictionary<string, string | string[]>();
-
-        if (StringExtensions.isNullOrWhiteSpace(this.rawQuery))
+        if (StringExtensions.isNullOrWhiteSpace(rawQuery))
             return result;
 
-        for (const part of this.rawQuery.split("&")) {
-            if (!StringExtensions.isNullOrWhiteSpace(part))
+        for (const part of rawQuery.split("&")) {
+            if (StringExtensions.isNullOrWhiteSpace(part))
                 continue;
 
             const [key, value = ""] = part.split("=").map(decodeURIComponent);

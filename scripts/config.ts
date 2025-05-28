@@ -22,7 +22,8 @@ export default class Config {
         ["webserver", [
             "webserver",
             "webserver-middleware-static",
-            "webserver-middleware-cookies"]],
+            "webserver-middleware-cookies",
+            "webserver-middleware-controllers"]],
         ["compiler", []],
         ["di", []],
         ["context", []],

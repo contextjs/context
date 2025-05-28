@@ -77,12 +77,6 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
     public readonly methodName: string | null;
 
     /**
-     * Indicates whether the method is asynchronous.
-     * This is determined by checking if the method's constructor is "AsyncFunction".
-     */
-    public readonly isAsync: boolean;
-
-    /**
      * The route information, which includes the URL template and name.
      */
     public readonly route: T;
@@ -92,10 +86,9 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
      * @param importPath The path to the module where the route is defined.
      * @param className The class name of the route handler, or null if not applicable.
      * @param methodName The method name of the route handler, or null if not applicable.
-     * @param isAsync Indicates if the method is asynchronous.
      * @param route The route information.
      */
-    public constructor(importPath: string, className: string | null, methodName: string | null, isAsync: boolean, route: T);
+    public constructor(importPath: string, className: string | null, methodName: string | null, route: T);
 }
 
 /**
@@ -132,4 +125,10 @@ export declare class RouteService {
      * @returns The matching ParsedRoute, or null if no match is found.
      */
     public static match(value: string, routes: RouteDefinition[]): ParsedRoute | null;
+
+    /**
+     * Splits a raw request path into normalized segments.
+     * @param value The raw request path.
+     */
+    public static getSegments(value: string): string[];
 }

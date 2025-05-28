@@ -19,7 +19,8 @@ export class RouteService {
             return null;
 
         value = this.normalizePath(value);
-        const maxScore = value.split("/").length * 10;
+        const segments = this.getSegments(value);
+        const maxScore = segments.length * 10;
         let bestMatch: RouteDefinition | null = null;
         let bestScore = -1;
 
@@ -37,12 +38,20 @@ export class RouteService {
         return this.parseRoute(value, bestMatch);
     }
 
+    public static getSegments(value: string): string[] {
+        return StringExtensions.isNullOrWhiteSpace(value)
+            ? []
+            : this.normalizePath(value)
+                .split("/")
+                .filter(p => p.length > 0);
+    }
+
     private static parseRoute(value: string, routeDefinition: RouteDefinition | null): ParsedRoute | null {
         if (ObjectExtensions.isNullOrUndefined(routeDefinition))
             return null;
 
         const parameters = new Dictionary<string, any>();
-        const valueParts = value.split("/").filter(p => p.length > 0);
+        const valueParts = this.getSegments(value);
         const templateParts = routeDefinition.route.decodedTemplate
             .split("/")
             .filter(p => p.length > 0);
@@ -70,7 +79,7 @@ export class RouteService {
     }
 
     private static getScore(value: string, template: string): number {
-        const valueParts = value.split("/").filter(part => part.length > 0);
+        const valueParts = this.getSegments(value);
         const templateParts = template.split("/").filter(part => part.length > 0);
 
         const hasCatchAll = this.hasCatchAll(templateParts);
