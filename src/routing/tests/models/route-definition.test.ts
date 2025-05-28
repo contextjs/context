@@ -14,7 +14,7 @@ import { RouteInfo } from "../../src/models/route-info.js";
 test("RouteDefinition: properties are set correctly", (context: TestContext) => {
 
     const routeInfo = new RouteInfo("/test/path", "testName");
-    const definition = new RouteDefinition("/some/import/path.js", "DummyController", "dummyHandler", false, routeInfo);
+    const definition = new RouteDefinition("/some/import/path.js", "DummyController", "dummyHandler",  routeInfo);
 
     context.assert.strictEqual(definition.importPath, "/some/import/path.js");
     context.assert.strictEqual(definition.className, "DummyController");
@@ -24,7 +24,7 @@ test("RouteDefinition: properties are set correctly", (context: TestContext) => 
 
 test("RouteDefinition: supports null references", (context: TestContext) => {
     const routeInfo = new RouteInfo("/none", undefined);
-    const definition = new RouteDefinition("relative/path.js", null, null, false, routeInfo);
+    const definition = new RouteDefinition("relative/path.js", null, null, routeInfo);
 
     context.assert.strictEqual(definition.importPath, "relative/path.js");
     context.assert.strictEqual(definition.className, null);

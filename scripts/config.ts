@@ -19,12 +19,13 @@ export default class Config {
         ["text", []],
         ["configuration", ["configuration", "configuration-json"]],
         ["routing", []],
+        ["di", []],
         ["webserver", [
             "webserver",
             "webserver-middleware-static",
-            "webserver-middleware-cookies"]],
+            "webserver-middleware-cookies",
+            "webserver-middleware-controllers"]],
         ["compiler", []],
-        ["di", []],
         ["context", []],
         ["symplex", ["symplex-parser"]]
     ]);

@@ -1,0 +1,35 @@
+{
+  "name": "@contextjs/webserver-middleware-controllers",
+  "version": "__VERSION__",
+  "description": "Controllers middleware for the ContextJS WebServer.",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/webserver/webserver-middleware-controllers"
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@contextjs/webserver": "__VERSION__",
+    "@contextjs/routing": "__VERSION__",
+    "@contextjs/io": "__VERSION__",
+    "@contextjs/di": "__VERSION__"
+  },
+  "keywords": [
+    "contextjs",
+    "webserver",
+    "middleware",
+    "controllers",
+    "mvc",
+    "typescript"
+  ]
+}
