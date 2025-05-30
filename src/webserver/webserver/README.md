@@ -281,6 +281,11 @@ export declare class WebServer {
      * Restart the server by stopping and then starting again.
      */
     public restartAsync(): Promise<void>;
+
+    /**
+     * Wait until the server is actively listening for connections.
+     */
+    public waitUntilListening(): Promise<void>;
 }
 
 /**

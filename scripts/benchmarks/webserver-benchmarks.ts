@@ -129,7 +129,8 @@ class Benchmark {
                     .sendAsync("OK");
             }
         });
-        await webServer.startAsync();
+        webServer.startAsync();
+        await webServer.waitUntilListening();
         console.log(`ContextJS WebServer running on http://${server.host}:${server.port}`);
 
         server.close = async () => webServer.stopAsync();

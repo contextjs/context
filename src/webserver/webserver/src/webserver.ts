@@ -88,6 +88,19 @@ export class WebServer {
         return this.startAsync();
     }
 
+    public async waitUntilListening(): Promise<void> {
+        const waits: Promise<void>[] = [];
+
+        if (this.httpServer)
+            waits.push(this.httpServer.waitUntilListening());
+
+        if (this.httpsServer)
+            waits.push(this.httpsServer.waitUntilListening());
+
+        await Promise.all(waits);
+    }
+
+
     public dispose(): void {
         process.off("SIGINT", this.sigHandler);
         process.off("SIGTERM", this.sigHandler);

@@ -170,4 +170,11 @@ export class HttpsServer extends ServerBase {
 
         this.options.onEvent({ type: "info", detail: `${this.label} fully stopped` });
     }
+
+    public async waitUntilListening(): Promise<void> {
+        if (this.tlsServer.listening)
+            return;
+
+        await once(this.tlsServer, "listening");
+    }
 }

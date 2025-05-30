@@ -77,6 +77,13 @@ export class HttpServer extends ServerBase {
         this.options.onEvent({ type: "info", detail: `${this.label} shutdown complete.` });
     }
 
+    public async waitUntilListening(): Promise<void> {
+        if (this.server.listening)
+            return;
+
+        await once(this.server, "listening");
+    }
+
     private configure(): void {
         this.server.removeAllListeners("connection");
         this.server.on("connection", (socket: Socket) => {
