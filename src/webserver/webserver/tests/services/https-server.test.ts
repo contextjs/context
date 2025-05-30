@@ -22,6 +22,23 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const KEY_PATH = resolve(__dirname, '../fixtures/test-key.pem');
 const CERT_PATH = resolve(__dirname, '../fixtures/test-cert.pem');
 
+class FakeTlsServer extends EventEmitter {
+  public listening = false;
+  listen() {
+    setImmediate(() => {
+      this.listening = true;
+      this.emit("listening");
+    });
+  }
+  close(cb?: () => void) {
+    setImmediate(() => {
+      this.listening = false;
+      this.emit("close");
+      if (cb) cb();
+    });
+  }
+}
+
 test('HttpsServer: startAsync and stopAsync complete without hanging', async (context: TestContext) => {
   const events: any[] = [];
   const options: WebServerOptions = new WebServerOptions(
@@ -280,4 +297,38 @@ test('HttpsServer: TLS server callback handles h2 and fallback protocols', (cont
   context.assert.strictEqual(server.handled[0], http1Socket);
 
   tls.createServer = originalTlsCreate;
+});
+
+test('HttpsServer: waitUntilListening resolves immediately if already listening', async (context: TestContext) => {
+  const options: WebServerOptions = new WebServerOptions(
+    { maximumHeaderSize: 1024, httpContextPoolSize: 2, idleSocketsTimeout: 100 } as any,
+    { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
+    { enabled: true, port: 0, host: '127.0.0.1', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
+  );
+  const server = new HttpsServer(options);
+
+  const fakeTls = new FakeTlsServer();
+  (server as any).tlsServer = fakeTls;
+
+  fakeTls.listening = true;
+  await context.assert.doesNotReject(() => server.waitUntilListening());
+});
+
+test('HttpsServer: waitUntilListening waits for listening event', async (context: TestContext) => {
+  const options: WebServerOptions = new WebServerOptions(
+    { maximumHeaderSize: 1024, httpContextPoolSize: 2, idleSocketsTimeout: 100 } as any,
+    { enabled: false, port: 0, keepAliveTimeout: 0 } as any,
+    { enabled: true, port: 0, host: '127.0.0.1', certificate: { key: KEY_PATH, cert: CERT_PATH } } as any,
+  );
+  const server = new HttpsServer(options);
+
+  const fakeTls = new FakeTlsServer();
+  (server as any).tlsServer = fakeTls;
+
+  setTimeout(() => {
+    fakeTls.listening = true;
+    fakeTls.emit("listening");
+  }, 10);
+
+  await context.assert.doesNotReject(() => server.waitUntilListening());
 });

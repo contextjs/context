@@ -164,3 +164,15 @@ test('WebServer: setOptions sets options and applies middleware', async (context
     context.assert.ok(httpSrv._applied.includes(mw), 'middleware should be applied to HTTP');
     context.assert.ok(httpsSrv._applied.includes(mw), 'middleware should be applied to HTTPS');
 });
+
+test('WebServer: waitUntilListening calls subserver wait', async (context: TestContext) => {
+    const webServer = new WebServer(new WebServerOptions());
+
+    let httpWaited = false, httpsWaited = false;
+    webServer['httpServer'] = { waitUntilListening: async () => { httpWaited = true; } } as any;
+    webServer['httpsServer'] = { waitUntilListening: async () => { httpsWaited = true; } } as any;
+
+    await context.assert.doesNotReject(() => webServer.waitUntilListening());
+    context.assert.strictEqual(httpWaited, true);
+    context.assert.strictEqual(httpsWaited, true);
+});

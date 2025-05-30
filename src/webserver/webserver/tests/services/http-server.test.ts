@@ -173,3 +173,18 @@ test('HttpServer: configure tracks and cleans up connections and removes old lis
     fakeSocket.emit('close');
     context.assert.ok(!server.getTrackedSockets().has(fakeSocket));
 });
+
+test('HttpServer: waitUntilListening resolves immediately if already listening', async (context: TestContext) => {
+    const server = new TestHttpServer(defaultOptions);
+    (server as any).server.listening = true;
+    await context.assert.doesNotReject(() => server.waitUntilListening());
+});
+
+test('HttpServer: waitUntilListening waits for listening event', async (context: TestContext) => {
+    const server = new TestHttpServer(defaultOptions);
+    (server as any).server.listening = false;
+
+    setTimeout(() => (server as any).server.emit('listening'), 20);
+
+    await context.assert.doesNotReject(() => server.waitUntilListening());
+});
