@@ -74,7 +74,7 @@ export function serviceCollectionTransformer(methods: Record<string, string>, pr
                             symbol = program.getTypeChecker().getAliasedSymbol(symbol);
 
                         const classDeclaration = symbol.declarations?.find(typescript.isClassDeclaration);
-                        if (classDeclaration)
+                        if (classDeclaration && classDeclaration.getSourceFile().fileName !== sourceFile.fileName)
                             importsMap.set(concreteName, getModuleSpecifier(sourceFile.fileName, classDeclaration.getSourceFile().fileName));
 
                         const interfaceSymbol = concreteType.getSymbol();

@@ -11,5 +11,6 @@ export const CommandAliases: Record<string, string> = {
     "-b": "build",
     "-r": "restore",
     "-w": "watch",
-    "-v": "version"
+    "-v": "version",
+    "-run": "run"
 };

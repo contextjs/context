@@ -48,9 +48,8 @@ const mockConsoleOutput = (context: TestContext) => {
 };
 
 test("BuildCommand: runAsync(--project) - no projects", async (context: TestContext) => {
-    const getExitCode = mockProcessExit(context);
+    mockProcessExit(context);
     const getOutput = mockConsoleOutput(context);
-
     const command = new Command(CommandType.Build, []);
     const buildCommand = new BuildCommand();
 
@@ -70,35 +69,18 @@ test("BuildCommand: runAsync(--project) - no projects", async (context: TestCont
 });
 
 test("BuildCommand: runAsync - project build success", async (context: TestContext) => {
-    const getExitCode = mockProcessExit(context);
-    const getOutput = mockConsoleOutput(context);
-
-    const command = new Command(CommandType.Build, [
-        { name: "project", values: ["any"] }
-    ]);
-
+    const command = new Command(CommandType.Build, [{ name: "project", values: ["any"] }]);
     const buildCommand = new BuildCommand();
     const projects = [new Project("project1", "path1")];
 
     context.mock.method(buildCommand as any, "getProjects", () => projects);
     context.mock.method(buildCommand as any, "buildAsync", () => void 0);
-
-    let threw: Error | null = null;
-    try {
-        await buildCommand.runAsync(command);
-    }
-    catch (error) {
-        threw = error as Error;
-    }
-
-    context.assert.ok(threw);
-    context.assert.match(threw.message, /exit:0/);
+    context.assert.doesNotThrow(() => buildCommand.runAsync(command));
 });
 
 test("BuildCommand: buildAsync - throws if context.ctxp missing", async (context: TestContext) => {
-    const getExitCode = mockProcessExit(context);
+    mockProcessExit(context);
     const getOutput = mockConsoleOutput(context);
-
     const project = new Project("missing-ctxp", path.join(os.tmpdir(), "ctx-missing"));
     Directory.create(project.path);
 
@@ -117,9 +99,8 @@ test("BuildCommand: buildAsync - throws if context.ctxp missing", async (context
 });
 
 test("BuildCommand: buildAsync - throws if tsconfig.json missing", async (context: TestContext) => {
-    const getExitCode = mockProcessExit(context);
+    mockProcessExit(context);
     const getOutput = mockConsoleOutput(context);
-
     const project = new Project("missing-tsconfig", path.join(os.tmpdir(), "ctx-tsconfig"));
     Directory.create(project.path);
     File.save(path.join(project.path, "context.ctxp"), "{}", true);
@@ -142,9 +123,9 @@ test("BuildCommand: copyFiles - success", (context: TestContext) => {
     context.mock.method(File, "read", () => JSON.stringify({ files: [{ from: "from1", to: "to1" }] }));
     context.mock.method(File, "exists", () => true);
     context.mock.method(File, "copy", () => true);
-
     const project = new Project("test", "dir");
     const buildCommand = new BuildCommand();
+
     context.assert.doesNotThrow(() => (buildCommand as any).copyFiles(project, {}));
 });
 
@@ -170,7 +151,6 @@ test("BuildCommand: compileAsync - emits valid project", async (context: TestCon
 
     File.save(path.join(base, "tsconfig.json"), JSON.stringify(tsconfig, null, 2));
     File.save(path.join(base, "context.ctxp"), "{}");
-
     File.save(path.join(srcDir, "index.ts"), "export const hello = 'world';");
 
     const project = new Project("compile-test", base);

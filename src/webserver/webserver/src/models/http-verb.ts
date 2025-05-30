@@ -6,4 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export type HttpVerb = "GET" | "POST" | "PUT" | "DELETE";
+export enum HttpVerb {
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    DELETE = "DELETE"
+}

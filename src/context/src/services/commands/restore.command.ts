@@ -24,7 +24,6 @@ export class RestoreCommand extends CommandBase {
         }
 
         await Promise.all(projects.map(project => this.restoreAsync(project)));
-        return process.exit(0);
     }
 
     private async restoreAsync(project: Project): Promise<void> {

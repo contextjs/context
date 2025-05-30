@@ -6,8 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { HttpVerb } from "@contextjs/webserver";
 import { Verb } from "./verb-decorator.js";
 
 export function Post(template: string): MethodDecorator {
-    return Verb(template, "POST");
+    return Verb(template, HttpVerb.POST);
 }

@@ -10,6 +10,7 @@ export enum CommandType {
     Ctx,
     New,
     Build,
+    Run,
     Restore,
     Watch,
     Version

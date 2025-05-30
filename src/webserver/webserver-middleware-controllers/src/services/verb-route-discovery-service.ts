@@ -14,29 +14,27 @@ import { ControllerDefinition } from "../models/controller-definition.js";
 import { VerbRouteInfo } from "../models/verb-route-info.js";
 
 export class VerbRouteDiscoveryService {
-    public static async discoverAsync(importedFile: any, importPath: string, controllerDefinition: ControllerDefinition): Promise<RouteDefinition[]> {
-        const routes = [];
+    public static async discoverAsync(
+        controllerClass: Function,
+        controllerDefinition: ControllerDefinition): Promise<RouteDefinition[]> {
+        const routes: RouteDefinition[] = [];
         const controllerTemplate = controllerDefinition.route?.decodedTemplate;
 
-        for (const exportName of Object.keys(importedFile)) {
-            const exportedClass = importedFile[exportName];
+        for (const propName of Object.getOwnPropertyNames(controllerClass.prototype)) {
+            if (propName === "constructor")
+                continue;
 
-            for (const propName of Object.getOwnPropertyNames(exportedClass.prototype)) {
-                if (propName === "constructor")
-                    continue;
+            const methodHandler = controllerClass.prototype[propName];
 
-                const methodHandler = exportedClass.prototype[propName];
+            if (!Reflect.hasMetadata(VERB_ROUTE_META, methodHandler))
+                continue;
 
-                if (!Reflect.hasMetadata(VERB_ROUTE_META, methodHandler))
-                    continue;
-
-                const { template, verb } = Reflect.getMetadata(VERB_ROUTE_META, methodHandler);
-                const fullTemplate = template.startsWith("/") || StringExtensions.isNullOrWhiteSpace(controllerTemplate)
-                    ? template
-                    : `${controllerTemplate}/${template}`;
-                const routeInfo = new VerbRouteInfo(verb, fullTemplate);
-                routes.push(new RouteDefinition(importPath, exportedClass.name, propName, routeInfo));
-            }
+            const { template, verb } = Reflect.getMetadata(VERB_ROUTE_META, methodHandler);
+            const fullTemplate = template.startsWith("/") || StringExtensions.isNullOrWhiteSpace(controllerTemplate)
+                ? template
+                : `${controllerTemplate}/${template}`;
+            const routeInfo = new VerbRouteInfo(verb, fullTemplate);
+            routes.push(new RouteDefinition(controllerClass.name, propName, routeInfo));
         }
 
         return routes;

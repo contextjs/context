@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import 'reflect-metadata';
-import test, { TestContext } from 'node:test';
-import { Verb, VERB_ROUTE_META } from '../../src/decorators/verb-decorator.js';
 import { HttpVerb } from '@contextjs/webserver';
+import test, { TestContext } from 'node:test';
+import 'reflect-metadata';
+import { Verb, VERB_ROUTE_META } from '../../src/decorators/verb-decorator.js';
 
 test('VerbDecorator: metadata is undefined for undecorated method', (context: TestContext) => {
     class PlainClass { method() { } }
@@ -20,7 +20,7 @@ test('VerbDecorator: metadata is undefined for undecorated method', (context: Te
 
 test('VerbDecorator: sets template and verb metadata when applied manually', (context: TestContext) => {
     const template = '/test-path';
-    const verb = 'GET';
+    const verb = HttpVerb.GET;
     class DecoratedClass { action() { } }
     const descriptor = Object.getOwnPropertyDescriptor(DecoratedClass.prototype, 'action');
     Verb(template, verb)(DecoratedClass.prototype, 'action', descriptor as TypedPropertyDescriptor<any>);

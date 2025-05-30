@@ -23,9 +23,6 @@ export class HttpServer extends ServerBase {
     public async startAsync(): Promise<void> {
         this.options.onEvent({ type: "info", detail: `${this.label} is starting...` });
         this.server.listen(this.options.http.port, this.options.http.host);
-        this.options.onEvent({ type: "info", detail: `${this.label} listening on http://${this.options.http.host}:${this.options.http.port}` });
-
-        this.setIdleSocketsInterval();
 
         const [event, payload] = await Promise.race([
             once(this.server, "listening").then(() => ["listening", undefined] as const),
@@ -36,6 +33,14 @@ export class HttpServer extends ServerBase {
             this.options.onEvent({ type: "error", detail: payload });
             throw payload;
         }
+
+        this.options.onEvent({ type: "info", detail: `${this.label} listening on http://${this.options.http.host}:${this.options.http.port}` });
+        this.setIdleSocketsInterval();
+
+        await new Promise<void>((resolve, reject) => {
+            this.server.on("close", resolve);
+            this.server.on("error", reject);
+        });
     }
 
     public async stopAsync(): Promise<void> {

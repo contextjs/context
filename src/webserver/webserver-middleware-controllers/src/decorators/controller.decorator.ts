@@ -8,12 +8,24 @@
 
 import "reflect-metadata";
 
+const controllerRegistry: Function[] = [];
+
 export function Controller(template?: string): ClassDecorator {
     return (target) => {
         Reflect.defineMetadata('controller', target.name, target);
         if (template)
             Reflect.defineMetadata('controller:template', template, target);
+
+        controllerRegistry.push(target);
     };
+}
+
+export function getRegisteredControllers() {
+    return controllerRegistry;
+}
+
+export function clearRegisteredRoutes() {
+    controllerRegistry.length = 0; // Clear the registry
 }
 
 export function getControllerMetadata(target: Function): string | undefined {

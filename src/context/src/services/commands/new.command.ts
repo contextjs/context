@@ -80,6 +80,5 @@ api             Web API project         A Web API project containing controllers
     private async displayHelpAsync(): Promise<void> {
         VersionService.display();
         Console.writeLine(this.helpText);
-        return process.exit(0);
     }
 }

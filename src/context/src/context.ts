@@ -13,6 +13,7 @@ import { CommandsService } from "./services/commands/commands.service.js";
 import { CtxCommand } from "./services/commands/ctx.command.js";
 import { NewCommand } from "./services/commands/new.command.js";
 import { RestoreCommand } from "./services/commands/restore.command.js";
+import { RunCommand } from "./services/commands/run.command.js";
 import { VersionCommand } from "./services/commands/version.command.js";
 import { WatchCommand } from "./services/commands/watch.command.js";
 
@@ -29,6 +30,9 @@ switch (command.type) {
         break;
     case CommandType.Build:
         await new BuildCommand().runAsync(command);
+        break;
+    case CommandType.Run:
+        await new RunCommand().runAsync(command);
         break;
     case CommandType.Restore:
         await new RestoreCommand().runAsync(command);

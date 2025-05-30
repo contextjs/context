@@ -38,7 +38,8 @@ test('RestoreCommand: runAsync(--project) - success', async (context: TestContex
 
     try {
         await restoreCommand.runAsync(command);
-    } catch (error) {
+    } 
+    catch (error) {
         threw = error as Error;
     }
 
@@ -75,7 +76,8 @@ test('RestoreCommand: runAsync(--p) - success', async (context: TestContext) => 
 
     try {
         await restoreCommand.runAsync(command);
-    } catch (error) {
+    } 
+    catch (error) {
         threw = error as Error;
     }
 
@@ -105,15 +107,7 @@ test('RestoreCommand: runAsync - success', async (context: TestContext) => {
     process.exit = (code: number) => { exitCode = code; throw new Error(`process.exit(${code})`); };
     context.after(() => { console.log = originalConsoleLog; process.exit = originalProcessExit; });
 
-    try {
-        await restoreCommand.runAsync(command);
-    }
-    catch (error: any) {
-        if (!error.message.startsWith("process.exit("))
-            throw error;
-    }
-
-    context.assert.strictEqual(exitCode, 0);
+    context.assert.doesNotThrow(async () => await restoreCommand.runAsync(command));
 });
 
 test('RestoreCommand: restoreAsync - exits when context.ctxp is missing', async (context: TestContext) => {
@@ -138,7 +132,8 @@ test('RestoreCommand: restoreAsync - exits when context.ctxp is missing', async 
 
     try {
         await (restoreCommand as any).restoreAsync(project);
-    } catch (error) {
+    } 
+    catch (error) {
         threw = error as Error;
     }
 

@@ -7,59 +7,45 @@
  */
 
 import { Directory, File, Path } from "@contextjs/io";
-import { ObjectExtensions, StringExtensions } from "@contextjs/system";
+import { StringExtensions } from "@contextjs/system";
 import path from "path";
 import { cwd } from "process";
 import "reflect-metadata";
 import typescript from "typescript";
 import { pathToFileURL } from "url";
-import { ROUTE_META } from "../decorators/route.decorator.js";
+import { clearRegisteredRoutes, getRegisteredRoutes } from "../decorators/route.decorator.js";
 import { RouteDefinition } from "../models/route-definition.js";
 import { RouteInfo } from "../models/route-info.js";
 
 export class RouteDiscoveryService {
     public static async discoverRoutesAsync(): Promise<RouteDefinition[]> {
         const currentDirectory = path.join(cwd(), this.getCurrentDirectory());
-        const entryFile = Path.normalize(process.argv[1]);
+        const entryFile = Path.normalize(process.env['CTX_ENTRY_FILE'] || process.argv[1]);
         const files = Directory
             .listFiles(currentDirectory, true)
             .filter(f => File.getExtension(f) === "js" || File.getExtension(f) === "mjs")
             .filter(f => Path.normalize(f) !== entryFile);
 
-        const routeDefinitions: RouteDefinition[] = [];
         for (const file of files) {
             const importPath = pathToFileURL(Path.normalize(file)).href;
-
-            let importedFile;
             try {
-                importedFile = await import(importPath);
+                await import(importPath);
             }
             catch (error) {
                 console.error(`Failed to import ${importPath}:`, error);
                 continue;
             }
-
-            for (const exportName of Object.keys(importedFile)) {
-                const exportedClass = importedFile[exportName];
-
-                if (typeof exportedClass !== "function")
-                    continue;
-
-                for (const propName of Object.getOwnPropertyNames(exportedClass.prototype)) {
-                    if (propName === "constructor")
-                        continue;
-
-                    const methodHandler = exportedClass.prototype[propName];
-                    if (!Reflect.hasMetadata(ROUTE_META, methodHandler))
-                        continue;
-
-                    const { template, name } = Reflect.getMetadata(ROUTE_META, methodHandler) as { template: string, name?: string };
-                    const routeInfo = new RouteInfo(template, name);
-
-                    routeDefinitions.push(new RouteDefinition(importPath, exportedClass.name, propName, routeInfo));
-                }
-            }
         }
+
+        const routeDefinitions: RouteDefinition[] = [];
+        for (const reg of getRegisteredRoutes()) {
+            const { target, propertyKey, template, name } = reg;
+            const controllerName = (target as any).constructor?.name || (target as any).name || "UnknownController";
+            const routeInfo = new RouteInfo(template, name);
+            routeDefinitions.push(new RouteDefinition(controllerName, propertyKey.toString(), routeInfo));
+        }
+
+        clearRegisteredRoutes();
 
         return routeDefinitions;
     }

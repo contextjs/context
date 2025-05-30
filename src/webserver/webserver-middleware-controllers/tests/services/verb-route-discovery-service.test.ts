@@ -15,25 +15,15 @@ import { VerbRouteDiscoveryService } from "../../src/services/verb-route-discove
 
 function createDummyController(template: string | null): ControllerDefinition {
     class DummyController { }
-
     Reflect.defineMetadata("controller:template", template, DummyController);
-
-    return new ControllerDefinition(
-        "DummyController",
-        DummyController,
-        template ?? undefined
-    );
+    return new ControllerDefinition("DummyController", DummyController, template ?? undefined);
 }
-
 
 test("VerbRouteDiscoveryService: discoverAsync returns matching routes with verb metadata", async (context: TestContext) => {
     class DummyController { public async handler() { } }
     Reflect.defineMetadata(VERB_ROUTE_META, { template: "test", verb: "GET" }, DummyController.prototype.handler);
-
-    const imported = { DummyController };
     const controller = createDummyController("api");
-
-    const result = await VerbRouteDiscoveryService.discoverAsync(imported, "dummy-path", controller);
+    const result = await VerbRouteDiscoveryService.discoverAsync(DummyController, controller);
 
     context.assert.strictEqual(result.length, 1);
     context.assert.strictEqual(result[0].className, "DummyController");
@@ -44,10 +34,8 @@ test("VerbRouteDiscoveryService: discoverAsync returns matching routes with verb
 
 test("VerbRouteDiscoveryService: discoverAsync skips methods without metadata", async (context: TestContext) => {
     class DummyController { handler() { } }
-    const imported = { DummyController };
     const controller = createDummyController("api");
-
-    const result = await VerbRouteDiscoveryService.discoverAsync(imported, "dummy-path", controller);
+    const result = await VerbRouteDiscoveryService.discoverAsync(DummyController, controller);
 
     context.assert.strictEqual(result.length, 0);
 });
@@ -55,10 +43,8 @@ test("VerbRouteDiscoveryService: discoverAsync skips methods without metadata", 
 test("VerbRouteDiscoveryService: discoverAsync handles missing controller template", async (context: TestContext) => {
     class DummyController { public handler() { } }
     Reflect.defineMetadata(VERB_ROUTE_META, { template: "test", verb: "POST" }, DummyController.prototype.handler);
-    const imported = { DummyController };
     const controller = createDummyController(null);
-
-    const result = await VerbRouteDiscoveryService.discoverAsync(imported, "dummy-path", controller);
+    const result = await VerbRouteDiscoveryService.discoverAsync(DummyController, controller);
 
     context.assert.strictEqual(result.length, 1);
     context.assert.strictEqual(result[0].route.template, "dummy/test");
@@ -67,20 +53,17 @@ test("VerbRouteDiscoveryService: discoverAsync handles missing controller templa
 test("VerbRouteDiscoveryService: discoverAsync handles absolute method template", async (context: TestContext) => {
     class DummyController { public handler() { } }
     Reflect.defineMetadata(VERB_ROUTE_META, { template: "/absolute", verb: "POST" }, DummyController.prototype.handler);
-    const imported = { DummyController };
     const controller = createDummyController("api");
-
-    const result = await VerbRouteDiscoveryService.discoverAsync(imported, "dummy-path", controller);
+    const result = await VerbRouteDiscoveryService.discoverAsync(DummyController, controller);
 
     context.assert.strictEqual(result.length, 1);
     context.assert.strictEqual(result[0].route.template, "/absolute");
 });
 
 test("VerbRouteDiscoveryService: discoverAsync skips constructor property", async (context: TestContext) => {
-    const imported = { DummyController: class DummyController { } };
+    class DummyController { public handler() { } }
     const controller = createDummyController("api");
-
-    const result = await VerbRouteDiscoveryService.discoverAsync(imported, "dummy-path", controller);
+    const result = await VerbRouteDiscoveryService.discoverAsync(DummyController, controller);
 
     context.assert.strictEqual(result.length, 0);
 });

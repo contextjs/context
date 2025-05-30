@@ -93,11 +93,6 @@ app.useRouting();
  */
 export class RouteDefinition<T extends RouteInfo = RouteInfo> {
     /**
-     * The import path of the module where the route is defined.
-     */
-    public readonly importPath: string;
-
-    /**
      * The class name of the route handler, or null if not applicable.
      * This is typically used for class-based controllers.
      */
@@ -116,12 +111,11 @@ export class RouteDefinition<T extends RouteInfo = RouteInfo> {
 
     /**
      * Creates a new route definition.
-     * @param importPath The path to the module where the route is defined.
      * @param className The class name of the route handler, or null if not applicable.
      * @param methodName The method name of the route handler, or null if not applicable.
      * @param route The route information.
      */
-    public constructor(importPath: string, className: string | null, methodName: string | null, route: T);
+    public constructor(className: string | null, methodName: string | null, route: T);
 }
 ```
 

@@ -13,6 +13,7 @@ const commandMap: Record<string, CommandType> = {
     ctx: CommandType.Ctx,
     new: CommandType.New,
     build: CommandType.Build,
+    run: CommandType.Run,
     restore: CommandType.Restore,
     watch: CommandType.Watch,
     version: CommandType.Version

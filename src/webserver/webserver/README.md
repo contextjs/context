@@ -240,7 +240,12 @@ declare module "@contextjs/system" {
 /**
  * HTTP verb types for routing and middleware.
  */
-export declare type HttpVerb = "GET" | "POST" | "PUT" | "DELETE";
+export declare enum HttpVerb {
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    DELETE = "DELETE"
+}
 
 /**
  * Protocol types for network communication.

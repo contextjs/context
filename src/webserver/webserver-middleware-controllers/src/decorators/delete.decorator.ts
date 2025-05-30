@@ -6,8 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { HttpVerb } from "@contextjs/webserver";
 import { Verb } from "./verb-decorator.js";
 
 export function Delete(template: string): MethodDecorator {
-    return Verb(template, "DELETE");
+    return Verb(template, HttpVerb.DELETE);
 }

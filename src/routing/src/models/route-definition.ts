@@ -9,13 +9,11 @@
 import { RouteInfo } from "./route-info.js";
 
 export class RouteDefinition<T extends RouteInfo = RouteInfo> {
-    public readonly importPath: string;
     public readonly className: string | null;
     public readonly methodName: string | null;
     public readonly route: T;
 
-    constructor(importPath: string, className: string | null, methodName: string | null, route: T) {
-        this.importPath = importPath;
+    constructor(className: string | null, methodName: string | null, route: T) {
         this.className = className;
         this.methodName = methodName;
         this.route = route;

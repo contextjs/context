@@ -11,14 +11,14 @@ import { Socket } from "node:net";
 import { PassThrough } from "node:stream";
 import { MiddlewareExistsException } from "../exceptions/middleware-exists.exception.js";
 import { BufferExtensions } from "../extensions/buffer.extensions.js";
-import { WebServerOptions } from "../options/webserver-options.js";
 import { IMiddleware } from "../interfaces/i-middleware.js";
 import { HeaderCollection } from "../models/header.collection.js";
 import { HttpContextPool } from "../models/http-context-pool.js";
 import { HttpContext } from "../models/http-context.js";
-import { HeaderParser } from "./header-parser.js";
 import { HttpVerb } from "../models/http-verb.js";
 import { Protocol } from "../models/protocol.js";
+import { WebServerOptions } from "../options/webserver-options.js";
+import { HeaderParser } from "./header-parser.js";
 
 enum ParseState {
     HEADER,
@@ -57,7 +57,8 @@ export abstract class ServerBase {
         try {
             await this.middlewareExecutor(httpContext);
         }
-        catch {
+        catch (error) {
+            this.options.onEvent?.({ type: "error", detail: error });
             httpContext.response
                 .setStatus(500, "Internal Server Error")
                 .setHeader("Content-Type", "text/plain")

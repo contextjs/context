@@ -17,10 +17,8 @@ import { TemplatesServiceResolver } from "../../../src/services/templates/templa
 
 test('NewCommand: runAsync - success - displayHelp', async (context: TestContext) => {
     const expectedHelpText = `The "ctx new" command creates a ContextJS project based on a template.`;
-
     const originalOutput = Console['output'];
     const originalExit = process.exit;
-
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
@@ -35,16 +33,8 @@ test('NewCommand: runAsync - success - displayHelp', async (context: TestContext
 
     const command = new Command(CommandType.New, []);
     const newCommand = new NewCommand();
+    await newCommand.runAsync(command);
 
-    let threw: Error | null = null;
-    try {
-        await newCommand.runAsync(command);
-    } catch (error) {
-        threw = error as Error;
-    }
-
-    context.assert.ok(threw);
-    context.assert.strictEqual(exitCode, 0);
     context.assert.match(logOutput, new RegExp(expectedHelpText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
     Console.setOutput(originalOutput);
@@ -55,7 +45,6 @@ test('NewCommand: runAsync - success - displayHelp', async (context: TestContext
 test('NewCommand: runAsync - invalid project type', async (context: TestContext) => {
     const originalOutput = Console['output'];
     const originalExit = process.exit;
-
     let logOutput = StringExtensions.empty;
     let exitCode = -100;
 
@@ -189,5 +178,6 @@ test('NewCommand: runAsync - success', async (context: TestContext) => {
     await newCommand.runAsync(command);
 
     context.assert.strictEqual(Directory.exists(projectName), true);
+    
     Directory.delete(projectName);
 });

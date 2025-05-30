@@ -114,9 +114,7 @@ export class HttpsServer extends ServerBase {
             port: this.options.https.port,
             host: this.options.https.host,
             backlog: 1024,
-            ...(process.platform === "linux"
-                ? { reusePort: true }
-                : {})
+            ...(process.platform === "linux" ? { reusePort: true } : {})
         };
 
         this.options.onEvent({ type: "info", detail: `${this.label} is starting...` });
@@ -134,7 +132,15 @@ export class HttpsServer extends ServerBase {
         }
 
         this.setIdleSocketsInterval();
-        this.options.onEvent({ type: "info", detail: `${this.label} listening on https://${listenOptions.host}:${listenOptions.port}` });
+        this.options.onEvent({
+            type: "info",
+            detail: `${this.label} listening on https://${listenOptions.host}:${listenOptions.port}`
+        });
+
+        await new Promise<void>((resolve, reject) => {
+            this.tlsServer.on("close", resolve);
+            this.tlsServer.on("error", reject);
+        });
     }
 
     public async stopAsync(): Promise<void> {

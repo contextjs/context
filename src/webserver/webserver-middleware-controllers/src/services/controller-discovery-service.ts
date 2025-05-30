@@ -14,54 +14,52 @@ import { cwd } from "process";
 import "reflect-metadata";
 import typescript from "typescript";
 import { pathToFileURL } from "url";
-import { getControllerMetadata } from "../decorators/controller.decorator.js";
+import { clearRegisteredRoutes, getControllerMetadata, getRegisteredControllers } from "../decorators/controller.decorator.js";
 import { ControllerDefinition } from "../models/controller-definition.js";
 import { VerbRouteDiscoveryService } from "./verb-route-discovery-service.js";
 
 export class ControllerDiscoveryService {
     public static async discoverAsync(): Promise<{ controllers: ControllerDefinition[], routes: RouteDefinition[] }> {
         const currentDirectory = path.join(cwd(), this.getCurrentDirectory());
-        const entryFile = Path.normalize(process.argv[1]);
+        const entryFile = Path.normalize(process.env['CTX_ENTRY_FILE'] || process.argv[1]);
         const files = Directory
             .listFiles(currentDirectory, true)
             .filter(fileName => {
                 const ext = File.getExtension(fileName);
-                return ext === "js" || ext === "mjs" || ext === "cjs";
-            })
-            .filter(fileName => Path.normalize(fileName) !== entryFile);
-
-        const controllerDefinitions: ControllerDefinition[] = [];
-        const routeDefinitions: RouteDefinition[] = [];
+                return (ext === "js" || ext === "mjs" || ext === "cjs") && Path.normalize(fileName) !== entryFile;
+            });
 
         for (const file of files) {
             const importPath = pathToFileURL(Path.normalize(file)).href;
-
-            let importedFile;
             try {
-                importedFile = await import(importPath);
+                await import(importPath);
             }
             catch (error) {
                 console.error(`Failed to import ${importPath}:`, error);
                 continue;
             }
-
-            for (const exportName of Object.keys(importedFile)) {
-                const exportedClass = importedFile[exportName];
-                if (typeof exportedClass !== "function")
-                    continue;
-
-                const controllerMeta = getControllerMetadata(exportedClass);
-                if (!controllerMeta)
-                    continue;
-
-                const definition = new ControllerDefinition(exportName, exportedClass, Reflect.getMetadata("controller:template", exportedClass));
-
-                controllerDefinitions.push(definition);
-                routeDefinitions.push(...await VerbRouteDiscoveryService.discoverAsync(importedFile, importPath, definition));
-            }
         }
 
-        return { controllers: controllerDefinitions, routes: routeDefinitions }
+        const controllerDefinitions: ControllerDefinition[] = [];
+        const routeDefinitions: RouteDefinition[] = [];
+
+        for (const exportedClass of getRegisteredControllers()) {
+            const exportName = exportedClass.name;
+            const controllerMeta = getControllerMetadata(exportedClass);
+            if (!controllerMeta)
+                continue;
+
+            const definition = new ControllerDefinition(exportName, exportedClass, Reflect.getMetadata("controller:template", exportedClass));
+            controllerDefinitions.push(definition);
+
+
+            const routes = await VerbRouteDiscoveryService.discoverAsync(exportedClass, definition);
+            routeDefinitions.push(...routes);
+        }
+
+        clearRegisteredRoutes();
+
+        return { controllers: controllerDefinitions, routes: routeDefinitions };
     }
 
     private static getCurrentDirectory(): string {

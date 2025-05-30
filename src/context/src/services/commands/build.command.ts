@@ -31,8 +31,6 @@ export class BuildCommand extends CommandBase {
 
         await ExtensionsResolver.registerAsync();
         await Promise.all(projects.map(project => this.buildAsync(project, typescriptOptions, transformersArg?.values[0].split(",") ?? [])));
-
-        return process.exit(0);
     }
 
     private async buildAsync(project: Project, typescriptOptions: typescript.CompilerOptions, externalTransformerPaths: string[]): Promise<void> {

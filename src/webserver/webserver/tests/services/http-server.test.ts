@@ -76,15 +76,34 @@ const defaultOptions: WebServerOptions = {
 
 test('HttpServer: startAsync succeeds and logs listening', async (context: TestContext) => {
     const events: any[] = [];
-    const options: WebServerOptions = { ...defaultOptions, onEvent: e => events.push(e) } as any;
-    const server = new TestHttpServer(options);
+    const options: WebServerOptions = {
+        ...defaultOptions,
+        http: { ...defaultOptions.http, port: 0 }, // Port 0 = random
+        onEvent: e => events.push(e)
+    } as any;
 
-    await server.startAsync();
-    context.assert.ok((server as any).server.listening);
+    const server = new HttpServer(options);
+
+    const promise = server.startAsync();
+
+    await new Promise(res => (server as any).server.once('listening', res));
+    const address = (server as any).server.address();
+    const port = typeof address === "object" && address ? address.port : options.http.port;
+
+    const client = new Socket();
+    await new Promise<void>((resolve, reject) => {
+        client.connect(port, options.http.host!, () => resolve());
+        client.on("error", reject);
+    });
+    client.end();
+
+    server.stopAsync();
+
+    await promise;
+
     context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('starting')));
     context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('listening')));
-
-    await server.stopAsync();
+    setTimeout(() => { context.assert.ok(events.some(e => e.type === 'info' && e.detail.includes('shutdown complete'))); }, 0);
 });
 
 test('HttpServer: startAsync throws when listen() throws', async (context: TestContext) => {
