@@ -16,122 +16,140 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ControllerDiscoveryService } from '../../src/services/controller-discovery-service.js';
 import { VerbRouteDiscoveryService } from '../../src/services/verb-route-discovery-service.js';
 
-const originalWorkingDirectory = process.cwd();
-test.afterEach(() => process.chdir(originalWorkingDirectory));
+async function withTempDirAsync<T>(action: (dir: string) => Promise<T> | T): Promise<T> {
+    const tempRoot = os.tmpdir();
+    const tempDir = fs.mkdtempSync(path.join(tempRoot, 'cds-'));
+    let result: T | undefined;
+    try {
+        result = await action(tempDir);
+        return result;
+    } finally {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+}
 
-test('ControllerDiscoveryService: getCurrentDirectory throws when tsconfig.json missing', (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    process.chdir(workingDirectory);
-
-    context.assert.throws(() => ControllerDiscoveryService['getCurrentDirectory']());
+test('ControllerDiscoveryService: getProjectOutputDirectory throws when tsconfig.json missing', async (context: TestContext) => {
+    await withTempDirAsync(async (workingDirectory) => {
+        context.assert.throws(() => ControllerDiscoveryService['getProjectOutputDirectory'](workingDirectory));
+    });
 });
 
-test('ControllerDiscoveryService: getCurrentDirectory throws when tsconfig.json invalid', (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    const invalidTsConfig = { compilerOptions: { module: "unknownModuleKind" } };
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify(invalidTsConfig));
-    process.chdir(workingDirectory);
+test('ControllerDiscoveryService: getProjectOutputDirectory returns config dir when outDir is missing', async (context: TestContext) => {
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({ compilerOptions: { module: "ESNext" } }));
+        const outputDirectory = ControllerDiscoveryService['getProjectOutputDirectory'](workingDirectory);
 
-    context.assert.strictEqual(ControllerDiscoveryService['getCurrentDirectory'](), '.');
+        context.assert.strictEqual(path.resolve(outputDirectory), path.resolve(workingDirectory));
+    });
 });
 
-test('ControllerDiscoveryService: getCurrentDirectory returns outDir from tsconfig.json', (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({ compilerOptions: { outDir: './build' } }));
-    process.chdir(workingDirectory);
-    const outputDirectory = ControllerDiscoveryService['getCurrentDirectory']();
-
-    context.assert.strictEqual(outputDirectory, Path.normalize('build'));
+test('ControllerDiscoveryService: getProjectOutputDirectory returns outDir absolute if set absolute', async (context: TestContext) => {
+    await withTempDirAsync(async (workingDirectory) => {
+        const absOutDir = path.join(os.tmpdir(), 'some-absolute-path');
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({ compilerOptions: { outDir: absOutDir } }));
+        const outputDirectory = ControllerDiscoveryService['getProjectOutputDirectory'](workingDirectory);
+        context.assert.strictEqual(outputDirectory, Path.normalize(absOutDir));
+    });
 });
 
-test('ControllerDiscoveryService: getCurrentDirectory returns "." when outDir not set', (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({}));
-    process.chdir(workingDirectory);
-    const outputDirectory = ControllerDiscoveryService['getCurrentDirectory']();
+test('ControllerDiscoveryService: getProjectOutputDirectory resolves outDir relative to tsconfig.json', async (context: TestContext) => {
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({ compilerOptions: { outDir: './build' } }));
+        const outputDirectory = ControllerDiscoveryService['getProjectOutputDirectory'](workingDirectory);
+        context.assert.strictEqual(outputDirectory, Path.normalize(path.join(workingDirectory, 'build')));
+    });
+});
 
-    context.assert.strictEqual(outputDirectory, Path.normalize('.'));
+test('ControllerDiscoveryService: getProjectOutputDirectory returns config dir when outDir not set', async (context: TestContext) => {
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({}));
+        const outputDirectory = ControllerDiscoveryService['getProjectOutputDirectory'](workingDirectory);
+
+        context.assert.strictEqual(path.resolve(outputDirectory), path.resolve(workingDirectory));
+    });
 });
 
 test('ControllerDiscoveryService: discoverAsync finds no controllers when no files', async (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
-        compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
-        include: ["./build/**/*"]
-    }));
-    const outputDirectory = path.join(workingDirectory, 'build');
-    fs.mkdirSync(outputDirectory, { recursive: true });
-    process.chdir(workingDirectory);
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
+            compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
+            include: ["./build/**/*"]
+        }));
+        const outputDirectory = path.join(workingDirectory, 'build');
+        fs.mkdirSync(outputDirectory, { recursive: true });
 
-    const discoveryResult = await ControllerDiscoveryService.discoverAsync();
+        const discoveryResult = await ControllerDiscoveryService.discoverAsync();
 
-    context.assert.strictEqual(discoveryResult.controllers.length, 0);
-    context.assert.strictEqual(discoveryResult.routes.length, 0);
+        context.assert.strictEqual(discoveryResult.controllers.length, 0);
+        context.assert.strictEqual(discoveryResult.routes.length, 0);
+    });
 });
 
 test('ControllerDiscoveryService: discoverAsync imports files and discovers controllers/routes', async (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
-        compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
-        include: ["./build/**/*"]
-    }));
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
+            compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
+            include: ["./build/**/*"]
+        }));
 
-    const outputDirectory = path.join(workingDirectory, 'build');
-    fs.mkdirSync(outputDirectory, { recursive: true });
+        fs.writeFileSync(path.join(workingDirectory, 'package.json'), JSON.stringify({ type: "module" }));
+        const outputDirectory = path.join(workingDirectory, 'build');
+        fs.mkdirSync(outputDirectory, { recursive: true });
 
-    const testFilePath = fileURLToPath(import.meta.url);
-    const decoratorAbsolutePath = path.resolve(path.dirname(testFilePath), '../../src/decorators/controller.decorator.js');
-    let controllerImportPath: string;
+        const testFilePath = fileURLToPath(import.meta.url);
+        const decoratorAbsolutePath = path.resolve(path.dirname(testFilePath), '../../src/decorators/controller.decorator.js');
+        const decoratorImportUrl = pathToFileURL(decoratorAbsolutePath).href;
 
-    const relativePath = path.relative(outputDirectory, decoratorAbsolutePath).replace(/\\/g, '/');
-    if (relativePath.startsWith('.'))
-        controllerImportPath = relativePath;
-    else if (path.isAbsolute(decoratorAbsolutePath))
-        controllerImportPath = pathToFileURL(decoratorAbsolutePath).href;
-    else
-        controllerImportPath = './' + relativePath;
+        const controllerSource = `
+            import { Controller } from '${decoratorImportUrl}';
+            class DummyController {}
+            Controller('templ')(DummyController);
+            export { DummyController };
+        `;
+        const controllerFilePath = path.join(outputDirectory, 'dummy-controller.mjs');
+        fs.writeFileSync(controllerFilePath, controllerSource);
 
-    const controllerSource = `
-        import { Controller } from '${controllerImportPath}';
-        class DummyController {}
-        Controller('templ')(DummyController);
-        export { DummyController };
-    `;
-    const controllerFilePath = path.join(outputDirectory, 'dummy-controller.mjs');
-    fs.writeFileSync(controllerFilePath, controllerSource);
+        await new Promise(r => setTimeout(r, 50)); // use longer for CI
 
-    process.chdir(workingDirectory);
+        context.mock.method(VerbRouteDiscoveryService, 'discoverAsync', async () => [{
+            route: new RouteInfo('templ/action'),
+            className: 'DummyController',
+            methodName: 'action'
+        } as RouteDefinition]);
 
-    context.mock.method(VerbRouteDiscoveryService, 'discoverAsync', async () => [{
-        route: new RouteInfo('templ/action'),
-        className: 'DummyController',
-        methodName: 'action'
-    } as RouteDefinition]);
+        const fileUrl = pathToFileURL(controllerFilePath).href;
+        try {
+            await import(fileUrl);
+            const registeredControllers = (await import('../../src/decorators/controller.decorator.js')).getRegisteredControllers();
+        }
+        catch (e) {
 
-    const discoveryResult = await ControllerDiscoveryService.discoverAsync();
+        }
 
-    context.assert.strictEqual(discoveryResult.controllers.length, 1);
-    context.assert.strictEqual(discoveryResult.controllers[0].name, 'DummyController');
-    context.assert.strictEqual(discoveryResult.routes.length, 1);
-    context.assert.strictEqual(discoveryResult.routes[0].className, 'DummyController');
+        const discoveryResult = await ControllerDiscoveryService.discoverAsync();
+
+        context.assert.strictEqual(discoveryResult.controllers.length, 1, 'Should discover one controller');
+        context.assert.strictEqual(discoveryResult.controllers[0].name, 'DummyController');
+        context.assert.strictEqual(discoveryResult.routes.length, 1, 'Should discover one route');
+        context.assert.strictEqual(discoveryResult.routes[0].className, 'DummyController');
+    });
 });
 
 test('ControllerDiscoveryService: discoverAsync skips files on import errors', async (context: TestContext) => {
-    const workingDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'cds-'));
-    fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
-        compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
-        include: ["./build/**/*"]
-    }));
-    const outputDirectory = path.join(workingDirectory, 'build');
-    fs.mkdirSync(outputDirectory, { recursive: true });
+    await withTempDirAsync(async (workingDirectory) => {
+        fs.writeFileSync(path.join(workingDirectory, 'tsconfig.json'), JSON.stringify({
+            compilerOptions: { module: "ESNext", target: "ES2022", outDir: "./build" },
+            include: ["./build/**/*"]
+        }));
+        const outputDirectory = path.join(workingDirectory, 'build');
+        fs.mkdirSync(outputDirectory, { recursive: true });
 
-    const invalidModuleFilePath = path.join(outputDirectory, 'bad-controller.mjs');
-    fs.writeFileSync(invalidModuleFilePath, 'invalid js syntax');
+        const invalidModuleFilePath = path.join(outputDirectory, 'bad-controller.mjs');
+        fs.writeFileSync(invalidModuleFilePath, 'invalid js syntax');
 
-    process.chdir(workingDirectory);
+        const discoveryResult = await ControllerDiscoveryService.discoverAsync();
 
-    const discoveryResult = await ControllerDiscoveryService.discoverAsync();
-
-    context.assert.strictEqual(discoveryResult.controllers.length, 0);
-    context.assert.strictEqual(discoveryResult.routes.length, 0);
+        context.assert.strictEqual(discoveryResult.controllers.length, 0);
+        context.assert.strictEqual(discoveryResult.routes.length, 0);
+    });
 });

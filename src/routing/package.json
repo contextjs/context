@@ -12,6 +12,9 @@
     "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/routing"
   },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2"
+  },
   "peerDependencies": {
     "@contextjs/system": "__VERSION__"
   },

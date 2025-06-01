@@ -18,6 +18,9 @@
       "types": "./api/index.d.ts"
     }
   },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2"
+  },
   "peerDependencies": {
     "@contextjs/webserver": "__VERSION__",
     "@contextjs/routing": "__VERSION__",

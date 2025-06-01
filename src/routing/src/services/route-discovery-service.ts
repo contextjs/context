@@ -9,7 +9,6 @@
 import { Directory, File, Path } from "@contextjs/io";
 import { StringExtensions } from "@contextjs/system";
 import path from "path";
-import { cwd } from "process";
 import "reflect-metadata";
 import typescript from "typescript";
 import { pathToFileURL } from "url";
@@ -19,11 +18,16 @@ import { RouteInfo } from "../models/route-info.js";
 
 export class RouteDiscoveryService {
     public static async discoverRoutesAsync(): Promise<RouteDefinition[]> {
-        const currentDirectory = path.join(cwd(), this.getCurrentDirectory());
         const entryFile = Path.normalize(process.env['CTX_ENTRY_FILE'] || process.argv[1]);
+        const entryDir = path.dirname(entryFile);
+        const outDir = this.getProjectOutputDirectory(entryDir);
+
         const files = Directory
-            .listFiles(currentDirectory, true)
-            .filter(f => File.getExtension(f) === "js" || File.getExtension(f) === "mjs")
+            .listFiles(outDir, true)
+            .filter(f => {
+                const ext = File.getExtension(f);
+                return ext === "js" || ext === "mjs";
+            })
             .filter(f => Path.normalize(f) !== entryFile);
 
         for (const file of files) {
@@ -33,7 +37,6 @@ export class RouteDiscoveryService {
             }
             catch (error) {
                 console.error(`Failed to import ${importPath}:`, error);
-                continue;
             }
         }
 
@@ -50,9 +53,8 @@ export class RouteDiscoveryService {
         return routeDefinitions;
     }
 
-    private static getCurrentDirectory(): string {
-        const tsConfigFilePath = typescript.findConfigFile("./", typescript.sys.fileExists, "tsconfig.json");
-
+    private static getProjectOutputDirectory(baseDir: string): string {
+        const tsConfigFilePath = typescript.findConfigFile(baseDir, typescript.sys.fileExists, "tsconfig.json");
         if (StringExtensions.isNullOrWhiteSpace(tsConfigFilePath))
             throw new Error("Could not find tsconfig.json");
 
@@ -60,12 +62,14 @@ export class RouteDiscoveryService {
         if (configFile.error)
             throw new Error("Error reading tsconfig.json");
 
-        const parsedConfig = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, "./");
+        const configDir = path.dirname(tsConfigFilePath);
+        const parsedConfig = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, configDir);
+
         const outDir = parsedConfig.options.outDir;
 
         if (!StringExtensions.isNullOrWhiteSpace(outDir))
-            return Path.normalize(outDir);
+            return path.isAbsolute(outDir) ? Path.normalize(outDir) : Path.normalize(path.join(configDir, outDir));
 
-        return Path.normalize(".");
+        return configDir;
     }
 }
