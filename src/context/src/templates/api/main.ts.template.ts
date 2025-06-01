@@ -18,14 +18,10 @@ import { Application } from "@contextjs/system";
 import { WebServerOptions } from "@contextjs/webserver";
 
 const application = new Application();
-application.useDependencyInjection();
 
 application.useWebServer((options: WebServerOptions) => {
     options.onEvent = (event) => console.log(event.type, event.detail);
-    options.useControllers(options => {
-        options.defaultController = "home";
-        options.defaultAction = "index";
-    });
+    options.useControllers();
 });
 
 application.services.registerServices();

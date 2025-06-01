@@ -21,9 +21,9 @@ export class AboutController {
         this.messageService = messageService;
     }
 
-    @Get("display")
-    public async display() {
-        return this.messageService.display("AboutController display method called");
+    @Get("index")
+    public async index() {
+        return this.messageService.display("AboutController index method called");
     }
 }`
 
