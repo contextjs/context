@@ -10,15 +10,27 @@ import { FileTemplate } from "../../models/file-template.js";
 
 export class MainTemplate {
   private static readonly name = "src/main.ts";
-  private static readonly content = `import { Application } from '@contextjs/system';
+  private static readonly content = `import "@contextjs/webserver";
+import "@contextjs/webserver-middleware-controllers";
+import "./services/service-collection.extensions.js";
+
+import { Application } from "@contextjs/system";
+import { WebServerOptions } from "@contextjs/webserver";
 
 const application = new Application();
+application.useDependencyInjection();
 
-application.onRun(async () => {
-    console.log('Application is running');
+application.useWebServer((options: WebServerOptions) => {
+    options.onEvent = (event) => console.log(event.type, event.detail);
+    options.useControllers(options => {
+        options.defaultController = "home";
+        options.defaultAction = "index";
+    });
 });
 
-application.runAsync();`
+application.services.registerServices();
+
+await application.runAsync();`
 
   public static readonly template: FileTemplate = new FileTemplate(MainTemplate.name, MainTemplate.content);
 }

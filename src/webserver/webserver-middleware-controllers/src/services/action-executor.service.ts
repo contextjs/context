@@ -14,20 +14,28 @@ import { VerbRouteInfo } from "../models/verb-route-info.js";
 
 export class ActionExecutorService {
     public static async executeAsync(webServer: WebServer, httpContext: HttpContext, defaultController: string, defaultAction: string): Promise<any> {
-        const requestUrl = httpContext.request.path;
+        let requestUrl = httpContext.request.path;
         if (StringExtensions.isNullOrWhiteSpace(requestUrl))
             return await this.serverErrorAsync(httpContext, "Request URL is empty");
+
+        const requestUrlSegments = RouteService.getSegments(requestUrl);
+        if (requestUrlSegments.length === 0)
+            requestUrl = `/${defaultController}/${defaultAction}`;
+        else if (requestUrlSegments.length === 1)
+            requestUrl = `/${requestUrlSegments[0]}/${defaultAction}`;
 
         const routeDefinitions = webServer.application.routes
             .filter(t => t.route instanceof VerbRouteInfo && t.route.verb === httpContext.request.method);
 
         const parsedRoute = RouteService.match(requestUrl, routeDefinitions);
+        if (ObjectExtensions.isNullOrUndefined(parsedRoute))
+            return await this.notFoundAsync(httpContext);
 
-        const controllerName = parsedRoute?.definition.className ?? defaultController;
+        const controllerName = parsedRoute?.definition.className;
         if (StringExtensions.isNullOrWhiteSpace(controllerName))
             return await this.notFoundAsync(httpContext);
 
-        const actionName = parsedRoute?.definition.methodName ?? defaultAction;
+        const actionName = parsedRoute?.definition.methodName;
         if (StringExtensions.isNullOrWhiteSpace(actionName))
             return await this.notFoundAsync(httpContext);
 

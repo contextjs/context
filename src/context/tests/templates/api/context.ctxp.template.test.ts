@@ -16,5 +16,5 @@ test("ContextTemplate: template definition - success", (context: TestContext) =>
     context.assert.ok(template instanceof FileTemplate);
     context.assert.strictEqual(template.name, "context.ctxp");
     context.assert.match(template.content!, /"name": "{{name}}"/);
-    context.assert.match(template.content!, /"main": "src\/main.ts"/);
+    context.assert.match(template.content!, /"main": "main.ts"/);
 });

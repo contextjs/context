@@ -12,7 +12,7 @@ export class TsConfigTemplate {
     private static readonly name = "tsconfig.json";
     private static readonly content = `{
     "compilerOptions": {
-        "outDir": "../_build/{{name}}",
+        "outDir": "build",
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",

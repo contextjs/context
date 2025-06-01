@@ -15,7 +15,7 @@ test("TsConfigTemplate: template definition - success", (context: TestContext) =
 
     context.assert.ok(template instanceof FileTemplate);
     context.assert.strictEqual(template.name, "tsconfig.json");
-    context.assert.match(template.content!, /"outDir": "..\/_build\/{{name}}"/);
+    context.assert.match(template.content!, /"outDir": "build"/);
     context.assert.match(template.content!, /"target": "ESNext"/);
     context.assert.match(template.content!, /"module": "NodeNext"/);
     context.assert.match(template.content!, /"strict": true/);

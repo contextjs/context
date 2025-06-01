@@ -18,7 +18,7 @@ test("PackageTemplate: template definition - success", (context: TestContext) =>
     context.assert.strictEqual(template.name, "package.json");
 
     const version = VersionService.get();
-    context.assert.match(template.content!, new RegExp(`"@contextjs/system":\\s*"${version}"`));
+    context.assert.match(template.content!, new RegExp(`"@contextjs/webserver":\\s*"${version}"`));
     context.assert.match(template.content!, /"name": "{{name}}"/);
     context.assert.match(template.content!, /"type": "module"/);
 });

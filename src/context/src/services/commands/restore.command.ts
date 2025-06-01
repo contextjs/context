@@ -15,7 +15,7 @@ import { CommandBase } from "./command-base.js";
 
 export class RestoreCommand extends CommandBase {
     public override async runAsync(command: Command): Promise<void> {
-        const projectCommand = command.args.find(arg => arg.name === 'project' || arg.name === 'p');
+        const projectCommand = command.args.find(arg => arg.name === 'project' || arg.name === '-p');
         const projects = this.getProjects(projectCommand?.values || []);
 
         if (projects.length === 0) {

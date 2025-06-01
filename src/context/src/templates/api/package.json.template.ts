@@ -17,7 +17,8 @@ export class PackageTemplate {
   "type": "module",
   "private": true,
   "dependencies": {
-    "@contextjs/system": "${VersionService.get()}"
+    "@contextjs/webserver": "${VersionService.get()}",
+    "@contextjs/webserver-middleware-controllers": "${VersionService.get()}"
   }
 }`;
 

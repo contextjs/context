@@ -33,6 +33,9 @@
     "@contextjs/io": "__VERSION__",
     "@contextjs/collections": "__VERSION__"
   },
+  "dependencies": {
+    "@types/node": "^22.13.10"
+  },
   "exports": {
     ".": {
       "import": "./api/index.js",

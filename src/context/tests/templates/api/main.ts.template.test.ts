@@ -16,6 +16,5 @@ test("MainTemplate: template definition - success", (context: TestContext) => {
     context.assert.ok(template instanceof FileTemplate);
     context.assert.strictEqual(template.name, "src/main.ts");
     context.assert.match(template.content!, /Application/);
-    context.assert.match(template.content!, /application\.onRun\(/);
     context.assert.match(template.content!, /application\.runAsync\(\);/);
 });
