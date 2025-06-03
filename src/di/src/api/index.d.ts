@@ -192,6 +192,18 @@ export declare class ServiceCollection {
             }
         ) => void;
     };
+
+    /**
+     * A callback that is invoked when a service is resolved.
+     * This callback can be used to perform additional actions or modifications when a service is resolved.
+     * @param context - The context of the resolved service.
+     */
+    public onResolve?: (context: {
+        name: string;
+        lifetime: ServiceLifetime;
+        parameters: ConstructorParameter[];
+        service: Service;
+    }) => any | null;
 }
 
 //#endregion
