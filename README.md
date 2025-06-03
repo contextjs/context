@@ -8,7 +8,7 @@
 
 > A modular, test-driven TypeScript ecosystem built on object-oriented design and zero-runtime dependencies.
 
-#### 🚧 Status: Pre-release – APIs and internal structures are stable, but breaking changes may occur before 1.0
+#### 🚧 Status: Pre-release – APIs and internal structures are stable, but breaking changes may occur before 25.0.0
 
 ## Getting Started
 
