@@ -54,4 +54,5 @@ These custom exceptions are thrown by the `File` and `Directory` APIs:
 | `NullReferenceException`  | Input path is null or whitespace (from system)   |
 
 ## API Reference
-For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/io#api-reference).
+For detailed API documentation, please refer to <a href="https://contextjs.dev/api/io#api-reference" target="_blank" rel="noopener noreferrer">API Reference</a>
+<span style="font-size:0.75em;vertical-align:super;">↗️</span>

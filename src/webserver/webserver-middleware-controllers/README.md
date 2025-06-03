@@ -94,4 +94,5 @@ application.useWebServer((options: WebServerOptions) => {
 Controllers are discovered automatically from the `outDir` specified in your `tsconfig.json`. You must compile your controllers to `.js` or `.mjs` files.
 
 ## API Reference
-For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/webserver-middleware-controllers#api-reference).
+For detailed API documentation, please refer to <a href="https://contextjs.dev/api/webserver-middleware-controllers#api-reference" target="_blank" rel="noopener noreferrer">API Reference</a>
+<span style="font-size:0.75em;vertical-align:super;">↗️</span>

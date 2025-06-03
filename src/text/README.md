@@ -37,4 +37,5 @@ console.log(builder.toString()); // "Hello, world!"
 ```
 
 ## API Reference
-For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/text#api-reference).
+For detailed API documentation, please refer to <a href="https://contextjs.dev/api/text#api-reference" target="_blank" rel="noopener noreferrer">API Reference</a>
+<span style="font-size:0.75em;vertical-align:super;">↗️</span>
