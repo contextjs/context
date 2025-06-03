@@ -147,5 +147,4 @@ Test coverage includes:
 It provides safe, strongly-typed primitives that you can rely on without reflection, decorators, or external dependencies.
 
 ## API Reference
-For detailed API documentation, please refer to <a href="https://contextjs.dev/api/system#api-reference" target="_blank" rel="noopener noreferrer">API Reference</a>
-<span style="font-size:0.75em;vertical-align:super;">↗️</span>
+For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/system#api-reference).
