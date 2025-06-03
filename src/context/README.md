@@ -6,7 +6,7 @@
 
 > Official CLI for building and managing ContextJS projects.
 
-## ✨ Features
+## Features
 
 - Unified command-line interface for managing ContextJS-based projects  
 - Support for creating new projects from templates  
@@ -15,7 +15,7 @@
 - Supports custom and external transformers via `--transformers` or `context.ctxp`  
 - Works seamlessly with all ContextJS packages  
 
-## 📦 Installation
+## Installation
 
 Install globally via npm:
 
@@ -25,7 +25,7 @@ npm install -g @contextjs/context
 
 This exposes the `ctx` command globally in your terminal.
 
-## 🚀 Usage
+## Usage
 
 ### Displaying available options
 
@@ -123,7 +123,7 @@ External transformers are also supported in watch mode:
 ctx watch --transformers=./src/my-transformer.ts
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 When you create a new project using `ctx new api myApi`, the following layout is generated:
 

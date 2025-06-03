@@ -43,9 +43,9 @@ export class RouteDiscoveryService {
         const routeDefinitions: RouteDefinition[] = [];
         for (const reg of getRegisteredRoutes()) {
             const { target, propertyKey, template, name } = reg;
-            const controllerName = (target as any).constructor?.name || (target as any).name || "UnknownController";
+            const className = (target as any).constructor?.name || (target as any).name || "unknown";
             const routeInfo = new RouteInfo(template, name);
-            routeDefinitions.push(new RouteDefinition(controllerName, propertyKey.toString(), routeInfo));
+            routeDefinitions.push(new RouteDefinition(className, propertyKey.toString(), routeInfo));
         }
 
         clearRegisteredRoutes();

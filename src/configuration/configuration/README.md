@@ -6,7 +6,7 @@
 
 > Lightweight configuration system for ContextJS applications, featuring async providers and environment variable support.
 
-## ✨ Features
+## Features
 
 - Fluent API for configuring providers
 - Async-based configuration loading
@@ -14,13 +14,13 @@
 - Pluggable provider model
 - Seamless integration with `Application` via `.useConfiguration()`
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm i @contextjs/configuration
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```ts
 import { Application } from "@contextjs/system";
@@ -42,52 +42,9 @@ app.useConfiguration(options => {
 const port = await app.configuration.getValueAsync("App:Port");
 ```
 
-## 📘 API Reference
+## API Reference
+For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/configuration#api-reference).
 
-### `ConfigurationOptions`
-
-```ts
-class ConfigurationOptions {
-    public readonly configuration: Configuration;
-
-    public useProvider(provider: IConfigurationProvider): ConfigurationOptions;
-    public useEnvironmentVariables(): ConfigurationOptions;
-}
-```
-
-### `Configuration`
-
-```ts
-class Configuration {
-    public readonly application: Application;
-    public readonly providers: IConfigurationProvider[];
-    public useEnvironmentVariables: boolean;
-
-    public getValueAsync(key: string): Promise<any>;
-}
-```
-
-### `IConfigurationProvider`
-
-```ts
-interface IConfigurationProvider {
-    getValueAsync(key: string): Promise<any>;
-}
-```
-
-## 🧩 Application Extension
-
-The `Application` class from `@contextjs/system` is automatically extended with configuration support:
-
-```ts
-declare module "@contextjs/system" {
-    export interface Application {
-        configuration: Configuration;
-        useConfiguration(options: (configurationOptions: ConfigurationOptions) => void): Application;
-    }
-}
-```
-
-## 🧪 Testing
+## Testing
 
 All features are covered by 100% unit test coverage, ensuring reliability, correctness, and long-term maintainability - so you can focus on building, not debugging.

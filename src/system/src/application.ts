@@ -13,7 +13,8 @@ export class Application {
     public readonly environment: Environment = new Environment();
 
     public async runAsync(): Promise<Application> {
-        await Promise.all(this.functions.map(f => f()));
+        for (let func of this.functions)
+            await func();
         return this;
     }
 

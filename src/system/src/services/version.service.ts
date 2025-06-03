@@ -9,7 +9,7 @@
 import { Console } from "./console.js";
 
 export class VersionService {
-    private static readonly version: string = "25.0.0-beta.1";
+    private static readonly version: string = "25.0.0-beta.2";
     private static readonly ascii: string = `
   ____            _            _         _ ____  
  / ___|___  _ __ | |_ _____  _| |_      | / ___| 

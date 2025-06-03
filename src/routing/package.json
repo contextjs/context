@@ -16,7 +16,8 @@
     "reflect-metadata": "^0.2.2"
   },
   "peerDependencies": {
-    "@contextjs/system": "__VERSION__"
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/collections": "__VERSION__"
   },
   "exports": {
     ".": {

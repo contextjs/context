@@ -27,8 +27,5 @@
       "import": "./api/index.js",
       "types": "./api/index.d.ts"
     }
-  },
-  "files": [
-    "api"
-  ]
+  }
 }
