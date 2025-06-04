@@ -8,7 +8,7 @@
 
 import { RouteInfo } from "@contextjs/routing";
 import "@contextjs/webserver";
-import { HttpVerb } from "@contextjs/webserver";
+import { HttpContext, HttpVerb } from "@contextjs/webserver";
 
 /**
  * Defines the Controller decorator, which is used to mark a class as a controller.
@@ -65,10 +65,6 @@ declare module "@contextjs/webserver" {
 
 /**
  * Defines the ControllerOptions class, which is used to configure default controller and action names.
- * This class is used to set default values for the controller and action names in the web server.
- * @param defaultController - The default controller name.
- * @param defaultAction - The default action name.
- * @return An instance of ControllerOptions with the specified default controller and action names.
  */
 export declare class ControllerOptions {
     /**
@@ -84,11 +80,6 @@ export declare class ControllerOptions {
 
 /**
  * Defines the VerbRouteInfo class, which extends RouteInfo to include an HTTP verb.
- * This class is used to represent a route with a specific HTTP verb.
- * @param verb - The HTTP verb for the route.
- * @param template - The route template.
- * @return An instance of VerbRouteInfo representing the route with the specified verb.
- * @extends RouteInfo
  */
 export declare class VerbRouteInfo extends RouteInfo {
 
@@ -107,11 +98,6 @@ export declare class VerbRouteInfo extends RouteInfo {
 
 /**
  * Defines the ControllerDefinition class, which represents a controller with its name, class reference, and optional route.
- * This class is used to store metadata about controllers in the web server.
- * @param name - The name of the controller.
- * @param classReference - The class reference for the controller.
- * @param route - An optional RouteInfo object representing the route for the controller.
- * @return An instance of ControllerDefinition representing the controller.
  */
 export declare class ControllerDefinition {
 
@@ -138,3 +124,73 @@ export declare class ControllerDefinition {
      */
     constructor(name: string, classReference: Function, route?: RouteInfo);
 }
+
+/**
+ * Represents an action result that can execute and write to the HTTP context.
+ */
+export declare interface IActionResult {
+    /**
+     * Executes the result, writing to the given HTTP context.
+     * @param httpContext - The HTTP context.
+     */
+    executeAsync(httpContext: HttpContext): Promise<any>;
+}
+
+/**
+ * Returns a result indicating a successful response with status 200 ("OK") and an optional string value as the response body.
+ * @param value - The response body as a string.
+ */
+export declare function OK(value?: string): IActionResult;
+
+/**
+ * Returns a result that serializes the given value as JSON and responds with status 200 ("OK").
+ * @param value - The value to serialize as JSON.
+ */
+export declare function Json(value: any): IActionResult;
+
+/**
+ * Returns a result indicating a successful response with status 204 ("No Content").
+ */
+export declare function NoContent(): IActionResult;
+
+/**
+ * Returns a result indicating a successful response with no body and no modification to status code.
+ */
+export declare function Empty(): IActionResult;
+
+/**
+ * Returns a result indicating a response with status 400 ("Bad Request") and an optional message as the response body.
+ * @param message - The optional error message.
+ */
+export declare function BadRequest(message?: string): IActionResult;
+
+/**
+ * Returns a result indicating a response with status 401 ("Unauthorized").
+ */
+export declare function Unauthorized(): IActionResult;
+
+/**
+ * Returns a result indicating a response with status 403 ("Forbidden").
+ */
+export declare function Forbidden(): IActionResult;
+
+/**
+ * Returns a result indicating a response with status 404 ("Not Found").
+ */
+export declare function NotFound(): IActionResult;
+
+/**
+ * Returns a result indicating a response with status 201 ("Created"), an optional value as the response body, and an optional "Location" header.
+ * @param value - The response body as a string.
+ * @param location - The optional Location header value.
+ */
+export declare function Created(value?: string, location?: string): IActionResult;
+
+/**
+ * Returns a result with custom content, content-type, status code, and reason phrase.
+ * @param content - The content to write to the response.
+ * @param contentType - The content-type header value.
+ * @param statusCode - The HTTP status code.
+ * @param statusMessage - The HTTP reason phrase.
+ */
+export declare function Content(content: string, contentType?: string, statusCode?: number, statusMessage?: string): IActionResult;

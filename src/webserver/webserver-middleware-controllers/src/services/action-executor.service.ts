@@ -100,14 +100,19 @@ export class ActionExecutorService {
         await httpContext.response.sendAsync(`Server Error: ${message}`);
     }
 
-    private static async okAsync(httpContext: HttpContext, payload: any): Promise<void> {
-        const isString = typeof payload === "string";
+    private static async okAsync(httpContext: HttpContext, result: any): Promise<void> {
+        if (!ObjectExtensions.isNullOrUndefined(result) && typeof result.executeAsync === "function"){
+            console.debug("Executing IActionResult");
+            return await result.executeAsync(httpContext);
+        }
+
+        const isString = typeof result === "string";
         const contentType = isString
             ? "text/plain; charset=utf-8"
             : "application/json";
 
         httpContext.response.setHeader("Content-Type", contentType);
         httpContext.response.setStatus(200, "OK");
-        await httpContext.response.sendAsync(isString ? payload : JSON.stringify(payload));
+        await httpContext.response.sendAsync(isString ? result : JSON.stringify(result));
     }
 }
