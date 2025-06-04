@@ -13,12 +13,15 @@ import { Command } from "../../../src/models/command.ts";
 import { Project } from "../../../src/models/project.ts";
 import { RestoreCommand } from "../../../src/services/commands/restore.command.ts";
 
+function stripAnsi(str: string) {
+    return str.replace(/\x1B\[[0-9;]*m/g, '');
+}
+
 test('RestoreCommand: runAsync(--project) - success', async (context: TestContext) => {
     const originalExit = process.exit;
     const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
-    let exitCode = 0;
 
     process.argv = ['', '', 'restore', '--project'];
 
@@ -30,22 +33,30 @@ test('RestoreCommand: runAsync(--project) - success', async (context: TestContex
     });
 
     process.exit = (code: number) => {
-        exitCode = code;
         throw new Error(`exit:${code}`);
     };
 
     let threw: Error | null = null;
+    let exitCode: number | null = null;
 
     try {
         await restoreCommand.runAsync(command);
-    } 
+    }
     catch (error) {
         threw = error as Error;
+        const match = threw?.message.match(/^exit:(\d+)$/);
+        if (match) {
+            exitCode = parseInt(match[1], 10);
+        } else {
+            exitCode = -1;
+            console.log('Unexpected error message:', threw?.message);
+        }
     }
+
 
     context.assert.ok(threw);
     context.assert.strictEqual(exitCode, 1);
-    context.assert.match(logOutput, /No projects found\. Exiting/);
+    context.assert.match(stripAnsi(logOutput), /No projects found. Exiting/);
 
     Console.setOutput(originalOutput);
     process.exit = originalExit;
@@ -56,7 +67,6 @@ test('RestoreCommand: runAsync(--p) - success', async (context: TestContext) => 
     const originalOutput = Console['output'];
 
     let logOutput = StringExtensions.empty;
-    let exitCode = 0;
 
     process.argv = ['', '', 'restore', '--p', 'api'];
 
@@ -68,17 +78,21 @@ test('RestoreCommand: runAsync(--p) - success', async (context: TestContext) => 
     });
 
     process.exit = (code: number) => {
-        exitCode = code;
         throw new Error(`exit:${code}`);
     };
 
     let threw: Error | null = null;
+    let exitCode: number | null = null;
 
     try {
         await restoreCommand.runAsync(command);
-    } 
+    }
     catch (error) {
         threw = error as Error;
+        const match = threw?.message.match(/^exit:(\d+)$/);
+        if (match) {
+            exitCode = parseInt(match[1], 10);
+        }
     }
 
     context.assert.ok(threw);
@@ -132,7 +146,7 @@ test('RestoreCommand: restoreAsync - exits when context.ctxp is missing', async 
 
     try {
         await (restoreCommand as any).restoreAsync(project);
-    } 
+    }
     catch (error) {
         threw = error as Error;
     }
