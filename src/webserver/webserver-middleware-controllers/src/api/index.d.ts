@@ -8,7 +8,7 @@
 
 import { RouteInfo } from "@contextjs/routing";
 import "@contextjs/webserver";
-import { HttpVerb } from "@contextjs/webserver";
+import { HttpContext, HttpVerb } from "@contextjs/webserver";
 
 /**
  * Defines the Controller decorator, which is used to mark a class as a controller.
@@ -138,3 +138,11 @@ export declare class ControllerDefinition {
      */
     constructor(name: string, classReference: Function, route?: RouteInfo);
 }
+
+export declare interface IActionResult {
+    executeAsync(httpContext: HttpContext): Promise<any>;
+}
+
+export declare function OK(value?: string): IActionResult;
+export declare function Json(value: any): IActionResult;
+export declare function NoContent(): IActionResult;
