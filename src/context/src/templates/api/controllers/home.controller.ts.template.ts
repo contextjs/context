@@ -10,7 +10,7 @@ import { FileTemplate } from "../../../models/file-template.js";
 
 export class HomeControllerTemplate {
     private static readonly name = "src/controllers/home.controller.ts";
-    private static readonly content = `import { Controller, Get } from "@contextjs/webserver-middleware-controllers";
+    private static readonly content = `import { Controller, Get, IActionResult, Ok } from "@contextjs/webserver-middleware-controllers";
 import type { ILoggerService } from "../services/interfaces/i-logger.service.js";
 
 @Controller()
@@ -22,9 +22,9 @@ export class HomeController {
     }
 
     @Get("index")
-    public async index() {
+    public async index(): Promise<IActionResult> {
         this.loggerService.log("HomeController index method called");
-        return "Home";
+        return Ok("Welcome to the Home Page!");
     }
 }`
 

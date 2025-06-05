@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from 'node:test';
-import { OK } from '../../src/results/ok-result.js';
+import { Ok } from '../../src/results/ok-result.js';
 
 class MockResponse {
     statusCode?: number;
@@ -45,15 +45,15 @@ class MockHttpContext {
     response = new MockResponse();
 }
 
-test('OK: returns an IActionResult implementation', (context: TestContext) => {
-    const result = OK('hello');
+test('Ok: returns an IActionResult implementation', (context: TestContext) => {
+    const result = Ok('hello');
     context.assert.ok(result);
     context.assert.strictEqual(typeof result.executeAsync, 'function');
 });
 
 test('OkResult: executeAsync sends value when defined', async (context: TestContext) => {
     const mockContext = new MockHttpContext();
-    const result = OK('hello');
+    const result = Ok('hello');
 
     await result.executeAsync(mockContext as any);
 
@@ -68,7 +68,7 @@ test('OkResult: executeAsync sends value when defined', async (context: TestCont
 
 test('OkResult: executeAsync delegates to NoContent when value is null or undefined', async (context: TestContext) => {
     const mockContext = new MockHttpContext();
-    const result = OK(undefined);
+    const result = Ok(undefined);
 
     await result.executeAsync(mockContext as any);
 
@@ -85,7 +85,7 @@ test('OkResult: executeAsync propagates errors', async (context: TestContext) =>
         }
     }
     const mockContext = { response: new ErrorResponse() };
-    const result = OK('fail');
+    const result = Ok('fail');
 
     await context.assert.rejects(() => result.executeAsync(mockContext as any), {
         message: 'Send error'

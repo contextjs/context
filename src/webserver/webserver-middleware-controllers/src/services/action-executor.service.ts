@@ -101,10 +101,8 @@ export class ActionExecutorService {
     }
 
     private static async okAsync(httpContext: HttpContext, result: any): Promise<void> {
-        if (!ObjectExtensions.isNullOrUndefined(result) && typeof result.executeAsync === "function"){
-            console.debug("Executing IActionResult");
+        if (!ObjectExtensions.isNullOrUndefined(result) && typeof result.executeAsync === "function")
             return await result.executeAsync(httpContext);
-        }
 
         const isString = typeof result === "string";
         const contentType = isString

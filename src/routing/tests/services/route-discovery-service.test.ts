@@ -29,7 +29,6 @@ function withTempDir<T>(action: (dir: string) => T | Promise<T>): Promise<T> {
         throw err;
     }
 
-    // Always return a Promise, handle sync/async transparently
     return Promise.resolve(result)
         .finally(() => {
             process.chdir(originalCwd);

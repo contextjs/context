@@ -44,6 +44,7 @@ test('RestoreCommand: runAsync(--project) - success', async (context: TestContex
     }
     catch (error) {
         threw = error as Error;
+        console.log('Actual error message:', threw?.message);
         const match = threw?.message.match(/^exit:(\d+)$/);
         if (match) {
             exitCode = parseInt(match[1], 10);
