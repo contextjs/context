@@ -140,7 +140,7 @@ export declare interface IActionResult {
  * Returns a result indicating a successful response with status 200 ("OK") and an optional string value as the response body.
  * @param value - The response body as a string.
  */
-export declare function OK(value?: string): IActionResult;
+export declare function Ok(value?: string): IActionResult;
 
 /**
  * Returns a result that serializes the given value as JSON and responds with status 200 ("OK").

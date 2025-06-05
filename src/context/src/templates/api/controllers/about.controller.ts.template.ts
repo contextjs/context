@@ -22,7 +22,7 @@ export class AboutController {
     }
 
     @Get("index")
-    public async index() {
+    public async index(): Promise<string> {
         return this.messageService.display("AboutController index method called");
     }
 }`

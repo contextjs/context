@@ -11,7 +11,7 @@ import { HttpContext } from "@contextjs/webserver";
 import { IActionResult } from "../interfaces/i-action-result.js";
 import { NoContent } from "./no-content-result.js";
 
-export function OK(value?: string): IActionResult {
+export function Ok(value?: string): IActionResult {
     return new OkResult(value);
 }
 
