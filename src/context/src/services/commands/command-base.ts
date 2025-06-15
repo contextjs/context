@@ -33,14 +33,14 @@ export abstract class CommandBase {
 
         directoryEntries.forEach(entry => {
             if (entry.isFile() && entry.name === 'context.ctxp') {
-                const entryPath = entry.parentPath || entry.path;
+                const entryPath = entry.parentPath;
                 const projectFile = File.read(`${entryPath}/context.ctxp`);
                 const projectName = JSON.parse(projectFile || '{}')?.name || '';
 
                 if (projectNames.length > 0 && !projectNames.includes(projectName))
                     return;
 
-                projects.push(new Project(projectName, entry.parentPath || entry.path));
+                projects.push(new Project(projectName, entryPath));
             }
         });
 

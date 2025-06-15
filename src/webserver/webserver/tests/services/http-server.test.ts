@@ -158,11 +158,11 @@ test('HttpServer: configure tracks and cleans up connections and removes old lis
     const server = new ConfigHttpServer(defaultOptions) as any;
     const fakeServer = (server as any).server as FakeServer;
 
-    const dummy = () => { };
-    fakeServer.on('connection', dummy);
+    const test = () => { };
+    fakeServer.on('connection', test);
     (server as any).configure();
 
-    context.assert.ok(!fakeServer.listeners('connection').includes(dummy));
+    context.assert.ok(!fakeServer.listeners('connection').includes(test));
 
     const fakeSocket = new PassThrough() as any as Socket;
     fakeServer.emit('connection', fakeSocket);

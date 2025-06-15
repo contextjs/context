@@ -11,29 +11,29 @@ import test, { TestContext } from 'node:test';
 import 'reflect-metadata';
 import { ControllerDefinition } from '../../src/models/controller-definition.js';
 
-class DummyClass { }
+class TestClass { }
 
 test('ControllerDefinition: default template uses controller name without suffix', (context: TestContext) => {
-    const controllerDefinition = new ControllerDefinition('MyController', DummyClass);
+    const controllerDefinition = new ControllerDefinition('MyController', TestClass);
     const template = (controllerDefinition.route as any).template;
 
     context.assert.strictEqual(controllerDefinition.name, 'MyController');
-    context.assert.strictEqual(controllerDefinition.classReference, DummyClass);
+    context.assert.strictEqual(controllerDefinition.classReference, TestClass);
     context.assert.ok(controllerDefinition.route instanceof RouteInfo);
     context.assert.strictEqual(template, 'my');
 });
 
 test('ControllerDefinition: non-controller name uses lowercase name directly', (context: TestContext) => {
-    const controllerDefinition = new ControllerDefinition('User', DummyClass);
+    const controllerDefinition = new ControllerDefinition('User', TestClass);
     const template = (controllerDefinition.route as any).template;
 
     context.assert.strictEqual(template, 'user');
 });
 
 test('ControllerDefinition: whitespace or empty template falls back to default name', (context: TestContext) => {
-    const controllerDefinition1 = new ControllerDefinition('TestController', DummyClass, '   ');
+    const controllerDefinition1 = new ControllerDefinition('TestController', TestClass, '   ');
     const template1 = (controllerDefinition1.route as any).template;
-    const controllerDefinition2 = new ControllerDefinition('TestController', DummyClass, '');
+    const controllerDefinition2 = new ControllerDefinition('TestController', TestClass, '');
     const template2 = (controllerDefinition2.route as any).template;
 
     context.assert.strictEqual(template2, 'test');
@@ -41,14 +41,14 @@ test('ControllerDefinition: whitespace or empty template falls back to default n
 });
 
 test('ControllerDefinition: trims slashes and normalizes template', (context: TestContext) => {
-    const controllerDefinition = new ControllerDefinition('AnyController', DummyClass, '/api/v1/resource/');
+    const controllerDefinition = new ControllerDefinition('AnyController', TestClass, '/api/v1/resource/');
     const template = (controllerDefinition.route as any).template;
 
     context.assert.strictEqual(template, 'api/v1/resource');
 });
 
 test('ControllerDefinition: replaces [controller] placeholder', (context: TestContext) => {
-    const controllerDefinition = new ControllerDefinition('OrderController', DummyClass, 'area/[controller]/details');
+    const controllerDefinition = new ControllerDefinition('OrderController', TestClass, 'area/[controller]/details');
     const template = (controllerDefinition.route as any).template;
 
     context.assert.strictEqual(template, 'area/order/details');

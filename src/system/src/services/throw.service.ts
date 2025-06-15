@@ -26,8 +26,8 @@ export class Throw {
             throw new NullReferenceException();
     }
 
-    public static ifNullOrWhiteSpace(value: string | null | undefined): void {
-        if (StringExtensions.isNullOrWhiteSpace(value))
+    public static ifNullOrWhitespace(value: string | null | undefined): void {
+        if (StringExtensions.isNullOrWhitespace(value))
             throw new NullReferenceException();
     }
 }

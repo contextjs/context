@@ -19,19 +19,19 @@ import { RouteDiscoveryService } from "../../src/services/route-discovery-servic
 test("Application: useRouting registers onRun handler that populates app.routes", async () => {
     const originalDiscover = RouteDiscoveryService.discoverRoutesAsync;
     try {
-        class DummyController {
-            async dummyMethod() { return "ok"; }
+        class TestController {
+            async testMethod() { return "ok"; }
         }
-        const dummyRouteInfo = new RouteInfo("/dummy", "dummyName");
-        const dummyRoutes = [
+        const testRouteInfo = new RouteInfo("/test", "testName");
+        const testRoutes = [
             new RouteDefinition(
-                "file:///dummy/path/controller.js",
-                DummyController,
-                DummyController.prototype.dummyMethod,
-                dummyRouteInfo
+                "file:///test/path/controller.js",
+                TestController,
+                TestController.prototype.testMethod,
+                testRouteInfo
             )
         ];
-        RouteDiscoveryService.discoverRoutesAsync = async () => dummyRoutes;
+        RouteDiscoveryService.discoverRoutesAsync = async () => testRoutes;
 
         const app = new Application();
         assert.strictEqual((app as any).routes, undefined);
@@ -41,8 +41,8 @@ test("Application: useRouting registers onRun handler that populates app.routes"
 
         assert.deepStrictEqual(
             (app as any).routes,
-            dummyRoutes,
-            "app.routes should equal the stubbed dummyRoutes"
+            testRoutes,
+            "app.routes should equal the stubbed testRoutes"
         );
     }
     finally {

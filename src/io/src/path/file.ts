@@ -23,7 +23,7 @@ export class File {
     }
 
     public static save(file: string, content: string, overwrite: boolean = false): boolean {
-        Throw.ifNullOrWhiteSpace(file);
+        Throw.ifNullOrWhitespace(file);
 
         if (!overwrite && Path.isFile(file))
             throw new FileExistsException(file);
@@ -37,8 +37,8 @@ export class File {
     }
 
     public static rename(oldFile: string, newFile: string): boolean {
-        Throw.ifNullOrWhiteSpace(oldFile);
-        Throw.ifNullOrWhiteSpace(newFile);
+        Throw.ifNullOrWhitespace(oldFile);
+        Throw.ifNullOrWhitespace(newFile);
 
         if (!this.exists(oldFile))
             throw new FileNotFoundException(oldFile);
@@ -52,7 +52,7 @@ export class File {
     }
 
     public static delete(file: string): boolean {
-        Throw.ifNullOrWhiteSpace(file);
+        Throw.ifNullOrWhitespace(file);
 
         if (this.exists(file)) {
             rmSync(file);
@@ -63,8 +63,8 @@ export class File {
     }
 
     public static copy(source: string, target: string): boolean {
-        Throw.ifNullOrWhiteSpace(source);
-        Throw.ifNullOrWhiteSpace(target);
+        Throw.ifNullOrWhitespace(source);
+        Throw.ifNullOrWhitespace(target);
 
         if (!this.exists(source))
             throw new FileNotFoundException(source);
@@ -86,19 +86,19 @@ export class File {
     }
 
     public static getName(file: string): string | null {
-        Throw.ifNullOrWhiteSpace(file);
+        Throw.ifNullOrWhitespace(file);
 
         return path.basename(file);
     }
 
     public static getDirectory(file: string): string | null {
-        Throw.ifNullOrWhiteSpace(file);
+        Throw.ifNullOrWhitespace(file);
 
         return path.dirname(file);
     }
 
     public static getExtension(file: string): string | null {
-        Throw.ifNullOrWhiteSpace(file);
+        Throw.ifNullOrWhitespace(file);
 
         const normalizedPath = Path.normalize(file);
         return path.extname(normalizedPath).slice(1).toLowerCase();

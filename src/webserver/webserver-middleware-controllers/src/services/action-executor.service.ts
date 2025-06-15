@@ -15,7 +15,7 @@ import { VerbRouteInfo } from "../models/verb-route-info.js";
 export class ActionExecutorService {
     public static async executeAsync(webServer: WebServer, httpContext: HttpContext, defaultController: string, defaultAction: string): Promise<any> {
         let requestUrl = httpContext.request.path;
-        if (StringExtensions.isNullOrWhiteSpace(requestUrl))
+        if (StringExtensions.isNullOrWhitespace(requestUrl))
             return await this.serverErrorAsync(httpContext, "Request URL is empty");
 
         const requestUrlSegments = RouteService.getSegments(requestUrl);
@@ -32,11 +32,11 @@ export class ActionExecutorService {
             return await this.notFoundAsync(httpContext);
 
         const controllerName = parsedRoute?.definition.className;
-        if (StringExtensions.isNullOrWhiteSpace(controllerName))
+        if (StringExtensions.isNullOrWhitespace(controllerName))
             return await this.notFoundAsync(httpContext);
 
         const actionName = parsedRoute?.definition.methodName;
-        if (StringExtensions.isNullOrWhiteSpace(actionName))
+        if (StringExtensions.isNullOrWhitespace(actionName))
             return await this.notFoundAsync(httpContext);
 
         const controllerInstance = webServer.application.services.resolve(controllerName);

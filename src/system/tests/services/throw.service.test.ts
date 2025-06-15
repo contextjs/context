@@ -39,12 +39,12 @@ test('Throw: ifNullOrEmpty - does not throw on valid string', (context: TestCont
 });
 
 test('Throw: ifNullOrWhiteSpace - throws NullReferenceException', (context: TestContext) => {
-    context.assert.throws(() => Throw.ifNullOrWhiteSpace(null), NullReferenceException);
-    context.assert.throws(() => Throw.ifNullOrWhiteSpace(undefined), NullReferenceException);
-    context.assert.throws(() => Throw.ifNullOrWhiteSpace(StringExtensions.empty), NullReferenceException);
-    context.assert.throws(() => Throw.ifNullOrWhiteSpace(' '), NullReferenceException);
+    context.assert.throws(() => Throw.ifNullOrWhitespace(null), NullReferenceException);
+    context.assert.throws(() => Throw.ifNullOrWhitespace(undefined), NullReferenceException);
+    context.assert.throws(() => Throw.ifNullOrWhitespace(StringExtensions.empty), NullReferenceException);
+    context.assert.throws(() => Throw.ifNullOrWhitespace(' '), NullReferenceException);
 });
 
 test('Throw: ifNullOrWhiteSpace - does not throw on non-empty string', (context: TestContext) => {
-    context.assert.doesNotThrow(() => Throw.ifNullOrWhiteSpace('contextjs'));
+    context.assert.doesNotThrow(() => Throw.ifNullOrWhitespace('contextjs'));
 });

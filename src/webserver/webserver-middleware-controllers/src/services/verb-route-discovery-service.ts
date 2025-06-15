@@ -30,7 +30,7 @@ export class VerbRouteDiscoveryService {
                 continue;
 
             const { template, verb } = Reflect.getMetadata(VERB_ROUTE_META, methodHandler);
-            const fullTemplate = template.startsWith("/") || StringExtensions.isNullOrWhiteSpace(controllerTemplate)
+            const fullTemplate = template.startsWith("/") || StringExtensions.isNullOrWhitespace(controllerTemplate)
                 ? template
                 : `${controllerTemplate}/${template}`;
             const routeInfo = new VerbRouteInfo(verb, fullTemplate);

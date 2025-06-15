@@ -243,3 +243,32 @@ export declare class Stack<T> {
      */
     public toArray(): T[];
 }
+
+/**
+ * Represents a binary search class for sorted arrays.
+ * @template T The type of elements in the array.
+ * This class provides a static method to perform binary search.
+ * It can use a custom comparison function or the default comparison.
+ * If a custom comparison function is not provided,
+ * it uses the default comparison based on the `<` and `>` operators.
+ */
+export declare class BinarySearch {
+    /**
+     * Performs a binary search on a sorted array.
+     * @template T The type of elements in the array.
+     * @param items The sorted array to search.
+     * @param target The item to search for.
+     * @param compare Optional comparison function. If not provided, uses default comparison.
+     * @returns The index of the target item, or -1 if not found.
+     */
+    public static search<T>(items: T[], target: T, compare?: (a: T, b: T) => number): number;
+    /**
+     * Performs a binary search on a sorted array with a numeric target.
+     * @template T The type of elements in the array.
+     * @param items The sorted array to search.
+     * @param target The numeric value to search for.
+     * @param compare Comparison function that compares an item with a number.
+     * @returns The index of the target item, or -1 if not found.
+     */
+    public static search<T>(items: T[], target: number, compare?: (a: T, b: number) => number): number;
+}

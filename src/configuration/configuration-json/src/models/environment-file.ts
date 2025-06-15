@@ -22,7 +22,7 @@ export class EnvironmentFile {
         this.environmentName = environmentName;
 
         const content = File.read(file);
-        this.content = StringExtensions.isNullOrWhiteSpace(content)
+        this.content = StringExtensions.isNullOrWhitespace(content)
             ? null
             : JSON.parse(content!);
     }

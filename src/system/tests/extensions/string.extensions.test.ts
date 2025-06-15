@@ -51,24 +51,24 @@ test('StringExtensions: isNullOrUndefined - failure', (context: TestContext) => 
     context.assert.strictEqual(StringExtensions.isNullOrUndefined(value), false);
 });
 
-test('StringExtensions: isNullOrWhiteSpace - success', (context: TestContext) => {
+test('StringExtensions: isNullOrWhitespace - success', (context: TestContext) => {
     const value = " ";
-    context.assert.strictEqual(StringExtensions.isNullOrWhiteSpace(value), true);
+    context.assert.strictEqual(StringExtensions.isNullOrWhitespace(value), true);
 });
 
-test('StringExtensions: isNullOrWhiteSpace - failure', (context: TestContext) => {
+test('StringExtensions: isNullOrWhitespace - failure', (context: TestContext) => {
     const value = "a";
-    context.assert.strictEqual(StringExtensions.isNullOrWhiteSpace(value), false);
+    context.assert.strictEqual(StringExtensions.isNullOrWhitespace(value), false);
 });
 
-test('StringExtensions:  removeWhiteSpaces - success', (context: TestContext) => {
+test('StringExtensions:  removeWhitespace - success', (context: TestContext) => {
     const value = "a b c";
-    context.assert.strictEqual(StringExtensions.removeWhiteSpaces(value), "abc");
+    context.assert.strictEqual(StringExtensions.removeWhitespace(value), "abc");
 });
 
-test('StringExtensions: removeWhiteSpaces - failure', (context: TestContext) => {
+test('StringExtensions: removeWhitespace - failure', (context: TestContext) => {
     const value = "a b c";
-    context.assert.notStrictEqual(StringExtensions.removeWhiteSpaces(value), "a b c");
+    context.assert.notStrictEqual(StringExtensions.removeWhitespace(value), "a b c");
 });
 
 test('StringExtensions: isLineBreak - success', (context: TestContext) => {
@@ -137,35 +137,35 @@ test('StringExtensions: isLetterOrDigit - failure', (context: TestContext) => {
 
 test('StringExtensions: isWhitespace - success', (context: TestContext) => {
     let value = " ";
-    context.assert.strictEqual(StringExtensions.isWhiteSpace(value), true);
+    context.assert.strictEqual(StringExtensions.isWhitespace(value), true);
 
     value = "a";
-    context.assert.strictEqual(StringExtensions.isWhiteSpace(value), false);
+    context.assert.strictEqual(StringExtensions.isWhitespace(value), false);
 });
 
 test('StringExtensions: isWhitespace - failure', (context: TestContext) => {
     const value = "a";
-    context.assert.strictEqual(StringExtensions.isWhiteSpace(value), false);
+    context.assert.strictEqual(StringExtensions.isWhitespace(value), false);
 });
 
-test('StringExtensions: containsOnlyLineBreaksAndSpaces - success', (context: TestContext) => {
+test('StringExtensions: containsOnlyWhitespace - success', (context: TestContext) => {
     let value = " \n\r";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), true);
 
     value = "a";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), false);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), false);
 
     value = "\u2028";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), true);
 
     value = "\u2029";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), true);
 
     value = " \u2028";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), true);
 
     value = "\u2028 ";
-    context.assert.strictEqual(StringExtensions.containsOnlyLineBreaksAndSpaces(value), true);
+    context.assert.strictEqual(StringExtensions.containsOnlyWhitespace(value), true);
 });
 
 test('StringExtensions: format - success', (context: TestContext) => {
@@ -192,10 +192,10 @@ test('StringExtensions: type narrowing - isNullOrEmpty', (context: TestContext) 
         context.assert.ok(true);
 });
 
-test('StringExtensions: type narrowing - isNullOrWhiteSpace', (context: TestContext) => {
+test('StringExtensions: type narrowing - isNullOrWhitespace', (context: TestContext) => {
     const value: string | null | undefined = "ContextJS";
 
-    if (!StringExtensions.isNullOrWhiteSpace(value)) {
+    if (!StringExtensions.isNullOrWhitespace(value)) {
         const first = value.charAt(0);
         context.assert.strictEqual(first, "C");
     }

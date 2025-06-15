@@ -18,7 +18,7 @@ class BadRequestResult implements IActionResult {
     public constructor(private readonly message?: string) { }
 
     public async executeAsync(httpContext: HttpContext): Promise<void> {
-        if (StringExtensions.isNullOrWhiteSpace(this.message))
+        if (StringExtensions.isNullOrWhitespace(this.message))
             await httpContext.response
                 .setStatus(400, "Bad Request")
                 .endAsync();

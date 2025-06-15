@@ -18,7 +18,7 @@ export class Cookie {
     public constructor(name: string, value: string);
     public constructor(name: string, value: string, options?: CookieOptions);
     public constructor(name: string, value?: string, options?: CookieOptions) {
-        Throw.ifNullOrWhiteSpace(name);
+        Throw.ifNullOrWhitespace(name);
 
         this.name = name;
         this.value = value ?? StringExtensions.empty;

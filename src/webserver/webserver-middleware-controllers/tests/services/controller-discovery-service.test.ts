@@ -102,18 +102,18 @@ test('ControllerDiscoveryService: discoverAsync imports files and discovers cont
 
         const controllerSource = `
             import { Controller } from '${decoratorImportUrl}';
-            class DummyController {}
-            Controller('templ')(DummyController);
-            export { DummyController };
+            class TestController {}
+            Controller('templ')(TestController);
+            export { TestController };
         `;
-        const controllerFilePath = path.join(outputDirectory, 'dummy-controller.mjs');
+        const controllerFilePath = path.join(outputDirectory, 'test-controller.mjs');
         fs.writeFileSync(controllerFilePath, controllerSource);
 
         await new Promise(r => setTimeout(r, 50)); // use longer for CI
 
         context.mock.method(VerbRouteDiscoveryService, 'discoverAsync', async () => [{
             route: new RouteInfo('templ/action'),
-            className: 'DummyController',
+            className: 'TestController',
             methodName: 'action'
         } as RouteDefinition]);
 
@@ -129,9 +129,9 @@ test('ControllerDiscoveryService: discoverAsync imports files and discovers cont
         const discoveryResult = await ControllerDiscoveryService.discoverAsync();
 
         context.assert.strictEqual(discoveryResult.controllers.length, 1, 'Should discover one controller');
-        context.assert.strictEqual(discoveryResult.controllers[0].name, 'DummyController');
+        context.assert.strictEqual(discoveryResult.controllers[0].name, 'TestController');
         context.assert.strictEqual(discoveryResult.routes.length, 1, 'Should discover one route');
-        context.assert.strictEqual(discoveryResult.routes[0].className, 'DummyController');
+        context.assert.strictEqual(discoveryResult.routes[0].className, 'TestController');
     });
 });
 

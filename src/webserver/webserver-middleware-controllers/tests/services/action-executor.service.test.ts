@@ -61,8 +61,8 @@ test('executeAsync: not found when controller cannot be resolved', async (contex
 });
 
 test('executeAsync: no content when handler returns undefined', async (context: TestContext) => {
-    class DummyController { async foo() { } }
-    const parsed: ParsedRoute = { definition: { className: 'DummyController', methodName: 'foo' }, parameters: new Map() } as any;
+    class TestController { async foo() { } }
+    const parsed: ParsedRoute = { definition: { className: 'TestController', methodName: 'foo' }, parameters: new Map() } as any;
     const origMatch = RouteService.match;
     (RouteService.match as any) = () => parsed;
 
@@ -70,7 +70,7 @@ test('executeAsync: no content when handler returns undefined', async (context: 
     const webServer: any = {
         application: {
             routes: [{ route: new VerbRouteInfo('GET', '/x') }],
-            services: { resolve: (_: string) => new DummyController() }
+            services: { resolve: (_: string) => new TestController() }
         }
     };
 
@@ -83,8 +83,8 @@ test('executeAsync: no content when handler returns undefined', async (context: 
 });
 
 test('executeAsync: ok with string result and correct headers', async (context: TestContext) => {
-    class DummyController { async foo() { return 'hello'; } }
-    const parsed: ParsedRoute = { definition: { className: 'DummyController', methodName: 'foo' }, parameters: new Map() } as any;
+    class TestController { async foo() { return 'hello'; } }
+    const parsed: ParsedRoute = { definition: { className: 'TestController', methodName: 'foo' }, parameters: new Map() } as any;
     const origMatch = RouteService.match;
     (RouteService.match as any) = () => parsed;
 
@@ -92,7 +92,7 @@ test('executeAsync: ok with string result and correct headers', async (context: 
     const webServer: any = {
         application: {
             routes: [{ route: new VerbRouteInfo('GET', '/x') }],
-            services: { resolve: (_: string) => new DummyController() }
+            services: { resolve: (_: string) => new TestController() }
         }
     };
 
@@ -106,14 +106,14 @@ test('executeAsync: ok with string result and correct headers', async (context: 
 });
 
 test('executeAsync: ok with JSON result and parameter mapping', async (context: TestContext) => {
-    class DummyController {
+    class TestController {
         async foo(httpContext: HttpContext, id: number) {
             return { id, ok: true, hasCtx: httpContext instanceof Object };
         }
     }
-    Reflect.defineMetadata('design:paramtypes', [HttpContext, Number], DummyController.prototype, 'foo');
+    Reflect.defineMetadata('design:paramtypes', [HttpContext, Number], TestController.prototype, 'foo');
     const parsed: ParsedRoute = {
-        definition: { className: 'DummyController', methodName: 'foo' },
+        definition: { className: 'TestController', methodName: 'foo' },
         parameters: new Map([['id', 123]])
     } as any;
     const origMatch = RouteService.match;
@@ -125,7 +125,7 @@ test('executeAsync: ok with JSON result and parameter mapping', async (context: 
     const webServer: any = {
         application: {
             routes: [{ route: new VerbRouteInfo('GET', '/x/:id') }],
-            services: { resolve: (_: string) => new DummyController() }
+            services: { resolve: (_: string) => new TestController() }
         }
     };
 

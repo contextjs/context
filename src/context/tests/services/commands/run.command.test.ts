@@ -55,7 +55,7 @@ test("RunCommand: exits if no projects found", async (context: TestContext) => {
 
     context.assert.ok(threw);
     context.assert.match(threw.message, /exit:1/);
-    context.assert.match(getOutput(), /No projects found\. Exiting/);
+    context.assert.strictEqual(getOutput(), '\x1B[31mNo projects found. Exiting...\x1B[39m\n');
 });
 
 test("RunCommand: exits if no context.ctxp file", async (context: TestContext) => {

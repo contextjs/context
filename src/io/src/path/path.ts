@@ -24,7 +24,7 @@ export class Path {
     }
 
     public static normalize(path: string): string {
-        Throw.ifNullOrWhiteSpace(path);
+        Throw.ifNullOrWhitespace(path);
 
         return nodePath.normalize(path).replace(/^(\.\.[\/\\])+/, '');
     }
