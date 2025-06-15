@@ -85,13 +85,13 @@ test('useControllers: allows partial configuration of ControllerOptions', (conte
 
 test('useControllers: onRun registers routes and DI entries correctly', async (context: TestContext) => {
     const { options, fakeApp, setCalls } = createOptionsWithContext();
-    class DummyCtrl { }
-    Reflect.defineMetadata('design:paramtypes', [Number, String], DummyCtrl);
+    class TestCtrl { }
+    Reflect.defineMetadata('design:paramtypes', [Number, String], TestCtrl);
     const originalDiscover = ControllerDiscoveryService.discoverAsync;
     // @ts-ignore
     ControllerDiscoveryService.discoverAsync = () => Promise.resolve({
         routes: ['r1', 'r2'],
-        controllers: [{ name: 'C1', classReference: DummyCtrl }]
+        controllers: [{ name: 'C1', classReference: TestCtrl }]
     });
     options.useControllers((options: ControllerOptions) => {
         options.defaultController = 'X';
@@ -106,7 +106,7 @@ test('useControllers: onRun registers routes and DI entries correctly', async (c
     const call = setCalls[0];
     context.assert.strictEqual(call.name, 'C1');
     context.assert.strictEqual(call.config.lifetime, 'transient');
-    context.assert.strictEqual(call.config.type, DummyCtrl);
+    context.assert.strictEqual(call.config.type, TestCtrl);
     context.assert.deepStrictEqual(call.config.parameters, [
         { name: 'param0', type: Number },
         { name: 'param1', type: String }

@@ -44,7 +44,7 @@ export class RunCommand extends CommandBase {
 
             const contextJson = JSON.parse(File.read(contextFilePath));
             const mainEntryPath = contextJson.main;
-            if (StringExtensions.isNullOrWhiteSpace(mainEntryPath)) {
+            if (StringExtensions.isNullOrWhitespace(mainEntryPath)) {
                 Console.writeLineError("No 'main' entry found in context.ctxp project file.");
                 process.exit(1);
             }
@@ -55,7 +55,7 @@ export class RunCommand extends CommandBase {
                 try {
                     const tsConfig = JSON.parse(File.read(tsConfigPath));
                     const outDir = tsConfig.compilerOptions?.outDir;
-                    if (StringExtensions.isNullOrWhiteSpace(outDir)) {
+                    if (StringExtensions.isNullOrWhitespace(outDir)) {
                         Console.writeLineError("tsconfig.json is missing 'compilerOptions.outDir'.");
                         process.exit(1);
                     }
@@ -72,7 +72,7 @@ export class RunCommand extends CommandBase {
                 process.exit(1);
             }
 
-            if (StringExtensions.isNullOrWhiteSpace(mainEntry) || !File.exists(mainEntry)) {
+            if (StringExtensions.isNullOrWhitespace(mainEntry) || !File.exists(mainEntry)) {
                 Console.writeLineError(`Compiled entry file "${mainEntry}" not found. Did you run 'ctx build'?`);
                 process.exit(1);
             }

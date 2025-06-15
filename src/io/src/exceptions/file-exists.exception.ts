@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { SystemException } from "@contextjs/system";
 
-export class FileExistsException extends Exception {
+export class FileExistsException extends SystemException {
     public constructor(file: string) {
         super(`The specified file already exists: ${file}`);
         this.name = FileExistsException.name;

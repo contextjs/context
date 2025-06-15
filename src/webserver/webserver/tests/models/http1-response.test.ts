@@ -14,17 +14,17 @@ import { Http1Response } from '../../src/models/http1-response.js';
 
 test('Http1Response: initialize returns this and allows first send', (context: TestContext) => {
     const response = new Http1Response();
-    const dummySocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
+    const testSocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
 
-    context.assert.strictEqual(response.initialize(dummySocket), response);
+    context.assert.strictEqual(response.initialize(testSocket), response);
     context.assert.doesNotThrow(() => response.send('first'));
 });
 
 test('Http1Response: send writes header and body, default keep-alive', (context: TestContext) => {
     const writes: Buffer[] = [];
-    const dummySocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
+    const testSocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
 
-    const response = new Http1Response().initialize(dummySocket);
+    const response = new Http1Response().initialize(testSocket);
     const body = 'BODY';
     response.send(body);
 
@@ -38,10 +38,10 @@ test('Http1Response: send writes header and body, default keep-alive', (context:
 
 test('Http1Response: send honors setConnectionClose', (context: TestContext) => {
     const writes: Buffer[] = [];
-    const dummySocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
+    const testSocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
 
     const response = new Http1Response()
-        .initialize(dummySocket)
+        .initialize(testSocket)
         .setConnectionClose(true);
     response.send('X');
     const headerBuf = writes[0];
@@ -50,8 +50,8 @@ test('Http1Response: send honors setConnectionClose', (context: TestContext) => 
 });
 
 test('Http1Response: send throws ResponseSentException on second send', (context: TestContext) => {
-    const dummySocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
-    const response = new Http1Response().initialize(dummySocket);
+    const testSocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
+    const response = new Http1Response().initialize(testSocket);
     response.send('A');
 
     context.assert.throws(() => response.send('B'), ResponseSentException);
@@ -59,9 +59,9 @@ test('Http1Response: send throws ResponseSentException on second send', (context
 
 test('Http1Response: reset allows send again after a send', (context: TestContext) => {
     const writes: Buffer[] = [];
-    const dummySocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
+    const testSocket = { cork: () => { }, write: (data: Buffer) => { writes.push(data); }, uncork: () => { } } as any;
 
-    const response = new Http1Response().initialize(dummySocket);
+    const response = new Http1Response().initialize(testSocket);
     response.send('ONE');
 
     context.assert.throws(() => response.send('TWO'), ResponseSentException);
@@ -100,8 +100,8 @@ test('Http1Response: setHeader returns this and normalizes number and array valu
 });
 
 test('Http1Response: createHeaderBuffer omits default date header when custom date is set', (context: TestContext) => {
-    const dummySocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
-    const response = new Http1Response().initialize(dummySocket);
+    const testSocket = { cork: () => { }, write: () => { }, uncork: () => { } } as any;
+    const response = new Http1Response().initialize(testSocket);
     response.setHeader('date', 'CustomDateVal');
     const headerBuf = (response as any).createHeaderBuffer(false, 0);
 
@@ -232,14 +232,14 @@ test('Http1Response: send then stream and stream then send both throw ResponseSe
 test('Http1Response: end writes only header and ends socket', (context: TestContext) => {
     const writes: Buffer[] = [];
     let didEnd = false;
-    const dummySocket = {
+    const testSocket = {
         cork: () => { },
         write: (data: Buffer) => { writes.push(data); },
         uncork: () => { },
         end: () => { didEnd = true; }
     } as any;
 
-    const response = new Http1Response().initialize(dummySocket);
+    const response = new Http1Response().initialize(testSocket);
     response.end();
 
     context.assert.strictEqual(writes.length, 1);
@@ -250,7 +250,7 @@ test('Http1Response: end writes only header and ends socket', (context: TestCont
 test('Http1Response: end honors setConnectionClose(true)', (context: TestContext) => {
     const writes: Buffer[] = [];
     let didEnd = false;
-    const dummySocket = {
+    const testSocket = {
         cork: () => { },
         write: (b: Buffer) => { writes.push(b); },
         uncork: () => { },
@@ -258,7 +258,7 @@ test('Http1Response: end honors setConnectionClose(true)', (context: TestContext
     } as any;
 
     const response = new Http1Response()
-        .initialize(dummySocket)
+        .initialize(testSocket)
         .setConnectionClose(true);
 
     response.end();
@@ -269,8 +269,8 @@ test('Http1Response: end honors setConnectionClose(true)', (context: TestContext
 });
 
 test('Http1Response: end throws ResponseSentException on second end', (context: TestContext) => {
-    const dummySocket = { cork: () => { }, write: () => { }, uncork: () => { }, end: () => { } } as any;
-    const response = new Http1Response().initialize(dummySocket);
+    const testSocket = { cork: () => { }, write: () => { }, uncork: () => { }, end: () => { } } as any;
+    const response = new Http1Response().initialize(testSocket);
 
     response.end();
     context.assert.throws(() => response.end(), ResponseSentException);

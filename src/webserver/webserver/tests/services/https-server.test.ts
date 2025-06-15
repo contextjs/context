@@ -163,10 +163,10 @@ test('HttpsServer: stream event dispatches request and releases context', async 
   const server = new HttpsServer(options);
   const acquired: Array<[string, string][]> = [];
   const released: HttpContext[] = [];
-  const dummy = new HttpContext();
+  const test = new HttpContext();
 
-  (dummy as any).reset = () => dummy;
-  (dummy as any).initialize = (
+  (test as any).reset = () => test;
+  (test as any).initialize = (
     _protocol: any,
     _host: any,
     _port: any,
@@ -177,13 +177,13 @@ test('HttpsServer: stream event dispatches request and releases context', async 
     _body: any
   ) => {
     acquired.push(Array.from(headers.entries()));
-    return dummy;
+    return test;
   };
 
-  (dummy.response as any).setConnectionClose = (_: boolean) => { };
+  (test.response as any).setConnectionClose = (_: boolean) => { };
 
   (server as any).httpContextPool = {
-    acquire: () => dummy,
+    acquire: () => test,
     release: (ctx: HttpContext) => { released.push(ctx); }
   };
 
@@ -200,7 +200,7 @@ test('HttpsServer: stream event dispatches request and releases context', async 
   t.assert.strictEqual(acquired.length, 1, 'should have initialized once');
   t.assert.deepStrictEqual(acquired[0], [['x-test', 'value']]);
   t.assert.strictEqual(released.length, 1, 'should have released once');
-  t.assert.strictEqual(released[0], dummy);
+  t.assert.strictEqual(released[0], test);
 });
 
 test('HttpsServer: stream error and aborted handling emits events and destroys stream', async (context: TestContext) => {
@@ -212,13 +212,13 @@ test('HttpsServer: stream error and aborted handling emits events and destroys s
     (e: any) => events.push(e)
   );
   const server = new HttpsServer(options);
-  const dummy = new HttpContext();
-  (dummy.request as any).initialize = () => dummy;
-  (dummy.response as any).initialize = () => { };
-  (dummy.response as any).setConnectionClose = () => { };
+  const test = new HttpContext();
+  (test.request as any).initialize = () => test;
+  (test.response as any).initialize = () => { };
+  (test.response as any).setConnectionClose = () => { };
 
-  (server as any).httpContextPool = { acquire: () => dummy, release: () => { } };
-  (server as any).dispatchRequestAsync = () => Promise.resolve(dummy);
+  (server as any).httpContextPool = { acquire: () => test, release: () => { } };
+  (server as any).dispatchRequestAsync = () => Promise.resolve(test);
   const fakeStream = new PassThrough() as any;
   let destroyCount = 0;
   fakeStream.destroy = () => { destroyCount++; };

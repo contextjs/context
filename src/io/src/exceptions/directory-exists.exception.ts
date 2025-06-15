@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { SystemException } from "@contextjs/system";
 
-export class DirectoryExistsException extends Exception {
+export class DirectoryExistsException extends SystemException {
     public constructor(directory: string) {
         super(`The specified directory already exists: ${directory}`);
         this.name = DirectoryExistsException.name;

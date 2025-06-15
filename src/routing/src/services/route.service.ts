@@ -15,7 +15,7 @@ import { SegmentKind } from "../models/segment-kind.js";
 
 export class RouteService {
     public static match(value: string, routeDefinitions: RouteDefinition[]): ParsedRoute | null {
-        if (StringExtensions.isNullOrWhiteSpace(value))
+        if (StringExtensions.isNullOrWhitespace(value))
             return null;
 
         value = this.normalizePath(value);
@@ -39,7 +39,7 @@ export class RouteService {
     }
 
     public static getSegments(value: string): string[] {
-        return StringExtensions.isNullOrWhiteSpace(value)
+        return StringExtensions.isNullOrWhitespace(value)
             ? []
             : this.normalizePath(value)
                 .split("/")
@@ -100,7 +100,7 @@ export class RouteService {
                 break;
             }
 
-            if (StringExtensions.isNullOrWhiteSpace(valueSegment)) {
+            if (StringExtensions.isNullOrWhitespace(valueSegment)) {
                 if (segment.kind === SegmentKind.Optional) {
                     score += 1;
                     i++;

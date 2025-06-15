@@ -19,7 +19,7 @@ export class Configuration {
     }
 
     public async getValueAsync(key: string): Promise<any> {
-        if (StringExtensions.isNullOrWhiteSpace(key))
+        if (StringExtensions.isNullOrWhitespace(key))
             return null;
 
         for (const provider of this.providers) {

@@ -15,7 +15,7 @@ import { Path } from "./path.js";
 
 export class Directory {
     public static create(directory: string): boolean {
-        Throw.ifNullOrWhiteSpace(directory);
+        Throw.ifNullOrWhitespace(directory);
 
         if (Path.exists(directory))
             return false;
@@ -25,8 +25,8 @@ export class Directory {
     }
 
     public static rename(oldDirectory: string, newDirectory: string): boolean {
-        Throw.ifNullOrWhiteSpace(oldDirectory);
-        Throw.ifNullOrWhiteSpace(newDirectory);
+        Throw.ifNullOrWhitespace(oldDirectory);
+        Throw.ifNullOrWhitespace(newDirectory);
 
         if (!Directory.exists(oldDirectory))
             throw new PathNotFoundException(oldDirectory);
@@ -39,7 +39,7 @@ export class Directory {
     }
 
     public static delete(directory: string): boolean {
-        Throw.ifNullOrWhiteSpace(directory);
+        Throw.ifNullOrWhitespace(directory);
 
         if (!Path.exists(directory))
             return true;
@@ -49,7 +49,7 @@ export class Directory {
     }
 
     public static exists(directory: string): boolean {
-        Throw.ifNullOrWhiteSpace(directory);
+        Throw.ifNullOrWhitespace(directory);
         return Path.isDirectory(directory);
     }
 

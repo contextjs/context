@@ -26,6 +26,7 @@ export default class Config {
             "webserver-middleware-cookies",
             "webserver-middleware-controllers"]],
         ["compiler", []],
+        ["nova", ["nova-parser"]],
         ["context", []]
     ]);
 }

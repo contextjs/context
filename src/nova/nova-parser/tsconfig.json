@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "outDir": "../../../_build/nova-parser"
+    },
+    "extends": "../../../tsconfig-base.json",
+    "exclude": [
+        "tests/*",
+        "scripts/*"
+    ]
+}

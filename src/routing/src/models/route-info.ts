@@ -15,7 +15,7 @@ export class RouteInfo {
     public readonly decodedTemplate: string;
 
     public constructor(template: string, name: string | null = null) {
-        Throw.ifNullOrWhiteSpace(template);
+        Throw.ifNullOrWhitespace(template);
 
         this.template = template;
         this.name = name;

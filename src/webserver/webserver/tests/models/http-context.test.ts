@@ -44,16 +44,16 @@ test('HttpContext: initialize delegates to Request.initialize and Response.initi
 
     try {
         const headers = new HeaderCollection();
-        const dummyTarget = {} as Socket;
-        const dummyBody = new Readable({ read() { } });
+        const testTarget = {} as Socket;
+        const testBody = new Readable({ read() { } });
 
-        const result = httpContext.initialize('HTTPS', 'example.com', 8443, 'GET', '/test', headers, dummyTarget, dummyBody);
+        const result = httpContext.initialize('HTTPS', 'example.com', 8443, 'GET', '/test', headers, testTarget, testBody);
 
         context.assert.strictEqual(result, httpContext);
         context.assert.ok(requestCalled, 'Request.initialize should have been called');
-        context.assert.deepStrictEqual(requestArguments, ['HTTPS', 'example.com', 8443, 'GET', '/test', headers, dummyBody]);
+        context.assert.deepStrictEqual(requestArguments, ['HTTPS', 'example.com', 8443, 'GET', '/test', headers, testBody]);
         context.assert.ok(responseCalled, 'Response.initialize should have been called');
-        context.assert.strictEqual(responseArgument, dummyTarget);
+        context.assert.strictEqual(responseArgument, testTarget);
     }
     finally {
         Request.prototype.initialize = originalRequestInitializer;

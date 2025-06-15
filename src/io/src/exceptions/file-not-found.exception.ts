@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { Exception, SystemException } from "@contextjs/system";
 
-export class FileNotFoundException extends Exception {
+export class FileNotFoundException extends SystemException {
     public constructor(file: string) {
         super(`The specified file was not found: ${file}`);
         this.name = FileNotFoundException.name;

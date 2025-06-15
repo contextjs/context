@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { SystemException } from "@contextjs/system";
 
-export class PathNotFoundException extends Exception {
+export class PathNotFoundException extends SystemException {
     public constructor(path: string) {
         super(`The specified path was not found: ${path}`);
         this.name = PathNotFoundException.name;

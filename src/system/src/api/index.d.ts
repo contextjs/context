@@ -172,25 +172,25 @@ export declare class StringExtensions {
     public static isNullOrUndefined(value: string | null | undefined): value is null | undefined;
 
     /**
-     * Checks if the string is null or whitespace.
+     * Checks if the string is null, empty, or only whitespace.
      * @param value The string to check.
      * @returns {value is null | undefined | ""} True if null, empty, or only whitespace.
      */
-    public static isNullOrWhiteSpace(value: string | null | undefined): value is null | undefined | "";
+    public static isNullOrWhitespace(value: string | null | undefined): value is null | undefined | "";
 
     /**
-     * Removes all white spaces from the string.
+     * Removes all whitespace characters from the string.
      * @param value The string to process.
      * @returns {string} The trimmed string.
      */
-    public static removeWhiteSpaces(value: string): string;
+    public static removeWhitespace(value: string): string;
 
     /**
-     * Checks if the character is a line break.
-     * @param value The character to check.
+     * Checks if the character is a line break character.
+     * @param character The character to check.
      * @returns {boolean} True if line break.
      */
-    public static isLineBreak(value: string): boolean;
+    public static isLineBreak(character: string): boolean;
 
     /**
      * Checks if the character is a digit.
@@ -208,24 +208,24 @@ export declare class StringExtensions {
 
     /**
      * Checks if the character is a letter or digit.
-     * @param value The character to check.
+     * @param character The character to check.
      * @returns {boolean} True if letter or digit.
      */
-    public static isLetterOrDigit(value: string): boolean;
+    public static isLetterOrDigit(character: string): boolean;
 
     /**
      * Checks if the character is a whitespace character.
-     * @param value The character to check.
+     * @param character The character to check.
      * @returns {boolean} True if whitespace.
      */
-    public static isWhitespace(value: string): boolean;
+    public static isWhitespace(character: string): boolean;
 
     /**
-     * Checks if a string contains only line breaks and spaces.
+     * Checks if a string contains only whitespace characters (or is empty).
      * @param value The string to check.
-     * @returns {boolean} True if only line breaks and spaces.
+     * @returns {boolean} True if only whitespace or empty.
      */
-    public static containsOnlyLineBreaksAndSpaces(value: string): boolean;
+    public static containsOnlyWhitespace(value: string): boolean;
 
     /**
      * Formats a string using positional arguments.
@@ -312,7 +312,6 @@ export declare type ForegroundColors =
     'cyan' |
     'gray' |
     'green' |
-    'grey' |
     'magenta' |
     'red' |
     'white' |
@@ -513,7 +512,7 @@ export declare class Throw {
      * @param {string | null | undefined} value - The string to check.
      * @throws {NullReferenceException} When the string is null or contains only empty spaces.
      */
-    public static ifNullOrWhiteSpace(value: string | null | undefined): void;
+    public static ifNullOrWhitespace(value: string | null | undefined): void;
 }
 
 /**

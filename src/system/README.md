@@ -112,7 +112,7 @@ import { StringExtensions } from "@contextjs/system";
 const value = "a b c ";
 
 StringExtensions.removeWhiteSpaces(value);
-console.log(StringExtensions.isNullOrWhiteSpace(value));
+console.log(StringExtensions.isNullOrWhitespace(value));
 ```
 
 ### Check object null state

@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright ContextJS All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found at https://github.com/contextjs/context/blob/main/LICENSE
- */
-
 import os from "node:os";
 
 export class StringExtensions {
@@ -22,16 +14,16 @@ export class StringExtensions {
         return value === null || value === undefined;
     }
 
-    public static isNullOrWhiteSpace(value: string | null | undefined): value is null | undefined | "" {
+    public static isNullOrWhitespace(value: string | null | undefined): value is null | undefined | "" {
         return this.isNullOrEmpty(value) || value?.trim() === StringExtensions.empty;
     }
 
-    public static removeWhiteSpaces(value: string): string {
+    public static removeWhitespace(value: string): string {
         return value.replace(/\s/g, "");
     }
 
-    public static isLineBreak(value: string): boolean {
-        return this.lineBreaks.includes(value);
+    public static isLineBreak(character: string): boolean {
+        return this.lineBreaks.includes(character);
     }
 
     public static isDigit(character: string): boolean {
@@ -42,16 +34,16 @@ export class StringExtensions {
         return /^\p{L}$/u.test(character);
     }
 
-    public static isLetterOrDigit(value: string): boolean {
-        return this.isLetter(value) || this.isDigit(value);
+    public static isLetterOrDigit(character: string): boolean {
+        return this.isLetter(character) || this.isDigit(character);
     }
 
-    public static isWhiteSpace(value: string): boolean {
-        return /^\s$/.test(value);
+    public static isWhitespace(character: string): boolean {
+        return /^\s$/.test(character);
     }
 
-    public static containsOnlyLineBreaksAndSpaces(value: string): boolean {
-        return /^[\s\n\r\u0085\u2028\u2029]*$/.test(value);
+    public static containsOnlyWhitespace(value: string): boolean {
+        return value !== "" && /^\s+$/.test(value);
     }
 
     public static format(template: string, ...args: any[]): string {

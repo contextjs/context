@@ -36,18 +36,18 @@ test("ExtensionsService: register + getTransformers - with before/after", (conte
     (ExtensionsService as any).extensions.length = 0;
     ExtensionsService.register(mockExtension);
 
-    const dummyProgram = typescript.createProgram(["tests/stubs/project/src/example.ts"], {
+    const testProgram = typescript.createProgram(["tests/stubs/project/src/example.ts"], {
         module: typescript.ModuleKind.ESNext
     });
 
-    const result = ExtensionsService.getTransformers(dummyProgram);
+    const result = ExtensionsService.getTransformers(testProgram);
     const contextMock = {} as typescript.TransformationContext;
 
     const beforeFn = result.before?.[0](contextMock);
     const afterFn = result.after?.[0](contextMock);
 
-    beforeFn?.(dummyProgram.getSourceFiles()[0]);
-    afterFn?.(dummyProgram.getSourceFiles()[0]);
+    beforeFn?.(testProgram.getSourceFiles()[0]);
+    afterFn?.(testProgram.getSourceFiles()[0]);
 
     context.assert.ok(Array.isArray(result.before));
     context.assert.ok(Array.isArray(result.after));
@@ -64,11 +64,11 @@ test("ExtensionsService: getTransformers - returns null if no transformers", (co
     (ExtensionsService as any).extensions.length = 0;
     ExtensionsService.register(noopExtension);
 
-    const dummyProgram = typescript.createProgram(["tests/stubs/project/src/example.ts"], {
+    const testProgram = typescript.createProgram(["tests/stubs/project/src/example.ts"], {
         module: typescript.ModuleKind.ESNext
     });
 
-    const result = ExtensionsService.getTransformers(dummyProgram);
+    const result = ExtensionsService.getTransformers(testProgram);
 
     context.assert.strictEqual(result.before, null);
     context.assert.strictEqual(result.after, null);

@@ -62,7 +62,7 @@ export class Request {
     }
 
     public get path(): string {
-        if (StringExtensions.isNullOrWhiteSpace(this._path)) {
+        if (StringExtensions.isNullOrWhitespace(this._path)) {
             const index = this.fullPath.indexOf("?");
             return index >= 0
                 ? this.fullPath.slice(0, index)
@@ -73,7 +73,7 @@ export class Request {
     }
 
     public get rawQuery(): string {
-        if (StringExtensions.isNullOrWhiteSpace(this._rawQuery)) {
+        if (StringExtensions.isNullOrWhitespace(this._rawQuery)) {
             const index = this.fullPath.indexOf("?");
             return index >= 0
                 ? this.fullPath.slice(index + 1)
@@ -89,11 +89,11 @@ export class Request {
 
         const rawQuery = this.rawQuery;
         const result = new Dictionary<string, string | string[]>();
-        if (StringExtensions.isNullOrWhiteSpace(rawQuery))
+        if (StringExtensions.isNullOrWhitespace(rawQuery))
             return result;
 
         for (const part of rawQuery.split("&")) {
-            if (StringExtensions.isNullOrWhiteSpace(part))
+            if (StringExtensions.isNullOrWhitespace(part))
                 continue;
 
             const [key, value = ""] = part.split("=").map(decodeURIComponent);

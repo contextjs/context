@@ -46,7 +46,7 @@ export class StringBuilder {
      * @returns The current instance for chaining.
      */
     public appendFormat(format: string, ...args: any[]): this {
-        Throw.ifNullOrWhiteSpace(format);
+        Throw.ifNullOrWhitespace(format);
 
         const formatted = StringExtensions.format(format, ...args);
         this._segments.push(formatted);

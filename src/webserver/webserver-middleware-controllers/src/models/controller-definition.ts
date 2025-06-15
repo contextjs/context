@@ -21,7 +21,7 @@ export class ControllerDefinition {
     }
 
     private createRoute(template?: string): RouteInfo {
-        if (StringExtensions.isNullOrWhiteSpace(template))
+        if (StringExtensions.isNullOrWhitespace(template))
             return new RouteInfo(`${this.getControllerName()}`);
 
         template = template.trim().toLowerCase();

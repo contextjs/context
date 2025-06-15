@@ -13,10 +13,10 @@ import { RouteInfo } from "../../src/models/route-info.js";
 
 test("RouteDefinition: properties are set correctly", (context: TestContext) => {
     const routeInfo = new RouteInfo("/test/path", "testName");
-    const definition = new RouteDefinition("DummyController", "dummyHandler", routeInfo);
+    const definition = new RouteDefinition("TestController", "testHandler", routeInfo);
 
-    context.assert.strictEqual(definition.className, "DummyController");
-    context.assert.strictEqual(definition.methodName, "dummyHandler");
+    context.assert.strictEqual(definition.className, "TestController");
+    context.assert.strictEqual(definition.methodName, "testHandler");
     context.assert.strictEqual(definition.route, routeInfo);
 });
 

@@ -63,7 +63,7 @@ export class ControllerDiscoveryService {
 
     private static getProjectOutputDirectory(baseDir: string): string {
         const tsConfigFilePath = typescript.findConfigFile(baseDir, typescript.sys.fileExists, "tsconfig.json");
-        if (StringExtensions.isNullOrWhiteSpace(tsConfigFilePath))
+        if (StringExtensions.isNullOrWhitespace(tsConfigFilePath))
             throw new Error("Could not find tsconfig.json");
 
         const configFile = typescript.readConfigFile(tsConfigFilePath, typescript.sys.readFile);
@@ -74,7 +74,7 @@ export class ControllerDiscoveryService {
         const parsedConfig = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, configDir);
         const outDir = parsedConfig.options.outDir;
 
-        if (!StringExtensions.isNullOrWhiteSpace(outDir))
+        if (!StringExtensions.isNullOrWhitespace(outDir))
             return path.isAbsolute(outDir) ? Path.normalize(outDir) : Path.normalize(path.join(configDir, outDir));
 
         return configDir;
