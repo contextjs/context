@@ -12,7 +12,7 @@ import Config from "./config.ts";
 import type PackageInfo from "./package-info.ts";
 
 export default abstract class Script {
-    abstract runAsync(): Promise<void>;
+    abstract runAsync(packageInfo: PackageInfo): Promise<void>;
 
     protected async executeCommandAsync(command: string, silent: boolean = false): Promise<void> {
         execSync(command, { stdio: silent ? 'ignore' : 'inherit' });
@@ -22,22 +22,22 @@ export default abstract class Script {
         console.log(message);
     }
 
-    protected async getPackageDescriptorsAsync(): Promise<Map<string, string[]>> {
+    protected async getPackagesInfoAsync(): Promise<PackageInfo[]> {
         const packageNames = process.argv.slice(2);
-
         if (packageNames.length > 0) {
-            const packageDescriptors = new Map<string, string[]>([]);
+            const packagesInfo: PackageInfo[] = [];
             for (const packageName of packageNames) {
-                if (Config.packageDescriptors.has(packageName))
-                    packageDescriptors.set(packageName, Config.packageDescriptors.get(packageName) ?? []);
+                const packageInfo = Config.packagesInfo.find(p => p.name === packageName);
+                if (packageInfo)
+                    packagesInfo.push(packageInfo);
                 else
                     throw new Error(`Package ${packageName} not found in configuration.`);
             }
 
-            return packageDescriptors;
+            return packagesInfo;
         }
 
-        return Config.packageDescriptors;
+        return Config.packagesInfo;
     }
 
     protected async createDirectoryAsync(directoryName: string): Promise<void> {
@@ -67,29 +67,17 @@ export default abstract class Script {
     }
 
     protected async copyDeclarationsFileAsync(packageInfo: PackageInfo): Promise<void> {
-        const packagePath = packageInfo.path
-            ? `${packageInfo.path}/${packageInfo.name}`
-            : packageInfo.name;
-
         await this.createDirectoryAsync(`${Config.buildFolder}/${packageInfo.name}/api`);
-        await this.copyFileAsync(`src/${packagePath}/src/api/index.d.ts`, `${Config.buildFolder}/${packageInfo.name}/api/index.d.ts`);
+        await this.copyFileAsync(`src/${packageInfo.path}/src/api/index.d.ts`, `${Config.buildFolder}/${packageInfo.name}/api/index.d.ts`);
     }
 
     protected async copyReadmeFileAsync(packageInfo: PackageInfo): Promise<void> {
-        const packagePath = packageInfo.path
-            ? `${packageInfo.path}/${packageInfo.name}`
-            : packageInfo.name;
-
-        await this.copyFileAsync(`src/${packagePath}/README.md`, `${Config.buildFolder}/${packageInfo.name}/README.md`);
+        await this.copyFileAsync(`src/${packageInfo.path}/README.md`, `${Config.buildFolder}/${packageInfo.name}/README.md`);
     }
 
-    protected async executeActionAsync(packageDescriptors: Map<string, string[]>, action: Function): Promise<void> {
-        for (const packageDescriptor of packageDescriptors) {
-            if (packageDescriptor[1].length === 0)
-                await action({ name: packageDescriptor[0] });
-            else
-                for (const packagePath of packageDescriptor[1])
-                    await action({ name: packagePath, path: packageDescriptor[0] });
+    protected async executeActionAsync(packagesInfo: PackageInfo[], action: Function): Promise<void> {
+        for (const packageInfo of packagesInfo) {
+            await action(packageInfo);
         }
     }
 }

@@ -22,6 +22,7 @@
     "@types/autocannon": "^7.12.7",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.1",
+    "@types/vscode": "^1.101.0",
     "autocannon": "^8.0.0",
     "express": "5.1.0",
     "fastify": "5.4.0",
@@ -39,14 +40,17 @@
     "@contextjs/context": "file:_packages/contextjs-context-25.0.0-beta.4.tgz",
     "@contextjs/di": "file:_packages/contextjs-di-25.0.0-beta.4.tgz",
     "@contextjs/io": "file:_packages/contextjs-io-25.0.0-beta.4.tgz",
-    "@contextjs/nova-parser": "file:_packages/contextjs-nova-parser-25.0.0-beta.4.tgz",
     "@contextjs/routing": "file:_packages/contextjs-routing-25.0.0-beta.4.tgz",
     "@contextjs/system": "file:_packages/contextjs-system-25.0.0-beta.4.tgz",
     "@contextjs/text": "file:_packages/contextjs-text-25.0.0-beta.4.tgz",
+    "@contextjs/views-language-server": "file:_packages/contextjs-views-language-server-25.0.0-beta.4.tgz",
+    "@contextjs/views-parser": "file:_packages/contextjs-views-parser-25.0.0-beta.4.tgz",
     "@contextjs/webserver": "file:_packages/contextjs-webserver-25.0.0-beta.4.tgz",
     "@contextjs/webserver-middleware-controllers": "file:_packages/contextjs-webserver-middleware-controllers-25.0.0-beta.4.tgz",
     "@contextjs/webserver-middleware-cookies": "file:_packages/contextjs-webserver-middleware-cookies-25.0.0-beta.4.tgz",
     "@contextjs/webserver-middleware-static": "file:_packages/contextjs-webserver-middleware-static-25.0.0-beta.4.tgz",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12"
   }
 }

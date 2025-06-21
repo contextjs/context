@@ -13,5 +13,6 @@ export enum CommandType {
     Run,
     Restore,
     Watch,
-    Version
+    Version,
+    Lsp
 }

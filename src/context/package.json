@@ -24,6 +24,7 @@
   "peerDependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
-    "@contextjs/compiler": "__VERSION__"
+    "@contextjs/compiler": "__VERSION__",
+    "@contextjs/views-language-server": "__VERSION__"
   }
 }

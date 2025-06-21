@@ -8,25 +8,28 @@
  * Notice: the order of the packages in the array is important, as some packages depend on others.
  */
 
+import type PackageInfo from "./package-info";
+
 export default class Config {
     public static version: string = "25.0.0-beta.4";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
-    public static packageDescriptors: Map<string, string[]> = new Map<string, string[]>([
-        ["system", []],
-        ["io", []],
-        ["collections", []],
-        ["text", []],
-        ["configuration", ["configuration", "configuration-json"]],
-        ["routing", []],
-        ["di", []],
-        ["webserver", [
-            "webserver",
-            "webserver-middleware-static",
-            "webserver-middleware-cookies",
-            "webserver-middleware-controllers"]],
-        ["compiler", []],
-        ["nova", ["nova-parser"]],
-        ["context", []]
-    ]);
+    public static packagesInfo: PackageInfo[] = [
+        { name: "system", path: "system" },
+        { name: "io", path: "io" },
+        { name: "collections", path: "collections" },
+        { name: "text", path: "text" },
+        { name: "configuration", path: "configuration/configuration" },
+        { name: "configuration-json", path: "configuration/configuration-json" },
+        { name: "routing", path: "routing" },
+        { name: "di", path: "di" },
+        { name: "webserver", path: "webserver/webserver" },
+        { name: "webserver-middleware-static", path: "webserver/webserver-middleware-static" },
+        { name: "webserver-middleware-cookies", path: "webserver/webserver-middleware-cookies" },
+        { name: "webserver-middleware-controllers", path: "webserver/webserver-middleware-controllers" },
+        { name: "compiler", path: "compiler" },
+        { name: "views-parser", path: "views/views-parser" },
+        { name: "views-language-server", path: "views/views-language-server" },
+        { name: "context", path: "context" }
+    ];
 }
