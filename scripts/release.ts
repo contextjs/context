@@ -11,8 +11,11 @@ import type PackageInfo from "./package-info.ts";
 import Script from "./script.ts";
 
 export class Release extends Script {
+    private publishCommand: string;
+
     public async runAsync(): Promise<void> {
         try {
+            this.publishCommand = this.getPublishCommand();
             const packagesInfo = await this.getPackagesInfoAsync();
             await this.executeActionAsync(packagesInfo, this.publishPackageAsync.bind(this));
         }
@@ -26,9 +29,19 @@ export class Release extends Script {
             return;
 
         await this.writeLogAsync(`Publishing "${packageInfo.name}"...`);
-        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageInfo.name} && npm publish --provenance --access public && cd .. && cd ..`);
+        await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageInfo.name} && ${this.publishCommand} && cd .. && cd ..`);
         await this.writeLogAsync(`Publishing "${packageInfo.name}"... Done`);
     }
+
+    private getPublishCommand(): string {
+        const version = Config.version;
+        const match = version.match(/^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)(\.\d+)?/);
+        if (match)
+            return `npm publish --tag ${match[1]} --provenance --access public`;
+        else
+            return `npm publish --provenance --access public`;
+    }
+
 }
 
 await new Release().runAsync();
