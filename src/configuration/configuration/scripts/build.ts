@@ -10,13 +10,9 @@ import type PackageInfo from '../../../../scripts/package-info.ts';
 import Script from '../../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageInfo: PackageInfo = { name: "configuration", path: "configuration" };
-
-    public override async runAsync(): Promise<void> {
-        await this.copyDeclarationsFileAsync(this.packageInfo);
-        await this.copyReadmeFileAsync(this.packageInfo);
-        await this.executeCommandAsync(`cd src/${this.packageInfo.path}/${this.packageInfo.name} && tsc`);
+    public override async runAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.copyDeclarationsFileAsync(packageInfo);
+        await this.copyReadmeFileAsync(packageInfo);
+        await this.executeCommandAsync(`cd src/${packageInfo.path} && tsc`);
     }
 }
-
-await new Build().runAsync();

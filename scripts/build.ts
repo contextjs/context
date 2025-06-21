@@ -25,17 +25,16 @@ export class Build extends Script {
         await this.npmInstallAsync();
         await this.createOutputDirectoriesAsync();
 
-        const packageDescriptors = await this.getPackageDescriptorsAsync();
-
-        if (packageDescriptors.size === 0) {
+        const packagesInfo = await this.getPackagesInfoAsync();
+        if (packagesInfo.length === 0) {
             this.writeLogAsync('No packages to build.');
             return;
         }
 
         await this.writeLogAsync('\r');
 
-        await this.executeActionAsync(packageDescriptors, this.buildPackageAsync.bind(this));
-        await this.executeActionAsync(packageDescriptors, this.afterBuildAsync.bind(this));
+        await this.executeActionAsync(packagesInfo, this.buildPackageAsync.bind(this));
+        await this.executeActionAsync(packagesInfo, this.afterBuildAsync.bind(this));
     }
 
     private async npmInstallAsync(): Promise<void> {
@@ -100,9 +99,7 @@ export class Build extends Script {
     }
 
     private async copyPackageFileAsync(packageInfo: PackageInfo): Promise<void> {
-        const packageFilePath = packageInfo.path
-            ? `src/${packageInfo.path}/${packageInfo.name}/package.json`
-            : `src/${packageInfo.name}/package.json`;
+        const packageFilePath = `src/${packageInfo.path}/package.json`;
 
         if (await this.pathExistsAsync(packageFilePath) === false)
             throw new Error(`Missing package.json in "${packageFilePath}" package.`);
@@ -122,19 +119,25 @@ export class Build extends Script {
     }
 
     private async buildAsync(packageInfo: PackageInfo): Promise<void> {
-        const path = packageInfo.path
-            ? `${packageInfo.path}/${packageInfo.name}`
-            : packageInfo.name;
+        const path = `${packageInfo.path}`;
 
-        if (await this.pathExistsAsync(`src/${path}/scripts/build.ts`))
-            await import(`../src/${path}/scripts/build.ts`);
+        if (await this.pathExistsAsync(`src/${path}/scripts/build.ts`)) {
+            const buildClassImport = await import(`../src/${path}/scripts/build.ts`);
+            await new buildClassImport.Build().runAsync(packageInfo);
+        }
     }
 
     private async createPackageAsync(packageInfo: PackageInfo): Promise<void> {
+        if (packageInfo.disableNPM === true)
+            return;
+
         await this.executeCommandAsync(`cd ${Config.buildFolder}/${packageInfo.name} && npm pack --silent --pack-destination ../../${Config.packagesFolder}`, true);
     }
 
     private async installPackageAsync(packageInfo: PackageInfo): Promise<void> {
+        if (packageInfo.disableNPM === true)
+            return;
+
         const packageJsonFile = await this.readFileAsync(`${Config.buildFolder}/${packageInfo.name}/package.json`);
         const packageJson = JSON.parse(packageJsonFile);
         const name = packageJson.name.replace("@", "").replace("/", "-");

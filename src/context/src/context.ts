@@ -11,6 +11,7 @@ import { CommandType } from "./models/command-type.js";
 import { BuildCommand } from "./services/commands/build.command.js";
 import { CommandsService } from "./services/commands/commands.service.js";
 import { CtxCommand } from "./services/commands/ctx.command.js";
+import { LspCommand } from "./services/commands/lsp.command.js";
 import { NewCommand } from "./services/commands/new.command.js";
 import { RestoreCommand } from "./services/commands/restore.command.js";
 import { RunCommand } from "./services/commands/run.command.js";
@@ -42,6 +43,9 @@ switch (command.type) {
         break;
     case CommandType.Version:
         await new VersionCommand().runAsync(command);
+        break;
+    case CommandType.Lsp:
+        await new LspCommand().runAsync(command);
         break;
     default:
         Console.writeLineError('Invalid command provided. Exiting...');

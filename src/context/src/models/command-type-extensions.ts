@@ -16,7 +16,8 @@ const commandMap: Record<string, CommandType> = {
     run: CommandType.Run,
     restore: CommandType.Restore,
     watch: CommandType.Watch,
-    version: CommandType.Version
+    version: CommandType.Version,
+    lsp: CommandType.Lsp
 };
 
 export class CommandTypeExtensions {

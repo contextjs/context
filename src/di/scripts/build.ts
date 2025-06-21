@@ -11,13 +11,12 @@ import type PackageInfo from '../../../scripts/package-info.ts';
 import Script from '../../../scripts/script.ts';
 
 export class Build extends Script {
-    private readonly packageInfo: PackageInfo = { name: "di" };
     private targetDir = path.resolve("src", "context", "src", "transformers");
 
-    public override async runAsync(): Promise<void> {
-        await this.copyDeclarationsFileAsync(this.packageInfo);
-        await this.copyReadmeFileAsync(this.packageInfo);
-        await this.executeCommandAsync(`cd src/${this.packageInfo.name} && tsc`);
+    public override async runAsync(packageInfo: PackageInfo): Promise<void> {
+        await this.copyDeclarationsFileAsync(packageInfo);
+        await this.copyReadmeFileAsync(packageInfo);
+        await this.executeCommandAsync(`cd src/${packageInfo.name} && tsc`);
         await this.copyTransformersToContext();
         await this.generateCompilerExtension();
     }
@@ -79,5 +78,3 @@ export default {
         );
     }
 }
-
-await new Build().runAsync();
