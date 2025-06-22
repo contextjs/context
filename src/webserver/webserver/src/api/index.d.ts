@@ -8,6 +8,7 @@
 
 import { Dictionary } from "@contextjs/collections";
 import { Application, SystemException } from "@contextjs/system";
+import { Readable } from "node:stream";
 
 /**
  * Augment the base Application to integrate ContextJS WebServer.
@@ -351,6 +352,12 @@ export declare class Request {
      * Parsed request headers.
      */
     public readonly headers: HeaderCollection;
+
+    /**
+     * The full request URL path including query parameters.
+     * Example: "/api/resource?param=value"
+     */
+    public body: Readable;
 
     /**
      * The path of the request, excluding query parameters.

@@ -73,74 +73,91 @@ export abstract class ServerBase {
         let activeRequests = 0;
         let connectionClosed = false;
         let bodyStream: PassThrough | null = null;
+        let context: HttpContext | null = null;
 
-        socket.on("data", async (data: Buffer) => {
-            if (connectionClosed) return;
+        const processRequest = async () => {
+            if (!context || !bodyStream)
+                return;
+
+            activeRequests++;
+            const shouldClose = this.shouldCloseConnection(context.request.headers);
+
+            try {
+                await this.dispatchRequestAsync(context);
+            }
+            catch (error) {
+                this.options.onEvent?.({ type: "error", detail: error });
+            }
+            finally {
+                activeRequests--;
+                this.httpContextPool.release(context);
+                context = null;
+
+                if (shouldClose && activeRequests === 0) {
+                    socket.end();
+                    connectionClosed = true;
+                }
+            }
+        };
+
+        socket.on("data", (data: Buffer) => {
+            if (connectionClosed)
+                return;
+
             this.updateSocketLastActive(socket);
-
             let buffer = data;
+
             while (buffer.length > 0) {
                 if (state === ParseState.HEADER) {
                     const result = parser.append(buffer);
+
                     if (result.overflow) {
                         socket.write(this.headerTooLargeResponse);
-                        this.options.onEvent({ type: "error", detail: "HTTP/1.1 431 Request Header Fields Too Large", });
                         socket.end();
                         connectionClosed = true;
                         return;
                     }
 
-                    if (!result.header)
+                    if (!result.header) 
                         break;
 
                     const raw = result.header;
                     buffer = result.remaining ?? Buffer.alloc(0);
 
-                    const context = this.httpContextPool.acquire();
+                    context = this.httpContextPool.acquire();
                     const { method, path, headers } = this.parseRequestHeaders(raw, context.request.headers);
+
                     if (!method || !path) {
                         socket.end();
                         connectionClosed = true;
                         return;
                     }
 
-                    const contentLength = headers.get("content-length");
-                    remainingBodyBytes = contentLength
-                        ? parseInt(Array.isArray(contentLength) ? contentLength[0] : contentLength, 10) || 0
-                        : 0;
+                    remainingBodyBytes = parseInt(headers.get("content-length") as string, 10) || 0;
 
                     bodyStream = new PassThrough();
-                    activeRequests++;
+                    state = ParseState.BODY;
 
                     const host = headers.get("host") || socket.remoteAddress || "unknown";
-
                     const shouldClose = this.shouldCloseConnection(headers);
-                    context.initialize(protocol, host, port, method, path, headers, socket, bodyStream!);
+                    context.initialize(protocol, host, port, method, path, headers, socket, bodyStream);
                     context.response.setConnectionClose(shouldClose);
 
-                    try {
-                        await this.dispatchRequestAsync(context);
-                    }
-                    finally {
-                        activeRequests--;
-                        this.httpContextPool.release(context);
-                        if (shouldClose && activeRequests === 0)
-                            socket.end();
-                    }
-
-                    state = ParseState.BODY;
+                    processRequest();
                     continue;
                 }
 
-                const take = Math.min(remainingBodyBytes, buffer.length);
-                bodyStream!.write(buffer.subarray(0, take));
-                buffer = buffer.subarray(take);
-                remainingBodyBytes -= take;
+                if (state === ParseState.BODY && bodyStream) {
+                    const take = Math.min(remainingBodyBytes, buffer.length);
+                    bodyStream.write(buffer.subarray(0, take));
+                    buffer = buffer.subarray(take);
+                    remainingBodyBytes -= take;
 
-                if (remainingBodyBytes === 0) {
-                    bodyStream!.end();
-                    bodyStream = null;
-                    state = ParseState.HEADER;
+                    if (remainingBodyBytes === 0) {
+                        bodyStream.end();
+                        bodyStream = null;
+                        state = ParseState.HEADER;
+                    }
                 }
             }
         });
