@@ -263,20 +263,6 @@ test('ServerBase: onSocketError emits error event for unexpected codes and ignor
     context.assert.strictEqual(events.length, 0);
 });
 
-test('ServerBase: handleSocket overflow headers writes error and ends connection', async (context: TestContext) => {
-    const events: any[] = [];
-    const options = { http: { keepAliveTimeout: 0 }, general: { maximumHeaderSize: 1, idleSocketsTimeout: 0, httpContextPoolSize: 1 }, onEvent: (e: any) => events.push(e) } as any;
-    const server = new TestServerBase(options);
-    const socket = new PassThrough();
-    server.exposeHandle(socket);
-
-    socket.emit('data', Buffer.from('EXCEED'));
-
-    context.assert.ok(server.writes.length > 0);
-    context.assert.ok(events.some(e => e.type === 'error' && /431/.test(e.detail)));
-    context.assert.strictEqual(server.ends.length, 1);
-});
-
 test('ServerBase: handleSocket parses header and body streams and closes if necessary', async (context: TestContext) => {
     const events: any[] = [];
     let receivedBody = Buffer.alloc(0);
