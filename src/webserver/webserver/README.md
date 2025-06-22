@@ -50,10 +50,10 @@ npm i @contextjs/webserver
 <!-- BENCHMARKS_SUMMARY:START -->
 | Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
 |--------|--------:|-------------:|------------------:|-------:|
-| ContextJS | 15425.60 | 32.15 | 2.75 | 0.00 |
-| Node.js Raw HTTP | 14259.20 | 34.82 | 2.54 | 0.00 |
-| Fastify | 13184.00 | 37.71 | 2.35 | 0.00 |
-| Express | 8817.87 | 56.69 | 2.11 | 0.00 |
+| ContextJS | 14659.47 | 33.90 | 2.61 | 0.00 |
+| Node.js Raw HTTP | 14300.80 | 34.76 | 2.55 | 0.00 |
+| Fastify | 13541.60 | 36.74 | 2.42 | 0.00 |
+| Express | 8925.87 | 56.16 | 2.14 | 0.00 |
 
 <!-- BENCHMARKS_SUMMARY:END -->
 **Column descriptions**:
@@ -67,10 +67,10 @@ npm i @contextjs/webserver
 <!-- BENCHMARKS_EXTENDED:START -->
 | Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
 |--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|
-| ContextJS | 500 | 1 | 10.09 | 104.66 | 247.41 | 0.04 | 462750 |
-| Node.js Raw HTTP | 500 | 1 | 10.11 | 118.29 | 249.38 | 0.04 | 427750 |
-| Fastify | 500 | 1 | 10.11 | 130.60 | 387.18 | 0.07 | 395500 |
-| Express | 500 | 1 | 10.12 | 236.72 | 209.56 | 0.05 | 264500 |
+| ContextJS | 500 | 1 | 10.12 | 107.16 | 224.85 | 0.04 | 439750 |
+| Node.js Raw HTTP | 500 | 1 | 10.15 | 117.45 | 315.13 | 0.06 | 429000 |
+| Fastify | 500 | 1 | 10.13 | 125.49 | 271.37 | 0.05 | 406250 |
+| Express | 500 | 1 | 10.14 | 236.75 | 184.51 | 0.04 | 267750 |
 
 <!-- BENCHMARKS_EXTENDED:END -->
 **Extended column descriptions**:
