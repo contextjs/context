@@ -9,7 +9,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/contextjs/context.git",
+    "url": "git+https://github.com/contextjs/context.git",
     "directory": "src/text"
   },
   "keywords": [
