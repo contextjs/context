@@ -19,9 +19,7 @@
     }
   },
   "dependencies": {
-    "reflect-metadata": "^0.2.2"
-  },
-  "peerDependencies": {
+    "reflect-metadata": "^0.2.2",
     "@contextjs/webserver": "__VERSION__",
     "@contextjs/routing": "__VERSION__",
     "@contextjs/io": "__VERSION__",

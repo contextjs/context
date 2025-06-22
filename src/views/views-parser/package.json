@@ -14,7 +14,7 @@
   "config": {
     "id": "views-parser"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/text": "__VERSION__",
     "@contextjs/collections": "__VERSION__"

@@ -28,12 +28,12 @@
     "extensible",
     "fast"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
     "@contextjs/collections": "__VERSION__"
   },
-  "dependencies": {
+  "devDependencies": {
     "@types/node": "^22.13.10"
   },
   "exports": {

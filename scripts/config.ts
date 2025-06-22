@@ -11,7 +11,7 @@
 import type PackageInfo from "./package-info";
 
 export default class Config {
-    public static version: string = "25.0.0-beta.4";
+    public static version: string = "25.0.0";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packagesInfo: PackageInfo[] = [
