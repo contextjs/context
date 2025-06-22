@@ -21,7 +21,7 @@
     "compiler",
     "context"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
     "@contextjs/compiler": "__VERSION__",

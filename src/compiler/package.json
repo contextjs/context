@@ -28,7 +28,7 @@
       "types": "./api/index.d.ts"
     }
   },
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__"
   }
 }

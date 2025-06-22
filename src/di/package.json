@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/contextjs/context/issues"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__"
   }
 }

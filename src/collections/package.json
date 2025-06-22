@@ -34,7 +34,7 @@
     "data-structures",
     "contextjs"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__"
   }
 }

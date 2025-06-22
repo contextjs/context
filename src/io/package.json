@@ -21,7 +21,7 @@
     "utility",
     "contextjs"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__"
   },
   "exports": {

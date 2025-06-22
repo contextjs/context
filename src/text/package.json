@@ -19,7 +19,7 @@
     "contextjs-text",
     "text utilities"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@contextjs/system": "__VERSION__"
   },
   "exports": {

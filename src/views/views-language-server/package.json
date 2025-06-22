@@ -16,9 +16,7 @@
     },
     "dependencies": {
         "vscode-languageserver": "^9.0.1",
-        "vscode-languageserver-textdocument": "^1.0.12"
-    },
-    "peerDependencies": {
+        "vscode-languageserver-textdocument": "^1.0.12",
         "@contextjs/views-parser": "__VERSION__"
     },
     "devDependencies": {
