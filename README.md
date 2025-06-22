@@ -8,7 +8,7 @@
 
 > A modular, test-driven TypeScript ecosystem built on object-oriented design and zero-runtime dependencies.
 
-npm## Getting Started
+## Getting Started
 
 Install the CLI globally:
 
