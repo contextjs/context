@@ -12,7 +12,7 @@ import { Exception } from '../../src/exceptions/exception.ts';
 test('Exception: instance - success', (context: TestContext) => {
     const exception = new Exception("Test Exception");
     context.assert.ok(exception instanceof Exception);
-    context.assert.ok(exception instanceof Error); // ensure base class
+    context.assert.ok(exception instanceof Error);
 });
 
 test('Exception: name - success', (context: TestContext) => {

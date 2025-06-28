@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { DiagnosticMessages } from "../../src/diagnostics/diagnostic-messages.js";
 import { Language } from "../../src/parsers/language.js";
 import { ParserResolver } from "../../src/parsers/parser-resolver.js";
 import { Parser } from "../../src/parsers/parser.js";
@@ -249,8 +249,8 @@ test("Parser: mixed trivia and empty tag", (context: TestContext) => {
 test("Parser: simple @identifier transition", (context: TestContext) => {
     const result = parse("@foo");
     const transitionGroup = result.nodes[0] as any;
-    const atNode = transitionGroup.children[0];
-    const fooNode = transitionGroup.children[1];
+    const atNode = transitionGroup.transition;
+    const fooNode = transitionGroup.value;
 
     context.assert.strictEqual(atNode.value, "@");
     context.assert.strictEqual(fooNode.value, "foo");
@@ -261,8 +261,8 @@ test("Parser: simple @identifier transition", (context: TestContext) => {
 test("Parser: @ transition with Unicode identifier", (context: TestContext) => {
     const result = parse("@😀");
     const transitionGroup = result.nodes[0] as any;
-    const atNode = transitionGroup.children[0];
-    const emojiNode = transitionGroup.children[1];
+    const atNode = transitionGroup.transition;
+    const emojiNode = transitionGroup.value;
 
     context.assert.strictEqual(atNode.value, "@");
     context.assert.strictEqual(emojiNode.value, "😀");
@@ -272,8 +272,8 @@ test("Parser: @ transition with Unicode identifier", (context: TestContext) => {
 test("Parser: @ transition with underscore", (context: TestContext) => {
     const result = parse("@_private");
     const transitionGroup = result.nodes[0] as any;
-    const atNode = transitionGroup.children[0];
-    const identNode = transitionGroup.children[1];
+    const atNode = transitionGroup.transition;
+    const identNode = transitionGroup.value;
 
     context.assert.strictEqual(atNode.value, "@");
     context.assert.strictEqual(identNode.value, "_private");
@@ -283,9 +283,10 @@ test("Parser: @ transition with underscore", (context: TestContext) => {
 test("Parser: simple code block @{ ... }", (context: TestContext) => {
     const result = parse("@{ let x = 1; }");
     const group = result.nodes[0] as any;
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
-    context.assert.strictEqual(group.children.at(-1).value, "}");
+
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
+    context.assert.strictEqual(group.closingBrace.value, "}");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -293,9 +294,9 @@ test("Parser: code block with Unicode and emoji", (context: TestContext) => {
     const result = parse("@{ let x = '😎漢字'; }");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
-    context.assert.strictEqual(group.children.at(-1).value, "}");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
+    context.assert.strictEqual(group.closingBrace.value, "}");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -305,8 +306,8 @@ test("Parser: inline transition in text", (context: TestContext) => {
     const transitionGroup = result.nodes[1] as any;
 
     context.assert.strictEqual(literal.value, "hi ");
-    context.assert.strictEqual(transitionGroup.children[0].value, "@");
-    context.assert.strictEqual(transitionGroup.children[1].value, "foo");
+    context.assert.strictEqual(transitionGroup.transition.value, "@");
+    context.assert.strictEqual(transitionGroup.value.value, "foo");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -315,8 +316,8 @@ test("Parser: transition inside HTML", (context: TestContext) => {
     const tagNode = result.nodes[0] as any;
     const transitionGroup = tagNode.children[1];
 
-    context.assert.strictEqual(transitionGroup.children[0].value, "@");
-    context.assert.strictEqual(transitionGroup.children[1].value, "bar");
+    context.assert.strictEqual(transitionGroup.transition.value, "@");
+    context.assert.strictEqual(transitionGroup.value.value, "bar");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -325,9 +326,9 @@ test("Parser: code block inside HTML", (context: TestContext) => {
     const tagNode = result.nodes[0] as any;
     const group = tagNode.children[1];
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
-    context.assert.strictEqual(group.children.at(-1).value, "}");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
+    context.assert.strictEqual(group.closingBrace.value, "}");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -337,11 +338,11 @@ test("Parser: multiple transitions in one input", (context: TestContext) => {
     const literal = result.nodes[1] as LiteralSyntaxNode;
     const group2 = result.nodes[2] as any;
 
-    context.assert.strictEqual(group1.children[0].value, "@");
-    context.assert.strictEqual(group1.children[1].value, "foo");
+    context.assert.strictEqual(group1.transition.value, "@");
+    context.assert.strictEqual(group1.value.value, "foo");
     context.assert.strictEqual(literal.value, "and ");
-    context.assert.strictEqual(group2.children[0].value, "@");
-    context.assert.strictEqual(group2.children[1].value, "bar");
+    context.assert.strictEqual(group2.transition.value, "@");
+    context.assert.strictEqual(group2.value.value, "bar");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -351,13 +352,13 @@ test("Parser: multiple code blocks in one input", (context: TestContext) => {
     const literal = result.nodes[1] as LiteralSyntaxNode;
     const group2 = result.nodes[2] as any;
 
-    context.assert.strictEqual(group1.children[0].value, "@");
-    context.assert.strictEqual(group1.children[1].value, "{");
-    context.assert.strictEqual(group1.children.at(-1).value, "}");
+    context.assert.strictEqual(group1.transition.value, "@");
+    context.assert.strictEqual(group1.openingBrace.value, "{");
+    context.assert.strictEqual(group1.closingBrace.value, "}");
     context.assert.strictEqual(literal.value, "and ");
-    context.assert.strictEqual(group2.children[0].value, "@");
-    context.assert.strictEqual(group2.children[1].value, "{");
-    context.assert.strictEqual(group2.children.at(-1).value, "}");
+    context.assert.strictEqual(group2.transition.value, "@");
+    context.assert.strictEqual(group2.openingBrace.value, "{");
+    context.assert.strictEqual(group2.closingBrace.value, "}");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -368,13 +369,13 @@ test("Parser: transition at start, middle, end", (context: TestContext) => {
     const group2 = result.nodes[2] as any;
     const group3 = result.nodes[3] as any;
 
-    context.assert.strictEqual(group1.children[0].value, "@");
-    context.assert.strictEqual(group1.children[1].value, "foo");
+    context.assert.strictEqual(group1.transition.value, "@");
+    context.assert.strictEqual(group1.value.value, "foo");
     context.assert.strictEqual(literal1.value, "bar ");
-    context.assert.strictEqual(group2.children[0].value, "@");
-    context.assert.strictEqual(group2.children[1].value, "baz");
-    context.assert.strictEqual(group3.children[0].value, "@");
-    context.assert.strictEqual(group3.children[1].value, "qux");
+    context.assert.strictEqual(group2.transition.value, "@");
+    context.assert.strictEqual(group2.value.value, "baz");
+    context.assert.strictEqual(group3.transition.value, "@");
+    context.assert.strictEqual(group3.value.value, "qux");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -382,7 +383,7 @@ test("Parser: lone @ is not diagnostic", (context: TestContext) => {
     const result = parse("@");
     const transitionGroup = result.nodes[0] as any;
 
-    context.assert.strictEqual(transitionGroup.children[0].value, "@");
+    context.assert.strictEqual(transitionGroup.transition.value, "@");
     context.assert.ok(result.diagnostics.length === 0);
 });
 
@@ -396,8 +397,8 @@ test("Parser: unterminated code block", (context: TestContext) => {
     const result = parse("@{ let x = 1;");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
     context.assert.ok(result.diagnostics.length > 0);
 });
 
@@ -409,8 +410,8 @@ test("Parser: transition in attribute value", (context: TestContext) => {
     const attrValue = attr.children[2];
     const group = attrValue.children[1];
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "bar");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.value.value, "bar");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 
@@ -477,8 +478,8 @@ test("Parser: EOF in the middle of code block", (context: TestContext) => {
     const result = parse("@{ let x = 1;");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
     context.assert.ok(result.diagnostics.length > 0);
 });
 
@@ -550,7 +551,7 @@ test("Parser: only @ character", (context: TestContext) => {
     const result = parse("@");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
+    context.assert.strictEqual(group.transition.value, "@");
     context.assert.ok(result.diagnostics.length === 0);
 });
 
@@ -643,8 +644,8 @@ test("Parser: malformed transition @{", (context: TestContext) => {
     const result = parse("@{");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "{");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.openingBrace.value, "{");
     context.assert.ok(result.diagnostics.length > 0);
 });
 
@@ -652,8 +653,8 @@ test("Parser: malformed transition @}", (context: TestContext) => {
     const result = parse("@}");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
-    context.assert.strictEqual(group.children[1].value, "}");
+    context.assert.strictEqual(group.transition.value, "@");
+    context.assert.strictEqual(group.value.value, "}");
     context.assert.ok(result.diagnostics.length === 0);
 });
 
@@ -661,7 +662,7 @@ test("Parser: transition with embedded tag", (context: TestContext) => {
     const result = parse("@<div>");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.children[0].value, "@");
+    context.assert.strictEqual(group.transition.value, "@");
     context.assert.strictEqual((result.nodes[1] as any).children[0].children[1].children[0].value, "div");
 });
 

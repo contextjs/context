@@ -1,0 +1,38 @@
+<html>
+    <div>
+        <h1>Welcome to My Web Page</h1>
+        <p>This is a simple HTML page with TypeScript integration.</p>
+        <button id="clickMeButton">Click Me!</button>
+    </div>
+
+    <script>
+        document.getElementById("clickMeButton").addEventListener("click", function() {
+            alert("Button clicked!");
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/4.9.5/typescript.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+
+    @{
+        for (let i = 0; i < 5; i++) {
+            <p>Item @i</p>
+        }
+    }
+</html>

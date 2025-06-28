@@ -6,12 +6,19 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 import { ParserContext } from "../../context/parser-context.js";
-import { TypescriptCodeSyntaxNode } from "../../syntax/tshtml/typescript-code-syntax-node.js";
-import { TypescriptCodeValueSyntaxNode } from "../../syntax/tshtml/typescript-code-value-syntax-node.js";
+import { TypescriptCodeBlockSyntaxNode } from "../../syntax/typescript/typescript-code-block-syntax-node.js";
+import { TypescriptCodeBraceSyntaxNode } from "../../syntax/typescript/typescript-code-brace-syntax-node.js";
+import { TypescriptCodeExpressionSyntaxNode } from "../../syntax/typescript/typescript-code-expression-syntax-node.js";
+import { TypescriptCodeValueSyntaxNode } from "../../syntax/typescript/typescript-code-value-syntax-node.js";
 import { CodeParser } from "../generic/code/code.parser.js";
 
 export class TypescriptCodeParser {
-    public static parse(context: ParserContext): TypescriptCodeSyntaxNode {
-        return CodeParser.parse(context, TypescriptCodeSyntaxNode, TypescriptCodeValueSyntaxNode);
+    public static parse(context: ParserContext): TypescriptCodeBlockSyntaxNode {
+        return CodeParser.parse(
+            context,
+            TypescriptCodeBlockSyntaxNode,
+            TypescriptCodeExpressionSyntaxNode,
+            TypescriptCodeValueSyntaxNode,
+            TypescriptCodeBraceSyntaxNode) as TypescriptCodeBlockSyntaxNode;
     }
 }

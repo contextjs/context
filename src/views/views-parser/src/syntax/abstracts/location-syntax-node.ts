@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Location } from "../../sources/location.js";
+import { Location } from "@contextjs/views";
 import { TriviaSyntaxNode } from "../common/trivia-syntax-node.js";
 import { SyntaxNode } from "./syntax-node.js";
 

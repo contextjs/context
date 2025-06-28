@@ -6,12 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { DiagnosticMessages } from "../../diagnostics/diagnostic-messages.js";
 import { TransitionSyntaxNode } from "../../syntax/common/transition-syntax-node.js";
 import { ContentParser } from "../generic/content.parser.js";
-import { StringExtensions } from "@contextjs/system";
 
 export class TransitionParser {
     public static transitionSymbol = '@';

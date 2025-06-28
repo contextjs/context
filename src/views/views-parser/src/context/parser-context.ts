@@ -7,13 +7,10 @@
  */
 
 import { Stack } from "@contextjs/collections";
-import { DiagnosticMessage } from "../diagnostics/diagnostic-message.js";
-import { Diagnostic } from "../diagnostics/diagnostic.js";
-import { Location } from "../sources/location.js";
-import { Source } from "../sources/source.js";
 import { SyntaxNode } from "../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../syntax/common/end-of-file-syntax-node.js";
 import { ParserContextState } from "./parser-context-state.js";
+import { Diagnostic, DiagnosticMessage, Location, Source } from "@contextjs/views";
 
 export class ParserContext {
     private readonly stateStack: Stack<ParserContextState> = new Stack();

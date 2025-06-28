@@ -176,3 +176,17 @@ test('WebServer: waitUntilListening calls subserver wait', async (context: TestC
     context.assert.strictEqual(httpWaited, true);
     context.assert.strictEqual(httpsWaited, true);
 });
+
+test('WebServer: hasMiddleware checks middleware presence', (context: TestContext) => {
+    const options = new WebServerOptions();
+    const server = new WebServer(options);
+    const mw1: IMiddleware = { name: 'm1', onRequest: () => { } };
+    const mw2: IMiddleware = { name: 'm2', onRequest: () => { } };
+
+    server.useMiddleware(mw1);
+    context.assert.ok(server.hasMiddleware('m1'), 'should find m1 middleware');
+    context.assert.ok(!server.hasMiddleware('m2'), 'should not find m2 middleware');
+
+    server.useMiddleware(mw2);
+    context.assert.ok(server.hasMiddleware('m2'), 'should find m2 middleware after adding it');
+});

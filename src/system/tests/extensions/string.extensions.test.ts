@@ -202,3 +202,59 @@ test('StringExtensions: type narrowing - isNullOrWhitespace', (context: TestCont
     else
         context.assert.ok(true);
 });
+
+test('StringExtensions: escape - backslash', (context: TestContext) => {
+    const input = "a\\b";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\\\b");
+});
+
+test('StringExtensions: escape - double quote', (context: TestContext) => {
+    const input = 'a"b"c';
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, 'a\\"b\\"c');
+});
+
+test("StringExtensions: escape - single quote", (context: TestContext) => {
+    const input = "a'b'c";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\'b\\'c");
+});
+
+test("StringExtensions: escape - backtick", (context: TestContext) => {
+    const input = "a`b`c";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\`b\\`c");
+});
+
+test("StringExtensions: escape - template literal start (${)", (context: TestContext) => {
+    const input = "foo${bar}";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "foo\\${bar}");
+});
+
+test("StringExtensions: escape - all at once", (context: TestContext) => {
+    const input = 'a\\b"c\'d`e${f}';
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, 'a\\\\b\\"c\\\'d\\`e\\${f}');
+});
+
+test("StringExtensions: escape - nothing to escape", (context: TestContext) => {
+    const input = "abc123";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "abc123");
+});
+
+test("StringExtensions: escape - already escaped ${ is not double-escaped", (context: TestContext) => {
+    const input = "foo\\${bar}";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "foo\\\\${bar}");
+});

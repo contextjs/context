@@ -28,7 +28,8 @@ function createOptionsWithContext() {
     };
     const fakeServer: any = {
         application: fakeApp,
-        useMiddleware: (middleware: IMiddleware) => applied.push(middleware)
+        useMiddleware: (middleware: IMiddleware) => applied.push(middleware),
+        hasMiddleware: (name: string) => applied.some(mw => mw.name === name)
     };
     const options = new WebServerOptions();
     // @ts-ignore

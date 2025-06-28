@@ -7,90 +7,123 @@
  */
 
 import { StringBuilder } from "@contextjs/text";
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContextState } from "../../../context/parser-context-state.js";
 import { ParserContext } from "../../../context/parser-context.js";
-import { DiagnosticMessages } from "../../../diagnostics/diagnostic-messages.js";
-import { CodeSyntaxNode, CodeSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-syntax-node.js";
+import { BraceSyntaxNode, BraceSyntaxNodeConstructor } from "../../../syntax/abstracts/brace-syntax-node.js";
+import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-block-syntax-node.js";
 import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
 import { SyntaxNode } from "../../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../../syntax/common/end-of-file-syntax-node.js";
-import { BraceParser } from "../../common/brace.parser.js";
 import { TransitionParser } from "../../common/transition.parser.js";
 import { TriviaParser } from "../../common/trivia.parser.js";
+import { BraceParser } from "../../generic/brace.parser.js";
 import { TagParser } from "../tags/tag.parser.js";
 
 export class BlockCodeParser {
     public static parse<
-        TCodeSyntaxNode extends CodeSyntaxNode,
+        TCodeBlockSyntaxNode extends CodeBlockSyntaxNode,
         TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
             context: ParserContext,
-            codeSyntaxNode: CodeSyntaxNodeConstructor<TCodeSyntaxNode>,
-            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>
-        ): TCodeSyntaxNode {
+            codeBlockSyntaxNode: CodeBlockSyntaxNodeConstructor<TCodeBlockSyntaxNode>,
+            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>,
+            braceSyntaxNode: BraceSyntaxNodeConstructor<BraceSyntaxNode>
+        ): TCodeBlockSyntaxNode {
 
         context.reset();
         const transitionNode = TransitionParser.parse(context);
 
         context.reset();
-        const openBraceNode = BraceParser.parse(context, '{');
-
-        const leadingTrivia = TriviaParser.parse(context);
+        const openBraceNode = BraceParser.parse(context, braceSyntaxNode, '{');
 
         context.reset();
-        const children: SyntaxNode[] = [transitionNode, openBraceNode];
+        const children: SyntaxNode[] = [];
         const valueBuilder = new StringBuilder();
         let done = false;
 
+        context.setState(ParserContextState.RootBlock);
+
+        // ---- Quote tracking state ----
+        let inSingleQuote = false;
+        let inDoubleQuote = false;
+        let inBacktick = false;
+        let prevChar = "";
+
         while (!done) {
-            switch (context.currentCharacter) {
+            const ch = context.currentCharacter;
+
+            // Update quote state (handles basic escaping, but can be extended)
+            if (ch === "'" && !inDoubleQuote && !inBacktick && prevChar !== '\\') inSingleQuote = !inSingleQuote;
+            else if (ch === '"' && !inSingleQuote && !inBacktick && prevChar !== '\\') inDoubleQuote = !inDoubleQuote;
+            else if (ch === '`' && !inSingleQuote && !inDoubleQuote && prevChar !== '\\') inBacktick = !inBacktick;
+
+            const insideQuotes = inSingleQuote || inDoubleQuote || inBacktick;
+
+            switch (ch) {
                 case EndOfFileSyntaxNode.endOfFile:
-                    if (context.currentState === ParserContextState.Code)
+                    if (context.currentState === ParserContextState.RootBlock)
                         context.addErrorDiagnostic(DiagnosticMessages.UnexpectedEndOfInput);
-                    else if (context.currentState === ParserContextState.CodeBlock)
+                    else if (context.currentState === ParserContextState.NestedBlock)
                         context.addErrorDiagnostic(DiagnosticMessages.ExpectedBrace(context.currentCharacter));
                     done = true;
                     break;
                 case '}':
-                    if (context.currentState === ParserContextState.Code)
-                        done = true;
-                    else {
-                        valueBuilder.append(context.currentCharacter);
-                        context.moveNext();
+                    if (!insideQuotes) {
+                        if (context.currentState === ParserContextState.RootBlock)
+                            done = true;
+                        else {
+                            valueBuilder.append(ch);
+                            context.moveNext();
+                        }
+                        context.popState();
+                        break;
                     }
-                    context.popState();
+                    valueBuilder.append(ch);
+                    context.moveNext();
                     break;
                 case '{':
-                    context.setState(ParserContextState.CodeBlock);
-                    valueBuilder.append(context.currentCharacter);
+                    if (!insideQuotes) {
+                        context.setState(ParserContextState.NestedBlock);
+                        valueBuilder.append(ch);
+                        context.moveNext();
+                        break;
+                    }
+                    valueBuilder.append(ch);
                     context.moveNext();
                     break;
                 case '<': {
-                    const tagNodes = this.tryParseTag(context, valueBuilder.toString(), codeValueSyntaxNode);
-                    if (tagNodes.length === 0) {
-                        valueBuilder.append(context.currentCharacter);
-                        context.moveNext();
+                    if (!insideQuotes) {
+                        const tagNodes = this.tryParseTag(context, valueBuilder.toString(), codeValueSyntaxNode);
+                        if (tagNodes.length === 0) {
+                            valueBuilder.append(ch);
+                            context.moveNext();
+                        }
+                        else {
+                            children.push(...tagNodes);
+                            valueBuilder.clear();
+                            context.reset();
+                        }
+                        break;
                     }
-                    else {
-                        children.push(...tagNodes);
-                        valueBuilder.clear();
-                        context.reset();
-                    }
+                    valueBuilder.append(ch);
+                    context.moveNext();
                     break;
                 }
                 default:
-                    valueBuilder.append(context.currentCharacter);
+                    valueBuilder.append(ch);
                     context.moveNext();
                     break;
             }
+
+            prevChar = ch;
         }
 
         if (valueBuilder.length > 0)
             children.push(new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation()));
 
+        const closingBraceNode = BraceParser.parse(context, braceSyntaxNode, '}');
 
-        children.push(BraceParser.parse(context, '}'));
-
-        return new codeSyntaxNode(children, leadingTrivia);
+        return new codeBlockSyntaxNode(transitionNode, openBraceNode, children, closingBraceNode, null, TriviaParser.parse(context));
     }
 
     private static tryParseTag<TCodeValueSyntaxNode extends CodeValueSyntaxNode>(

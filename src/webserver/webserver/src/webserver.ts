@@ -38,6 +38,10 @@ export class WebServer {
         return this;
     }
 
+    public hasMiddleware(middlewareName: string): boolean {
+        return this.middleware.some(m => m.name === middlewareName);
+    }
+
     public setOptions(options: WebServerOptions): this {
         if (!options.http.enabled && !options.https.enabled)
             options.onEvent({ type: "error", detail: "At least one of HTTP or HTTPS must be enabled." });

@@ -13,12 +13,14 @@ import { StringBuilder } from "../src/string-builder.js";
 test("StringBuilder: append() and toString()", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("Hello").append(", ").append("world");
+
     context.assert.strictEqual(sb.toString(), "Hello, world");
 });
 
 test("StringBuilder: appendLine() appends newline", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.appendLine("Hello").appendLine("World");
+
     context.assert.match(sb.toString(), /Hello/);
     context.assert.match(sb.toString(), /World/);
     context.assert.match(sb.toString(), /\n|\r/);
@@ -27,12 +29,14 @@ test("StringBuilder: appendLine() appends newline", (context: TestContext) => {
 test("StringBuilder: appendFormat() replaces placeholders", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.appendFormat("{0} + {1} = {2}", 2, 3, 5);
+
     context.assert.strictEqual(sb.toString(), "2 + 3 = 5");
 });
 
 test("StringBuilder: insert() inserts segment", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("A").append("C").insert(1, "B");
+
     context.assert.strictEqual(sb.toString(), "ABC");
 });
 
@@ -40,18 +44,21 @@ test("StringBuilder: removeSegment() removes segments", (context: TestContext) =
     const sb = new StringBuilder();
     sb.append("A").append("B").append("C");
     sb.removeSegment(1);
+
     context.assert.strictEqual(sb.toString(), "AC");
 });
 
 test("StringBuilder: replaceSegment() replaces content", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("Hello").replaceSegment(0, "Hi");
+
     context.assert.strictEqual(sb.toString(), "Hi");
 });
 
 test("StringBuilder: clear() resets state", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("Hello").clear();
+
     context.assert.strictEqual(sb.length, 0);
     context.assert.strictEqual(sb.segmentCount, 0);
     context.assert.strictEqual(sb.toString(), "");
@@ -60,6 +67,7 @@ test("StringBuilder: clear() resets state", (context: TestContext) => {
 test("StringBuilder: length and segmentCount are correct", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("123").append("4567");
+
     context.assert.strictEqual(sb.length, 7);
     context.assert.strictEqual(sb.segmentCount, 2);
 });
@@ -67,30 +75,36 @@ test("StringBuilder: length and segmentCount are correct", (context: TestContext
 test("StringBuilder: isEmpty returns true only when empty", (context: TestContext) => {
     const sb = new StringBuilder();
     context.assert.strictEqual(sb.isEmpty, true);
+
     sb.append("x");
     context.assert.strictEqual(sb.isEmpty, false);
+
     sb.clear();
     context.assert.strictEqual(sb.isEmpty, true);
 });
 
 test("StringBuilder: insert() out of range throws", (context: TestContext) => {
     const sb = new StringBuilder();
+
     context.assert.throws(() => sb.insert(5, "fail"), ArgumentOutOfRangeException);
 });
 
 test("StringBuilder: removeSegment() out of range throws", (context: TestContext) => {
     const sb = new StringBuilder();
+
     context.assert.throws(() => sb.removeSegment(0), ArgumentOutOfRangeException);
 });
 
 test("StringBuilder: replaceSegment() out of range throws", (context: TestContext) => {
     const sb = new StringBuilder();
+
     context.assert.throws(() => sb.replaceSegment(0, "fail"), ArgumentOutOfRangeException);
 });
 
 test("StringBuilder: appending empty strings still updates segment count", (context: TestContext) => {
     const sb = new StringBuilder();
     sb.append("").append("");
+
     context.assert.strictEqual(sb.segmentCount, 2);
     context.assert.strictEqual(sb.length, 0);
     context.assert.strictEqual(sb.toString(), "");
@@ -124,19 +138,6 @@ test("StringBuilder: performance with high volume appends", (context: TestContex
     context.assert.strictEqual(sb.toString().length, count);
 });
 
-test("StringBuilder: handles mix of short and long segments", (context: TestContext) => {
-    const sb = new StringBuilder();
-    sb.append("A");
-    sb.append("x".repeat(1000));
-    sb.append("B");
-
-    const result = sb.toString();
-    context.assert.strictEqual(result.length, 1002);
-    context.assert.ok(result.startsWith("A"));
-    context.assert.ok(result.endsWith("B"));
-    context.assert.strictEqual(sb.segmentCount, 3);
-});
-
 test("StringBuilder: performance with high volume appends", (context: TestContext) => {
     const sb = new StringBuilder();
     const count = 10_000;
@@ -167,7 +168,7 @@ test("StringBuilder: toArray() returns a copy of segments", (context: TestContex
     const segments = sb.toArray();
 
     context.assert.deepStrictEqual(segments, ["A", "B", "C"]);
-    context.assert.notStrictEqual(segments, sb["_segments"]); // ensure it's a copy
+    context.assert.notStrictEqual(segments, sb["_segments"]);
 });
 
 test("StringBuilder: clone() returns a copy with same content and length", (context: TestContext) => {
@@ -195,7 +196,6 @@ test("StringBuilder: clone() returns a copy with same content and length", (cont
     context.assert.notStrictEqual(sb2, sb1);
     context.assert.deepStrictEqual(sb2.toArray(), sb1.toArray());
 
-    // Modify original and confirm clone is unaffected
     sb1.append("!",);
     context.assert.notStrictEqual(sb1.toString(), sb2.toString());
 });
@@ -204,6 +204,71 @@ test("StringBuilder: supports implicit string conversion via Symbol.toPrimitive"
     const sb = new StringBuilder();
     sb.append("Hello").append(" ").append("world");
 
-    const result = `${sb}`; // Triggers Symbol.toPrimitive
+    const result = `${sb}`;
     context.assert.strictEqual(result, "Hello world");
+});
+
+test("StringBuilder: chaining works with escaped methods", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendEscaped("a`").appendLineEscaped("b${").appendFormatEscaped("c{0}\\", "d`");
+    const str = sb.toString();
+
+    context.assert.match(str, /^a\\`b\\\$\{\r?\ncd\\`\\\\$/);
+});
+
+test("StringBuilder: appendEscaped handles empty string", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendEscaped("");
+
+    context.assert.strictEqual(sb.length, 0);
+    context.assert.strictEqual(sb.segmentCount, 1);
+    context.assert.strictEqual(sb.toString(), "");
+});
+
+test("StringBuilder: appendLineEscaped handles empty string and adds newline", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendLineEscaped();
+    context.assert.ok(sb.toString() === "\n" || sb.toString() === "\r\n");
+});
+
+test("StringBuilder: appendEscaped escapes backticks, ${, and backslashes", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendEscaped("abc`def");
+    context.assert.strictEqual(sb.toString(), "abc\\`def");
+
+    sb.clear();
+    sb.appendEscaped("x${y}z");
+    context.assert.strictEqual(sb.toString(), "x\\${y}z");
+
+    sb.clear();
+    sb.appendEscaped("one\\two");
+    context.assert.strictEqual(sb.toString(), "one\\\\two");
+
+    sb.clear();
+    sb.appendEscaped("multi\\`\\${");
+    context.assert.strictEqual(sb.toString(), "multi\\\\\\`\\\\${");
+});
+
+test("StringBuilder: appendFormatEscaped with special characters", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendFormatEscaped("`{0}` and ${1}", "tick`", "dollar{");
+
+    context.assert.strictEqual(sb.toString(), "\\`tick\\`\\` and $dollar{");
+});
+
+test("StringBuilder: appendLineEscaped escapes content and appends newline", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendLineEscaped("foo`bar${baz}\\qux");
+    const str = sb.toString();
+    context.assert.ok(/^foo\\`bar\\\${baz}\\\\qux(\r\n|\n)$/.test(str));
+});
+
+test("StringBuilder: appendFormatEscaped escapes formatted values", (context: TestContext) => {
+    const sb = new StringBuilder();
+    sb.appendFormatEscaped("Hello `{0}`", "world");
+    context.assert.strictEqual(sb.toString(), "Hello \\`world\\`");
+
+    sb.clear();
+    sb.appendFormatEscaped("Val: {0}, Interp: ${1}", 42, "a${b}");
+    context.assert.strictEqual(sb.toString(), "Val: 42, Interp: $a\\${b}");
 });

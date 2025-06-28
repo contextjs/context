@@ -51,4 +51,13 @@ export class StringExtensions {
             return typeof args[index] !== 'undefined' ? args[index] : match;
         });
     }
+
+    public static escape(value: string): string {
+        return value
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/'/g, "\\'")
+            .replace(/`/g, '\\`')
+            .replace(/(?<!\\)\$\{/g, '\\${');
+    }
 }

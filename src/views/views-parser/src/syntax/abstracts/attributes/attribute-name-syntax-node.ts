@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { NameSyntaxNode, NameSyntaxNodeConstructor } from "../name.syntax-node.js";
+import { NameSyntaxNode, NameSyntaxNodeConstructor } from "../name-syntax-node.js";
 
 export type AttributeNameSyntaxNodeConstructor<TSyntaxNode extends AttributeNameSyntaxNode>
     = NameSyntaxNodeConstructor<TSyntaxNode>;

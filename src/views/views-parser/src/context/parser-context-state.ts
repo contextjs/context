@@ -7,6 +7,6 @@
  */
 
 export enum ParserContextState {
-    Code = 'Code',
-    CodeBlock = 'CodeBlock',
+    RootBlock = 'RootBlock',
+    NestedBlock = 'NestedBlock'
 }

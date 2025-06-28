@@ -6,16 +6,15 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
 import { CDATAParser } from "../../../src/parsers/html/cdata.parser.js";
-import { Source } from "../../../src/sources/source.js";
-import { SyntaxNode } from "../../../src/syntax/abstracts/syntax-node.js";
+import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 import { CDATAContentSyntaxNode } from "../../../src/syntax/html/cdata/cdata-content-syntax-node.js";
 import { CDATAEndSyntaxNode } from "../../../src/syntax/html/cdata/cdata-end-syntax-node.js";
 import { CDATAStartSyntaxNode } from "../../../src/syntax/html/cdata/cdata-start-syntax-node.js";
 import { CDATASyntaxNode } from "../../../src/syntax/html/cdata/cdata-syntax-node.js";
-import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 
 function createContext(input: string): ParserContext {
     return new ParserContext(new Source(input), null!);

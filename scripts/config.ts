@@ -11,7 +11,7 @@
 import type PackageInfo from "./package-info";
 
 export default class Config {
-    public static version: string = "25.0.0";
+    public static version: string = "25.1.0-next.1";
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
     public static packagesInfo: PackageInfo[] = [
@@ -27,8 +27,11 @@ export default class Config {
         { name: "webserver-middleware-static", path: "webserver/webserver-middleware-static" },
         { name: "webserver-middleware-cookies", path: "webserver/webserver-middleware-cookies" },
         { name: "webserver-middleware-controllers", path: "webserver/webserver-middleware-controllers" },
+        { name: "webserver-middleware-views", path: "webserver/webserver-middleware-views" },
         { name: "compiler", path: "compiler" },
+        { name: "views", path: "views/views" },
         { name: "views-parser", path: "views/views-parser" },
+        { name: "views-compiler", path: "views/views-compiler" },
         { name: "views-language-server", path: "views/views-language-server" },
         { name: "context", path: "context" }
     ];

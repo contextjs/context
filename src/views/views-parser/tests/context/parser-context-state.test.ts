@@ -10,14 +10,14 @@ import test, { TestContext } from "node:test";
 import { ParserContextState } from "../../src/context/parser-context-state.js";
 
 test("ParserContextState: enum values are correct", (context: TestContext) => {
-    context.assert.strictEqual(ParserContextState.Code, "Code");
-    context.assert.strictEqual(ParserContextState.CodeBlock, "CodeBlock");
+    context.assert.strictEqual(ParserContextState.RootBlock, "RootBlock");
+    context.assert.strictEqual(ParserContextState.NestedBlock, "NestedBlock");
 });
 
 test("ParserContextState: enum supports type-safe assignments", (context: TestContext) => {
-    let state: ParserContextState = ParserContextState.Code;
-    context.assert.strictEqual(state, "Code");
+    let state: ParserContextState = ParserContextState.NestedBlock;
+    context.assert.strictEqual(state, "NestedBlock");
 
-    state = ParserContextState.CodeBlock;
-    context.assert.strictEqual(state, "CodeBlock");
+    state = ParserContextState.RootBlock;
+    context.assert.strictEqual(state, "RootBlock");
 });

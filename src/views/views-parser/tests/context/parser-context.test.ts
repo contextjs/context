@@ -9,9 +9,8 @@
 import test, { TestContext } from "node:test";
 import { ParserContextState } from "../../src/context/parser-context-state.js";
 import { ParserContext } from "../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../src/diagnostics/diagnostic-messages.js";
-import { DiagnosticSeverity } from "../../src/diagnostics/diagnostic-severity.js";
 import { EndOfFileSyntaxNode } from "../../src/syntax/common/end-of-file-syntax-node.js";
+import { DiagnosticMessages, DiagnosticSeverity, Diagnostic } from "@contextjs/views";
 
 class TestSource {
     constructor(public content: string) { }
@@ -71,14 +70,14 @@ test("ParserContext: peek and peekMultiple, bounds", (context: TestContext) => {
 test("ParserContext: stateStack management", (context: TestContext) => {
     const parserContext = new ParserContext(new TestSource("a") as any, null!);
 
-    parserContext.setState(ParserContextState.Code);
-    context.assert.strictEqual(parserContext.currentState, ParserContextState.Code);
+    parserContext.setState(ParserContextState.RootBlock);
+    context.assert.strictEqual(parserContext.currentState, ParserContextState.RootBlock);
 
-    parserContext.setState(ParserContextState.CodeBlock);
-    context.assert.strictEqual(parserContext.currentState, ParserContextState.CodeBlock);
-    context.assert.strictEqual(parserContext.popState(), ParserContextState.CodeBlock);
-    context.assert.strictEqual(parserContext.currentState, ParserContextState.Code);
-    context.assert.strictEqual(parserContext.popState(), ParserContextState.Code);
+    parserContext.setState(ParserContextState.NestedBlock);
+    context.assert.strictEqual(parserContext.currentState, ParserContextState.NestedBlock);
+    context.assert.strictEqual(parserContext.popState(), ParserContextState.NestedBlock);
+    context.assert.strictEqual(parserContext.currentState, ParserContextState.RootBlock);
+    context.assert.strictEqual(parserContext.popState(), ParserContextState.RootBlock);
     context.assert.strictEqual(parserContext.popState(), null);
 });
 
@@ -177,8 +176,8 @@ test("ParserContext: peekUntil with always-false predicate consumes all to EOF",
 
 test("ParserContext: deep state stack push/pop works", (context: TestContext) => {
     const parserContext = new ParserContext(new TestSource("abc") as any, null!);
-    for (let i = 0; i < 20; i++) parserContext.setState(ParserContextState.Code);
-    for (let i = 0; i < 20; i++) context.assert.strictEqual(parserContext.popState(), ParserContextState.Code);
+    for (let i = 0; i < 20; i++) parserContext.setState(ParserContextState.RootBlock);
+    for (let i = 0; i < 20; i++) context.assert.strictEqual(parserContext.popState(), ParserContextState.RootBlock);
 
     context.assert.strictEqual(parserContext.currentState, null);
 });

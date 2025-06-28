@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { Exception, SystemException } from "@contextjs/system";
 
 //#region Extensions
 
@@ -220,13 +220,33 @@ export declare class ServiceCollection {
  * throw new CircularDependencyException("MyService");
  * ```
  **/
-export declare class CircularDependencyException extends Exception {
+export declare class CircularDependencyException extends DependencyInjectionException {
 
     /**
      * Creates an instance of CircularDependencyException.
      * @param dependencyName - The name of the dependency that caused the circular reference.
      **/
     constructor(dependencyName: string);
+}
+
+/**
+ * Base class for exceptions related to dependency injection.
+ * This class extends the SystemException class and provides a base for all dependency injection-related exceptions.
+ * @param message - The message describing the exception.
+ * @param options - Optional error options to customize the exception.
+ * @example
+ * ```typescript
+ * import { DependencyInjectionException } from "@contextjs/di";
+ * throw new DependencyInjectionException("MyDependency");
+ * ```
+ **/
+export declare class DependencyInjectionException extends SystemException {
+    /**
+     * Creates an instance of DependencyInjectionException.
+     * @param message - The message describing the exception.
+     * @param options - Optional error options to customize the exception.
+     **/
+    constructor(message: string, options?: ErrorOptions);
 }
 
 /**
@@ -241,7 +261,7 @@ export declare class CircularDependencyException extends Exception {
  * throw new UnresolvedDependencyException("MyDependency", "MyType", "MyService");
  * ```
  **/
-export declare class UnresolvedDependencyException extends Exception {
+export declare class UnresolvedDependencyException extends DependencyInjectionException {
     /**
      * Creates an instance of UnresolvedDependencyException.
      * @param name - The name of the unresolved dependency.

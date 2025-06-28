@@ -11,14 +11,19 @@ import { CommentParser } from "../../src/parsers/common/comment.parser";
 import { LiteralParser } from "../../src/parsers/common/literal.parser";
 import { TransitionParser } from "../../src/parsers/common/transition.parser";
 import { AttributeParser } from "../../src/parsers/generic/attribute.parser";
+import { BraceParser } from "../../src/parsers/generic/brace.parser";
+import { BracketParser } from "../../src/parsers/generic/bracket.parser";
 import { CodeParser } from "../../src/parsers/generic/code/code.parser";
 import { TagParser } from "../../src/parsers/generic/tags/tag.parser";
 import { CDATAParser } from "../../src/parsers/html/cdata.parser";
 import { AttributeSyntaxNode } from "../../src/syntax/abstracts/attributes/attribute-syntax-node";
 import { AttributeValueSyntaxNode } from "../../src/syntax/abstracts/attributes/attribute-value-syntax-node";
-import { CodeSyntaxNode } from "../../src/syntax/abstracts/code/code-syntax-node";
+import { BraceSyntaxNode } from "../../src/syntax/abstracts/brace-syntax-node";
+import { BracketSyntaxNode } from "../../src/syntax/abstracts/bracket-syntax-node";
+import { CodeBlockSyntaxNode } from "../../src/syntax/abstracts/code/code-block-syntax-node";
+import { CodeExpressionSyntaxNode } from "../../src/syntax/abstracts/code/code-expression-syntax-node";
 import { CodeValueSyntaxNode } from "../../src/syntax/abstracts/code/code-value-syntax-node";
-import { NameSyntaxNode } from "../../src/syntax/abstracts/name.syntax-node";
+import { NameSyntaxNode } from "../../src/syntax/abstracts/name-syntax-node";
 import { SyntaxNode } from "../../src/syntax/abstracts/syntax-node";
 import { TagEndSyntaxNode } from "../../src/syntax/abstracts/tags/tag-end-syntax-node";
 import { TagNameSyntaxNode } from "../../src/syntax/abstracts/tags/tag-name-syntax-node";
@@ -26,17 +31,24 @@ import { TagStartSyntaxNode } from "../../src/syntax/abstracts/tags/tag-start-sy
 import { TagSyntaxNode } from "../../src/syntax/abstracts/tags/tag-syntax-node";
 import { EndOfFileSyntaxNode } from "../../src/syntax/common/end-of-file-syntax-node";
 
-class TestTagSyntaxNode extends TagSyntaxNode { }
-class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
-class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
-class TestTagEndSyntaxNode extends TagEndSyntaxNode { }
+export class TestTagSyntaxNode extends TagSyntaxNode { }
+export class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
+export class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
+export class TestTagEndSyntaxNode extends TagEndSyntaxNode { }
 
-class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
-class TestAttributeNameSyntaxNode extends NameSyntaxNode { }
-class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
+export class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
+export class TestAttributeNameSyntaxNode extends NameSyntaxNode { }
+export class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
 
-class TestCodeSyntaxNode extends CodeSyntaxNode { }
-class TestCodeValueSyntaxNode extends CodeValueSyntaxNode { }
+export class TestCodeBlockSyntaxNode extends CodeBlockSyntaxNode { }
+export class TestCodeValueSyntaxNode extends CodeValueSyntaxNode { }
+export class TestCodeExpressionSyntaxNode extends CodeExpressionSyntaxNode { }
+
+export class TestBraceSyntaxNode extends BraceSyntaxNode { }
+export class TestBracketSyntaxNode extends BracketSyntaxNode { }
+
+export class TestNode extends SyntaxNode { }
+export class TestHeaderNode extends CodeValueSyntaxNode { }
 
 export class TestParser {
     public static parse(context: ParserContext): SyntaxNode {
@@ -89,7 +101,8 @@ export class TestTagParser extends TagParser {
                 attributeSyntaxNode: TestAttributeSyntaxNode,
                 attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
                 attributeValueSyntaxNode: TestAttributeValueSyntaxNode
-            }
+            },
+            TestBracketSyntaxNode
         );
     }
 }
@@ -98,8 +111,22 @@ export class TestCodeParser {
     public static parse(context: ParserContext): SyntaxNode {
         return CodeParser.parse(
             context,
-            TestCodeSyntaxNode,
-            TestCodeValueSyntaxNode
+            TestCodeBlockSyntaxNode,
+            TestCodeExpressionSyntaxNode,
+            TestCodeValueSyntaxNode,
+            TestBraceSyntaxNode
         );
+    }
+}
+
+export class TestBraceParser {
+    public static parse(context: ParserContext, expected: "{" | "}"): SyntaxNode {
+        return BraceParser.parse(context, TestBraceSyntaxNode, expected);
+    }
+}
+
+export class TestBracketParser {
+    public static parse(context: ParserContext, expected: "<" | ">" | "/>" | "</"): SyntaxNode {
+        return BracketParser.parse(context, TestBracketSyntaxNode, expected);
     }
 }

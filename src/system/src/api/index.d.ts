@@ -234,6 +234,13 @@ export declare class StringExtensions {
      * @returns {string} The formatted string.
      */
     public static format(template: string, ...args: any[]): string;
+
+    /**
+     * Escapes special characters in a string for safe use in code.
+     * @param value The string to escape.
+     * @returns {string} The escaped string.
+     */
+    public static escape(value: string): string
 }
 
 /**
@@ -394,7 +401,11 @@ export enum ProjectType {
     /**
      * API project.
      */
-    API
+    API = "API",
+    /**
+     * Views project.
+     */
+    Views = "Views"
 }
 
 //#endregion

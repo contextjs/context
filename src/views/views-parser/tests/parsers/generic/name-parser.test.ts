@@ -6,13 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../src/diagnostics/diagnostic-messages.js";
 import { TransitionParser } from "../../../src/parsers/common/transition.parser.js";
 import { NameParser } from "../../../src/parsers/generic/name.parser.js";
-import { Source } from "../../../src/sources/source.js";
-import { NameSyntaxNode } from "../../../src/syntax/abstracts/name.syntax-node.js";
+import { NameSyntaxNode } from "../../../src/syntax/abstracts/name-syntax-node.js";
 import { SyntaxNode } from "../../../src/syntax/abstracts/syntax-node.js";
 import { LiteralSyntaxNode } from "../../../src/syntax/common/literal-syntax-node.js";
 import { TransitionSyntaxNode } from "../../../src/syntax/common/transition-syntax-node.js";
@@ -327,7 +326,7 @@ test("NameParser: parses names with embedded unicode whitespace", (context: Test
 
 test("NameParser: handles sequence of stops and transitions", (context: TestContext) => {
     const node = parseName("foo@bar=baz", c => c.currentCharacter === "=");
-    
+
     context.assert.strictEqual(node.children.length, 3);
     context.assert.strictEqual((node.children[0] as LiteralSyntaxNode).value, "foo");
     context.assert.strictEqual((node.children[1] as LiteralSyntaxNode).value, "TS");

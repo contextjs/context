@@ -6,9 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Diagnostic, DiagnosticSeverity } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { DiagnosticSeverity } from "../../src/diagnostics/diagnostic-severity.js";
-import { Diagnostic } from "../../src/diagnostics/diagnostic.js";
 import { ParserResult } from "../../src/parsers/parser-result.js";
 import { LiteralSyntaxNode } from "../../src/syntax/common/literal-syntax-node.js";
 

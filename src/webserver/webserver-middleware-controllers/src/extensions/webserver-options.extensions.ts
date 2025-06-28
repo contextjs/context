@@ -23,6 +23,9 @@ declare module "@contextjs/webserver" {
 }
 
 WebServerOptions.prototype.useControllers = function (configure: (controllersOptions: ControllerOptions) => void): WebServerOptions {
+    if (this.webServer.hasMiddleware("ControllersMiddleware"))
+        return this;
+
     const controllersOptions = new ControllerOptions();
 
     if (!ObjectExtensions.isNullOrUndefined(configure))

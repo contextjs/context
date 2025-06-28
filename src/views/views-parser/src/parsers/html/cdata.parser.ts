@@ -7,8 +7,8 @@
  */
 
 import { StringBuilder } from "@contextjs/text";
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { DiagnosticMessages } from "../../diagnostics/diagnostic-messages.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { LiteralSyntaxNode } from "../../syntax/common/literal-syntax-node.js";

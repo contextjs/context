@@ -8,7 +8,7 @@
 
 import test, { TestContext } from "node:test";
 import { CompositeSyntaxNode } from "../../../../src/syntax/abstracts/composite-syntax-node.js";
-import { NameSyntaxNode } from "../../../../src/syntax/abstracts/name.syntax-node.js";
+import { NameSyntaxNode } from "../../../../src/syntax/abstracts/name-syntax-node.js";
 import { SyntaxNode } from "../../../../src/syntax/abstracts/syntax-node.js";
 import { TriviaSyntaxNode } from "../../../../src/syntax/common/trivia-syntax-node.js";
 import { HtmlAttributeNameSyntaxNode } from "../../../../src/syntax/html/attributes/html-attribute-name-syntax-node.js";

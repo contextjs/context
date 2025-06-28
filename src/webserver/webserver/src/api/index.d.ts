@@ -81,6 +81,13 @@ export declare class WebServer {
     public useMiddleware(middleware: IMiddleware): this;
 
     /**
+     * Check if a middleware with the given name is registered.
+     * @param middlewareName The name of the middleware to check.
+     * @returns True if the middleware is registered, false otherwise.
+     */
+    public hasMiddleware(middlewareName: string): boolean;
+
+    /**
      * Start listening for connections based on configured HTTP/HTTPS options.
      */
     public startAsync(): Promise<void>;

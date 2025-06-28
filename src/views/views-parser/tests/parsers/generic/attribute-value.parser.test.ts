@@ -6,12 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../src/diagnostics/diagnostic-messages.js";
 import { TransitionParser } from "../../../src/parsers/common/transition.parser.js";
 import { AttributeValueParser } from "../../../src/parsers/generic/attribute-value.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { AttributeValueSyntaxNode } from "../../../src/syntax/abstracts/attributes/attribute-value-syntax-node.js";
 import { LiteralSyntaxNode } from "../../../src/syntax/common/literal-syntax-node.js";
 import { QuoteSyntaxNode } from "../../../src/syntax/common/quote-syntax-node.js";

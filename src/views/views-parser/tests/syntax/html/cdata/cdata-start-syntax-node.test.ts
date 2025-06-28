@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Location } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { Location } from "../../../../src/sources/location.js";
 import { LocationSyntaxNode } from "../../../../src/syntax/abstracts/location-syntax-node.js";
 import { SyntaxNode } from "../../../../src/syntax/abstracts/syntax-node.js";
 import { ValueSyntaxNode } from "../../../../src/syntax/abstracts/value-syntax-node.js";

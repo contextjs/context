@@ -6,35 +6,30 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ParserContextState } from "../../../context/parser-context-state.js";
+import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeConstructor } from "../../../api/index.js";
 import { ParserContext } from "../../../context/parser-context.js";
-import { DiagnosticMessages } from "../../../diagnostics/diagnostic-messages.js";
-import { CodeSyntaxNode, CodeSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-syntax-node.js";
+import { BraceSyntaxNode, BraceSyntaxNodeConstructor } from "../../../syntax/abstracts/brace-syntax-node.js";
+import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
 import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
-import { TransitionParser } from "../../common/transition.parser.js";
-import { TriviaParser } from "../../common/trivia.parser.js";
 import { BlockCodeParser } from "./block-code.parser.js";
 import { InlineCodeParser } from "./inline-code.parser.js";
 
 export class CodeParser {
     public static parse<
-        TCodeSyntaxNode extends CodeSyntaxNode,
-        TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
+        TCodeBlockSyntaxNode extends CodeBlockSyntaxNode,
+        TCodeExpressionSyntaxNode extends CodeExpressionSyntaxNode,
+        TCodeValueSyntaxNode extends CodeValueSyntaxNode,
+        TBraceSyntaxNode extends BraceSyntaxNode>(
             context: ParserContext,
-            codeSyntaxNode: CodeSyntaxNodeConstructor<TCodeSyntaxNode>,
-            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>
-        ): TCodeSyntaxNode {
+            codeBlockSyntaxNode: CodeBlockSyntaxNodeConstructor<TCodeBlockSyntaxNode>,
+            codeExpressionSyntaxNode: CodeExpressionSyntaxNodeConstructor<TCodeExpressionSyntaxNode>,
+            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>,
+            braceSyntaxNode: BraceSyntaxNodeConstructor<TBraceSyntaxNode>
+        ): TCodeExpressionSyntaxNode | TCodeBlockSyntaxNode {
 
-        if (context.currentCharacter !== TransitionParser.transitionSymbol) {
-            context.addErrorDiagnostic(DiagnosticMessages.ExpectedTransitionMarker(context.currentCharacter));
-            return new codeSyntaxNode([], null, TriviaParser.parse(context));
-        }
+        if (context.nextCharacter === '{')
+            return BlockCodeParser.parse(context, codeBlockSyntaxNode, codeValueSyntaxNode, braceSyntaxNode);
 
-        if (context.nextCharacter === '{') {
-            context.setState(ParserContextState.Code);
-            return BlockCodeParser.parse(context, codeSyntaxNode, codeValueSyntaxNode);
-        }
-
-        return InlineCodeParser.parse(context, codeSyntaxNode, codeValueSyntaxNode);
+        return InlineCodeParser.parse(context, codeExpressionSyntaxNode, codeValueSyntaxNode);
     }
 }

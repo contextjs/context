@@ -6,23 +6,18 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../../src/diagnostics/diagnostic-messages.js";
 import { TagEndParser } from "../../../../src/parsers/generic/tags/tag-end.parser.js";
-import { Source } from "../../../../src/sources/source.js";
-import { TagEndSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-end-syntax-node.js";
+import { BracketSyntaxNode } from "../../../../src/syntax/abstracts/bracket-syntax-node.js";
 import { TagNameSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-name-syntax-node.js";
-import { BracketSyntaxNode } from "../../../../src/syntax/common/bracket-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../../src/syntax/common/trivia-syntax-node.js";
-import { TestParser } from "../../../_fixtures/parsers-fixtures.js";
-
-class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
-class TestTagEndSyntaxNode extends TagEndSyntaxNode { }
+import { TestBracketSyntaxNode, TestParser, TestTagEndSyntaxNode, TestTagNameSyntaxNode } from "../../../_fixtures/parsers-fixtures.js";
 
 function parseTagEnd(input: string, expected = "div") {
     const context = new ParserContext(new Source(input), TestParser);
-    const node = TagEndParser.parse(context, expected, TestTagNameSyntaxNode, TestTagEndSyntaxNode);
+    const node = TagEndParser.parse(context, expected, TestTagNameSyntaxNode, TestTagEndSyntaxNode, TestBracketSyntaxNode);
     return { node, context };
 }
 

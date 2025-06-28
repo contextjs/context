@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
 import { LiteralParser } from "../../../src/parsers/common/literal.parser.js";
 import { TransitionParser } from "../../../src/parsers/common/transition.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { EndOfFileSyntaxNode } from "../../../src/syntax/common/end-of-file-syntax-node.js";
 import { LiteralSyntaxNode } from "../../../src/syntax/common/literal-syntax-node.js";
 import { TestParser } from "../../_fixtures/parsers-fixtures.js";

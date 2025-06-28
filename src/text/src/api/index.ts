@@ -6,4 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+export * from "../exceptions/text.exception.js";
+export * from "../exceptions/tracking-string-builder.exception.js";
+
 export * from "../string-builder.js";
+export * from "../tracking-string-builder.js";

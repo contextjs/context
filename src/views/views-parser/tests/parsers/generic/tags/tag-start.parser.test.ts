@@ -6,25 +6,20 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../../src/diagnostics/diagnostic-messages.js";
 import { TagStartParser } from "../../../../src/parsers/generic/tags/tag-start.parser.js";
-import { Source } from "../../../../src/sources/source.js";
-import { AttributeNameSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-name-syntax-node.js";
 import { AttributeSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-syntax-node.js";
-import { AttributeValueSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-value-syntax-node.js";
-import { TagNameSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-name-syntax-node.js";
-import { TagStartSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-start-syntax-node.js";
-import { BracketSyntaxNode } from "../../../../src/syntax/common/bracket-syntax-node.js";
+import { BracketSyntaxNode } from "../../../../src/syntax/abstracts/bracket-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../../src/syntax/common/trivia-syntax-node.js";
-import { TestParser } from "../../../_fixtures/parsers-fixtures.js";
+import { TestAttributeNameSyntaxNode, TestAttributeSyntaxNode, TestAttributeValueSyntaxNode, TestBracketParser, TestBracketSyntaxNode, TestParser, TestTagNameSyntaxNode, TestTagStartSyntaxNode } from "../../../_fixtures/parsers-fixtures.js";
 
-class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
-class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
-class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
-class TestAttributeNameSyntaxNode extends AttributeNameSyntaxNode { }
-class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
+// class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
+// class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
+// class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
+// class TestAttributeNameSyntaxNode extends AttributeNameSyntaxNode { }
+// class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
 
 function parseTagStart(input: string) {
     const context = new ParserContext(new Source(input), TestParser);
@@ -36,7 +31,8 @@ function parseTagStart(input: string) {
             attributeSyntaxNode: TestAttributeSyntaxNode,
             attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
             attributeValueSyntaxNode: TestAttributeValueSyntaxNode
-        }
+        },
+        TestBracketSyntaxNode
     );
 
     return { ...result, context };

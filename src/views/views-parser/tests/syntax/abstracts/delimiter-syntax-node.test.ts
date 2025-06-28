@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Location } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { Location } from "../../../src/sources/location.js";
 import { DelimiterSyntaxNode } from "../../../src/syntax/abstracts/delimiter-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 

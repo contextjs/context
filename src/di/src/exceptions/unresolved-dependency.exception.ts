@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { DependencyInjectionException } from "./dependency-injection.exception.js";
 
-export class UnresolvedDependencyException extends Exception {
+export class UnresolvedDependencyException extends DependencyInjectionException {
     constructor(name: string, type: string, serviceName: string) {
         super(`Unresolved dependency "${name}" of type "${type}" for service "${serviceName}".`);
         this.name = "UnresolvedDependencyException";

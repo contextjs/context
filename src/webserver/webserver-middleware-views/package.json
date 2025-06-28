@@ -1,0 +1,32 @@
+{
+  "name": "@contextjs/webserver-middleware-views",
+  "version": "__VERSION__",
+  "description": "Views middleware for the ContextJS WebServer.",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/webserver/webserver-middleware-views"
+  },
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "@contextjs/webserver-middleware-controllers": "__VERSION__"
+  },
+  "keywords": [
+    "contextjs",
+    "webserver",
+    "middleware",
+    "views",
+    "mvc",
+    "typescript"
+  ]
+}

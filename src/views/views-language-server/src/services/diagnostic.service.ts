@@ -1,4 +1,4 @@
-import { Diagnostic as ParserDiagnostic, DiagnosticSeverity as ParserDiagnosticSeverity } from "@contextjs/views-parser";
+import { Diagnostic as ParserDiagnostic, DiagnosticSeverity as ParserDiagnosticSeverity } from "@contextjs/views";
 import { ObjectExtensions } from "@contextjs/system";
 import { Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams } from "vscode-languageserver/node.js";
 import { ServerContext } from "../server-context.js";

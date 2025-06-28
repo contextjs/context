@@ -7,6 +7,7 @@
  */
 
 export * from "../exceptions/circular-dependency.exception.js";
+export * from "../exceptions/dependency-injection.exception.js";
 export * from "../exceptions/unresolved-dependency.exception.js";
 
 export * from "../extensions/application-extensions.js";

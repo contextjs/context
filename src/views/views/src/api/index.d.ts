@@ -1,0 +1,271 @@
+/**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
+ */
+
+/**
+ * Represents a diagnostic message in the system.
+ */
+export declare class Diagnostic {
+    /**
+     * The severity of the diagnostic message.
+     */
+    public readonly severity: DiagnosticSeverity;
+    /**
+     * The diagnostic message.
+     */
+    public readonly message: DiagnosticMessage;
+    /**
+     * The location associated with the diagnostic message, if any.
+     */
+    public readonly location: Location | null;
+
+    /**
+     * Creates a new diagnostic message with the specified severity and message.
+     * @param severity The severity of the diagnostic message.
+     * @param message The diagnostic message.
+     * @param location The location associated with the diagnostic message, if any.
+     */
+    public constructor(severity: DiagnosticSeverity, message: DiagnosticMessage);
+    public constructor(severity: DiagnosticSeverity, message: DiagnosticMessage, location: Location | null);
+
+
+    /**
+     * Creates an Info diagnostic message
+     * 
+     * @param message The diagnostic message.
+     * @param location The location associated with the diagnostic message, if any.
+     * @returns A new Diagnostic instance with severity set to Info.
+     */
+    public static info(message: DiagnosticMessage): Diagnostic;
+    public static info(message: DiagnosticMessage, location: Location | null): Diagnostic;
+
+    /**
+     * Creates a Warning diagnostic message
+     * 
+     * @param message The diagnostic message.
+     * @param location The location associated with the diagnostic message, if any.
+     * @returns A new Diagnostic instance with severity set to Warning.
+     */
+    public static warning(message: DiagnosticMessage): Diagnostic;
+    public static warning(message: DiagnosticMessage, location: Location | null): Diagnostic;
+
+    /**
+     * Creates an Error diagnostic message
+     * 
+     * @param message The diagnostic message.
+     * @param location The location associated with the diagnostic message, if any.
+     * @returns A new Diagnostic instance with severity set to Error.
+     */
+    public static error(message: DiagnosticMessage): Diagnostic;
+    public static error(message: DiagnosticMessage, location: Location | null): Diagnostic;
+
+    public toString(): string;
+}
+
+/**
+ * Represents a diagnostic message with a code and text.
+ */
+export declare class DiagnosticMessage {
+    /**
+     * The code of the diagnostic message.
+     */
+    public readonly code: number;
+    /**
+     * The text of the diagnostic message.
+     */
+    public readonly message: string;
+
+    /**
+     * Creates a new diagnostic message with the specified code and text.
+     * @param code The code of the diagnostic message.
+     * @param message The text of the diagnostic message.
+     */
+    public constructor(code: number, message: string);
+}
+
+/**
+ * Represents the severity of a diagnostic message.
+ */
+export declare enum DiagnosticSeverity {
+    Info = "Info",
+    Warning = "Warning",
+    Error = "Error"
+}
+
+/**
+ * Represents a location in a source file, including the start and end positions, text, and lines.
+ * This class is used to provide context for diagnostics and other source-related operations.
+*/
+export declare class Location {
+    /**
+     * The index of the starting line in the source file.
+     */
+    public readonly startLineIndex: number;
+    /**
+     * The character index at the start of the location in the source file.
+     */
+    public readonly startCharacterIndex: number;
+    /**
+     * The index of the ending line in the source file.
+     */
+    public readonly endLineIndex: number;
+    /**
+     * The character index at the end of the location in the source file.
+     */
+    public readonly endCharacterIndex: number;
+    /**
+     * The text contained within this location in the source file.
+     */
+    public readonly text: string;
+    /**
+     * An array of LineInfo objects representing the lines in this location.
+     */
+    public readonly lines: LineInfo[];
+
+    /**
+     * Creates a new Location instance with the specified start and end positions, text, and lines.
+     * @param startLineIndex The index of the starting line.
+     * @param startCharacterIndex The character index at the start of the location.
+     * @param endLineIndex The index of the ending line.
+     * @param endCharacterIndex The character index at the end of the location.
+     * @param text The text contained within this location.
+     * @param lines An array of LineInfo objects representing the lines in this location.
+     */
+    public constructor(
+        startLineIndex: number,
+        startCharacterIndex: number,
+        endLineIndex: number,
+        endCharacterIndex: number,
+        text: string,
+        lines: LineInfo[]);
+}
+
+/**
+ * Represents information about a line in a source file, including its index and character indices.
+ * This class is used to provide detailed line-level context for diagnostics and other source-related operations.
+ */
+export declare class LineInfo {
+    /**
+     * The index of the line in the source file.
+     */
+    public readonly index: number;
+    /**
+     * The character index at the start of the line in the source file.
+     */
+    public readonly startCharacterIndex: number;
+    /**
+     * The character index at the end of the line in the source file.
+     */
+    public readonly endCharacterIndex: number;
+
+    /**
+     * Creates a new LineInfo instance with the specified index and character indices.
+     * @param index The index of the line in the source file.
+     * @param startCharacterIndex The character index at the start of the line.
+     * @param endCharacterIndex The character index at the end of the line.
+     */
+    public constructor(index: number, startCharacterIndex: number, endCharacterIndex: number);
+}
+
+/**
+ * Represents a collection of diagnostic messages used throughout the system.
+ */
+export declare class DiagnosticMessages {
+    public static readonly InvalidComment: DiagnosticMessage;
+    public static readonly UnterminatedComment: (endTag: string) => DiagnosticMessage;
+
+    public static readonly InvalidName: DiagnosticMessage;
+    public static readonly UnterminatedAttributeValue: DiagnosticMessage;
+    public static readonly InvalidAttributeValue: DiagnosticMessage;
+    public static readonly ExpectedEquals: DiagnosticMessage;
+    public static readonly InvalidTagFormat: DiagnosticMessage;
+    public static readonly ExpectedCDATAStart: DiagnosticMessage;
+    public static readonly MissingCDATAEnd: DiagnosticMessage;
+    public static readonly InvalidTagName: (name: string) => DiagnosticMessage;
+    public static readonly UnterminatedTag: (tagName: string) => DiagnosticMessage;
+    public static readonly MismatchedEndTag: (expectedTagName: string, tagName: string) => DiagnosticMessage;
+    public static readonly EmptyAttributeValue: DiagnosticMessage;
+    public static readonly ExpectedEndStyleTag: (name: string) => DiagnosticMessage;
+    public static readonly ExpectedEndScriptTag: (name: string) => DiagnosticMessage;
+
+    public static readonly ExpectedTransitionMarker: (character: string) => DiagnosticMessage;
+    public static readonly ExpectedBracket: (character: string) => DiagnosticMessage;
+    public static readonly ExpectedBrace: (character: string) => DiagnosticMessage;
+    public static readonly NoWhitespaceAfterTransition: DiagnosticMessage;
+    public static readonly MalformedCodeBlock: DiagnosticMessage;
+    public static readonly UnexpectedTransition: DiagnosticMessage;
+
+    public static readonly UnexpectedEndOfInput: DiagnosticMessage;
+    public static readonly UnsupportedLanguage: DiagnosticMessage;
+    public static readonly UnsupportedProjectType: (projectType: string) => DiagnosticMessage;
+}
+
+export declare class Source {
+    public readonly content: string;
+    public readonly lines: LineInfo[];
+
+    public constructor(content: string);
+
+    private getLines(): LineInfo[];
+
+    public getLocation(startIndex: number, endIndex: number, text: string): Location;
+}
+
+/**
+ * Represents a compiled view output file.
+ * This interface is used to define the structure of files generated by view providers.
+ */
+export declare interface IViewOutputFile {
+    /** 
+     * The output path, relative to the root of the provider
+    */
+    filename: string;
+
+    /** 
+     * The compiled TypeScript code for this view. 
+    */
+    code: string;
+
+    /** 
+     * The source map as a string, if generated. 
+    */
+    map?: string;
+}
+
+export declare interface IViewOutputProvider {
+    /**
+     * Writes a compiled view output to the provider.
+     * Overwrites any existing file at the same path.
+     * @param file The view output file to write.
+     * @returns A promise that resolves when the write operation is complete.
+     */
+    writeAsync(file: IViewOutputFile): Promise<void>;
+
+    /**
+     * Reads a compiled view output from the provider.
+     * Returns null if the file does not exist.
+     * @param filename The name of the file to read.
+     * @returns A promise that resolves to the view output file or null if not found.
+     */
+    readAsync(filename: string): Promise<IViewOutputFile | null>;
+
+    /**
+     * Deletes a compiled view output.
+     * Does nothing if the file does not exist.
+     * @param filename The name of the file to delete.
+     * @returns A promise that resolves when the delete operation is complete.
+     */
+    deleteAsync(filename: string): Promise<void>;
+
+    /**
+     * Returns a list of all output files managed by this provider.
+     * Each is returned as an IViewOutputFile (filename + code + map).
+     * @returns A promise that resolves to an array of IViewOutputFile objects.
+     * If no files are found, returns an empty array.
+     */
+    listAsync(): Promise<IViewOutputFile[]>;
+}

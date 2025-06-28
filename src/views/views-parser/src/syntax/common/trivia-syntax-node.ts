@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Location } from "../../sources/location.js";
+import { Location } from "@contextjs/views";
 import { ValueSyntaxNode } from "../abstracts/value-syntax-node.js";
 
 export class TriviaSyntaxNode extends ValueSyntaxNode {

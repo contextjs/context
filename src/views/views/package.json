@@ -1,0 +1,21 @@
+{
+  "name": "@contextjs/views",
+  "version": "__VERSION__",
+  "description": "ContextJS - Views template engine",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "main": "api/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/views/views"
+  },
+  "config": {
+    "id": "views"
+  },
+  "dependencies": {
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/collections": "__VERSION__"
+  }
+}

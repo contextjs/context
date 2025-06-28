@@ -6,29 +6,27 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../../src/diagnostics/diagnostic-messages.js";
 import { TagParser } from "../../../../src/parsers/generic/tags/tag.parser.js";
-import { Source } from "../../../../src/sources/source.js";
-import { AttributeNameSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-name-syntax-node.js";
 import { AttributeSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-syntax-node.js";
-import { AttributeValueSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-value-syntax-node.js";
+import { BracketSyntaxNode } from "../../../../src/syntax/abstracts/bracket-syntax-node.js";
 import { SyntaxNode } from "../../../../src/syntax/abstracts/syntax-node.js";
-import { TagEndSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-end-syntax-node.js";
 import { TagNameSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-name-syntax-node.js";
-import { TagStartSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-start-syntax-node.js";
 import { TagSyntaxNode } from "../../../../src/syntax/abstracts/tags/tag-syntax-node.js";
-import { BracketSyntaxNode } from "../../../../src/syntax/common/bracket-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../../src/syntax/common/trivia-syntax-node.js";
-
-class TestTagSyntaxNode extends TagSyntaxNode { }
-class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
-class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
-class TestTagEndSyntaxNode extends TagEndSyntaxNode { }
-class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
-class TestAttributeNameSyntaxNode extends AttributeNameSyntaxNode { }
-class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
+import {
+    TestAttributeNameSyntaxNode,
+    TestAttributeSyntaxNode,
+    TestAttributeValueSyntaxNode,
+    TestBracketSyntaxNode,
+    TestTagEndSyntaxNode,
+    TestTagNameSyntaxNode,
+    TestTagParser,
+    TestTagStartSyntaxNode,
+    TestTagSyntaxNode
+} from "../../../_fixtures/parsers-fixtures.js";
 
 class TestCodeParser {
     public static parse(context: ParserContext): SyntaxNode {
@@ -39,17 +37,7 @@ class TestCodeParser {
 
 function parseTag(input: string) {
     const parserContext = new ParserContext(new Source(input), TestCodeParser);
-    const node = TagParser.parse(parserContext,
-        TestTagSyntaxNode,
-        TestTagNameSyntaxNode,
-        TestTagStartSyntaxNode,
-        TestTagEndSyntaxNode,
-        {
-            attributeSyntaxNode: TestAttributeSyntaxNode,
-            attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
-            attributeValueSyntaxNode: TestAttributeValueSyntaxNode
-        }
-    );
+    const node = TestTagParser.parse(parserContext);
     return { node, parserContext };
 }
 
@@ -230,7 +218,8 @@ test("TagParser: parser can be called repeatedly", (context: TestContext) => {
             attributeSyntaxNode: TestAttributeSyntaxNode,
             attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
             attributeValueSyntaxNode: TestAttributeValueSyntaxNode
-        }
+        },
+        TestBracketSyntaxNode
     );
     const node2 = TagParser.parse(parserContext,
         TestTagSyntaxNode,
@@ -241,7 +230,8 @@ test("TagParser: parser can be called repeatedly", (context: TestContext) => {
             attributeSyntaxNode: TestAttributeSyntaxNode,
             attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
             attributeValueSyntaxNode: TestAttributeValueSyntaxNode
-        }
+        },
+        TestBracketSyntaxNode
     );
 
     context.assert.strictEqual(getStartTag(node1).children[1].children[0].value, "foo");
@@ -259,7 +249,7 @@ test("TagParser: parses tag with only opening bracket", (context: TestContext) =
 test("TagParser: parses tag with only opening bracket and trivia", (context: TestContext) => {
     const { node } = parseTag("<  ") as any;
 
-    context.assert.ok(node.children[0].children[0].trailingTrivia?.value,   "  ");
+    context.assert.ok(node.children[0].children[0].trailingTrivia?.value, "  ");
 });
 
 test("TagParser: parses tag with attribute value containing '>'", (context: TestContext) => {

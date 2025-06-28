@@ -6,11 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../src/diagnostics/diagnostic-messages.js";
 import { StyleParser } from "../../../src/parsers/html/style.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { SyntaxNode } from "../../../src/syntax/abstracts/syntax-node.js";
 import { StyleContentSyntaxNode } from "../../../src/syntax/html/style/style-content-syntax-node.js";
 import { StyleTagEndSyntaxNode } from "../../../src/syntax/html/style/style-tag-end-syntax-node.js";

@@ -6,11 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../src/diagnostics/diagnostic-messages.js";
 import { EqualsParser } from "../../../src/parsers/common/equals.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { EqualsSyntaxNode } from "../../../src/syntax/common/equals-syntax-node.js";
 
 function parseEquals(input: string) {

@@ -10,23 +10,37 @@ import test, { TestContext } from 'node:test';
 import { ProjectType, ProjectTypeExtensions } from '../../src/models/project-type.ts';
 
 test('ProjectType: length - success', (context: TestContext) => {
-    context.assert.strictEqual(Object.keys(ProjectType).length / 2, 1);
+    const enumValues = Object.values(ProjectType).filter(x => typeof x === "string");
+
+    context.assert.strictEqual(enumValues.length, 2);
 });
 
-test('ProjectType: toString - success', (context: TestContext) => {
-    context.assert.strictEqual(ProjectType.API, 0);
+test('ProjectType: value assignments', (context: TestContext) => {
+    context.assert.strictEqual(ProjectType.API, "API");
+    context.assert.strictEqual(ProjectType.Views, "Views");
 });
 
-test('ProjectTypeExtensions: toString - success', (context: TestContext) => {
+test('ProjectTypeExtensions: toString - API', (context: TestContext) => {
     context.assert.strictEqual(ProjectTypeExtensions.toString(ProjectType.API), "API");
 });
 
-test('ProjectTypeExtensions: fromString - success', (context: TestContext) => {
+test('ProjectTypeExtensions: toString - Views', (context: TestContext) => {
+    context.assert.strictEqual(ProjectTypeExtensions.toString(ProjectType.Views), "Views");
+});
+
+test('ProjectTypeExtensions: fromString - API', (context: TestContext) => {
     context.assert.strictEqual(ProjectTypeExtensions.fromString("API"), ProjectType.API);
+    context.assert.strictEqual(ProjectTypeExtensions.fromString("api"), ProjectType.API);
+});
+
+test('ProjectTypeExtensions: fromString - Views', (context: TestContext) => {
+    context.assert.strictEqual(ProjectTypeExtensions.fromString("Views"), ProjectType.Views);
+    context.assert.strictEqual(ProjectTypeExtensions.fromString("views"), ProjectType.Views);
 });
 
 test('ProjectTypeExtensions: toString - fallback', (context: TestContext) => {
-    const invalid = -1 as ProjectType;
+    const invalid = "" as ProjectType;
+    
     context.assert.strictEqual(ProjectTypeExtensions.toString(invalid), null);
 });
 

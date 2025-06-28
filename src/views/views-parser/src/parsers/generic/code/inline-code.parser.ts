@@ -9,9 +9,8 @@
 import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
 import { ParserContext } from "../../../context/parser-context.js";
-import { CodeSyntaxNode, CodeSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-syntax-node.js";
+import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
 import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
-import { SyntaxNode } from "../../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../../syntax/common/end-of-file-syntax-node.js";
 import { CommentParser } from "../../common/comment.parser.js";
 import { TransitionParser } from "../../common/transition.parser.js";
@@ -19,19 +18,16 @@ import { TriviaParser } from "../../common/trivia.parser.js";
 
 export class InlineCodeParser {
     public static parse<
-        TCodeSyntaxNode extends CodeSyntaxNode,
+        TCodeExpressionSyntaxNode extends CodeExpressionSyntaxNode,
         TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
             context: ParserContext,
-            codeSyntaxNode: CodeSyntaxNodeConstructor<TCodeSyntaxNode>,
+            codeExpressionSyntaxNode: CodeExpressionSyntaxNodeConstructor<TCodeExpressionSyntaxNode>,
             codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>
-        ): TCodeSyntaxNode {
-
-        const children: SyntaxNode[] = [];
+        ): TCodeExpressionSyntaxNode {
 
         context.reset();
-        children.push(TransitionParser.parse(context));
-
-        const leadingTrivia = TriviaParser.parse(context);
+        const transitionNode = TransitionParser.parse(context);
+        transitionNode.trailingTrivia = TriviaParser.parse(context);
 
         context.reset();
         const valueBuilder = new StringBuilder();
@@ -76,9 +72,8 @@ export class InlineCodeParser {
                     break;
             }
         }
-        if (valueBuilder.length > 0)
-            children.push(new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation()));
 
-        return new codeSyntaxNode(children, leadingTrivia, TriviaParser.parse(context));
+        const valueNode = new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation(), null, TriviaParser.parse(context));
+        return new codeExpressionSyntaxNode(transitionNode, valueNode);
     }
 }

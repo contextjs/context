@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { DependencyInjectionException } from "./dependency-injection.exception.js";
 
-export class CircularDependencyException extends Exception {
-    constructor(dependencyName: string) {
-        super(`Circular dependency detected: ${dependencyName}.`);
+export class CircularDependencyException extends DependencyInjectionException {
+    constructor(dependencyName: string, options?: ErrorOptions) {
+        super(`Circular dependency detected: ${dependencyName}.`, options);
         this.name = "CircularDependencyException";
     }
 }

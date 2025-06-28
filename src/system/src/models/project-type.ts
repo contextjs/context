@@ -7,7 +7,8 @@
  */
 
 export enum ProjectType {
-    API
+    API = "API",
+    Views = "Views"
 }
 
 export class ProjectTypeExtensions {
@@ -15,6 +16,8 @@ export class ProjectTypeExtensions {
         switch (projectType) {
             case ProjectType.API:
                 return "API";
+            case ProjectType.Views:
+                return "Views";
             default:
                 return null;
         }
@@ -24,6 +27,8 @@ export class ProjectTypeExtensions {
         switch (value.toLowerCase()) {
             case "api":
                 return ProjectType.API;
+            case "views":
+                return ProjectType.Views;
             default:
                 return null;
         }

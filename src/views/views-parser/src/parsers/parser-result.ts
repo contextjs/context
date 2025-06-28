@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Diagnostic } from "../diagnostics/diagnostic.js";
+import { Diagnostic } from "@contextjs/views";
 import { SyntaxNode } from "../syntax/abstracts/syntax-node.js";
 
 export class ParserResult {

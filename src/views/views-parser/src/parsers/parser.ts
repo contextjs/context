@@ -7,9 +7,9 @@
  */
 
 import { ObjectExtensions } from "@contextjs/system";
+import { Source } from "@contextjs/views";
 import { ParserContext } from "../context/parser-context.js";
 import { NoParserFoundException } from "../exceptions/no-parser-found.exception.js";
-import { Source } from "../sources/source.js";
 import { SyntaxNode } from "../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../syntax/common/end-of-file-syntax-node.js";
 import { Language } from "./language.js";

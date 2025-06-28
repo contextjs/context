@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { DiagnosticMessages } from "../../diagnostics/diagnostic-messages.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { StyleAttributeNameSyntaxNode } from "../../syntax/html/style/style-attribute-name-syntax-node.js";
@@ -17,9 +17,10 @@ import { StyleTagNameSyntaxNode } from "../../syntax/html/style/style-tag-name-s
 import { StyleTagStartSyntaxNode } from "../../syntax/html/style/style-tag-start-syntax-node.js";
 import { StyleTagSyntaxNode } from "../../syntax/html/style/style-tag-syntax-node.js";
 import { TriviaParser } from "../common/trivia.parser.js";
+import { ContentParser } from "../generic/content.parser.js";
 import { TagEndParser } from "../generic/tags/tag-end.parser.js";
 import { TagStartParser } from "../generic/tags/tag-start.parser.js";
-import { ContentParser } from "../generic/content.parser.js";
+import { HtmlBracketSyntaxNode } from "../../syntax/html/html-bracket-syntax-node.js";
 
 export class StyleParser {
     public static isStyleStart(context: ParserContext): boolean {
@@ -36,7 +37,8 @@ export class StyleParser {
                 attributeSyntaxNode: StyleAttributeNameSyntaxNode,
                 attributeNameSyntaxNode: StyleAttributeNameSyntaxNode,
                 attributeValueSyntaxNode: StyleAttributeNameSyntaxNode,
-            }
+            },
+            HtmlBracketSyntaxNode
         );
 
         children.push(tagStartResult.tagStartSyntaxNode);
@@ -46,7 +48,7 @@ export class StyleParser {
         if (context.currentCharacter === EndOfFileSyntaxNode.endOfFile || !isEndTagPresent)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedEndStyleTag(context.currentCharacter));
         else
-            children.push(TagEndParser.parse(context, tagStartResult.tagName, StyleTagNameSyntaxNode, StyleTagEndSyntaxNode));
+            children.push(TagEndParser.parse(context, tagStartResult.tagName, StyleTagNameSyntaxNode, StyleTagEndSyntaxNode, HtmlBracketSyntaxNode));
 
         return new StyleTagSyntaxNode(children, null, TriviaParser.parse(context));
     }

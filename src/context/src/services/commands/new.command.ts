@@ -21,6 +21,7 @@ Usage: ctx new [options]
 Command         Template Name           Description
 --------        ----------------        -----------------------------------------------------
 api             Web API project         A Web API project containing controllers and actions.
+views           Views project           A Views project containing controllers, actions, and view templates.
 `;
     public override async runAsync(command: Command): Promise<void> {
         if (command.args.length === 0)

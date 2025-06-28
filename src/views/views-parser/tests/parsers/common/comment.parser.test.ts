@@ -6,11 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
 import { CommentParser } from "../../../src/parsers/common/comment.parser.js";
-import { Source } from "../../../src/sources/source.js";
-import { SyntaxNode } from "../../../src/syntax/abstracts/syntax-node.js";
 import { CommentSyntaxNode } from "../../../src/syntax/common/comment-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 
@@ -152,7 +151,7 @@ test("CommentParser: isCommentStart returns true", (context: TestContext) => {
     context.assert.strictEqual(CommentParser.isCommentStart(ctx3), true);
 });
 
-    test("CommentParser: whitespace after comment", (context: TestContext) => {
+test("CommentParser: whitespace after comment", (context: TestContext) => {
     const parserContext = createContext('// foo   \n  ');
     const node = CommentParser.parse(parserContext);
 

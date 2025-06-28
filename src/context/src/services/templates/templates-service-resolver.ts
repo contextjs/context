@@ -9,12 +9,15 @@
 import { ProjectType } from "@contextjs/system";
 import { APITemplatesService } from "./api-templates.service.js";
 import { TemplatesService } from "./templates.service.js";
+import { ViewsTemplatesService } from "./views-templates.service.js";
 
 export class TemplatesServiceResolver {
     public static async resolveAsync(projectType: ProjectType): Promise<TemplatesService | null> {
         switch (projectType) {
             case ProjectType.API:
                 return new APITemplatesService();
+            case ProjectType.Views:
+                return new ViewsTemplatesService();
             default:
                 return null;
         }

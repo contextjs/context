@@ -1,0 +1,21 @@
+{
+  "name": "@contextjs/views-compiler",
+  "version": "__VERSION__",
+  "description": "ContextJS - Views template engine compiler",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "main": "api/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/views/views-compiler"
+  },
+  "config": {
+    "id": "views-compiler"
+  },
+  "dependencies": {
+    "@contextjs/views-parser": "__VERSION__",
+    "source-map": "^0.7.4"
+  }
+}

@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context";
 import { TSHTMLParser } from "../../../src/parsers/tshtml/tshtml.parser";
-import { Source } from "../../../src/sources/source";
 import { CommentSyntaxNode } from "../../../src/syntax/common/comment-syntax-node";
 import { EndOfFileSyntaxNode } from "../../../src/syntax/common/end-of-file-syntax-node";
 import { LiteralSyntaxNode } from "../../../src/syntax/common/literal-syntax-node";
@@ -17,7 +17,7 @@ import { CDATASyntaxNode } from "../../../src/syntax/html/cdata/cdata-syntax-nod
 import { ScriptTagSyntaxNode } from "../../../src/syntax/html/scripts/script-tag-syntax-node";
 import { StyleTagSyntaxNode } from "../../../src/syntax/html/style/style-tag-syntax-node";
 import { HtmlTagSyntaxNode } from "../../../src/syntax/html/tags/html-tag-syntax-node";
-import { TypescriptCodeValueSyntaxNode } from "../../../src/syntax/tshtml/typescript-code-value-syntax-node";
+import { TypescriptCodeValueSyntaxNode } from "../../../src/syntax/typescript/typescript-code-value-syntax-node";
 
 function parse(text: string) {
     const context = new ParserContext(new Source(text), TSHTMLParser);
@@ -40,8 +40,8 @@ test("TSHTMLParser: parses escaped transition (@@) as literal", (context: TestCo
 test("TSHTMLParser: parses transition (@) as inline TypeScript", (context: TestContext) => {
     const node = parse("@x") as any;
 
-    context.assert.ok(node.children[1] instanceof TypescriptCodeValueSyntaxNode);
-    context.assert.strictEqual(node.children[1].value, "x");
+    context.assert.ok(node.value instanceof TypescriptCodeValueSyntaxNode);
+    context.assert.strictEqual(node.value.value, "x");
 });
 
 test("TSHTMLParser: parses HTML comment", (context: TestContext) => {
@@ -87,7 +87,7 @@ test("TSHTMLParser: parses forward-slash comments as comment", (context: TestCon
 
 test("TSHTMLParser: parses unknown characters as literal", (context: TestContext) => {
     const node = parse("Hello World");
-    
+
     context.assert.ok(node instanceof LiteralSyntaxNode);
     context.assert.strictEqual(node.value, "Hello World");
 });

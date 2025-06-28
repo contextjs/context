@@ -6,11 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context";
-import { DiagnosticMessages } from "../../../src/diagnostics/diagnostic-messages";
 import { HtmlTagParser } from "../../../src/parsers/html/html-tag.parser";
-import { Source } from "../../../src/sources/source";
 import { HtmlAttributeNameSyntaxNode } from "../../../src/syntax/html/attributes/html-attribute-name-syntax-node";
 import { HtmlAttributeSyntaxNode } from "../../../src/syntax/html/attributes/html-attribute-syntax-node";
 import { HtmlAttributeValueSyntaxNode } from "../../../src/syntax/html/attributes/html-attribute-value-syntax-node";
@@ -96,5 +95,5 @@ test("HtmlTagParser: parses attribute with transition (@)", (context: TestContex
     const { node } = parseHtmlTag('<foo bar="@baz">');
     const attr = getAttributes(getStartTag(node))[0] as any;
 
-    context.assert.ok(attr.children[2].children[1].children[0].value.includes("@"));
+    context.assert.strictEqual(attr.children[2].children[1].transition.value, "@");
 });

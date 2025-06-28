@@ -10,6 +10,7 @@ import { ParserContext } from "../../../context/parser-context.js";
 import { AttributeNameSyntaxNode, AttributeNameSyntaxNodeConstructor } from "../../../syntax/abstracts/attributes/attribute-name-syntax-node.js";
 import { AttributeSyntaxNode, AttributeSyntaxNodeConstructor } from "../../../syntax/abstracts/attributes/attribute-syntax-node.js";
 import { AttributeValueSyntaxNode, AttributeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/attributes/attribute-value-syntax-node.js";
+import { BracketSyntaxNode, BracketSyntaxNodeConstructor } from "../../../syntax/abstracts/bracket-syntax-node.js";
 import { SyntaxNode } from "../../../syntax/abstracts/syntax-node.js";
 import { TagEndSyntaxNode, TagEndSyntaxNodeConstructor } from "../../../syntax/abstracts/tags/tag-end-syntax-node.js";
 import { TagNameSyntaxNode, TagNameSyntaxNodeConstructor } from "../../../syntax/abstracts/tags/tag-name-syntax-node.js";
@@ -29,7 +30,8 @@ export class TagParser extends TagParserBase {
         TTagEndSyntaxNode extends TagEndSyntaxNode,
         TAttributeSyntaxNode extends AttributeSyntaxNode,
         TAttributeNameSyntaxNode extends AttributeNameSyntaxNode,
-        TAttributeValueSyntaxNode extends AttributeValueSyntaxNode>(
+        TAttributeValueSyntaxNode extends AttributeValueSyntaxNode,
+        TBracketSyntaxNode extends BracketSyntaxNode>(
             context: ParserContext,
             tagSyntaxNode: TagSyntaxNodeConstructor<TTagSyntaxNode>,
             tagNameSyntaxNode: TagNameSyntaxNodeConstructor<TTagNameSyntaxNode>,
@@ -39,11 +41,12 @@ export class TagParser extends TagParserBase {
                 attributeSyntaxNode: AttributeSyntaxNodeConstructor<TAttributeSyntaxNode>,
                 attributeNameSyntaxNode: AttributeNameSyntaxNodeConstructor<TAttributeNameSyntaxNode>,
                 attributeValueSyntaxNode: AttributeValueSyntaxNodeConstructor<TAttributeValueSyntaxNode>
-            }
+            },
+            bracketSyntaxNode: BracketSyntaxNodeConstructor<TBracketSyntaxNode>
         ): TagSyntaxNode {
 
         const children: SyntaxNode[] = [];
-        const startTagResult = TagStartParser.parse(context, tagStartSyntaxNode, tagNameSyntaxNode, attributeTag);
+        const startTagResult = TagStartParser.parse(context, tagStartSyntaxNode, tagNameSyntaxNode, attributeTag, bracketSyntaxNode);
 
         if (startTagResult.selfClosing)
             return new tagSyntaxNode([startTagResult.tagStartSyntaxNode], TriviaParser.parse(context));
@@ -60,7 +63,7 @@ export class TagParser extends TagParserBase {
             children.push(context.parser.parse(context));
         }
 
-        children.push(TagEndParser.parse(context, startTagResult.tagName, tagNameSyntaxNode, tagEndSyntaxNode));
+        children.push(TagEndParser.parse(context, startTagResult.tagName, tagNameSyntaxNode, tagEndSyntaxNode, bracketSyntaxNode));
 
         return new tagSyntaxNode(children, null, TriviaParser.parse(context));
     }

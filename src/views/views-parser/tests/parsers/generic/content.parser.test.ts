@@ -7,10 +7,10 @@
  */
 
 import { StringBuilder } from "@contextjs/text";
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
 import { ContentParser } from "../../../src/parsers/generic/content.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { ValueSyntaxNode } from "../../../src/syntax/abstracts/value-syntax-node.js";
 import { TestParser } from "../../_fixtures/parsers-fixtures.js";
 

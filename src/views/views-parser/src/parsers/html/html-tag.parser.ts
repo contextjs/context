@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { HtmlBracketSyntaxNode } from "../../api/index.js";
 import { ParserContext } from "../../context/parser-context.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { HtmlAttributeNameSyntaxNode } from "../../syntax/html/attributes/html-attribute-name-syntax-node.js";
@@ -29,6 +30,7 @@ export class HtmlTagParser {
                 attributeSyntaxNode: HtmlAttributeSyntaxNode,
                 attributeNameSyntaxNode: HtmlAttributeNameSyntaxNode,
                 attributeValueSyntaxNode: HtmlAttributeValueSyntaxNode
-            });
+            },
+            HtmlBracketSyntaxNode);
     }
 }

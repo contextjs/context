@@ -7,11 +7,10 @@
  */
 
 
+import { DiagnosticMessages, Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../../src/context/parser-context.js";
-import { DiagnosticMessages } from "../../../../src/diagnostics/diagnostic-messages.js";
 import { TagParserBase } from "../../../../src/parsers/generic/tags/tag-parser-base.js";
-import { Source } from "../../../../src/sources/source.js";
 import { TestParser } from "../../../_fixtures/parsers-fixtures.js";
 
 class TestableTagParserBase extends TagParserBase {

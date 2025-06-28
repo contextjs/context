@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { DiagnosticMessages } from "../../diagnostics/diagnostic-messages.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { ScriptAttributeNameSyntaxNode } from "../../syntax/html/scripts/script-attribute-name-syntax-node.js";
@@ -17,9 +17,10 @@ import { ScriptTagNameSyntaxNode } from "../../syntax/html/scripts/script-tag-na
 import { ScriptTagStartSyntaxNode } from "../../syntax/html/scripts/script-tag-start-syntax-node.js";
 import { ScriptTagSyntaxNode } from "../../syntax/html/scripts/script-tag-syntax-node.js";
 import { TriviaParser } from "../common/trivia.parser.js";
+import { ContentParser } from "../generic/content.parser.js";
 import { TagEndParser } from "../generic/tags/tag-end.parser.js";
 import { TagStartParser } from "../generic/tags/tag-start.parser.js";
-import { ContentParser } from "../generic/content.parser.js";
+import { HtmlBracketSyntaxNode } from "../../api/index.js";
 
 export class ScriptParser {
     public static isScriptStart(context: ParserContext): boolean {
@@ -36,7 +37,8 @@ export class ScriptParser {
                 attributeSyntaxNode: ScriptAttributeNameSyntaxNode,
                 attributeNameSyntaxNode: ScriptAttributeNameSyntaxNode,
                 attributeValueSyntaxNode: ScriptAttributeNameSyntaxNode,
-            }
+            },
+            HtmlBracketSyntaxNode
         );
 
         children.push(tagStartResult.tagStartSyntaxNode);
@@ -46,7 +48,7 @@ export class ScriptParser {
         if (context.currentCharacter === EndOfFileSyntaxNode.endOfFile || !isEndTagPresent)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedEndScriptTag(context.currentCharacter));
         else
-            children.push(TagEndParser.parse(context, tagStartResult.tagName, ScriptTagNameSyntaxNode, ScriptTagEndSyntaxNode));
+            children.push(TagEndParser.parse(context, tagStartResult.tagName, ScriptTagNameSyntaxNode, ScriptTagEndSyntaxNode, HtmlBracketSyntaxNode));
 
         return new ScriptTagSyntaxNode(children, null, TriviaParser.parse(context));
     }

@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Source } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ParserContext } from "../../../src/context/parser-context.js";
 import { ScriptParser } from "../../../src/parsers/html/script.parser.js";
-import { Source } from "../../../src/sources/source.js";
 import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 import { ScriptContentSyntaxNode } from "../../../src/syntax/html/scripts/script-content-syntax-node.js";
 import { ScriptTagEndSyntaxNode } from "../../../src/syntax/html/scripts/script-tag-end-syntax-node.js";
