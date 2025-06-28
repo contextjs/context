@@ -17,8 +17,12 @@ export class PackageTemplate {
   "type": "module",
   "private": true,
   "dependencies": {
-    "@contextjs/webserver-middleware-views": "${VersionService.get()}"
-  }
+    "@contextjs/webserver-middleware-views": "${VersionService.get()}",
+    "@contextjs/views-compiler": "${VersionService.get()}"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.7"
+  },
 }`;
 
   public static readonly template: FileTemplate = new FileTemplate(PackageTemplate.name, PackageTemplate.content);

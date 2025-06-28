@@ -19,7 +19,8 @@
     }
   },
   "dependencies": {
-    "@contextjs/webserver-middleware-controllers": "__VERSION__"
+    "@contextjs/webserver-middleware-controllers": "__VERSION__",
+    "@contextjs/views-compiler": "__VERSION__"
   },
   "keywords": [
     "contextjs",
