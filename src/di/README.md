@@ -8,8 +8,7 @@
 
 ## Features
 
-- **Interface-based service registration** with generics
-- **No decorators, no reflect-metadata**
+- **Interface-based service registration** with generics (yes, this is possible)
 - **Transformer-based constructor metadata extraction**
 - **Singleton and transient lifetimes**
 - **Full constructor injection, including primitives**
@@ -18,15 +17,11 @@
 - **Scoped resolution support via `onResolve` hook**
 - **Clean, extensible design** with 100% test coverage
 
----
-
 ## Installation
 
 ```bash
 npm i @contextjs/di
 ```
-
----
 
 ## Quick Start
 
@@ -88,8 +83,6 @@ application.onRun(async () => {
 await application.runAsync();
 ```
 
----
-
 ## Core Concepts
 
 ### Service Collection
@@ -101,8 +94,6 @@ Acts as the container that stores service registrations and resolves instances.
 
 ### Interface Support
 The transformer compiles your registration call into metadata so that interfaces can be resolved automatically, with no need for runtime tokens or reflection.
-
----
 
 ## Advanced Features
 
@@ -138,8 +129,6 @@ services.dependenciesAccessor.set('ILogger', {
 });
 ```
 
----
-
 ## Testing
 
 This project maintains **100% test coverage** across:
@@ -150,8 +139,6 @@ This project maintains **100% test coverage** across:
 - Interface registration
 - `onResolve` overrides
 
----
-
 ## Philosophy
 
 Many DI containers in the JS/TS ecosystem rely on decorators and metadata reflection. These approaches are fragile, hard to test, and incompatible with interface-based architecture.
@@ -159,12 +146,9 @@ Many DI containers in the JS/TS ecosystem rely on decorators and metadata reflec
 `@contextjs/di` takes a different path:
 
 - No decorators
-- No `reflect-metadata`
 - Full static type safety
 - Zero runtime dependency metadata
 - A container designed for OOP in TypeScript
-
----
 
 ## API Reference
 For detailed API documentation, please refer to the [API Reference](https://contextjs.dev/api/di#api-reference).

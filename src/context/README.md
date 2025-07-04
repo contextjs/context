@@ -8,26 +8,26 @@
 
 ## Features
 
-- Unified command-line interface for managing ContextJS-based projects  
-- Support for creating new projects from templates  
-- Project-wide or selective build and watch support  
-- Supports all TypeScript compiler flags via `ctx build` and `ctx watch`  
-- Supports custom and external transformers via `--transformers` or `context.ctxp`  
-- Works seamlessly with all ContextJS packages  
+- Unified command-line interface for all ContextJS-based projects  
+- Fast, extensible project build and watch support  
+- Seamless integration with the ContextJS ecosystem  
+- Full support for TypeScript compiler flags via `ctx build` and `ctx watch`  
+- Support for custom compiler extensions via `--extensions` or `context.ctxp`  
+- Easily scaffold new projects from official templates (see below)
 
 ## Installation
 
-Install globally via npm:
+For the **full CLI experience, including templates**, install both `@contextjs/context` and `@contextjs/templates` globally:
 
 ```bash
-npm install -g @contextjs/context
+npm install -g @contextjs/context @contextjs/templates
 ```
 
-This exposes the `ctx` command globally in your terminal.
+This exposes the `ctx` command in your terminal, with official templates automatically discovered when you run `ctx new`.
 
 ## Usage
 
-### Displaying available options
+### Display help and available options
 
 ```bash
 ctx
@@ -36,29 +36,27 @@ ctx
 ### Version
 
 ```bash
-ctx version
+ctx --version
 ```
 
-### New project
-
-These commands are equivalent:
-
 ```bash
-ctx new api myApi
-ctx new api -n myApi
-ctx new api --name myApi
+ctx -v
 ```
 
-If no argument is passed for the API name, the current folder name will be used:
+### New project (with templates)
+
+> Requires `@contextjs/templates` installed globally.
 
 ```bash
-ctx new api
+ctx new webapi myApi
+ctx new webapi -n myApi
+ctx new webapi --name myApi
 ```
 
-If no arguments are passed at all, the help message will be shown:
+If no project name is provided, the current folder name will be used:
 
 ```bash
-ctx new
+ctx new webapi
 ```
 
 ### Build
@@ -81,19 +79,17 @@ You can pass TypeScript compiler options directly:
 ctx build --noEmitOnError --target ES2022
 ```
 
-Use a custom transformer:
+Use a custom extension for the TypeScript compiler:
 
 ```bash
-ctx build --transformers=./src/my-transformer.ts
+ctx build --extensions=./src/my-extension.ts
 ```
 
-Or define transformers in `context.ctxp`:
+Or define extensions in `myapi.ctxp`:
 
 ```json
 {
-  "compilerOptions": {
-    "transformers": ["./src/my-transformer.ts"]
-  }
+    "compilerExtensions": ["./src/my-extension.ts"]
 }
 ```
 
@@ -111,17 +107,27 @@ Watch specific projects:
 ctx watch myApi1 myApi2 ...
 ```
 
-You can also include TypeScript flags with `watch`:
+Include TypeScript flags with `watch`:
 
 ```bash
 ctx watch --moduleResolution NodeNext --strict true
 ```
 
-External transformers are also supported in watch mode:
+External extensions are supported in watch mode as well:
 
 ```bash
-ctx watch --transformers=./src/my-transformer.ts
+ctx watch --extensions=./src/my-extension.ts
 ```
+
+## Project Templates
+
+Templates are provided by the [`@contextjs/templates`](https://www.npmjs.com/package/@contextjs/templates) package.
+- Install it globally to make all official templates available to the CLI.
+- When you run `ctx new ...`, templates are automatically discovered and listed.
+
+You can find a list of available templates in the [@contextjs/templates README](https://www.npmjs.com/package/@contextjs/templates).
+
+---
 
 ## Project Structure
 
@@ -129,11 +135,11 @@ When you create a new project using `ctx new api myApi`, the following layout is
 
 ```
 myApi/
-├── context.ctxp
+├── myApi.ctxp
 ├── tsconfig.json
 ├── package.json
 └── src/
     └── main.ts
 ```
 
-Each file is preconfigured to follow ContextJS conventions and integrates cleanly with the rest of the ecosystem.
+All files are preconfigured to follow ContextJS conventions and integrate cleanly with the rest of the ecosystem.

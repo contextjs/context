@@ -11,9 +11,16 @@
 import type PackageInfo from "./package-info";
 
 export default class Config {
-    public static version: string = "25.0.0";
+    public static version: string = "25.1.0-next.2";
+
+    public static typescriptVersion: string = "^5.8.3";
+    public static reflectMetadataVersion: string = "^0.2.2";
+    public static nodeTypesVersion: string = "^24.0.10";
+    public static nodeEngineVersion: string = "24.x";
+
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
+
     public static packagesInfo: PackageInfo[] = [
         { name: "system", path: "system" },
         { name: "io", path: "io" },
@@ -30,6 +37,8 @@ export default class Config {
         { name: "compiler", path: "compiler" },
         { name: "views-parser", path: "views/views-parser" },
         { name: "views-language-server", path: "views/views-language-server" },
-        { name: "context", path: "context" }
+        { name: "context", path: "context" },
+        { name: "templates", path: "templates" },
+        { name: "commands", path: "commands" }
     ];
 }

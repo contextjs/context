@@ -116,3 +116,22 @@ test('Dictionary<TKey, TValue>: clear - multiple items', (context: TestContext) 
     context.assert.equal(dictionary.get(1), null);
     context.assert.equal(dictionary.get(2), null);
 });
+
+test('Dictionary<TKey, TValue>: iteration - success', (context: TestContext) => {
+    const dictionary = new Dictionary<number, string>();
+    dictionary.set(1, 'one');
+    dictionary.set(2, 'two');
+
+    const result: Array<[number, string]> = [];
+    for (const entry of dictionary)
+        result.push(entry);
+
+    context.assert.deepEqual(result, [[1, 'one'], [2, 'two']]);
+});
+
+test('Dictionary<TKey, TValue>: iteration - empty', (context: TestContext) => {
+    const dictionary = new Dictionary<number, string>();
+    const result = Array.from(dictionary);
+
+    context.assert.deepEqual(result, []);
+});

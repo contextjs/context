@@ -30,7 +30,9 @@ ctx build
 | [`@contextjs/system`](https://github.com/contextjs/context/tree/main/src/system) | Foundation utilities: `Console`, `Exception`, `Throw`, `VersionService`, argument parsing, and string/object extensions |
 | [`@contextjs/di`](https://github.com/contextjs/context/tree/main/src/di) | Dependency injection container with interface-based registration, constructor metadata via AST transformers, and scoped lifetimes |
 | [`@contextjs/compiler`](https://github.com/contextjs/context/tree/main/src/compiler) | TypeScript build engine with transformer merging, diagnostic reporting, and extension-ready `build()` and `watch()` flows |
-| [`@contextjs/context`](https://github.com/contextjs/context/tree/main/src/context) | Official CLI tool (`ctx`) for building, watching, scaffolding, and restoring projects; supports full TypeScript flag passthrough and custom transformers |
+| [`@contextjs/context`](https://github.com/contextjs/context/tree/main/src/context) | Official CLI tool (`ctx`) supports full TypeScript flag passthrough and custom extensions |
+| [`@contextjs/templates`](https://github.com/contextjs/context/tree/main/src/templates) | Project templates for rapid scaffolding and development |
+| [`@contextjs/commands`](https://github.com/contextjs/context/tree/main/src/commands) | Command-line utilities for managing ContextJS projects |
 
 ## Collections & IO
 

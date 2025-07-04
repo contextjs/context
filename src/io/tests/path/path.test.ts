@@ -83,8 +83,8 @@ test('Path: normalize - simple normalization (no parent segments)', (context: Te
 
 test('Path: normalize - removes leading parent segments', (context: TestContext) => {
     const input = '../../alpha/beta';
-    const normalized = path.normalize(input);               // e.g. '../../alpha/beta'
-    const expected = normalized.replace(/^(\.\.[\/\\])+/, ''); // 'alpha/beta'
+    const normalized = path.normalize(input);
+    const expected = normalized.replace(/^(\.\.[\/\\])+/, '');
 
     context.assert.strictEqual(Path.normalize(input), expected);
 });
@@ -107,4 +107,79 @@ test('Path: normalize - preserves absolute paths', (context: TestContext) => {
 test('Path: normalize - throws on empty or whitespace input', (context: TestContext) => {
     context.assert.throws(() => Path.normalize(''), NullReferenceException);
     context.assert.throws(() => Path.normalize('   '), NullReferenceException);
+});
+
+test('Path: join - basic join', (context: TestContext) => {
+    const result = Path.join('foo', 'bar', 'baz.txt');
+    const expected = path.join('foo', 'bar', 'baz.txt');
+
+    context.assert.strictEqual(result, expected);
+});
+
+test('Path: join - normalizes segments', (context: TestContext) => {
+    const result = Path.join('foo/', './bar', '../baz', 'qux.txt');
+    const expected = path.join('foo', 'bar', 'baz', 'qux.txt');
+
+    context.assert.strictEqual(result, expected);
+});
+
+test('Path: join - removes leading parent segments in all', (context: TestContext) => {
+    const result = Path.join('../../alpha', '../beta', 'gamma');
+    const expected = path.join('alpha', 'beta', 'gamma');
+
+    context.assert.strictEqual(result, expected);
+});
+
+test('Path: resolve - resolves absolute path', (context: TestContext) => {
+    const result = Path.resolve('/foo', 'bar', 'baz.txt');
+    const expected = path.resolve('/foo', 'bar', 'baz.txt');
+
+    context.assert.strictEqual(result, expected);
+});
+
+test('Path: resolve - handles mixed relative and absolute', (context: TestContext) => {
+    const result = Path.resolve('foo', '../bar', './baz');
+    const expected = path.resolve('foo', '../bar', './baz');
+
+    context.assert.strictEqual(result, expected);
+});
+
+test('Path: listDirectories - success', (context: TestContext) => {
+    const root = path.join(base, 'list-dirs-root');
+    const dirA = path.join(root, 'A');
+    const dirB = path.join(root, 'B');
+    const file = path.join(root, 'file.txt');
+    Directory.create(root);
+    Directory.create(dirA);
+    Directory.create(dirB);
+    fs.writeFileSync(file, 'hello');
+
+    const dirs = Path.listDirectories(root);
+
+    context.assert.deepEqual(dirs.sort(), ['A', 'B']);
+
+    fs.unlinkSync(file);
+    Directory.delete(dirA);
+    Directory.delete(dirB);
+    Directory.delete(root);
+});
+
+test('Path: listDirectories - throws if not directory', (context: TestContext) => {
+    const file = path.join(base, 'not-a-dir.txt');
+    fs.writeFileSync(file, 'hi');
+
+    context.assert.throws(() => Path.listDirectories(file), /not a directory/);
+
+    fs.unlinkSync(file);
+});
+
+test('Path: listDirectories - throws if missing', (context: TestContext) => {
+    const missing = path.join(base, 'missing-folder');
+
+    context.assert.throws(() => Path.listDirectories(missing), /does not exist/);
+});
+
+test('Path: listDirectories - throws on empty/whitespace', (context: TestContext) => {
+    context.assert.throws(() => Path.listDirectories(''), NullReferenceException);
+    context.assert.throws(() => Path.listDirectories('   '), NullReferenceException);
 });
