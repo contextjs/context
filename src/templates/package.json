@@ -1,0 +1,32 @@
+{
+  "name": "@contextjs/templates",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "description": "ContextJS - Templates",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/templates"
+  },
+  "keywords": [
+    "contextjs",
+    "cli",
+    "templates",
+    "scaffolding",
+    "console",
+    "new project",
+    "create project",
+    "new webapi",
+    "webapi",
+    "api"
+  ],
+  "dependencies": {
+    "@contextjs/context": "__VERSION__",
+    "@contextjs/io": "__VERSION__",
+    "@contextjs/system": "__VERSION__"
+  }
+}

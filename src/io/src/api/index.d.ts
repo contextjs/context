@@ -178,6 +178,18 @@ export declare class File {
     public static copy(source: string, target: string): boolean;
 
     /**
+     * Copies a file.
+     * @param source The source file path.
+     * @param target The target file path.
+     * @param overwrite true to overwrite the target file; otherwise, false.
+     * @returns true if the file was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or target string is null or contains only empty spaces.
+     * @throws {FileNotFoundException} When the source file does not exist.
+     * @throws {FileExistsException} When the target file already exists and overwrite is false.
+     */
+    public static copy(source: string, target: string, overwrite: boolean): boolean;
+
+    /**
      * Determines whether the specified file exists.
      * @param file The file to check.
      * @returns true if the file exists; otherwise, false.
@@ -187,10 +199,19 @@ export declare class File {
     /**
      * Gets the name of the file.
      * @param file The file to check.
-     * @returns The name of the file, or null if the file does not exist.
+     * @returns The name of the file, including extension, or null if the file does not exist.
      * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
      */
     public static getName(file: string): string | null;
+
+    /**
+     * Gets the name of the file.
+     * @param file The file to check.
+     * @param withExtension true to include the file extension; otherwise, false.
+     * @returns The name of the file, or null if the file does not exist.
+     * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
+     */
+    public static getName(file: string, withExtension: boolean): string | null;
 
     /**
      * Gets the directory of the file.
@@ -241,6 +262,31 @@ export declare class Path {
      * @throws {NullReferenceException} When the path string is null or contains only empty spaces.
      */
     public static normalize(path: string): string;
+
+    /**
+     * Joins multiple paths into a single path.
+     * @param paths The paths to join.
+     * @returns The joined path.
+     * @throws {NullReferenceException} When any of the path strings are null or contain only empty spaces.
+     */
+    public static join(...paths: string[]): string;
+
+    /**
+     * Lists the directories in a specified directory.
+     * @param directory The directory to list.
+     * @returns An array of directory names in the specified directory.
+     * @throws {NullReferenceException} When the directory string is null or contains only empty spaces.
+     * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
+     */
+    public static listDirectories(directory: string): string[];
+
+    /**
+     * Resolves a sequence of paths into an absolute path.
+     * @param paths The paths to resolve.
+     * @returns The resolved absolute path.
+     * @throws {NullReferenceException} When any of the path strings are null or contain only empty spaces.
+     */
+    public static resolve(...paths: string[]): string;
 }
 
 //#endregion

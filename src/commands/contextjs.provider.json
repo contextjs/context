@@ -1,0 +1,26 @@
+{
+    "$schema": "https://contextjs.dev/schemas/contextjs.provider.schema.json",
+    "name": "@contextjs/commands",
+    "commands": {
+        "build": {
+            "path": "./commands/build.command.js",
+            "description": "Build your ContextJS project.",
+            "help": "Compiles TypeScript, processes templates, and prepares your ContextJS project for deployment or local use."
+        },
+        "restore": {
+            "path": "./commands/restore.command.js",
+            "description": "Install or update your project dependencies.",
+            "help": "Automatically restores and updates all dependencies for your ContextJS project, ensuring everything is ready to build and run."
+        },
+        "run": {
+            "path": "./commands/run.command.js",
+            "description": "Launch your ContextJS project.",
+            "help": "Runs the main entry point specified in your ContextJS project file, starting your application."
+        },
+        "watch": {
+            "path": "./commands/watch.command.js",
+            "description": "Watch for changes and rebuild automatically.",
+            "help": "Watches your project files for any changes and automatically rebuilds your ContextJS project in real time."
+        }
+    }
+}

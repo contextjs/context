@@ -68,7 +68,7 @@ export class Build extends Script {
         await this.createPackageDirectoryAsync(packageInfo);
         await this.copyPackageFileAsync(packageInfo);
         await this.copyLicenseFileAsync(packageInfo);
-        await this.writeVersionAsync(packageInfo);
+        await this.writeVersionsAsync(packageInfo);
         await this.buildAsync(packageInfo);
         await this.createPackageAsync(packageInfo);
         await this.installPackageAsync(packageInfo);
@@ -111,10 +111,16 @@ export class Build extends Script {
         await this.copyFileAsync('LICENSE', `${Config.buildFolder}/${packageInfo.name}/LICENSE`);
     }
 
-    private async writeVersionAsync(packageInfo: PackageInfo): Promise<void> {
+    private async writeVersionsAsync(packageInfo: PackageInfo): Promise<void> {
         const packageFilePath = `${Config.buildFolder}/${packageInfo.name}/package.json`;
         let packageFileContent = await this.readFileAsync(packageFilePath);
+
         packageFileContent = packageFileContent.replace(/__VERSION__/g, Config.version);
+        packageFileContent = packageFileContent.replace(/__TYPESCRIPT_VERSION__/g, Config.typescriptVersion);
+        packageFileContent = packageFileContent.replace(/__REFLECT_METADATA_VERSION__/g, Config.reflectMetadataVersion);
+        packageFileContent = packageFileContent.replace(/__NODE_TYPES_VERSION__/g, Config.nodeTypesVersion);
+        packageFileContent = packageFileContent.replace(/__NODE_ENGINE_VERSION__/g, Config.nodeEngineVersion);
+
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }
 

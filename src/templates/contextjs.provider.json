@@ -1,0 +1,18 @@
+{
+    "$schema": "https://contextjs.dev/schemas/contextjs.provider.schema.json",
+    "name": "@contextjs/templates",
+    "templates": {
+        "webapi": {
+            "title": "WebAPI",
+            "path": "./templates/webapi",
+            "description": "A Web API Template for ContextJS.",
+            "commands": {
+                "new": {
+                    "path": "./services/new.command.js",
+                    "description": "Creates a new Web API project.",
+                    "help": "Creates a new Web API project containing controllers and actions."
+                }
+            }
+        }
+    }
+}

@@ -19,8 +19,5 @@
     "utilities",
     "environment",
     "console"
-  ],
-  "dependencies": {
-    "typescript": "^5.8.2"
-  }
+  ]
 }

@@ -16,15 +16,20 @@
   "keywords": [
     "contextjs",
     "cli",
-    "build",
-    "typescript",
-    "compiler",
-    "context"
+    "context",
+    "commands",
+    "templates",
+    "ctx"
   ],
+  "exports": {
+    ".": {
+      "import": "./api/index.js",
+      "types": "./api/index.d.ts"
+    }
+  },
   "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
-    "@contextjs/compiler": "__VERSION__",
-    "@contextjs/views-language-server": "__VERSION__"
+    "@contextjs/collections": "__VERSION__"
   }
 }

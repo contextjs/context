@@ -75,6 +75,10 @@ export default abstract class Script {
         await this.copyFileAsync(`src/${packageInfo.path}/README.md`, `${Config.buildFolder}/${packageInfo.name}/README.md`);
     }
 
+    protected async copyProviderManifestFile(packageInfo: PackageInfo) {
+        await this.copyFileAsync(`src/${packageInfo.path}/contextjs.provider.json`, `${Config.buildFolder}/${packageInfo.name}/contextjs.provider.json`);
+    }
+
     protected async executeActionAsync(packagesInfo: PackageInfo[], action: Function): Promise<void> {
         for (const packageInfo of packagesInfo) {
             await action(packageInfo);

@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { ConsoleArgument } from "@contextjs/system";
 import typescript, { SemanticDiagnosticsBuilderProgram } from "typescript";
 
 //#region Interfaces
@@ -105,6 +106,25 @@ export declare class Compiler {
      * @param extension An object implementing `ICompilerExtension`.
      */
     public static registerExtension(extension: ICompilerExtension): void;
+
+    /**
+     * Parses command line arguments into TypeScript compiler options.
+     * This is useful for integrating CLI arguments into the TypeScript compilation process.
+     *
+     * @param consoleArguments The parsed console arguments to convert.
+     * @returns The parsed TypeScript compiler options.
+     */
+    public static parseTypescriptArguments(consoleArguments: ConsoleArgument[]): typescript.CompilerOptions
+
+    /**
+     * Parses command line arguments into TypeScript compiler options.
+     * This is useful for integrating CLI arguments into the TypeScript compilation process.
+     *
+     * @param consoleArguments The parsed console arguments to convert.
+     * @param verbose Optional flag to enable verbose output for debugging.
+     * @returns The parsed TypeScript compiler options.
+     */
+    public static parseTypescriptArguments(consoleArguments: ConsoleArgument[], verbose: boolean): typescript.CompilerOptions
 }
 
 //#endregion

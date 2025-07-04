@@ -1,0 +1,7 @@
+{
+    "$schema": "https://contextjs.dev/schemas/contextjs.provider.schema.json",
+    "name": "@contextjs/di",
+    "compilerExtensions": [
+        "./transformers/compiler-extensions.js"
+    ]
+}

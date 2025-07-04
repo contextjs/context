@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * @license
  * Copyright ContextJS All Rights Reserved.
@@ -6,48 +8,38 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Console } from "@contextjs/system";
-import { CommandType } from "./models/command-type.js";
-import { BuildCommand } from "./services/commands/build.command.js";
-import { CommandsService } from "./services/commands/commands.service.js";
-import { CtxCommand } from "./services/commands/ctx.command.js";
-import { LspCommand } from "./services/commands/lsp.command.js";
-import { NewCommand } from "./services/commands/new.command.js";
-import { RestoreCommand } from "./services/commands/restore.command.js";
-import { RunCommand } from "./services/commands/run.command.js";
-import { VersionCommand } from "./services/commands/version.command.js";
-import { WatchCommand } from "./services/commands/watch.command.js";
+import { Console, VersionService } from "@contextjs/system";
+import { CommandContextService } from "./services/command-context.service.js";
+import { CommandDelegationService } from "./services/command-delegation.service.js";
+import { HelpService } from "./services/help.service.js";
 
 process.title = 'ContextJS';
 
-const command = CommandsService.parse();
+process.on("unhandledRejection", error => {
+    Console.writeLineError("Unhandled exception: " + (error instanceof Error ? error.message : String(error)));
+    process.exit(1);
+});
 
-switch (command.type) {
-    case CommandType.Ctx:
-        await new CtxCommand().runAsync(command);
+const commandContext = await CommandContextService.create();
+
+if (!commandContext.parsedArguments.length) {
+    VersionService.display();
+    Console.writeLineWarning("Try 'ctx --help' or 'ctx -h' to list all templates and commands.");
+    process.exit(0);
+}
+
+const [commandArgument] = commandContext.parsedArguments;
+
+switch (commandArgument.name) {
+    case "-h":
+    case "--help":
+        HelpService.display(commandContext);
         break;
-    case CommandType.New:
-        await new NewCommand().runAsync(command);
-        break;
-    case CommandType.Build:
-        await new BuildCommand().runAsync(command);
-        break;
-    case CommandType.Run:
-        await new RunCommand().runAsync(command);
-        break;
-    case CommandType.Restore:
-        await new RestoreCommand().runAsync(command);
-        break;
-    case CommandType.Watch:
-        await new WatchCommand().runAsync(command);
-        break;
-    case CommandType.Version:
-        await new VersionCommand().runAsync(command);
-        break;
-    case CommandType.Lsp:
-        await new LspCommand().runAsync(command);
+    case "-v":
+    case "--version":
+        VersionService.display();
         break;
     default:
-        Console.writeLineError('Invalid command provided. Exiting...');
-        process.exit(1);
+        await CommandDelegationService.delegate(commandContext);
+        break;
 }

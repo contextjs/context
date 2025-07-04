@@ -19,7 +19,7 @@
     }
   },
   "dependencies": {
-    "reflect-metadata": "^0.2.2",
+    "reflect-metadata": "__REFLECT_METADATA_VERSION__",
     "@contextjs/webserver": "__VERSION__",
     "@contextjs/routing": "__VERSION__",
     "@contextjs/io": "__VERSION__",

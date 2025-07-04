@@ -62,14 +62,14 @@ export class File {
         return false;
     }
 
-    public static copy(source: string, target: string): boolean {
+    public static copy(source: string, target: string, overwrite: boolean = false): boolean {
         Throw.ifNullOrWhitespace(source);
         Throw.ifNullOrWhitespace(target);
 
         if (!this.exists(source))
             throw new FileNotFoundException(source);
 
-        if (this.exists(target))
+        if (this.exists(target) && !overwrite)
             throw new FileExistsException(target);
 
         const dirname = path.dirname(target);
@@ -85,10 +85,12 @@ export class File {
         return Path.isFile(file);
     }
 
-    public static getName(file: string): string | null {
+    public static getName(file: string, withExtension: boolean = true): string | null {
         Throw.ifNullOrWhitespace(file);
 
-        return path.basename(file);
+        return withExtension
+            ? path.basename(file)
+            : path.basename(file, path.extname(file));
     }
 
     public static getDirectory(file: string): string | null {
