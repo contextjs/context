@@ -203,6 +203,19 @@ test('StringExtensions: type narrowing - isNullOrWhitespace', (context: TestCont
         context.assert.ok(true);
 });
 
+test('StringExtensions: format - unmatched placeholder returns original', (context: TestContext) => {
+    const template = "Hello {0}{1}{2}";
+    const world = "World";
+    const exclamation = "!";
+    context.assert.strictEqual(StringExtensions.format(template, world, exclamation), "Hello World!{2}");
+});
+
+test('StringExtensions: format - all placeholders unmatched', (context: TestContext) => {
+    const template = "{0}{1}{2}";
+
+    context.assert.strictEqual(StringExtensions.format(template), "{0}{1}{2}");
+});
+
 test('StringExtensions: escape - backslash', (context: TestContext) => {
     const input = "a\\b";
     const result = StringExtensions.escape(input);

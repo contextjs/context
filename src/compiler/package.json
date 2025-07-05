@@ -29,6 +29,7 @@
     }
   },
   "dependencies": {
-    "@contextjs/system": "__VERSION__"
+    "@contextjs/system": "__VERSION__",
+    "typescript": "__TYPESCRIPT_VERSION__"
   }
 }

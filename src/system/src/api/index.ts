@@ -17,12 +17,13 @@ export * from "../exceptions/system.exception.js";
 
 export * from "../extensions/object.extensions.js";
 export * from "../extensions/string.extensions.js";
-
 export * from "../extensions/console-extensions.js";
+
+export * from "../interfaces/i-project.js";
+
 export * from "../models/console-argument.js";
 export * from "../models/environment-name.js";
 export * from "../models/environment.js";
-export * from "../models/project-type.js";
 
 export * from "../services/console.js";
 export * from "../services/nameof.js";

@@ -1,0 +1,30 @@
+{
+  "name": "@contextjs/commands",
+  "version": "__VERSION__",
+  "main": "api/index.js",
+  "types": "api/index.d.ts",
+  "description": "ContextJS - Commands",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/commands"
+  },
+  "keywords": [
+    "contextjs",
+    "system",
+    "cli",
+    "utilities",
+    "environment",
+    "console"
+  ],
+  "dependencies": {
+    "@contextjs/context": "__VERSION__",
+    "@contextjs/io": "__VERSION__",
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/compiler": "__VERSION__",
+    "typescript": "__TYPESCRIPT_VERSION__"
+  }
+}

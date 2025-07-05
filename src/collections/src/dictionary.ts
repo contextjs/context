@@ -30,9 +30,9 @@ export class Dictionary<TKey, TValue> {
     }
 
     public values(): TValue[] {
-        if (this.map.size === 0) 
+        if (this.map.size === 0)
             return [];
-        
+
         return Array.from(this.map.values());
     }
 
@@ -42,5 +42,10 @@ export class Dictionary<TKey, TValue> {
 
     public count(): number {
         return this.map.size;
+    }
+
+    public *[Symbol.iterator](): IterableIterator<[TKey, TValue]> {
+        for (const entry of this.map.entries())
+            yield entry;
     }
 }

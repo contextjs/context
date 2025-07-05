@@ -30,7 +30,9 @@ ctx build
 | [`@contextjs/system`](https://github.com/contextjs/context/tree/main/src/system) | Foundation utilities: `Console`, `Exception`, `Throw`, `VersionService`, argument parsing, and string/object extensions |
 | [`@contextjs/di`](https://github.com/contextjs/context/tree/main/src/di) | Dependency injection container with interface-based registration, constructor metadata via AST transformers, and scoped lifetimes |
 | [`@contextjs/compiler`](https://github.com/contextjs/context/tree/main/src/compiler) | TypeScript build engine with transformer merging, diagnostic reporting, and extension-ready `build()` and `watch()` flows |
-| [`@contextjs/context`](https://github.com/contextjs/context/tree/main/src/context) | Official CLI tool (`ctx`) for building, watching, scaffolding, and restoring projects; supports full TypeScript flag passthrough and custom transformers |
+| [`@contextjs/context`](https://github.com/contextjs/context/tree/main/src/context) | Official CLI tool (`ctx`) supports full TypeScript flag passthrough and custom extensions |
+| [`@contextjs/templates`](https://github.com/contextjs/context/tree/main/src/templates) | Project templates for rapid scaffolding and development |
+| [`@contextjs/commands`](https://github.com/contextjs/context/tree/main/src/commands) | Command-line utilities for managing ContextJS projects |
 
 ## Collections & IO
 
@@ -86,10 +88,10 @@ ctx build
 <!-- BENCHMARKS_SUMMARY:START -->
 | Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
 |--------|--------:|-------------:|------------------:|-------:|
-| ContextJS | 14659.47 | 33.90 | 2.61 | 0.00 |
-| Node.js Raw HTTP | 14300.80 | 34.76 | 2.55 | 0.00 |
-| Fastify | 13541.60 | 36.74 | 2.42 | 0.00 |
-| Express | 8925.87 | 56.16 | 2.14 | 0.00 |
+| ContextJS | 14900.80 | 33.29 | 2.65 | 0.00 |
+| Node.js Raw HTTP | 14401.33 | 34.46 | 2.57 | 0.00 |
+| Fastify | 13818.13 | 35.94 | 2.47 | 0.00 |
+| Express | 8709.34 | 57.50 | 2.09 | 0.00 |
 
 <!-- BENCHMARKS_SUMMARY:END -->
 **Column descriptions**:
@@ -103,10 +105,10 @@ ctx build
 <!-- BENCHMARKS_EXTENDED:START -->
 | Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
 |--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|
-| ContextJS | 500 | 1 | 10.12 | 107.16 | 224.85 | 0.04 | 439750 |
-| Node.js Raw HTTP | 500 | 1 | 10.15 | 117.45 | 315.13 | 0.06 | 429000 |
-| Fastify | 500 | 1 | 10.13 | 125.49 | 271.37 | 0.05 | 406250 |
-| Express | 500 | 1 | 10.14 | 236.75 | 184.51 | 0.04 | 267750 |
+| ContextJS | 500 | 1 | 10.10 | 107.81 | 210.73 | 0.04 | 447000 |
+| Node.js Raw HTTP | 500 | 1 | 10.10 | 113.49 | 199.56 | 0.04 | 432000 |
+| Fastify | 500 | 1 | 10.10 | 119.63 | 280.14 | 0.05 | 414500 |
+| Express | 500 | 1 | 10.18 | 243.14 | 180.99 | 0.04 | 261250 |
 
 <!-- BENCHMARKS_EXTENDED:END -->
 **Extended column descriptions**:

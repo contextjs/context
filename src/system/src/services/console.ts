@@ -8,7 +8,6 @@
 
 import readline from 'node:readline';
 import { styleText } from 'node:util';
-import typescript from 'typescript';
 import { ConsoleMessage } from '../extensions/console-extensions.js';
 import { ObjectExtensions } from "../extensions/object.extensions.js";
 import { ConsoleArgument } from "../models/console-argument.js";
@@ -64,41 +63,6 @@ export class Console {
         }
 
         return parsedArguments;
-    }
-
-    public static parseTypescriptArguments(consoleArguments: ConsoleArgument[], verbose: boolean = false): typescript.CompilerOptions {
-        const tsArgs: string[] = [];
-
-        for (const consoleArgument of consoleArguments) {
-            if (!consoleArgument.name.startsWith("--"))
-                continue;
-            else if (consoleArgument.name === "--transformers" || consoleArgument.name === "-t") {
-                if (verbose)
-                    this.writeLineInfo(`Skipping custom CLI flag: ${consoleArgument.name}`);
-                continue;
-            }
-
-
-            if (consoleArgument.values.length === 0)
-                tsArgs.push(consoleArgument.name);
-            else
-                tsArgs.push(consoleArgument.name, ...consoleArgument.values);
-        }
-
-        const parsed = typescript.parseCommandLine(tsArgs);
-
-        if (parsed.errors.length > 0) {
-            for (const error of parsed.errors)
-                this.writeLineError(typescript.flattenDiagnosticMessageText(error.messageText, "\n"));
-        }
-
-        if (verbose) {
-            this.writeLineInfo("Parsed TypeScript options:");
-            for (const [key, value] of Object.entries(parsed.options))
-                this.writeLine(`  --${key}: ${JSON.stringify(value)}`);
-        }
-
-        return parsed.options;
     }
 
     public static writeLineError(message: any, ...messages: any[]): void {
