@@ -10,19 +10,19 @@ import "@contextjs/webserver";
 import "@contextjs/webserver-middleware-controllers";
 
 import { WebServerOptions } from "@contextjs/webserver";
-import { ViewsMiddleware } from "../views.middleware.js";
+import { MVCMiddleware } from "../mvc.middleware.js";
 
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
-        useViews(): WebServerOptions;
+        useMvc(): WebServerOptions;
     }
 }
 
-WebServerOptions.prototype.useViews = function (): WebServerOptions {
+WebServerOptions.prototype.useMvc = function (): WebServerOptions {
     if (!this.webServer.application.webServer.hasMiddleware("ControllersMiddleware"))
         this.useControllers();
 
-    this.useMiddleware(new ViewsMiddleware(this.webServer));
+    this.useMiddleware(new MVCMiddleware(this.webServer));
 
     return this;
 };

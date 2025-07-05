@@ -6,18 +6,13 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ProjectType } from "@contextjs/system";
 import test, { TestContext } from "node:test";
 import type { ICompilationContext } from "../src/interfaces/i-compilation-context.js";
 import type { IViewsCompilerOptions } from "../src/interfaces/i-views-compiler-options.js";
 import { ViewsCompiler } from "../src/views-compiler.js";
 
 const TEST_FILE_PATH = "index.tshtml";
-const OPTIONS: IViewsCompilerOptions = {
-    files: [TEST_FILE_PATH],
-    projectRoot: "",
-    projectType: ProjectType.Views
-};
+const OPTIONS: IViewsCompilerOptions = { files: [TEST_FILE_PATH], projectRoot: "" };
 
 function createContext(value: string) {
     class MockCompilationContext implements ICompilationContext {

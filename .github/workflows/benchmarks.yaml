@@ -46,8 +46,8 @@ jobs:
         token: ${{ secrets.CONTEXTJS_BENCHMARKS }}
         author: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
         committer: "contextjs-bot <contextjs-bot@users.noreply.github.com>"
-        title: "chore: update benchmarks"
-        commit-message: "chore: update benchmarks"
+        title: "Update benchmarks"
+        commit-message: "Update benchmarks"
         branch: benchmark/${{ github.run_number }}
         body: "Auto-generated benchmarks update."
         add-paths: |

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "../../../_build/webserver-middleware-views",
+        "outDir": "../../../_build/webserver-middleware-mvc",
     },
     "extends": "../../../tsconfig-base.json",
     "exclude": [

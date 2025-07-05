@@ -39,7 +39,7 @@ export default class Config {
         { name: "webserver-middleware-static", path: "webserver/webserver-middleware-static" },
         { name: "webserver-middleware-cookies", path: "webserver/webserver-middleware-cookies" },
         { name: "webserver-middleware-controllers", path: "webserver/webserver-middleware-controllers" },
-        { name: "webserver-middleware-views", path: "webserver/webserver-middleware-views" },
+        { name: "webserver-middleware-mvc", path: "webserver/webserver-middleware-mvc" },
         { name: "context", path: "context" },
         { name: "templates", path: "templates" },
         { name: "commands", path: "commands" }

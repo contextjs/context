@@ -52,6 +52,7 @@
     "@contextjs/webserver": "file:_packages/contextjs-webserver-25.1.0-next.3.tgz",
     "@contextjs/webserver-middleware-controllers": "file:_packages/contextjs-webserver-middleware-controllers-25.1.0-next.3.tgz",
     "@contextjs/webserver-middleware-cookies": "file:_packages/contextjs-webserver-middleware-cookies-25.1.0-next.3.tgz",
+    "@contextjs/webserver-middleware-mvc": "file:_packages/contextjs-webserver-middleware-mvc-25.1.0-next.3.tgz",
     "@contextjs/webserver-middleware-static": "file:_packages/contextjs-webserver-middleware-static-25.1.0-next.3.tgz",
     "@contextjs/webserver-middleware-views": "file:_packages/contextjs-webserver-middleware-views-25.1.0-next.3.tgz",
     "reflect-metadata": "^0.2.2",

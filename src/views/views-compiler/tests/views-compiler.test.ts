@@ -10,7 +10,6 @@ import test, { TestContext } from "node:test";
 import { ViewsCompiler } from "../src/views-compiler.js";
 import type { ICompilationContext } from "../src/interfaces/i-compilation-context.js";
 import type { IViewsCompilerOptions } from "../src/interfaces/i-views-compiler-options.js";
-import { ProjectType } from "@contextjs/system";
 
 const TEST_FILE_PATH = "index.tshtml";
 const TEST_FILE_CONTENT = `<div>
@@ -30,11 +29,7 @@ class MockCompilationContext implements ICompilationContext {
 
 test("ViewsCompiler: compiles a simple TSHTML file into ESM source as a class", async (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: [TEST_FILE_PATH],
-        projectRoot: "",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: [TEST_FILE_PATH], projectRoot: "" };
 
     const compiler = new ViewsCompiler(contextMock, options);
     const result = await compiler.compileFile(TEST_FILE_PATH);
@@ -45,11 +40,7 @@ test("ViewsCompiler: compiles a simple TSHTML file into ESM source as a class", 
 
 test("ViewsCompiler: compiles all files and returns an array of compiled views", async (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: [TEST_FILE_PATH],
-        projectRoot: "",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: [TEST_FILE_PATH], projectRoot: "" };
 
     const compiler = new ViewsCompiler(contextMock, options);
     const results = await compiler.compileAll();
@@ -61,11 +52,7 @@ test("ViewsCompiler: compiles all files and returns an array of compiled views",
 
 test("ViewsCompiler: handles unsupported languages gracefully", async (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: ["unsupported.lang"],
-        projectRoot: "",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: ["unsupported.lang"], projectRoot: "" };
 
     const compiler = new ViewsCompiler(contextMock, options);
     const result = await compiler.compileFile("unsupported.lang");
@@ -76,11 +63,7 @@ test("ViewsCompiler: handles unsupported languages gracefully", async (context: 
 
 test("ViewsCompiler: generates class names from file path and projectRoot (flat)", (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: [],
-        projectRoot: "",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: [], projectRoot: "" };
     const compiler = new ViewsCompiler(contextMock, options);
 
     context.assert.strictEqual(compiler["getClassNameFromFilePath"]("about.view.tshtml"), "AboutView");
@@ -94,11 +77,7 @@ test("ViewsCompiler: generates class names from file path and projectRoot (flat)
 
 test("ViewsCompiler: generates class names from file path and projectRoot (with folders)", (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: [],
-        projectRoot: "src/views",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: [], projectRoot: "src/views" };
     const compiler = new ViewsCompiler(contextMock, options);
 
     context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/about.view.tshtml"), "AboutView");
@@ -110,11 +89,7 @@ test("ViewsCompiler: generates class names from file path and projectRoot (with 
 
 test("ViewsCompiler: handles projectRoot with trailing slash", (context: TestContext) => {
     const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = {
-        files: [],
-        projectRoot: "src/views/",
-        projectType: ProjectType.Views
-    };
+    const options: IViewsCompilerOptions = { files: [], projectRoot: "src/views/" };
     const compiler = new ViewsCompiler(contextMock, options);
 
     context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/other-pages/home.tshtml"), "OtherPagesHome");

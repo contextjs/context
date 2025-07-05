@@ -13,6 +13,6 @@ import "@contextjs/webserver";
  */
 declare module "@contextjs/webserver" {
     export interface WebServerOptions {
-        useViews(): WebServerOptions;
+        useMVC(): WebServerOptions;
     }
 }

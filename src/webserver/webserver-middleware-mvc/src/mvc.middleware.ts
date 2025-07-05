@@ -8,8 +8,8 @@
 
 import { HttpContext, IMiddleware, WebServer } from "@contextjs/webserver";
 
-export class ViewsMiddleware implements IMiddleware {
-    public name: string = "ViewsMiddleware";
+export class MVCMiddleware implements IMiddleware {
+    public name: string = "MvcMiddleware";
     public version: string = "1.0.0";
 
     private readonly webServer: WebServer;
