@@ -6,10 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ProjectType } from "@contextjs/system";
-
 export interface IViewsCompilerOptions {
     projectRoot: string;
     files: string[];
-    projectType: ProjectType;
 }
