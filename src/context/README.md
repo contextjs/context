@@ -17,13 +17,17 @@
 
 ## Installation
 
-For the **full CLI experience, including templates**, install both `@contextjs/context` and `@contextjs/templates` globally:
+For the **full CLI experience, including templates**, install `@contextjs/context` and both `@contextjs/templates` and `@contextjs/commands` globally:
 
 ```bash
-npm install -g @contextjs/context @contextjs/templates
+npm install -g @contextjs/context @contextjs/templates @contextjs/commands
 ```
 
-This exposes the `ctx` command in your terminal, with official templates automatically discovered when you run `ctx new`.
+This exposes the `ctx` command in your terminal, with official templates automatically discovered when you run `ctx new`, `ctx build`, `ctx watch`, etc.
+
+> The `@contextjs/templates` and `@contextjs/commands` packages are separate so you can install only what you need: just the CLI, just the templates, or both. You can also install them locally in your project if you prefer not to install them globally.  
+> You can also install third-party templates and commands to use, the ContextJS ecosystem is designed to be extensible.
+
 
 ## Usage
 
@@ -127,15 +131,22 @@ Templates are provided by the [`@contextjs/templates`](https://www.npmjs.com/pac
 
 You can find a list of available templates in the [@contextjs/templates README](https://www.npmjs.com/package/@contextjs/templates).
 
----
+## Project commands
+- `ctx new <template> --name <projectName>`: Create a new project using the specified template.
+- `ctx build [projectName1 projectName2 ...]`: Builds one or more projects
+- `ctx watch [projectName1 projectName2 ...]`: Watches one or more projects for changes and rebuilds them automatically
+- `ctx restore [projectName1 projectName2 ...]`: Restores the project dependencies and configurations
+- `ctx run [projectName1 projectName2 ...]`: Runs the specified projects.
+- `ctx --version`: Displays the current version of the CLI
+- `ctx -v`: Alias for `--version`
 
 ## Project Structure
 
-When you create a new project using `ctx new api myApi`, the following layout is generated:
+When you create a new project using `ctx new webapi myapi`, the following layout is generated:
 
 ```
-myApi/
-├── myApi.ctxp
+myapi/
+├── myapi.ctxp
 ├── tsconfig.json
 ├── package.json
 └── src/

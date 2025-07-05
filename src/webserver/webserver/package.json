@@ -31,9 +31,7 @@
   "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
-    "@contextjs/collections": "__VERSION__"
-  },
-  "devDependencies": {
+    "@contextjs/collections": "__VERSION__",
     "@types/node": "__NODE_TYPES_VERSION__"
   },
   "exports": {
