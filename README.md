@@ -10,16 +10,17 @@
 
 ## Getting Started
 
-Install the CLI globally:
+Install the CLI and Templates globally:
 
 ```bash
-npm i -g @contextjs/context
+npm i -g @contextjs/context @contextjs/templates
 ```
 
 Create a new project:
 
 ```bash
 ctx new api my-app
+cd my-app
 ctx build
 ```
 
