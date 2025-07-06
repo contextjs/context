@@ -17,15 +17,15 @@
 
 ## Installation
 
-For the **full CLI experience, including templates**, install `@contextjs/context` and both `@contextjs/templates` and `@contextjs/commands` globally:
+For the **full CLI experience, including templates**, install both `@contextjs/context` and `@contextjs/templates` globally:
 
 ```bash
-npm install -g @contextjs/context @contextjs/templates @contextjs/commands
+npm install -g @contextjs/context @contextjs/templates
 ```
 
-This exposes the `ctx` command in your terminal, with official templates automatically discovered when you run `ctx new`, `ctx build`, `ctx watch`, etc.
+This exposes the `ctx` command in your terminal, with official templates automatically discovered when you run `ctx new`.
 
-> The `@contextjs/templates` and `@contextjs/commands` packages are separate so you can install only what you need: just the CLI, just the templates, or both. You can also install them locally in your project if you prefer not to install them globally.  
+> The `@contextjs/templates` package is separate so you can install only what you need: just the CLI, just the templates, or both. You can also install it locally in your project if you prefer not to install it globally.  
 > You can also install third-party templates and commands to use, the ContextJS ecosystem is designed to be extensible.
 
 
@@ -89,7 +89,7 @@ Use a custom extension for the TypeScript compiler:
 ctx build --extensions=./src/my-extension.ts
 ```
 
-Or define extensions in `myapi.ctxp`:
+Or define extensions in `context.ctxp`:
 
 ```json
 {
@@ -146,7 +146,7 @@ When you create a new project using `ctx new webapi myapi`, the following layout
 
 ```
 myapi/
-├── myapi.ctxp
+├── context.ctxp
 ├── tsconfig.json
 ├── package.json
 └── src/

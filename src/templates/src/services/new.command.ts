@@ -43,7 +43,7 @@ export class NewCommand {
         const name = await this.getNameAsync(context);
 
         if (Path.exists(name)) {
-            Console.writeLineError(`The Project or folder \"${name}\" already exists. Exiting...`);
+            Console.writeLineError(`The Project or folder \"${name}\" already exists (case-insensitive match). Exiting...`);
             return process.exit(1);
         }
 
@@ -55,12 +55,15 @@ export class NewCommand {
                 return;
             }
 
-            file.content = file.content!.replace(/{{name}}/g, name);
-            file.name = file.name.replace(/{{name}}/g, name);
+            if (file.name === 'package.json')
+                file.content = file.content.replace(/{{name}}/g, name.toLowerCase());
+            else
+                file.content = file.content!.replace(/{{name}}/g, name);
             File.save(`${name}/${file.name}`, file.content, true);
         });
 
-        childProcess.execSync(`cd ${name} && npm install && cd ..`);
+        childProcess.execSync("npm install", { cwd: name, stdio: "inherit" });
+
         Console.removeLastLine();
         Console.writeLineFormatted({ format: 'green', text: `Creating project \"${name}\"...` }, { format: ['green', 'bold'], text: 'Done.' });
     }
@@ -81,6 +84,6 @@ export class NewCommand {
             return process.exit(1);
         }
 
-        return result.toLowerCase().replace(/ /g, '-');
+        return result.replace(/ /g, '-');
     }
 }

@@ -47,8 +47,8 @@ test("WatchCommand: runAsync exits when no projects are found", async (context: 
 });
 
 test("WatchCommand: watchAsync exits when .ctxp file is missing", async (context: TestContext) => {
-    let errorMessages = "";
-    Console.writeLineError = (...args) => { errorMessages += args.join(" "); };
+    let errorMessage = "";
+    Console.writeLineError = (...args) => { errorMessage += args.join(" "); };
     File.exists = (filePath: string) => !filePath.endsWith(".ctxp");
     File.read = () => "{}";
     process.exit = (() => { throw new Error("ProcessExit"); }) as any;
@@ -57,7 +57,7 @@ test("WatchCommand: watchAsync exits when .ctxp file is missing", async (context
     const watchCommand = new WatchCommand();
 
     await context.assert.rejects(() => (watchCommand as any).watchAsync(project, { parsedArguments: [], compilerExtensions: [] }, {}), /ProcessExit/);
-    context.assert.match(errorMessages, /No project file found/);
+    context.assert.strictEqual(errorMessage, "No context.ctxp project file found. Exiting...");
 
     restoreGlobals();
 });

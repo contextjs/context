@@ -41,22 +41,22 @@ class TestCommandBase extends CommandBase {
 }
 
 test("CommandBase: getProjects returns all valid projects with no filter", (context: TestContext) => {
-    Directory.listFiles = () => ["/repo/foo.ctxp", "/repo/bar.ctxp", "/repo/baz.ctxp"];
+    Directory.listFiles = () => ["/repo1/context.ctxp", "/repo2/context.ctxp", "/repo3/context.ctxp"];
     Path.isFile = () => true;
     File.getExtension = (f) => f.endsWith(".ctxp") ? "ctxp" : "";
     File.read = (f) => {
-        if (f.endsWith("foo.ctxp")) return JSON.stringify({ name: "foo" });
-        if (f.endsWith("bar.ctxp")) return JSON.stringify({ name: "bar" });
-        if (f.endsWith("baz.ctxp")) return JSON.stringify({ name: "baz" });
+        if (f.endsWith("/repo1/context.ctxp")) return JSON.stringify({ name: "foo" });
+        if (f.endsWith("/repo2/context.ctxp")) return JSON.stringify({ name: "bar" });
+        if (f.endsWith("/repo3/context.ctxp")) return JSON.stringify({ name: "baz" });
         return "";
     };
-    File.getDirectory = (f) => "/repo";
+    File.getDirectory = (f) => "/repo1";
     ObjectExtensions.isNullOrUndefined = (v): v is null | undefined => false;
     StringExtensions.isNullOrWhitespace = (v): v is null | undefined => false;
 
     const cmd = new TestCommandBase();
     const ctx = { parsedArguments: [] };
-    const projects = cmd["getProjects"](ctx as any);
+    const projects = cmd["getProjects"](ctx as any, [process.cwd()]);
 
     context.assert.strictEqual(projects.length, 3);
     context.assert.ok(projects.some(p => p.name === "foo"));
@@ -67,12 +67,12 @@ test("CommandBase: getProjects returns all valid projects with no filter", (cont
 });
 
 test("CommandBase: getProjects filters by --project argument", (context: TestContext) => {
-    Directory.listFiles = () => ["/repo/abc.ctxp", "/repo/xyz.ctxp"];
+    Directory.listFiles = () => ["/repo1/context.ctxp", "/repo2/context.ctxp"];
     Path.isFile = () => true;
     File.getExtension = () => "ctxp";
     File.read = (f) => {
-        if (f.endsWith("abc.ctxp")) return JSON.stringify({ name: "abc" });
-        if (f.endsWith("xyz.ctxp")) return JSON.stringify({ name: "xyz" });
+        if (f.endsWith("/repo1/context.ctxp")) return JSON.stringify({ name: "abc" });
+        if (f.endsWith("/repo2/context.ctxp")) return JSON.stringify({ name: "xyz" });
         return "";
     };
     File.getDirectory = () => "/repo";
@@ -81,7 +81,7 @@ test("CommandBase: getProjects filters by --project argument", (context: TestCon
 
     const cmd = new TestCommandBase();
     const ctx = { parsedArguments: [{ name: "--project", values: ["xyz"] }] };
-    const projects = cmd["getProjects"](ctx as any);
+    const projects = cmd["getProjects"](ctx as any, [process.cwd()]);
 
     context.assert.strictEqual(projects.length, 1);
     context.assert.strictEqual(projects[0].name, "xyz");
@@ -89,33 +89,10 @@ test("CommandBase: getProjects filters by --project argument", (context: TestCon
     restoreAll();
 });
 
-test("CommandBase: getProjects logs and skips invalid project", (context: TestContext) => {
-    let loggedError = "";
-    Console.writeLineError = (...args: any[]) => { loggedError += args.join(" "); };
-    Directory.listFiles = () => ["/repo/invalid.ctxp"];
-    Path.isFile = () => true;
-    File.getExtension = () => "ctxp";
-    File.read = () => "{}";
-    ObjectExtensions.isNullOrUndefined = (v): v is null | undefined => false;
-    StringExtensions.isNullOrWhitespace = (v): v is null | undefined => true;
-
-    File.getDirectory = () => "/repo";
-
-    const cmd = new TestCommandBase();
-    const ctx = { parsedArguments: [] };
-
-    const projects = cmd["getProjects"](ctx as any);
-
-    context.assert.strictEqual(projects.length, 0);
-    context.assert.strictEqual(loggedError, "Project file /repo/invalid.ctxp does not contain a valid project name.");
-
-    restoreAll();
-});
-
 test("CommandBase: getProjects logs and skips project with missing name", (context: TestContext) => {
     let loggedError = "";
     Console.writeLineError = (...args: any[]) => { loggedError += args.join(" "); };
-    Directory.listFiles = () => ["/repo/bad.ctxp"];
+    Directory.listFiles = () => ["/repo/context.ctxp"];
     Path.isFile = () => true;
     File.getExtension = () => "ctxp";
     File.read = () => JSON.stringify({});
@@ -125,10 +102,10 @@ test("CommandBase: getProjects logs and skips project with missing name", (conte
 
     const cmd = new TestCommandBase();
     const ctx = { parsedArguments: [] };
-    const projects = cmd["getProjects"](ctx as any);
+    const projects = cmd["getProjects"](ctx as any, [process.cwd()]);
 
     context.assert.strictEqual(projects.length, 0);
-    context.assert.match(loggedError, /does not contain a valid project name/);
+    context.assert.match(loggedError, /Invalid or unnamed project file: \/repo\/context.ctxp/);
 
     restoreAll();
 });
@@ -163,7 +140,7 @@ test("CommandBase: getTransformersAsync - warns on failed import", async (contex
     Console.writeLineWarning = (...args: any[]) => { warningOutput += args.join(" "); };
     const cmd = new TestCommandBase();
     const result = await cmd["getTransformersAsync"](ctx as any, fakeProgram as any);
-    
+
     context.assert.match(warningOutput, /Failed to load compiler extension/);
     context.assert.deepStrictEqual(result, { before: [], after: [] });
 
