@@ -10,16 +10,17 @@
 
 ## Getting Started
 
-Install the CLI globally:
+Install the CLI and Templates globally:
 
 ```bash
-npm i -g @contextjs/context
+npm i -g @contextjs/context @contextjs/templates
 ```
 
 Create a new project:
 
 ```bash
 ctx new api my-app
+cd my-app
 ctx build
 ```
 
@@ -88,10 +89,10 @@ ctx build
 <!-- BENCHMARKS_SUMMARY:START -->
 | Server | Req/sec | Latency (ms) | Throughput (MB/s) | Errors |
 |--------|--------:|-------------:|------------------:|-------:|
-| ContextJS | 14900.80 | 33.29 | 2.65 | 0.00 |
-| Node.js Raw HTTP | 14401.33 | 34.46 | 2.57 | 0.00 |
-| Fastify | 13818.13 | 35.94 | 2.47 | 0.00 |
-| Express | 8709.34 | 57.50 | 2.09 | 0.00 |
+| ContextJS | 15492.53 | 31.97 | 2.76 | 0.00 |
+| Node.js Raw HTTP | 14793.33 | 33.51 | 2.64 | 0.00 |
+| Fastify | 13884.27 | 35.80 | 2.48 | 0.00 |
+| Express | 8942.94 | 55.93 | 2.14 | 0.00 |
 
 <!-- BENCHMARKS_SUMMARY:END -->
 **Column descriptions**:
@@ -105,10 +106,10 @@ ctx build
 <!-- BENCHMARKS_EXTENDED:START -->
 | Server | Connections | Pipelining | Duration (s) | Latency Stdev (ms) | Requests Stdev | Throughput Stdev (MB/s) | Total Requests |
 |--------|------------:|-----------:|-------------:|-------------------:|---------------:|------------------------:|----:|
-| ContextJS | 500 | 1 | 10.10 | 107.81 | 210.73 | 0.04 | 447000 |
-| Node.js Raw HTTP | 500 | 1 | 10.10 | 113.49 | 199.56 | 0.04 | 432000 |
-| Fastify | 500 | 1 | 10.10 | 119.63 | 280.14 | 0.05 | 414500 |
-| Express | 500 | 1 | 10.18 | 243.14 | 180.99 | 0.04 | 261250 |
+| ContextJS | 500 | 1 | 10.07 | 102.32 | 258.50 | 0.05 | 464750 |
+| Node.js Raw HTTP | 500 | 1 | 10.08 | 109.54 | 198.34 | 0.04 | 443750 |
+| Fastify | 500 | 1 | 10.10 | 121.67 | 174.27 | 0.03 | 416500 |
+| Express | 500 | 1 | 10.15 | 237.23 | 191.14 | 0.05 | 268250 |
 
 <!-- BENCHMARKS_EXTENDED:END -->
 **Extended column descriptions**:

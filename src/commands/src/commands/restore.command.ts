@@ -19,7 +19,7 @@ export async function runAsync(context: ICommandContext) {
 
 export class RestoreCommand extends CommandBase {
     public override async runAsync(context: ICommandContext): Promise<void> {
-        const projects = this.getProjects(context);
+        const projects = this.getProjects(context, [process.cwd()]);
         if (projects.length === 0) {
             Console.writeLineError('No projects found. Exiting...');
             return process.exit(1);
@@ -31,8 +31,8 @@ export class RestoreCommand extends CommandBase {
     private async restoreAsync(project: Project): Promise<void> {
         Console.writeLine(`Restoring project: "${project.name}"...`);
 
-        if (!File.exists(`${project.path}/${project.name}.ctxp`)) {
-            Console.writeLineError(`No ${project.name}.ctxp file found. Exiting...`);
+        if (!File.exists(`${project.path}/context.ctxp`)) {
+            Console.writeLineError(`No context.ctxp file found. Exiting...`);
             return process.exit(1);
         }
 
@@ -42,7 +42,7 @@ export class RestoreCommand extends CommandBase {
         }
 
         try {
-            execSync(`cd ${project.path} && npm update && cd ..`, { stdio: 'inherit' });
+            execSync("npm update", { cwd: project.path, stdio: "inherit" });
             Console.writeLineSuccess(`Project "${project.name}" restored successfully.`);
         }
         catch {

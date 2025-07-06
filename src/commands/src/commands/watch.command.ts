@@ -21,7 +21,7 @@ export async function runAsync(context: ICommandContext) {
 
 export class WatchCommand extends CommandBase {
     public async runAsync(context: ICommandContext): Promise<void> {
-        const projects = this.getProjects(context);
+        const projects = this.getProjects(context, [process.cwd()]);
 
         if (projects.length === 0) {
             Console.writeLineError("No projects found. Exiting...");
@@ -35,11 +35,11 @@ export class WatchCommand extends CommandBase {
     }
 
     private async watchAsync(project: Project, context: ICommandContext, typescriptOptions: typescript.CompilerOptions): Promise<void> {
-        const projectFilePath = path.join(project.path, `${project.name}.ctxp`);
+        const projectFilePath = path.join(project.path, "context.ctxp");
         const tsConfigPath = path.join(project.path, "tsconfig.json");
 
         if (!File.exists(projectFilePath)) {
-            Console.writeLineError("No project file found. Exiting...");
+            Console.writeLineError("No context.ctxp project file found. Exiting...");
             return process.exit(1);
         }
 

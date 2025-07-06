@@ -98,7 +98,7 @@ test("BuildCommand: buildAsync - exits if project file missing", async (context:
     const testContext = { parsedArguments: [], compilerExtensions: [] };
 
     await context.assert.rejects(() => (buildCommand as any).buildAsync(project, testContext, {}), /ProcessExit/);
-    context.assert.match(capturedError, /No project file found/);
+    context.assert.match(capturedError, /No context.ctxp project file found/);
 
     restoreGlobals();
 });
@@ -110,7 +110,7 @@ test("BuildCommand: buildAsync - exits if tsconfig.json is missing", async (cont
     process.exit = ((code: number) => { throw new Error("ProcessExit"); }) as any;
 
     const project = new Project("foo", "/projects/foo");
-    File.exists = (filePath: string) => filePath.endsWith("foo.ctxp");
+    File.exists = (filePath: string) => filePath.endsWith("context.ctxp");
     File.read = () => "{}";
     File.copy = () => true;
 

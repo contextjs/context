@@ -25,7 +25,7 @@ export class RunCommand extends CommandBase {
         if (ObjectExtensions.isNullOrUndefined(noBuildCommand))
             await new BuildCommand().runAsync(context);
 
-        const projects = this.getProjects(context);
+        const projects = this.getProjects(context, [process.cwd()]);
         if (projects.length === 0) {
             Console.writeLineError("No projects found. Exiting...");
             process.exit(1);
@@ -37,16 +37,27 @@ export class RunCommand extends CommandBase {
 
     private async runProjectAsync(project: Project): Promise<void> {
         try {
-            const projectFilePath = path.join(project.path, `${project.name}.ctxp`);
+            const projectFilePath = path.join(project.path, "context.ctxp");
             if (!File.exists(projectFilePath)) {
-                Console.writeLineError(`No ${project.name}.ctxp file found. Exiting...`);
+                Console.writeLineError(`No context.ctxp file found. Exiting...`);
                 process.exit(1);
             }
 
             const contextJson = JSON.parse(File.read(projectFilePath));
             const mainEntryPath = contextJson.main;
             if (StringExtensions.isNullOrWhitespace(mainEntryPath)) {
-                Console.writeLineError(`No 'main' entry found in ${project.name}.ctxp project file.`);
+                Console.writeLineError(`No 'main' entry found in context.ctxp project file.`);
+                process.exit(1);
+            }
+
+            const mainEntryFileName = File.getName(mainEntryPath, false);
+            if (StringExtensions.isNullOrWhitespace(mainEntryFileName)) {
+                Console.writeLineError(`Invalid 'main' entry in context.ctxp project file: "${mainEntryPath}".`);
+                process.exit(1);
+            }
+            const mainEntryExtension = File.getExtension(mainEntryPath)?.toLowerCase().replace(/ts$/, "js");
+            if (StringExtensions.isNullOrWhitespace(mainEntryExtension)) {
+                Console.writeLineError(`Invalid 'main' entry in context.ctxp project file: "${mainEntryPath}". Expected a file with a valid extension.`);
                 process.exit(1);
             }
 
@@ -61,7 +72,7 @@ export class RunCommand extends CommandBase {
                         process.exit(1);
                     }
 
-                    mainEntry = path.join(project.path, outDir, mainEntryPath.replace(/\.ts$/, ".js"));
+                    mainEntry = path.join(project.path, outDir, `${mainEntryFileName}.${mainEntryExtension}`);
                 }
                 catch {
                     Console.writeLineError("Failed to parse tsconfig.json.");

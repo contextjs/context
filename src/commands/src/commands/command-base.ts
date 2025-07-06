@@ -16,27 +16,30 @@ import { Project } from "../models/project.js";
 export abstract class CommandBase {
     public abstract runAsync(context: ICommandContext): Promise<void>;
 
-    protected getProjects(context: ICommandContext): Project[] {
+    protected getProjects(context: ICommandContext, rootPaths: string[]): Project[] {
         const projectCommand = context.parsedArguments.find(arg => arg.name === "--project" || arg.name === "-p");
         const projectNames = projectCommand?.values || [];
 
-        const files = Directory.listFiles(process.cwd(), true);
-        let projects: Project[] = [];
+        const projects: Project[] = [];
 
-        for (const file of files) {
-            if (Path.isFile(file) && File.getExtension(file) === 'ctxp') {
-                const projectFile = File.read(file);
-                const project = JSON.parse(projectFile)
+        for (const rootPath of rootPaths) {
+            const files = Directory.listFiles(rootPath);
 
-                if (ObjectExtensions.isNullOrUndefined(project))
-                    Console.writeLineError(`Project file ${file} is not a valid CobtextJS project file.`);
-                if (StringExtensions.isNullOrWhitespace(project.name))
-                    Console.writeLineError(`Project file ${file} does not contain a valid project name.`);
+            for (const file of files) {
+                if (Path.isFile(file) && File.getName(file) === "context.ctxp") {
+                    const projectJson = JSON.parse(File.read(file));
+                    const isInvalid = ObjectExtensions.isNullOrUndefined(projectJson) || StringExtensions.isNullOrWhitespace(projectJson.name);
 
-                if (StringExtensions.isNullOrWhitespace(project.name) || (projectNames.length > 0 && !projectNames.includes(project.name)))
-                    continue;
+                    if (isInvalid) {
+                        Console.writeLineError(`Invalid or unnamed project file: ${file}`);
+                        continue;
+                    }
 
-                projects.push(new Project(project.name, File.getDirectory(file)!));
+                    if (projectNames.length > 0 && !projectNames.includes(projectJson.name))
+                        continue;
+
+                    projects.push(new Project(projectJson.name, File.getDirectory(file)!));
+                }
             }
         }
 

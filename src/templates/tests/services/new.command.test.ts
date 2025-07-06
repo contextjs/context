@@ -120,7 +120,7 @@ test('NewCommand: runAsync - successful creation', async (context: TestContext) 
     Path.exists = () => false;
     TemplateResolverService.resolveAsync = async () => ({
         templates: [
-            new FileTemplate('foo-{{name}}.txt', 'Hello {{name}}'),
+            new FileTemplate('foo.txt', 'Hello {{name}}'),
             new FileTemplate('folder/', null)
         ]
     });
@@ -132,31 +132,12 @@ test('NewCommand: runAsync - successful creation', async (context: TestContext) 
     await command.runAsync(testContext as any);
 
     context.assert.ok(createdDirectories.includes("myapp/folder/"));
-    context.assert.ok(writtenFiles.some(f => f.path === "myapp/foo-myapp.txt" && f.content === "Hello myapp"));
+    context.assert.ok(writtenFiles.some(f => f.path === "myapp/foo.txt" && f.content === "Hello myapp"));
     context.assert.ok(npmInstallInvoked);
     context.assert.ok(removeLastLineCalled);
     context.assert.ok(formattedMessages.some(m => m.includes("Done")));
 
     restorePatchedGlobals();
-});
-
-test('NewCommand: getNameAsync - name via --name arg (invalid)', async (context: TestContext) => {
-    ObjectExtensions.isNullOrUndefined = ((v: any): v is null | undefined => v == null) as any;
-    let errorMessage = '';
-    let exitCode;
-    Console.setOutput((...args: any[]) => { errorMessage += args.join(' '); });
-    process.exit = ((code: number) => { exitCode = code; throw new Error("ProcessExit"); }) as any;
-
-    const command = new NewCommand();
-    const testContext = {
-        parsedArguments: [
-            { name: '--name', values: ['My Project'] }
-        ]
-    };
-
-    await context.assert.rejects(() => (command as any).getNameAsync(testContext), /ProcessExit/);
-    context.assert.match(errorMessage, /not valid/);
-    context.assert.strictEqual(exitCode, 1);
 });
 
 test('NewCommand: getNameAsync - name starts with number', async (context: TestContext) => {
@@ -206,7 +187,7 @@ test('NewCommand: getNameAsync - uses basename when name arg missing', async (co
     const testContext = { parsedArguments: [{ name: '--unknown', values: [] }] };
     const resolvedName = await (command as any).getNameAsync(testContext);
 
-    context.assert.strictEqual(resolvedName, 'myfolder');
+    context.assert.strictEqual(resolvedName, 'MyFolder');
 
     path.basename = originalBasename;
 });

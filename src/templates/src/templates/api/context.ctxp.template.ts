@@ -9,7 +9,7 @@
 import { FileTemplate } from "../../models/file-template.js";
 
 export class ContextTemplate {
-  private static readonly name = "{{name}}.ctxp";
+  private static readonly name = "context.ctxp";
   private static readonly content = `{
   "name": "{{name}}",
   "type": "webapi",

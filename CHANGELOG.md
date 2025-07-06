@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [25.1.0] - 2025-07-06
+
+### Added
+- **@contextjs/templates**: New package for project templates, including a CLI for generating projects from templates.
+- **@contextjs/commands**: New package for command-line interface (CLI) commands
+
 ## [25.0.0] - 2025-06-22
 
 ### Added
@@ -32,3 +38,4 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Full GitHub Actions CI/CD and automated release workflow.
 
 [25.0.0]: https://github.com/contextjs/context/releases/tag/25.0.0
+[25.1.0]: https://github.com/contextjs/context/releases/tag/25.1.0

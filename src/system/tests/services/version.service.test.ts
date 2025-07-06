@@ -10,7 +10,7 @@ import test, { TestContext } from 'node:test';
 import { VersionService } from "../../src/services/version.service.ts";
 import { Console } from "../../src/services/console.ts";
 
-const CURRENT_VERSION = "25.1.0-next.3";
+const CURRENT_VERSION = "25.1.0";
 
 test('VersionService: get - success', async (context: TestContext) => {
     const version = VersionService.get();

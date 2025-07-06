@@ -11,7 +11,7 @@
 import type PackageInfo from "./package-info";
 
 export default class Config {
-    public static version: string = "25.1.0-next.3";
+    public static version: string = "25.1.0";
 
     public static typescriptVersion: string = "^5.8.3";
     public static reflectMetadataVersion: string = "^0.2.2";
