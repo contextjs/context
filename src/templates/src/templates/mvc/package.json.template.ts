@@ -22,7 +22,7 @@ export class PackageTemplate {
   },
   "devDependencies": {
     "@types/node": "^24.0.7"
-  },
+  }
 }`;
 
   public static readonly template: FileTemplate = new FileTemplate(PackageTemplate.name, PackageTemplate.content);

@@ -13,7 +13,7 @@ import { AboutControllerIndexViewTemplate } from "../../templates/mvc/views/abou
 import { HomeControllerIndexViewTemplate } from "../../templates/mvc/views/home/index.tshtml.template.js";
 import { TsConfigTemplate } from "../../templates/tsconfig.json.template.js";
 
-export class ViewsTemplatesService {
+export class MVCTemplatesService {
     public templates: FileTemplate[] = [
         TsConfigTemplate.template,
         ContextTemplate.template,
