@@ -242,8 +242,7 @@ test("Parser: mixed trivia and empty tag", (context: TestContext) => {
     const result = parse("  < >  ");
 
     context.assert.ok(result.diagnostics.length === 2);
-    context.assert.strictEqual(result.diagnostics[1].message.code, DiagnosticMessages.InvalidName.code);
-    context.assert.strictEqual(result.diagnostics[1].message.message, DiagnosticMessages.InvalidName.message);
+    context.assert.strictEqual(result.diagnostics[1].message.code, DiagnosticMessages.InvalidTagName("<").code);
 });
 
 test("Parser: simple @identifier transition", (context: TestContext) => {

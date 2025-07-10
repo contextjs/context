@@ -24,7 +24,7 @@ export class DiagnosticsService {
 
     private toDiagnostic(uri: string, diagnostic: ParserDiagnostic): Diagnostic {
         return {
-            message: diagnostic.toString(),
+            message: diagnostic.message.message,
             range: {
                 start: {
                     line: diagnostic.location?.startLineIndex ?? 0,
@@ -36,7 +36,7 @@ export class DiagnosticsService {
                 }
             },
             severity: this.toDiagnosticSeverity(diagnostic),
-            source: uri
+            source: ""
         };
     }
 

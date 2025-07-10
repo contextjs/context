@@ -68,6 +68,7 @@ import "./html/tags/html-tag-start-syntax-node.extensions.js";
 import "./html/tags/html-tag-syntax-node.extensions.js";
 
 import "./html/html-bracket-syntax-node.extensions.js";
+import "./html/doctype-syntax-node.extensions.js";
 
 import "./typescript/typescript-code-brace-syntax-node.extensions.js";
 import "./typescript/typescript-code-expression-syntax-node.extensions.js";

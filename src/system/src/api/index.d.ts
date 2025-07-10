@@ -184,6 +184,13 @@ export declare class StringExtensions {
     public static removeWhitespace(value: string): string;
 
     /**
+     * Removes all line break characters from the string.
+     * @param value The string to process.
+     * @returns {string} The string without line breaks.
+     */
+    public static removeLineBreaks(value: string): string;
+
+    /**
      * Checks if the character is a line break character.
      * @param character The character to check.
      * @returns {boolean} True if line break.

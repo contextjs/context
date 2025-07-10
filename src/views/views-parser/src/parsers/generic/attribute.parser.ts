@@ -30,12 +30,22 @@ export class AttributeParser {
 
         const children: SyntaxNode[] = [];
 
-        children.push(NameParser.parse(context, attributeNameSyntaxNode, this.nameStopPredicate));
+        children.push(context.ensureProgress(
+            () => NameParser.parse(context, attributeNameSyntaxNode, this.nameStopPredicate),
+            'NameParser (attribute) did not advance context.'
+        ));
 
         context.reset();
         if (context.currentCharacter === EqualsParser.equalsCharacter) {
-            children.push(EqualsParser.parse(context));
-            children.push(AttributeValueParser.parse(context, attributeValueSyntaxNode));
+            children.push(context.ensureProgress(
+                () => EqualsParser.parse(context),
+                'EqualsParser did not advance context.'
+            ));
+
+            children.push(context.ensureProgress(
+                () => AttributeValueParser.parse(context, attributeValueSyntaxNode),
+                'AttributeValueParser did not advance context.'
+            ));
         }
 
         return new attributeSyntaxNode(children, null, TriviaParser.parse(context));

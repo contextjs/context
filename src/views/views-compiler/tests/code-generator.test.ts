@@ -1384,3 +1384,174 @@ return __out;
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
 });
+
+test("CodeGenerator: Attribute value with escaped quotes", async (context: TestContext) => {
+    const contextMock = createContext('<input value="He said \\"hi\\"."/>');
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+        `export default class Index {
+    public static metadata = { filePath: \"index.tshtml\" };
+    public async renderAsync(model) {
+let __out = \"\";
+__out += \"<\";
+__out += \"input\";
+__out += \" \";
+__out += \"value\";
+__out += \"=\";
+__out += \"\\\"\";
+__out += \"He said \\\\\\\"hi\\\\\\\".\";
+__out += \"\\\"\";
+__out += \"/>\";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAA;AAAiB\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"He said \\\\\\\"hi\\\\\\\".\\\"/>\"]};";
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});
+
+test("CodeGenerator: Simple DOCTYPE at root", async (context: TestContext) => {
+    const contextMock = createContext('<!DOCTYPE html>');
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+`export default class Index {
+    public static metadata = { filePath: "index.tshtml" };
+    public async renderAsync(model) {
+let __out = "";
+__out += "<!DOCTYPE html>";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<!DOCTYPE html>\"]};";
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});
+
+test("CodeGenerator: Complex legacy DOCTYPE with identifiers", async (context: TestContext) => {
+    const doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+    const contextMock = createContext(doctype);
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+`export default class Index {
+    public static metadata = { filePath: "index.tshtml" };
+    public async renderAsync(model) {
+let __out = "";
+__out += "<!DOCTYPE HTML PUBLIC \\"-//W3C//DTD HTML 4.01 Transitional//EN\\" \\"http://www.w3.org/TR/html4/loose.dtd\\">";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = `const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<!DOCTYPE HTML PUBLIC \\\"-//W3C//DTD HTML 4.01 Transitional//EN\\\" \\\"http://www.w3.org/TR/html4/loose.dtd\\\">\"]};`;
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});
+
+test("CodeGenerator: DOCTYPE with leading/trailing whitespace and trivia", async (context: TestContext) => {
+    const contextMock = createContext('   <!DOCTYPE html>  \n<div>hi</div>');
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+`export default class Index {
+    public static metadata = { filePath: "index.tshtml" };
+    public async renderAsync(model) {
+let __out = "";
+__out += "   ";
+__out += "<!DOCTYPE html>";
+__out += "  \n";
+__out += "<";
+__out += "div";
+__out += ">";
+__out += "hi";
+__out += "</";
+__out += "div";
+__out += ">";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = `const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAG;AAAe;;AAClB;AAAC;AAAG;AAAC;AAAE;AAAE;AAAG\",\"file\":\"Index.ts\",\"sourcesContent\":[\"   <!DOCTYPE html>  \\n<div>hi</div>\"]};`;
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});
+
+test("CodeGenerator: DOCTYPE, comment, then content", async (context: TestContext) => {
+    const contextMock = createContext('<!DOCTYPE html><!-- doc comment --><main>test</main>');
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+`export default class Index {
+    public static metadata = { filePath: "index.tshtml" };
+    public async renderAsync(model) {
+let __out = "";
+__out += "<!DOCTYPE html>";
+__out += "<!-- doc comment -->";
+__out += "<";
+__out += "main";
+__out += ">";
+__out += "test";
+__out += "</";
+__out += "main";
+__out += ">";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = `const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAe;AAAoB;AAAC;AAAI;AAAC;AAAI;AAAE;AAAI\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<!DOCTYPE html><!-- doc comment --><main>test</main>\"]};`;
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});
+
+test("CodeGenerator: DOCTYPE inside markup (not recommended, but legal in legacy HTML)", async (context: TestContext) => {
+    const contextMock = createContext('<div><!DOCTYPE weird></div>');
+    const compiler = new ViewsCompiler(contextMock, OPTIONS);
+    const result = await compiler.compileFile(TEST_FILE_PATH);
+    const [code, sourcemap] = result.esmSource.split(/const __sourcemap\s*=/);
+
+    const expectedCode =
+`export default class Index {
+    public static metadata = { filePath: "index.tshtml" };
+    public async renderAsync(model) {
+let __out = "";
+__out += "<";
+__out += "div";
+__out += ">";
+__out += "<!DOCTYPE weird>";
+__out += "</";
+__out += "div";
+__out += ">";
+return __out;
+    }
+}
+`;
+    const generatedMap = "const __sourcemap =" + sourcemap;
+    const expectedMap = `const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;AAAC;AAAgB;AAAE;AAAG\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<div><!DOCTYPE weird></div>\"]};`;
+
+    context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
+    context.assert.strictEqual(generatedMap, expectedMap);
+});

@@ -84,10 +84,9 @@ test("TagStartParser: emits diagnostic for unexpected EOF", (context: TestContex
 
 test("TagStartParser: emits diagnostic for missing tag name", (context: TestContext) => {
     const { tagStartSyntaxNode, context: ctx } = parseTagStart("< >");
-    const tagNameNode = tagStartSyntaxNode.children.find(c => c instanceof TestTagNameSyntaxNode) as TestTagNameSyntaxNode;
 
-    context.assert.strictEqual(tagNameNode.children.length, 0);
-    context.assert.ok(ctx.diagnostics.some(d => d.message.code === DiagnosticMessages.InvalidName.code));
+    context.assert.strictEqual(ctx.diagnostics[1].message.code, DiagnosticMessages.InvalidTagName("<").code);
+    context.assert.strictEqual(ctx.diagnostics[1].message.message, DiagnosticMessages.InvalidTagName(">").message);
 });
 
 test("TagStartParser: parses tag with trivia after", (context: TestContext) => {

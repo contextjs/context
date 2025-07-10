@@ -8,7 +8,6 @@
 
 import { ParserResult } from '@contextjs/views-parser';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { ServerOptions } from './server-options.js';
 import { ConnectionService } from './services/connection.service.js';
 import { DiagnosticsService } from './services/diagnostic.service.js';
 import { DocumentService } from './services/document.service.js';
@@ -16,7 +15,6 @@ import { ParserService } from './services/parser.service.js';
 
 export class ServerContext {
     public document: TextDocument | null = null;
-    public options: ServerOptions;
     public parserResult: ParserResult | null = null;
 
     public connectionService!: ConnectionService;
@@ -24,8 +22,7 @@ export class ServerContext {
     public parserService!: ParserService;
     public diagnosticsService!: DiagnosticsService;
 
-    public constructor(options: ServerOptions) {
-        this.options = options;
+    public constructor() {
         this.createServices();
     }
 

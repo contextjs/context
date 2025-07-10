@@ -1,0 +1,25 @@
+{
+    "name": "@contextjs/language-server",
+    "version": "__VERSION__",
+    "description": "ContextJS - Language Server",
+    "author": "ContextJS",
+    "license": "MIT",
+    "type": "module",
+    "main": "api/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/contextjs/context.git",
+        "directory": "src/language-server"
+    },
+    "config": {
+        "id": "language-server"
+    },
+    "dependencies": {
+        "vscode-languageserver": "__VSCODE_LANGUAGE_SERVER_VERSION__",
+        "vscode-languageserver-textdocument": "__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__",
+        "@contextjs/views-parser": "__VERSION__"
+    },
+    "devDependencies": {
+        "typescript": "__TYPESCRIPT_VERSION__"
+    }
+}

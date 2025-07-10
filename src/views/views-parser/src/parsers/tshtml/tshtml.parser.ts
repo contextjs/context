@@ -13,6 +13,7 @@ import { CommentParser } from "../common/comment.parser.js";
 import { LiteralParser } from "../common/literal.parser.js";
 import { TransitionParser } from "../common/transition.parser.js";
 import { CDATAParser } from "../html/cdata.parser.js";
+import { DoctypeParser } from "../html/doctype.parser.js";
 import { HtmlTagParser } from "../html/html-tag.parser.js";
 import { ScriptParser } from "../html/script.parser.js";
 import { StyleParser } from "../html/style.parser.js";
@@ -37,6 +38,8 @@ export class TSHTMLParser {
                     return StyleParser.parse(context);
                 else if (ScriptParser.isScriptStart(context))
                     return ScriptParser.parse(context);
+                else if (DoctypeParser.isDoctypeStart(context))
+                    return DoctypeParser.parse(context);
                 else
                     return HtmlTagParser.parse(context);
             case '/':

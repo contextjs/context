@@ -14,6 +14,7 @@
     9000–9999: General/Internal/Other
 */
 
+import { StringExtensions } from "@contextjs/system";
 import { DiagnosticMessage } from "./diagnostic-message.js";
 
 export class DiagnosticMessages {
@@ -27,16 +28,17 @@ export class DiagnosticMessages {
     public static readonly InvalidTagFormat = new DiagnosticMessage(2004, "Invalid tag format. Expected a name followed by optional attributes.");
     public static readonly ExpectedCDATAStart = new DiagnosticMessage(2005, "Expected start of the \"<![CDATA[\" tag.");
     public static readonly MissingCDATAEnd = new DiagnosticMessage(2006, "Missing CDATA section end (expected \"]]>\").");
-    public static readonly InvalidTagName = (name: string) => new DiagnosticMessage(2007, `Invalid tag name: ${name}. Tag names must start with a letter and can contain letters, digits, hyphens, underscores, and periods.`);
-    public static readonly UnterminatedTag = (tagName: string) => new DiagnosticMessage(2008, `Unterminated tag: missing closing tag for <${tagName}>.`);
-    public static readonly MismatchedEndTag = (expectedTagName: string, tagName: string) => new DiagnosticMessage(2009, `Mismatched end tag: expected </${expectedTagName}>, but found </${tagName}>.`);
+    public static readonly InvalidTagName = (name: string) => new DiagnosticMessage(2007, `Invalid tag name: ${StringExtensions.removeLineBreaks(name)}. Tag names must start with a letter and can contain letters, digits, hyphens, underscores, and periods.`);
+    public static readonly UnterminatedTag = (tagName: string) => new DiagnosticMessage(2008, `Unterminated tag: missing closing tag for <${StringExtensions.removeLineBreaks(tagName)}>.`);
+    public static readonly MismatchedEndTag = (expectedTagName: string, tagName: string) => new DiagnosticMessage(2009, `Mismatched end tag: expected </${StringExtensions.removeLineBreaks(expectedTagName)}>, but found </${StringExtensions.removeLineBreaks(tagName)}>.`);
     public static readonly EmptyAttributeValue = new DiagnosticMessage(2010, "Empty attribute value is not allowed. Attribute values must be non-empty strings.");
-    public static readonly ExpectedEndStyleTag = (name: string) => new DiagnosticMessage(2011, `Expected end of style tag (</style>), but found: ${name}`);
-    public static readonly ExpectedEndScriptTag = (name: string) => new DiagnosticMessage(2012, `Expected end of script tag (</script>), but found: ${name}`);
+    public static readonly ExpectedEndStyleTag = (name: string) => new DiagnosticMessage(2011, `Expected end of style tag (</style>), but found: ${StringExtensions.removeLineBreaks(name)}`);
+    public static readonly ExpectedEndScriptTag = (name: string) => new DiagnosticMessage(2012, `Expected end of script tag (</script>), but found: ${StringExtensions.removeLineBreaks(name)}`);
+    public static readonly UnterminatedDoctype = new DiagnosticMessage(2013, "Unterminated DOCTYPE identifier: missing closing '>' character.");
 
-    public static readonly ExpectedTransitionMarker = (character: string) => new DiagnosticMessage(3000, `Expected a transition marker but found: ${character}`);
-    public static readonly ExpectedBracket = (character: string) => new DiagnosticMessage(3001, `Expected a bracket but found: ${character}`);
-    public static readonly ExpectedBrace = (character: string) => new DiagnosticMessage(3002, `Expected a brace but found: ${character}`);
+    public static readonly ExpectedTransitionMarker = (character: string) => new DiagnosticMessage(3000, `Expected a transition marker but found: ${StringExtensions.removeLineBreaks(character)}`);
+    public static readonly ExpectedBracket = (character: string) => new DiagnosticMessage(3001, `Expected a bracket but found: ${StringExtensions.removeLineBreaks(character)}`);
+    public static readonly ExpectedBrace = (character: string) => new DiagnosticMessage(3002, `Expected a brace but found: ${StringExtensions.removeLineBreaks(character)}`);
     public static readonly NoWhitespaceAfterTransition = new DiagnosticMessage(3003, "No whitespace allowed after transition marker.");
     public static readonly MalformedCodeBlock = new DiagnosticMessage(3004, "Malformed code block. Expected a valid code block syntax.");
     public static readonly UnexpectedTransition = new DiagnosticMessage(3005, `Unexpected transition.`);

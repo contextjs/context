@@ -7,19 +7,22 @@
  */
 
 import { Stack } from "@contextjs/collections";
-import { SyntaxNode } from "../syntax/abstracts/syntax-node.js";
-import { EndOfFileSyntaxNode } from "../syntax/common/end-of-file-syntax-node.js";
-import { ParserContextState } from "./parser-context-state.js";
 import { Diagnostic, DiagnosticMessage, Location, Source } from "@contextjs/views";
+import { ParserType } from "../parsers/parser.js";
+import { EndOfFileSyntaxNode } from "../syntax/common/end-of-file-syntax-node.js";
+import { Debug } from "./debug.js";
+import { ParserContextState } from "./parser-context-state.js";
 
 export class ParserContext {
     private readonly stateStack: Stack<ParserContextState> = new Stack();
     private startIndex: number = 0;
     private currentIndex: number = 0;
 
-    public readonly parser: { parse(context: ParserContext): SyntaxNode };
+    public readonly parser: ParserType;
     public readonly diagnostics: Diagnostic[] = [];
     public readonly source: Source;
+    public readonly debug: Debug;
+    public readonly debugMode: boolean = false;
 
     public get currentCharacter(): string {
         return this.peek();
@@ -45,13 +48,19 @@ export class ParserContext {
         return this.currentIndex;
     }
 
+    public get moved(): boolean {
+        return this.currentIndex !== this.startIndex;
+    }
+
     public get currentLength(): number {
         return this.currentIndex - this.startIndex;
     }
 
-    public constructor(source: Source, parser: { parse(context: ParserContext): SyntaxNode }) {
+    public constructor(source: Source, parser: ParserType, debugMode: boolean = false) {
         this.source = source;
         this.parser = parser;
+        this.debugMode = debugMode;
+        this.debug = new Debug(this);
     }
 
     public setState(state: ParserContextState): void {
@@ -193,5 +202,19 @@ export class ParserContext {
 
     public addErrorDiagnostic(message: DiagnosticMessage): void {
         this.diagnostics.push(Diagnostic.error(message, this.getLocation()));
+    }
+
+    public ensureProgress<T>(callback: () => T, message: string): T {
+        const offsetBefore = this.currentPosition;
+        const result = callback();
+        const offsetAfter = this.currentPosition;
+
+        if (offsetBefore === offsetAfter && this.currentCharacter !== EndOfFileSyntaxNode.endOfFile)
+            if (this.debugMode)
+                this.debug.error(message);
+            else
+                this.moveNext();
+
+        return result;
     }
 }

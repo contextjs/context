@@ -271,3 +271,10 @@ test("StringExtensions: escape - already escaped ${ is not double-escaped", (con
 
     context.assert.strictEqual(result, "foo\\\\${bar}");
 });
+
+test("StringExtensions: removeLineBreaks - success", (context: TestContext) => {
+    const input = "Hello\nWorld\r\nThis is a test.\u0085\u2028\u2029";
+    const result = StringExtensions.removeLineBreaks(input);
+
+    context.assert.strictEqual(result, "HelloWorldThis is a test.");
+});

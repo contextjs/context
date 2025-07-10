@@ -6,11 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { ICommandContext } from '@contextjs/system';
 import { ServerContext } from './server-context.js';
-import { ServerOptions } from './server-options.js';
 
-export class Server {
-    public static start(options: ServerOptions): void {
-        new ServerContext(options).listen();
-    }
+export async function runAsync(context: ICommandContext) {
+    new ServerContext().listen();
 }

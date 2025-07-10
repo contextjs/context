@@ -46,7 +46,10 @@ export class TagParser extends TagParserBase {
         ): TagSyntaxNode {
 
         const children: SyntaxNode[] = [];
-        const startTagResult = TagStartParser.parse(context, tagStartSyntaxNode, tagNameSyntaxNode, attributeTag, bracketSyntaxNode);
+        const startTagResult = context.ensureProgress(
+            () => TagStartParser.parse(context, tagStartSyntaxNode, tagNameSyntaxNode, attributeTag, bracketSyntaxNode),
+            'TagStartParser did not advance context.'
+        );
 
         if (startTagResult.selfClosing)
             return new tagSyntaxNode([startTagResult.tagStartSyntaxNode], TriviaParser.parse(context));
@@ -63,7 +66,10 @@ export class TagParser extends TagParserBase {
             children.push(context.parser.parse(context));
         }
 
-        children.push(TagEndParser.parse(context, startTagResult.tagName, tagNameSyntaxNode, tagEndSyntaxNode, bracketSyntaxNode));
+        children.push(context.ensureProgress(
+            () => TagEndParser.parse(context, startTagResult.tagName, tagNameSyntaxNode, tagEndSyntaxNode, bracketSyntaxNode),
+            'TagEndParser did not advance context.'
+        ));
 
         return new tagSyntaxNode(children, null, TriviaParser.parse(context));
     }

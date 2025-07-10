@@ -74,6 +74,7 @@ export * from "../syntax/html/tags/html-tag-start-syntax-node.js";
 export * from "../syntax/html/tags/html-tag-syntax-node.js";
 
 export * from "../syntax/html/html-bracket-syntax-node.js";
+export * from "../syntax/html/doctype-syntax-node.js";
 
 export * from "../syntax/typescript/typescript-code-block-syntax-node.js";
 export * from "../syntax/typescript/typescript-code-brace-syntax-node.js";

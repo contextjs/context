@@ -130,6 +130,14 @@ test("DiagnosticMessages: ExpectedEndScriptTag", (context: TestContext) => {
     context.assert.strictEqual(diagnosticMessage.message, "Expected end of script tag (</script>), but found: script");
 });
 
+test("DiagnosticMessages: UnterminatedDoctype", (context: TestContext) => {
+    const diagnosticMessage = DiagnosticMessages.UnterminatedDoctype;
+
+    context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
+    context.assert.strictEqual(diagnosticMessage.code, 2013);
+    context.assert.strictEqual(diagnosticMessage.message, "Unterminated DOCTYPE identifier: missing closing '>' character.");
+});
+
 test("DiagnosticMessages: ExpectedTransitionMarker", (context: TestContext) => {
     const diagnosticMessage = DiagnosticMessages.ExpectedTransitionMarker("@");
 
@@ -176,4 +184,20 @@ test("DiagnosticMessages: UnexpectedEndOfInput", (context: TestContext) => {
     context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
     context.assert.strictEqual(diagnosticMessage.code, 9000);
     context.assert.strictEqual(diagnosticMessage.message, 'Unexpected end of input.');
+});
+
+test("DiagnosticMessages: UnsupportedLanguage", (context: TestContext) => {
+    const diagnosticMessage = DiagnosticMessages.UnsupportedLanguage;
+
+    context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
+    context.assert.strictEqual(diagnosticMessage.code, 9001);
+    context.assert.strictEqual(diagnosticMessage.message, "Unsupported language.");
+});
+
+test("DiagnosticMessages: UnsupportedProjectType", (context: TestContext) => {
+    const diagnosticMessage = DiagnosticMessages.UnsupportedProjectType("unknown");
+
+    context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
+    context.assert.strictEqual(diagnosticMessage.code, 9002);
+    context.assert.strictEqual(diagnosticMessage.message, "Unsupported project type: 'unknown'.");
 });

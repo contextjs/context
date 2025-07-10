@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "outDir": "../../../_build/views-language-server",
+        "outDir": "../../_build/language-server",
         "skipLibCheck": true
     },
-    "extends": "../../../tsconfig-base.json",
+    "extends": "../../tsconfig-base.json",
     "exclude": [
         "tests/*",
         "scripts/*"

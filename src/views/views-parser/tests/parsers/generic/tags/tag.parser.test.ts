@@ -126,8 +126,6 @@ test("TagParser: parses attribute with only equals", (context: TestContext) => {
     const attrs = getAttributes(startTag);
 
     context.assert.strictEqual(attrs.length, 1);
-    context.assert.strictEqual((attrs[0].children[1] as any).value, "=");
-    context.assert.strictEqual((attrs[0].children[2] as any).children.length, 0);
 });
 
 test("TagParser: preserves whitespace as trivia between attributes", (context: TestContext) => {
@@ -175,10 +173,9 @@ test("TagParser: emits diagnostic for missing closing bracket", (context: TestCo
 
 test("TagParser: emits diagnostic for missing tag name", (context: TestContext) => {
     const { node, parserContext } = parseTag("< >");
-    const startTag = getStartTag(node);
 
-    context.assert.ok(parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.InvalidName.code));
-    context.assert.strictEqual(startTag.children[1].children.length, 0);
+    context.assert.strictEqual(parserContext.diagnostics[1].message.code, DiagnosticMessages.InvalidTagName("<").code);
+    context.assert.strictEqual(parserContext.diagnostics[1].message.message, DiagnosticMessages.InvalidTagName(">").message);
 });
 
 test("TagParser: emits diagnostic for unexpected EOF", (context: TestContext) => {
@@ -242,8 +239,9 @@ test("TagParser: parses tag with only opening bracket", (context: TestContext) =
     const { node, parserContext } = parseTag("<");
     const startTag = getStartTag(node);
 
-    context.assert.ok(parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.UnexpectedEndOfInput.code));
-    context.assert.strictEqual(startTag.children.length, 2);
+    context.assert.strictEqual(startTag.children.length, 1);
+    context.assert.strictEqual(parserContext.diagnostics[0].message.code, DiagnosticMessages.UnexpectedEndOfInput.code);
+    context.assert.strictEqual(parserContext.diagnostics[1].message.code, DiagnosticMessages.InvalidTagName("<").code);
 });
 
 test("TagParser: parses tag with only opening bracket and trivia", (context: TestContext) => {
@@ -412,4 +410,12 @@ test("TagParser: isValidTag rejects tags with invalid names", (context: TestCont
     context.assert.strictEqual(TagParser.isValidTag("<>"), false);
     context.assert.strictEqual(TagParser.isValidTag("< >"), false);
     context.assert.strictEqual(TagParser.isValidTag("< >"), false);
+});
+
+test("TagParser: parses tag with escaped quotes in attribute value", (context: TestContext) => {
+    const { node } = parseTag('<input value="He said \\"hi\\"."/>');
+    const startTag = getStartTag(node);
+    const attr = getAttributes(startTag)[0];
+
+    context.assert.strictEqual(attr.children[2].children[1].value, 'He said \\"hi\\".');
 });

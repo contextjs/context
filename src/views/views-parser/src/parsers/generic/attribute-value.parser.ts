@@ -73,12 +73,25 @@ export class AttributeValueParser {
                         context.reset();
                     }
                     break;
+                case '\\':
+                    valueBuilder.append(context.currentCharacter);
+                    context.moveNext();
+
+                    if (context.currentCharacter !== EndOfFileSyntaxNode.endOfFile) {
+                        valueBuilder.append(context.currentCharacter);
+                        context.moveNext();
+                    }
+                    else {
+                        context.addErrorDiagnostic(DiagnosticMessages.UnexpectedEndOfInput);
+                        done = true;
+                    }
+                    break;
                 default:
-                    if ((!isQuoted && (StringExtensions.containsOnlyWhitespace(context.currentCharacter) ||
-                        ATTRIBUTE_VALUE_TERMINATORS.has(context.currentCharacter))) ||
-                        (isQuoted && context.currentCharacter === quoteCharacter)) {
-                        if (!isQuoted && StringExtensions.containsOnlyWhitespace(context.currentCharacter))
-                            terminatedByWhitespace = true;
+                    if (isQuoted && context.currentCharacter === quoteCharacter)
+                        done = true;
+                    else if (!isQuoted &&
+                        (StringExtensions.containsOnlyWhitespace(context.currentCharacter) || ATTRIBUTE_VALUE_TERMINATORS.has(context.currentCharacter))) {
+                        terminatedByWhitespace = StringExtensions.containsOnlyWhitespace(context.currentCharacter);
                         done = true;
                     }
                     else {

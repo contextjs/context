@@ -1,8 +1,10 @@
+import { Console } from '@contextjs/system';
 import {
     createConnection,
     DidChangeConfigurationNotification,
     InitializeParams,
     InitializeResult,
+    ProposedFeatures,
     TextDocumentSyncKind
 } from 'vscode-languageserver/node.js';
 import { ServerContext } from '../server-context.js';
@@ -10,7 +12,7 @@ import { ServerContext } from '../server-context.js';
 export class ConnectionService {
     private hasConfigurationCapability = false;
     private hasWorkspaceFolderCapability = false;
-    public readonly connection = createConnection();
+    public readonly connection = (createConnection as any)(process.stdin, process.stdout, ProposedFeatures.all);
 
     public constructor(private readonly context: ServerContext) {
         this.setupEvents();
@@ -18,6 +20,9 @@ export class ConnectionService {
 
     public listen() {
         this.connection.listen();
+        Console.setOutput((...args: any[]) => { process.stderr.write(args.map(String).join(' ') + '\n'); });
+        Console.writeLineInfo('ContextJS Language Server is listening for connections...');
+        Console.resetOutput();
     }
 
     private setupEvents() {

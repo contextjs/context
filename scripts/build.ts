@@ -120,6 +120,8 @@ export class Build extends Script {
         packageFileContent = packageFileContent.replace(/__REFLECT_METADATA_VERSION__/g, Config.reflectMetadataVersion);
         packageFileContent = packageFileContent.replace(/__NODE_TYPES_VERSION__/g, Config.nodeTypesVersion);
         packageFileContent = packageFileContent.replace(/__NODE_ENGINE_VERSION__/g, Config.nodeEngineVersion);
+        packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_SERVER_VERSION__/g, Config.vscodeLanguageServerVersion);
+        packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__/g, Config.vscodeLanguageServerTextDocumentVersion);
 
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }

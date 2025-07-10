@@ -247,6 +247,8 @@ export declare class HtmlTagSyntaxNode extends TagSyntaxNode { }
 
 export declare class HtmlBracketSyntaxNode extends BracketSyntaxNode { }
 
+export declare class DoctypeSyntaxNode extends ValueSyntaxNode { }
+
 //#endregion
 
 //#region Typescript

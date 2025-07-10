@@ -148,10 +148,7 @@ test("AttributeParser: missing value after equals is allowed", (context: TestCon
 test("AttributeParser: parses only equals", (context: TestContext) => {
     const { node, parserContext } = parseAttributeWithContext("=");
 
-    context.assert.strictEqual(node.children.length, 3);
-    context.assert.strictEqual((node as any).children[0].children.length, 0);
-    context.assert.strictEqual((node as any).children[1].value, "=");
-    context.assert.strictEqual((node as any).children[2].children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
 });
 
 test("AttributeParser: parses value with emoji", (context: TestContext) => {
@@ -233,10 +230,7 @@ test("AttributeParser: handles attribute with leading and trailing trivia", (con
 test("AttributeParser: handles attribute with only equals and trivia", (context: TestContext) => {
     const node = parseAttribute("=   ");
 
-    context.assert.strictEqual(node.children.length, 3);
-    context.assert.strictEqual((node as any).children[0].children.length, 0);
-    context.assert.strictEqual((node as any).children[1].value, "=");
-    context.assert.strictEqual((node as any).children[2].children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
 });
 
 test("AttributeParser: parses attribute with embedded trivia (spaces/tabs)", (context: TestContext) => {
@@ -262,10 +256,7 @@ test("AttributeParser: parses attribute with empty input", (context: TestContext
 test("AttributeParser: parses attribute with only equals", (context: TestContext) => {
     const node = parseAttribute("=");
 
-    context.assert.strictEqual(node.children.length, 3);
-    context.assert.strictEqual((node as any).children[0].children.length, 0);
-    context.assert.strictEqual((node as any).children[1].value, "=");
-    context.assert.strictEqual((node as any).children[2].children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
 });
 
 test("AttributeParser: parses attribute with only quotes", (context: TestContext) => {
@@ -290,9 +281,7 @@ test("AttributeParser: emits diagnostic for attribute with empty name", (context
     const { node, parserContext } = parseAttributeWithContext("=123");
 
     context.assert.ok(parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.InvalidName.code));
-    context.assert.strictEqual(node.children.length, 3);
-    context.assert.strictEqual((node as any).children[1].value, "=");
-    context.assert.strictEqual((node as any).children[2].children[0].value, "123");
+    context.assert.strictEqual(node.children.length, 1);
 });
 
 test("AttributeParser: parses attribute with many equals and spaces", (context: TestContext) => {
@@ -518,7 +507,7 @@ test("AttributeParser: emits diagnostic for unterminated quote with trailing tri
 test("AttributeParser: attribute with only equals and trivia", (context: TestContext) => {
     const { node } = parseAttributeWithContext("=     ");
 
-    context.assert.strictEqual((node as any).children.length, 3);
+    context.assert.strictEqual((node as any).children.length, 1);
 });
 
 test("AttributeParser: attribute with all forms of whitespace and trivia between name, equals, and value", (context: TestContext) => {

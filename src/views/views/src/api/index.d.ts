@@ -191,6 +191,7 @@ export declare class DiagnosticMessages {
     public static readonly EmptyAttributeValue: DiagnosticMessage;
     public static readonly ExpectedEndStyleTag: (name: string) => DiagnosticMessage;
     public static readonly ExpectedEndScriptTag: (name: string) => DiagnosticMessage;
+    public static readonly UnterminatedDoctype: DiagnosticMessage;
 
     public static readonly ExpectedTransitionMarker: (character: string) => DiagnosticMessage;
     public static readonly ExpectedBracket: (character: string) => DiagnosticMessage;

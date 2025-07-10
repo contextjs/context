@@ -29,16 +29,19 @@ export class StyleParser {
 
     public static parse(context: ParserContext): StyleTagSyntaxNode {
         const children: SyntaxNode[] = [];
-        const tagStartResult = TagStartParser.parse(
-            context,
-            StyleTagStartSyntaxNode,
-            StyleTagNameSyntaxNode,
-            {
-                attributeSyntaxNode: StyleAttributeNameSyntaxNode,
-                attributeNameSyntaxNode: StyleAttributeNameSyntaxNode,
-                attributeValueSyntaxNode: StyleAttributeNameSyntaxNode,
-            },
-            HtmlBracketSyntaxNode
+        const tagStartResult = context.ensureProgress(
+            () => TagStartParser.parse(
+                context,
+                StyleTagStartSyntaxNode,
+                StyleTagNameSyntaxNode,
+                {
+                    attributeSyntaxNode: StyleAttributeNameSyntaxNode,
+                    attributeNameSyntaxNode: StyleAttributeNameSyntaxNode,
+                    attributeValueSyntaxNode: StyleAttributeNameSyntaxNode,
+                },
+                HtmlBracketSyntaxNode
+            ),
+            'TagStartParser (style) did not advance context.'
         );
 
         children.push(tagStartResult.tagStartSyntaxNode);
@@ -48,7 +51,10 @@ export class StyleParser {
         if (context.currentCharacter === EndOfFileSyntaxNode.endOfFile || !isEndTagPresent)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedEndStyleTag(context.currentCharacter));
         else
-            children.push(TagEndParser.parse(context, tagStartResult.tagName, StyleTagNameSyntaxNode, StyleTagEndSyntaxNode, HtmlBracketSyntaxNode));
+            children.push(context.ensureProgress(
+                () => TagEndParser.parse(context, tagStartResult.tagName, StyleTagNameSyntaxNode, StyleTagEndSyntaxNode, HtmlBracketSyntaxNode),
+                'TagEndParser (style end) did not advance context.'
+            ));
 
         return new StyleTagSyntaxNode(children, null, TriviaParser.parse(context));
     }

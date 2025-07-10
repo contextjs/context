@@ -26,7 +26,10 @@ export class InlineCodeParser {
         ): TCodeExpressionSyntaxNode {
 
         context.reset();
-        const transitionNode = TransitionParser.parse(context);
+        const transitionNode = context.ensureProgress(
+            () => TransitionParser.parse(context),
+            "TransitionParser did not advance context (inline code)."
+        );
         transitionNode.trailingTrivia = TriviaParser.parse(context);
 
         context.reset();

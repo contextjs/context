@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { StringExtensions } from "@contextjs/system";
 import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../../context/parser-context.js";
 import { BracketSyntaxNode, BracketSyntaxNodeConstructor } from "../../../syntax/abstracts/bracket-syntax-node.js";
@@ -30,14 +31,28 @@ export class TagEndParser extends TagParserBase {
         ): TTagEndSyntaxNode {
 
         const children: SyntaxNode[] = [];
-        children.push(BracketParser.parse(context, bracketSyntaxNode, "</"));
+        children.push(context.ensureProgress(
+            () => BracketParser.parse(context, bracketSyntaxNode, "</"),
+            "BracketParser (open tag end) did not advance context."
+        ));
 
         const tagName = this.getTagName(context);
-        const tagNameNode = NameParser.parse(context, tagNameSyntaxNode, super.tagNameStopPredicate);
-        children.push(tagNameNode);
+        if (StringExtensions.isNullOrWhitespace(tagName)) {
+            context.addErrorDiagnostic(DiagnosticMessages.InvalidTagName(context.currentCharacter));
+            return new tagEndSyntaxNode(children, null, TriviaParser.parse(context));
+        }
 
-        if (context.currentCharacter === ">")
-            children.push(BracketParser.parse(context, bracketSyntaxNode, ">"));
+        children.push(context.ensureProgress(
+            () => NameParser.parse(context, tagNameSyntaxNode, super.tagNameStopPredicate),
+            'NameParser (tag end) did not advance context.'
+        ));
+
+        if (context.currentCharacter === ">") {
+            children.push(context.ensureProgress(
+                () => BracketParser.parse(context, bracketSyntaxNode, ">"),
+                'BracketParser (close tag end) did not advance context.'
+            ));
+        }
         else
             context.addErrorDiagnostic(DiagnosticMessages.UnterminatedTag(expectedTagName));
 

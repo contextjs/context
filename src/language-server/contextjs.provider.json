@@ -1,0 +1,11 @@
+{
+    "$schema": "https://contextjs.dev/schemas/contextjs.provider.schema.json",
+    "name": "@contextjs/language-server",
+    "commands": {
+        "lsp": {
+            "path": "./provider.js",
+            "description": "ContextJS Language Server",
+            "help": "Provides language server capabilities for ContextJS."
+        }
+    }
+}

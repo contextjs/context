@@ -22,6 +22,10 @@ export class StringExtensions {
         return value.replace(/\s/g, "");
     }
 
+    public static removeLineBreaks(value: string): string {
+        return value.replace(/[\r\n\u0085\u2028\u2029]/g, "");
+    }
+
     public static isLineBreak(character: string): boolean {
         return this.lineBreaks.includes(character);
     }

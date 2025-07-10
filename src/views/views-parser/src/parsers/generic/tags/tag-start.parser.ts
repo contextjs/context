@@ -21,6 +21,7 @@ import { AttributeParser } from "../attribute.parser.js";
 import { BracketParser } from "../bracket.parser.js";
 import { NameParser } from "../name.parser.js";
 import { TagParserBase } from "./tag-parser-base.js";
+import { StringExtensions } from "@contextjs/system";
 
 export class TagStartParser extends TagParserBase {
     public static parse<
@@ -45,9 +46,21 @@ export class TagStartParser extends TagParserBase {
         let selfClosing = false;
         const children: SyntaxNode[] = [];
 
-        children.push(BracketParser.parse(context, bracketSyntaxNode, "<"));
+        children.push(context.ensureProgress(
+            () => BracketParser.parse(context, bracketSyntaxNode, "<"),
+            'BracketParser (tag start "<") did not advance context.'
+        ));
+
         const tagName = this.getTagName(context);
-        children.push(NameParser.parse(context, tagNameSyntaxNode, super.tagNameStopPredicate));
+        if (StringExtensions.isNullOrWhitespace(tagName)) {
+            context.addErrorDiagnostic(DiagnosticMessages.InvalidTagName(context.currentCharacter));
+            return { tagName, selfClosing, tagStartSyntaxNode: new tagStartSyntaxNode(children, null, TriviaParser.parse(context)) };
+        }
+
+        children.push(context.ensureProgress(
+            () => NameParser.parse(context, tagNameSyntaxNode, super.tagNameStopPredicate),
+            'NameParser (tag start) did not advance context.'
+        ));
 
         context.reset();
 
@@ -58,13 +71,19 @@ export class TagStartParser extends TagParserBase {
                 break;
             }
             if (context.peekMultiple(2) === "/>") {
-                children.push(BracketParser.parse(context, bracketSyntaxNode, "/>"));
+                children.push(context.ensureProgress(
+                    () => BracketParser.parse(context, bracketSyntaxNode, "/>"),
+                    'BracketParser (tag start "/>") did not advance context.'
+                ));
                 selfClosing = true;
                 done = true;
                 break;
             }
             if (context.currentCharacter === ">") {
-                children.push(BracketParser.parse(context, bracketSyntaxNode, ">"));
+                children.push(context.ensureProgress(
+                    () => BracketParser.parse(context, bracketSyntaxNode, ">"),
+                    'BracketParser (tag start ">") did not advance context.'
+                ));
                 done = true;
                 break;
             }
@@ -74,11 +93,15 @@ export class TagStartParser extends TagParserBase {
                 break;
             }
 
-            children.push(AttributeParser.parse(
-                context,
-                attributeTag.attributeSyntaxNode,
-                attributeTag.attributeNameSyntaxNode,
-                attributeTag.attributeValueSyntaxNode));
+            children.push(context.ensureProgress(
+                () => AttributeParser.parse(
+                    context,
+                    attributeTag.attributeSyntaxNode,
+                    attributeTag.attributeNameSyntaxNode,
+                    attributeTag.attributeValueSyntaxNode
+                ),
+                'AttributeParser did not advance context.'
+            ));
         }
 
         return { tagName, selfClosing, tagStartSyntaxNode: new tagStartSyntaxNode(children, null, TriviaParser.parse(context)) };

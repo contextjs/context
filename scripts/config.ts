@@ -17,6 +17,8 @@ export default class Config {
     public static reflectMetadataVersion: string = "^0.2.2";
     public static nodeTypesVersion: string = "^24.0.10";
     public static nodeEngineVersion: string = "24.x";
+    public static vscodeLanguageServerVersion: string = "^9.0.1";
+    public static vscodeLanguageServerTextDocumentVersion: string = "^1.0.12";
 
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
@@ -34,7 +36,7 @@ export default class Config {
         { name: "views", path: "views/views" },
         { name: "views-parser", path: "views/views-parser" },
         { name: "views-compiler", path: "views/views-compiler" },
-        { name: "views-language-server", path: "views/views-language-server" },
+        { name: "language-server", path: "language-server" },
         { name: "webserver", path: "webserver/webserver" },
         { name: "webserver-middleware-static", path: "webserver/webserver-middleware-static" },
         { name: "webserver-middleware-cookies", path: "webserver/webserver-middleware-cookies" },

@@ -29,16 +29,19 @@ export class ScriptParser {
 
     public static parse(context: ParserContext): ScriptTagSyntaxNode {
         const children: SyntaxNode[] = [];
-        const tagStartResult = TagStartParser.parse(
-            context,
-            ScriptTagStartSyntaxNode,
-            ScriptTagNameSyntaxNode,
-            {
-                attributeSyntaxNode: ScriptAttributeNameSyntaxNode,
-                attributeNameSyntaxNode: ScriptAttributeNameSyntaxNode,
-                attributeValueSyntaxNode: ScriptAttributeNameSyntaxNode,
-            },
-            HtmlBracketSyntaxNode
+        const tagStartResult = context.ensureProgress(
+            () => TagStartParser.parse(
+                context,
+                ScriptTagStartSyntaxNode,
+                ScriptTagNameSyntaxNode,
+                {
+                    attributeSyntaxNode: ScriptAttributeNameSyntaxNode,
+                    attributeNameSyntaxNode: ScriptAttributeNameSyntaxNode,
+                    attributeValueSyntaxNode: ScriptAttributeNameSyntaxNode,
+                },
+                HtmlBracketSyntaxNode
+            ),
+            'TagStartParser (script) did not advance context.'
         );
 
         children.push(tagStartResult.tagStartSyntaxNode);
@@ -48,7 +51,10 @@ export class ScriptParser {
         if (context.currentCharacter === EndOfFileSyntaxNode.endOfFile || !isEndTagPresent)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedEndScriptTag(context.currentCharacter));
         else
-            children.push(TagEndParser.parse(context, tagStartResult.tagName, ScriptTagNameSyntaxNode, ScriptTagEndSyntaxNode, HtmlBracketSyntaxNode));
+            children.push(context.ensureProgress(
+                () => TagEndParser.parse(context, tagStartResult.tagName, ScriptTagNameSyntaxNode, ScriptTagEndSyntaxNode, HtmlBracketSyntaxNode),
+                'TagEndParser (script end) did not advance context.'
+            ));
 
         return new ScriptTagSyntaxNode(children, null, TriviaParser.parse(context));
     }

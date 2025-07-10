@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { MVCTemplatesService } from "./mvc-templates.service.js";
+import { MVCTemplateService } from "./mvc-template.service.js";
 import { TemplateService } from "./template.service.js";
 import { WebAPITemplateService } from "./webapi-template.service.js";
 
@@ -16,7 +16,7 @@ export class TemplateResolverService {
             case "webapi":
                 return new WebAPITemplateService();
             case "mvc":
-                return new MVCTemplatesService();
+                return new MVCTemplateService();
             default:
                 return null;
         }

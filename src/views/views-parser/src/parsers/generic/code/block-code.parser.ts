@@ -31,10 +31,16 @@ export class BlockCodeParser {
         ): TCodeBlockSyntaxNode {
 
         context.reset();
-        const transitionNode = TransitionParser.parse(context);
+        const transitionNode = context.ensureProgress(
+            () => TransitionParser.parse(context),
+            "BlockCodeParser: TransitionParser did not advance context."
+        );
 
         context.reset();
-        const openBraceNode = BraceParser.parse(context, braceSyntaxNode, '{');
+        const openBraceNode = context.ensureProgress(
+            () => BraceParser.parse(context, braceSyntaxNode, '{'),
+            "BlockCodeParser: BraceParser (open) did not advance context."
+        );
 
         context.reset();
         const children: SyntaxNode[] = [];
@@ -43,23 +49,21 @@ export class BlockCodeParser {
 
         context.setState(ParserContextState.RootBlock);
 
-        // ---- Quote tracking state ----
         let inSingleQuote = false;
         let inDoubleQuote = false;
         let inBacktick = false;
-        let prevChar = "";
+        let previousCharacter = "";
 
         while (!done) {
-            const ch = context.currentCharacter;
+            const currentCharacter = context.currentCharacter;
 
-            // Update quote state (handles basic escaping, but can be extended)
-            if (ch === "'" && !inDoubleQuote && !inBacktick && prevChar !== '\\') inSingleQuote = !inSingleQuote;
-            else if (ch === '"' && !inSingleQuote && !inBacktick && prevChar !== '\\') inDoubleQuote = !inDoubleQuote;
-            else if (ch === '`' && !inSingleQuote && !inDoubleQuote && prevChar !== '\\') inBacktick = !inBacktick;
+            if (currentCharacter === "'" && !inDoubleQuote && !inBacktick && !BlockCodeParser.isEscapedQuote(context)) inSingleQuote = !inSingleQuote;
+            else if (currentCharacter === '"' && !inSingleQuote && !inBacktick && !BlockCodeParser.isEscapedQuote(context)) inDoubleQuote = !inDoubleQuote;
+            else if (currentCharacter === '`' && !inSingleQuote && !inDoubleQuote && !BlockCodeParser.isEscapedQuote(context)) inBacktick = !inBacktick;
 
             const insideQuotes = inSingleQuote || inDoubleQuote || inBacktick;
 
-            switch (ch) {
+            switch (currentCharacter) {
                 case EndOfFileSyntaxNode.endOfFile:
                     if (context.currentState === ParserContextState.RootBlock)
                         context.addErrorDiagnostic(DiagnosticMessages.UnexpectedEndOfInput);
@@ -72,30 +76,30 @@ export class BlockCodeParser {
                         if (context.currentState === ParserContextState.RootBlock)
                             done = true;
                         else {
-                            valueBuilder.append(ch);
+                            valueBuilder.append(currentCharacter);
                             context.moveNext();
                         }
                         context.popState();
                         break;
                     }
-                    valueBuilder.append(ch);
+                    valueBuilder.append(currentCharacter);
                     context.moveNext();
                     break;
                 case '{':
                     if (!insideQuotes) {
                         context.setState(ParserContextState.NestedBlock);
-                        valueBuilder.append(ch);
+                        valueBuilder.append(currentCharacter);
                         context.moveNext();
                         break;
                     }
-                    valueBuilder.append(ch);
+                    valueBuilder.append(currentCharacter);
                     context.moveNext();
                     break;
                 case '<': {
                     if (!insideQuotes) {
                         const tagNodes = this.tryParseTag(context, valueBuilder.toString(), codeValueSyntaxNode);
                         if (tagNodes.length === 0) {
-                            valueBuilder.append(ch);
+                            valueBuilder.append(currentCharacter);
                             context.moveNext();
                         }
                         else {
@@ -105,23 +109,26 @@ export class BlockCodeParser {
                         }
                         break;
                     }
-                    valueBuilder.append(ch);
+                    valueBuilder.append(currentCharacter);
                     context.moveNext();
                     break;
                 }
                 default:
-                    valueBuilder.append(ch);
+                    valueBuilder.append(currentCharacter);
                     context.moveNext();
                     break;
             }
 
-            prevChar = ch;
+            previousCharacter = currentCharacter;
         }
 
         if (valueBuilder.length > 0)
             children.push(new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation()));
 
-        const closingBraceNode = BraceParser.parse(context, braceSyntaxNode, '}');
+        const closingBraceNode = context.ensureProgress(
+            () => BraceParser.parse(context, braceSyntaxNode, '}'),
+            "BlockCodeParser: BraceParser (close) did not advance context."
+        );
 
         return new codeBlockSyntaxNode(transitionNode, openBraceNode, children, closingBraceNode, null, TriviaParser.parse(context));
     }
@@ -142,5 +149,17 @@ export class BlockCodeParser {
         }
 
         return [];
+    }
+
+    private static isEscapedQuote(context: ParserContext): boolean {
+        let backslashCount = 0;
+        let offset = -1;
+
+        while (context.peek(offset) === '\\') {
+            backslashCount++;
+            offset--;
+        }
+
+        return backslashCount % 2 === 1;
     }
 }
