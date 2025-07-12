@@ -30,7 +30,7 @@ export class DiagnosticMessages {
     public static readonly MissingCDATAEnd = new DiagnosticMessage(2006, "Missing CDATA section end (expected \"]]>\").");
     public static readonly InvalidTagName = (name: string) => new DiagnosticMessage(2007, `Invalid tag name: ${StringExtensions.removeLineBreaks(name)}. Tag names must start with a letter and can contain letters, digits, hyphens, underscores, and periods.`);
     public static readonly UnterminatedTag = (tagName: string) => new DiagnosticMessage(2008, `Unterminated tag: missing closing tag for <${StringExtensions.removeLineBreaks(tagName)}>.`);
-    public static readonly MismatchedEndTag = (expectedTagName: string, tagName: string) => new DiagnosticMessage(2009, `Mismatched end tag: expected </${StringExtensions.removeLineBreaks(expectedTagName)}>, but found </${StringExtensions.removeLineBreaks(tagName)}>.`);
+    public static readonly MismatchedEndTag = (expectedTagName: string, tagName: string) => new DiagnosticMessage(2009, `Mismatched end tag: expected ${StringExtensions.removeLineBreaks(expectedTagName)}, but found ${StringExtensions.removeLineBreaks(tagName)}.`);
     public static readonly EmptyAttributeValue = new DiagnosticMessage(2010, "Empty attribute value is not allowed. Attribute values must be non-empty strings.");
     public static readonly ExpectedEndStyleTag = (name: string) => new DiagnosticMessage(2011, `Expected end of style tag (</style>), but found: ${StringExtensions.removeLineBreaks(name)}`);
     public static readonly ExpectedEndScriptTag = (name: string) => new DiagnosticMessage(2012, `Expected end of script tag (</script>), but found: ${StringExtensions.removeLineBreaks(name)}`);

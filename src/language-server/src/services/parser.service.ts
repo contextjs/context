@@ -1,7 +1,16 @@
-import { LanguageExtensions, Parser } from '@contextjs/views-parser';
-import { ObjectExtensions, StringExtensions } from '@contextjs/system';
+/**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
+ */
+
 import * as url from 'node:url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+
+import { LanguageExtensions, Parser } from '@contextjs/views-parser';
+import { ObjectExtensions, StringExtensions } from '@contextjs/system';
 import { ServerContext } from '../server-context.js';
 
 export class ParserService {

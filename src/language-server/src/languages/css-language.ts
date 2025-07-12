@@ -1,3 +1,12 @@
+/**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
+ */
+
+
 // import { CompletionList, getCSSLanguageService, LanguageService, Stylesheet } from 'vscode-css-languageservice';
 // import { TextDocument } from "vscode-languageserver-textdocument";
 // import { TextDocumentPositionParams } from 'vscode-languageserver/node';

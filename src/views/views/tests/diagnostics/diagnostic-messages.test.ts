@@ -103,7 +103,7 @@ test("DiagnosticMessages: MismatchedEndTag", (context: TestContext) => {
 
     context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
     context.assert.strictEqual(diagnosticMessage.code, 2009);
-    context.assert.strictEqual(diagnosticMessage.message, "Mismatched end tag: expected </div>, but found </span>.");
+    context.assert.strictEqual(diagnosticMessage.message, "Mismatched end tag: expected div, but found span.");
 });
 
 test("DiagnosticMessages: EmptyAttributeValue", (context: TestContext) => {

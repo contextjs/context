@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
+ */
+
 import { ObjectExtensions } from '@contextjs/system';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocuments } from 'vscode-languageserver/node.js';
@@ -19,6 +27,8 @@ export class DocumentService {
 
     private setupEvents() {
         this.documents.onDidChangeContent((event) => {
+            this.context.parserResult = null;
+            this.context.semanticTokensContext.clear();
             const uri = event.document.uri;
 
             const oldTimeout = this.debounceTimeouts.get(uri);
@@ -27,11 +37,13 @@ export class DocumentService {
 
             const timeout = setTimeout(() => {
                 this.context.parserService.parse(event.document);
+                this.context.semanticsService.parseTokens();
+
                 const diagnostics = this.context.diagnosticsService.analyse();
-                if (diagnostics)
-                    this.context.connectionService.connection.sendDiagnostics(diagnostics);
-                else
+                if (ObjectExtensions.isNullOrUndefined(diagnostics))
                     this.context.connectionService.connection.sendDiagnostics({ uri, diagnostics: [] });
+                else
+                    this.context.connectionService.connection.sendDiagnostics(diagnostics);
 
                 this.debounceTimeouts.delete(uri);
             }, this.debounceDelay);

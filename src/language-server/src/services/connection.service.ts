@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright ContextJS All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found at https://github.com/contextjs/context/blob/main/LICENSE
+ */
+
 import { Console } from '@contextjs/system';
 import {
     createConnection,
@@ -7,6 +15,8 @@ import {
     ProposedFeatures,
     TextDocumentSyncKind
 } from 'vscode-languageserver/node.js';
+import { Constants } from '../constants.js';
+import { SEMANTIC_TOKEN_LEGEND } from '../semantics/semantic-token-type.js';
 import { ServerContext } from '../server-context.js';
 
 export class ConnectionService {
@@ -36,12 +46,12 @@ export class ConnectionService {
                 capabilities: {
                     textDocumentSync: TextDocumentSyncKind.Incremental,
                     //completionProvider: { triggerCharacters: [">"], resolveProvider: false },
-                    // semanticTokensProvider: {
-                    //     full: false,
-                    //     range: true,
-                    //     documentSelector: [{ language: 'context' }],
-                    //     legend: { tokenTypes: ['markupElement'], tokenModifiers: [] }
-                    // }
+                    semanticTokensProvider: {
+                        full: true,
+                        range: false,
+                        documentSelector: [{ scheme: 'file', language: Constants.LANGUAGE }],
+                        legend: { tokenTypes: SEMANTIC_TOKEN_LEGEND, tokenModifiers: [] }
+                    }
                 }
             };
 

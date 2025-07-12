@@ -21,8 +21,8 @@ export class TagParserBase {
         const elementName = context.peekWhile((char) =>
             char !== '>' &&
             char !== '/' &&
-            char !== ' ' &&
             char !== '=' &&
+            !StringExtensions.containsOnlyWhitespace(char) &&
             char !== EndOfFileSyntaxNode.endOfFile
         );
 

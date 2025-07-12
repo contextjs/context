@@ -17,7 +17,8 @@
     "dependencies": {
         "vscode-languageserver": "__VSCODE_LANGUAGE_SERVER_VERSION__",
         "vscode-languageserver-textdocument": "__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__",
-        "@contextjs/views-parser": "__VERSION__"
+        "@contextjs/views-parser": "__VERSION__",
+        "@contextjs/collections": "__VERSION__"
     },
     "devDependencies": {
         "typescript": "__TYPESCRIPT_VERSION__"
