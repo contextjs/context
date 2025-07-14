@@ -199,6 +199,7 @@ export declare class DiagnosticMessages {
     public static readonly NoWhitespaceAfterTransition: DiagnosticMessage;
     public static readonly MalformedCodeBlock: DiagnosticMessage;
     public static readonly UnexpectedTransition: DiagnosticMessage;
+    public static readonly UnexpectedCodeBlock: DiagnosticMessage;
 
     public static readonly UnexpectedEndOfInput: DiagnosticMessage;
     public static readonly UnsupportedLanguage: DiagnosticMessage;

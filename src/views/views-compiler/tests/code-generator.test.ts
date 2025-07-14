@@ -120,7 +120,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;AAAC;AAAK;AAAC;AAAA;AAAA;AAAU;AAAC;AAAE;AAAG\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<div class=\\\"greeting\\\"></div>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;AAAC;AAAK;AAAC;AAAA;AAAS;AAAC;AAAC;AAAE;AAAG\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<div class=\\\"greeting\\\"></div>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -420,7 +420,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAA;AAAO\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"A B C\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAM;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"A B C\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -459,7 +459,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;AAAC;AAAG;AAAC;AAAA;AAAA;AAAG;AAAC;AAAG;AAAC;AAAA;AAAA;AAAO\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<img alt=\\\"a\\\" src=\\\"x.png\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;AAAC;AAAG;AAAC;AAAA;AAAE;AAAC;AAAC;AAAG;AAAC;AAAA;AAAM;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<img alt=\\\"a\\\" src=\\\"x.png\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -695,7 +695,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAA;AAAU\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"a&b<c>d'\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAS;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"a&b<c>d'\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -780,7 +780,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;;AAAA;AACV\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"A\\n\\tB\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;;AACX;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"A\\n\\tB\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -819,7 +819,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;;AACJ;AAAG;AAAC;AAAA;AAAA;AAAG;AAAI;AAAG;AAAC;AAAA;AAAA;AAAG\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<img    \\t\\nsrc=\\\"a\\\"    alt=\\\"b\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAG;;AACJ;AAAG;AAAC;AAAA;AAAE;AAAC;AAAI;AAAG;AAAC;AAAA;AAAE;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<img    \\t\\nsrc=\\\"a\\\"    alt=\\\"b\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -852,7 +852,7 @@ return __out;
 `;
 
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAA;AAAQ\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value='single'/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAO;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value='single'/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);
@@ -1411,7 +1411,7 @@ return __out;
 }
 `;
     const generatedMap = "const __sourcemap =" + sourcemap;
-    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAA;AAAiB\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"He said \\\\\\\"hi\\\\\\\".\\\"/>\"]};";
+    const expectedMap = "const __sourcemap = {\"version\":3,\"sources\":[\"index.tshtml\"],\"names\":[],\"mappings\":\";AAAA;AAAC;AAAK;AAAC;AAAK;AAAC;AAAA;AAAgB;AAAC\",\"file\":\"Index.ts\",\"sourcesContent\":[\"<input value=\\\"He said \\\\\\\"hi\\\\\\\".\\\"/>\"]};";
 
     context.assert.strictEqual(normalizeLineEndings(code), normalizeLineEndings(expectedCode));
     context.assert.strictEqual(generatedMap, expectedMap);

@@ -178,6 +178,14 @@ test("DiagnosticMessages: UnexpectedTransition", (context: TestContext) => {
     context.assert.strictEqual(diagnosticMessage.message, "Unexpected transition.");
 });
 
+test("DiagnosticMessages: UnexpectedCodeBlock", (context: TestContext) => {
+    const diagnosticMessage = DiagnosticMessages.UnexpectedCodeBlock;
+
+    context.assert.ok(diagnosticMessage instanceof DiagnosticMessage);
+    context.assert.strictEqual(diagnosticMessage.code, 3006);
+    context.assert.strictEqual(diagnosticMessage.message, "Unexpected code block inside a code block. Nested code blocks are not allowed. You can use inline code instead.");
+});
+
 test("DiagnosticMessages: UnexpectedEndOfInput", (context: TestContext) => {
     const diagnosticMessage = DiagnosticMessages.UnexpectedEndOfInput;
 

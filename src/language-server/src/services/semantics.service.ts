@@ -29,13 +29,12 @@ export class SemanticsService {
 
     private setupEvents() {
         this.context.connectionService.connection.languages.semanticTokens.on((params: any) => {
-            const data = ObjectExtensions.isNullOrUndefined(this.context.parserResult)
-                ? []
-                : this.context.semanticTokensContext.data;
-
-
-            console.error(this.context.semanticTokensContext.data);
-            return Promise.resolve({ data: this.context.semanticTokensContext.data });
+            console.error(JSON.stringify(this.context.parserResult));
+            return Promise.resolve({
+                data: ObjectExtensions.isNullOrUndefined(this.context.parserResult)
+                    ? []
+                    : this.context.semanticTokensContext.data
+            });
         });
     }
 }

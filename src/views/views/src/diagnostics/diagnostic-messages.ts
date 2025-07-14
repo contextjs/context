@@ -42,6 +42,7 @@ export class DiagnosticMessages {
     public static readonly NoWhitespaceAfterTransition = new DiagnosticMessage(3003, "No whitespace allowed after transition marker.");
     public static readonly MalformedCodeBlock = new DiagnosticMessage(3004, "Malformed code block. Expected a valid code block syntax.");
     public static readonly UnexpectedTransition = new DiagnosticMessage(3005, `Unexpected transition.`);
+    public static readonly UnexpectedCodeBlock = new DiagnosticMessage(3006, `Unexpected code block inside a code block. Nested code blocks are not allowed. You can use inline code instead.`);
 
     public static readonly UnexpectedEndOfInput = new DiagnosticMessage(9000, "Unexpected end of input.");
     public static readonly UnsupportedLanguage = new DiagnosticMessage(9001, "Unsupported language.");

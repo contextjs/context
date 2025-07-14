@@ -86,6 +86,8 @@ export class BlockCodeParser {
                     context.moveNext();
                     break;
                 case '{':
+                    if (context.previousCharacter === TransitionParser.transitionSymbol)
+                        context.addErrorDiagnostic(DiagnosticMessages.UnexpectedCodeBlock);
                     if (!insideQuotes) {
                         context.setState(ParserContextState.NestedBlock);
                         valueBuilder.append(currentCharacter);
