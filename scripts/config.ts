@@ -19,6 +19,8 @@ export default class Config {
     public static nodeEngineVersion: string = "24.x";
     public static vscodeLanguageServerVersion: string = "^9.0.1";
     public static vscodeLanguageServerTextDocumentVersion: string = "^1.0.12";
+    public static vscodeCssLanguageServiceVersion: string = "^6.3.7";
+    public static vscodeHtmlLanguageServiceVersion: string = "^5.5.1";
 
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";

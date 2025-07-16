@@ -32,12 +32,18 @@ function createNameContext(input: string, parser: { parse(context: ParserContext
 
 function parseName(input: string, shouldStop: (context: ParserContext) => boolean, parser = TestRootParser) {
     const parserContext = createNameContext(input, parser);
-    return NameParser.parse(parserContext, TestNameNode, shouldStop);
+    return NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia),
+        shouldStop);
 }
 
 function parseNameWithContext(input: string, shouldStop: (context: ParserContext) => boolean, parser = TestRootParser) {
     const parserContext = createNameContext(input, parser);
-    const node = NameParser.parse(parserContext, TestNameNode, shouldStop);
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia),
+        shouldStop);
     return { node, parserContext };
 }
 
@@ -60,7 +66,10 @@ test("NameParser: parses multi-character name", (context: TestContext) => {
 
 test("NameParser: empty input triggers diagnostic", (context: TestContext) => {
     const parserContext = createNameContext("");
-    const node = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === ">");
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia),
+        c => c.currentCharacter === ">");
 
     context.assert.strictEqual(node.children.length, 0);
     context.assert.strictEqual(parserContext.diagnostics.length, 1);
@@ -70,7 +79,10 @@ test("NameParser: empty input triggers diagnostic", (context: TestContext) => {
 
 test("NameParser: only whitespace triggers diagnostic", (context: TestContext) => {
     const parserContext = createNameContext("     ");
-    const node = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === ">");
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia),
+        c => c.currentCharacter === ">");
 
     context.assert.strictEqual(node.children.length, 1);
     context.assert.strictEqual(parserContext.diagnostics.length, 1);
@@ -206,7 +218,11 @@ test("NameParser: stops at whitespace if predicate so defined", (context: TestCo
 test("NameParser: parser advances context", (context: TestContext) => {
     const parserContext = createNameContext("foo bar");
 
-    NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === " ");
+    NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === " ");
+
     context.assert.strictEqual(parserContext.currentCharacter, "b");
 });
 
@@ -218,7 +234,10 @@ test("NameParser: parses names with dashes, colons, and dots", (context: TestCon
 
 test("NameParser: only stop char returns error", (context: TestContext) => {
     const parserContext = createNameContext("=");
-    const node = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === "=");
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === "=");
 
     context.assert.strictEqual(parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.InvalidName.code), true);
     context.assert.strictEqual(node.children.length, 0);
@@ -226,7 +245,10 @@ test("NameParser: only stop char returns error", (context: TestContext) => {
 
 test("NameParser: only transition char returns error or TS node", (context: TestContext) => {
     const parserContext = createNameContext("@");
-    const node = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === ">");
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === ">");
 
     context.assert.ok(node.children.length === 1 || node.children.length === 0);
 });
@@ -245,7 +267,10 @@ test("NameParser: keeps trailing whitespace", (context: TestContext) => {
 
 test("NameParser: parses nothing if input is stop char", (context: TestContext) => {
     const parserContext = createNameContext(">");
-    const node = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === ">");
+    const node = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === ">");
 
     context.assert.strictEqual(node.children.length, 0);
     context.assert.strictEqual(parserContext.diagnostics.length, 1);
@@ -304,7 +329,10 @@ test("NameParser: multiple transitions", (context: TestContext) => {
 
 test("NameParser: triggers InvalidName diagnostic on empty result", (context: TestContext) => {
     const parserContext = createNameContext("");
-    NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === ">");
+    NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === ">");
 
     context.assert.strictEqual(parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.UnexpectedEndOfInput.code), true);
 });
@@ -312,8 +340,15 @@ test("NameParser: triggers InvalidName diagnostic on empty result", (context: Te
 test("NameParser: parser can be called repeatedly", (context: TestContext) => {
     const parserContext = createNameContext("foo bar baz");
 
-    const node1 = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === " ");
-    const node2 = NameParser.parse(parserContext, TestNameNode, c => c.currentCharacter === " ");
+    const node1 = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === " ");
+    const node2 = NameParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestNameNode(value, leadingTrivia, trailingTrivia), 
+        c => c.currentCharacter === " ");
+        
     context.assert.strictEqual((node1.children[0] as LiteralSyntaxNode).value, "foo");
     context.assert.strictEqual((node2.children[0] as LiteralSyntaxNode).value, "bar");
 });

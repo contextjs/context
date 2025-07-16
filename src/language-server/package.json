@@ -17,6 +17,8 @@
     "dependencies": {
         "vscode-languageserver": "__VSCODE_LANGUAGE_SERVER_VERSION__",
         "vscode-languageserver-textdocument": "__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__",
+        "vscode-css-languageservice": "__VSCODE_CSS_LANGUAGE_SERVICE_VERSION__",
+        "vscode-html-languageservice": "__VSCODE_HTML_LANGUAGE_SERVICE_VERSION__",
         "@contextjs/views-parser": "__VERSION__",
         "@contextjs/collections": "__VERSION__"
     },

@@ -10,8 +10,8 @@ import { Location } from "@contextjs/views";
 import { TriviaSyntaxNode } from "../common/trivia-syntax-node.js";
 import { LocationSyntaxNode } from "./location-syntax-node.js";
 
-export type ValueSyntaxNodeConstructor<TSyntaxNode extends ValueSyntaxNode>
-    = new (value: string | null, location: Location, leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
+export type ValueSyntaxNodeFactory<TSyntaxNode extends ValueSyntaxNode>
+    = (value: string | null, location: Location, leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
 
 export abstract class ValueSyntaxNode extends LocationSyntaxNode {
     public readonly value: string | null;

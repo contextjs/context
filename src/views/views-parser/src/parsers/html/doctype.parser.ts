@@ -6,14 +6,13 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
 import { DiagnosticMessages } from "@contextjs/views";
-import { EndOfFileSyntaxNode } from "../../api/index.js";
 import { ParserContext } from "../../context/parser-context.js";
 import { DoctypeSyntaxNode } from "../../syntax/html/doctype-syntax-node.js";
 import { TriviaParser } from "../common/trivia.parser.js";
 import { ContentParser } from "../generic/content.parser.js";
-import { StringExtensions } from "@contextjs/system";
 
 export class DoctypeParser {
     public static isDoctypeStart(context: ParserContext): boolean {
@@ -21,7 +20,10 @@ export class DoctypeParser {
     }
 
     public static parse(context: ParserContext): DoctypeSyntaxNode {
-        const result = ContentParser.parse(context, DoctypeSyntaxNode, DoctypeParser.shouldStopParsing);
+        const result = ContentParser.parse(
+            context,
+            (value, location, leadingTrivia, trailingTrivia) => new DoctypeSyntaxNode(value, location, leadingTrivia, trailingTrivia),
+            DoctypeParser.shouldStopParsing);
         result.trailingTrivia = TriviaParser.parse(context);
 
         if (!result.value?.endsWith('>'))

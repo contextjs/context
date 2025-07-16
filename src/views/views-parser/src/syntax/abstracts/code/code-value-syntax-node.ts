@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ValueSyntaxNode, ValueSyntaxNodeConstructor } from "../value-syntax-node.js";
+import { ValueSyntaxNode, ValueSyntaxNodeFactory } from "../value-syntax-node.js";
 
-export type CodeValueSyntaxNodeConstructor<TSyntaxNode extends CodeValueSyntaxNode>
-    = ValueSyntaxNodeConstructor<TSyntaxNode>;
+export type CodeValueSyntaxNodeFactory<TSyntaxNode extends CodeValueSyntaxNode>
+    = ValueSyntaxNodeFactory<TSyntaxNode>;
 
 export abstract class CodeValueSyntaxNode extends ValueSyntaxNode { }

@@ -10,20 +10,22 @@ import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
 import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { BraceSyntaxNode, BraceSyntaxNodeConstructor } from "../../syntax/abstracts/brace-syntax-node.js";
+import { BraceSyntaxNode, BraceSyntaxNodeFactory } from "../../syntax/abstracts/brace-syntax-node.js";
 import { TriviaParser } from "../common/trivia.parser.js";
 import { ContentParser } from "./content.parser.js";
 
 export class BraceParser {
     public static parse<TBraceSyntaxNode extends BraceSyntaxNode>(
         context: ParserContext,
-        braceSyntaxNode: BraceSyntaxNodeConstructor<TBraceSyntaxNode>,
+        braceSyntaxNodeFactory: BraceSyntaxNodeFactory<TBraceSyntaxNode>,
         expected: "{" | "}"
     ): TBraceSyntaxNode {
         const leadingTrivia = TriviaParser.parse(context);
-        const node = ContentParser.parse(context, braceSyntaxNode, BraceParser.shouldStopParsing);
-        node.leadingTrivia = leadingTrivia;
-        node.trailingTrivia = TriviaParser.parse(context);
+        const node = ContentParser.parse(
+            context,
+            (value, location) => braceSyntaxNodeFactory(value, location, leadingTrivia, TriviaParser.parse(context)),
+            BraceParser.shouldStopParsing
+        );
 
         if (StringExtensions.isNullOrWhitespace(node.value) || node.value !== expected)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedBrace(node?.value ?? context.currentCharacter));

@@ -8,13 +8,13 @@
 
 import { StringBuilder } from "@contextjs/text";
 import { ParserContext } from "../../context/parser-context.js";
-import { ValueSyntaxNode, ValueSyntaxNodeConstructor } from "../../syntax/abstracts/value-syntax-node.js";
+import { ValueSyntaxNode, ValueSyntaxNodeFactory } from "../../syntax/abstracts/value-syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 
 export class ContentParser {
     public static parse<TValueSyntaxNode extends ValueSyntaxNode>(
         context: ParserContext,
-        node: ValueSyntaxNodeConstructor<TValueSyntaxNode>,
+        nodeFactory: ValueSyntaxNodeFactory<TValueSyntaxNode>,
         shouldStopParsing: (context: ParserContext, valueBuilder: StringBuilder) => boolean
     ): TValueSyntaxNode {
 
@@ -32,6 +32,6 @@ export class ContentParser {
             }
         }
 
-        return new node(valueBuilder.toString(), context.getLocation());
+        return nodeFactory(valueBuilder.toString(), context.getLocation());
     }
 }

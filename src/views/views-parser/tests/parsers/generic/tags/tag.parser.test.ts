@@ -27,6 +27,7 @@ import {
     TestTagStartSyntaxNode,
     TestTagSyntaxNode
 } from "../../../_fixtures/parsers-fixtures.js";
+import { EndOfFileSyntaxNode } from "../../../../src/syntax/common/end-of-file-syntax-node.js";
 
 class TestCodeParser {
     public static parse(context: ParserContext): SyntaxNode {
@@ -206,29 +207,33 @@ test("TagParser: attaches no trivia if none present", (context: TestContext) => 
 test("TagParser: parser can be called repeatedly", (context: TestContext) => {
     const src = "<foo a='1'/><bar b='2'/>";
     const parserContext = new ParserContext(new Source(src), TestCodeParser);
-    const node1 = TagParser.parse(parserContext,
-        TestTagSyntaxNode,
-        TestTagNameSyntaxNode,
-        TestTagStartSyntaxNode,
-        TestTagEndSyntaxNode,
+    const node1 = TagParser.parse(
+        parserContext,
+        (context, tagName) => context.currentCharacter === EndOfFileSyntaxNode.endOfFile,
+        (children, leadingTrivia, trailingTrivia) => new TestTagSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagStartSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagEndSyntaxNode(children, leadingTrivia, trailingTrivia),
         {
-            attributeSyntaxNode: TestAttributeSyntaxNode,
-            attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
-            attributeValueSyntaxNode: TestAttributeValueSyntaxNode
+            attributeSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeNameSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeValueSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
         },
-        TestBracketSyntaxNode
+        (value, location, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(value, location, leadingTrivia, trailingTrivia)
     );
-    const node2 = TagParser.parse(parserContext,
-        TestTagSyntaxNode,
-        TestTagNameSyntaxNode,
-        TestTagStartSyntaxNode,
-        TestTagEndSyntaxNode,
+    const node2 = TagParser.parse(
+        parserContext,
+        (context, tagName) => context.currentCharacter === EndOfFileSyntaxNode.endOfFile,
+        (children, leadingTrivia, trailingTrivia) => new TestTagSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagStartSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagEndSyntaxNode(children, leadingTrivia, trailingTrivia),
         {
-            attributeSyntaxNode: TestAttributeSyntaxNode,
-            attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
-            attributeValueSyntaxNode: TestAttributeValueSyntaxNode
+            attributeSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeNameSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeValueSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
         },
-        TestBracketSyntaxNode
+        (value, location, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(value, location, leadingTrivia, trailingTrivia)
     );
 
     context.assert.strictEqual(getStartTag(node1).children[1].children[0].value, "foo");

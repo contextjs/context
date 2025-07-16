@@ -507,8 +507,8 @@ test("Parser: invalid attribute emits diagnostic and recovers", (context: TestCo
     const startTag = tag.children[0];
     const attr2 = startTag.children[2];
 
-    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.InvalidName.code);
-    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.InvalidName.message);
+    context.assert.strictEqual(result.diagnostics[1].message.code, DiagnosticMessages.InvalidName.code);
+    context.assert.strictEqual(result.diagnostics[1].message.message, DiagnosticMessages.InvalidName.message);
 });
 
 test("Parser: unterminated attribute quote emits diagnostic", (context: TestContext) => {
@@ -658,11 +658,11 @@ test("Parser: malformed transition @}", (context: TestContext) => {
 });
 
 test("Parser: transition with embedded tag", (context: TestContext) => {
-    const result = parse("@<div>");
+    const result = parse("<div style='color: red;'>@foo</div>");
     const group = result.nodes[0] as any;
 
-    context.assert.strictEqual(group.transition.value, "@");
-    context.assert.strictEqual((result.nodes[1] as any).children[0].children[1].children[0].value, "div");
+    context.assert.strictEqual(group.children[1].transition.value, "@");
+    context.assert.strictEqual(group.children[0].children[1].children[0].value, "div");
 });
 
 test("Parser: unknown language throws or errors", (context: TestContext) => {
@@ -675,4 +675,12 @@ test("Parser: unknown language throws or errors", (context: TestContext) => {
     }
 
     context.assert.strictEqual(threw, true);
+});
+
+test("Parser: tag with style", (context: TestContext) => {
+    const result = parse("<div style=\"color: #000\"></div>");
+    const group = result.nodes[0] as any;
+
+    context.assert.strictEqual(group.children[1].transition.value, "@");
+    context.assert.strictEqual(group.children[0].children[1].children[0].value, "div");
 });

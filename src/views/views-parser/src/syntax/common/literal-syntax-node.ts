@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ValueSyntaxNode, ValueSyntaxNodeConstructor } from "../abstracts/value-syntax-node.js";
+import { ValueSyntaxNode, ValueSyntaxNodeFactory } from "../abstracts/value-syntax-node.js";
 
-export type LiteralSyntaxNodeConstructor = ValueSyntaxNodeConstructor<LiteralSyntaxNode>;
+export type LiteralSyntaxNodeFactory = ValueSyntaxNodeFactory<LiteralSyntaxNode>;
 
 export class LiteralSyntaxNode extends ValueSyntaxNode { }

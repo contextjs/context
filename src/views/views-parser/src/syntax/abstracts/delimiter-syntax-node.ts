@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ValueSyntaxNode, ValueSyntaxNodeConstructor } from "./value-syntax-node.js";
+import { ValueSyntaxNode, ValueSyntaxNodeFactory } from "./value-syntax-node.js";
 
-export type DelimiterSyntaxNodeConstructor<TSyntaxNode extends DelimiterSyntaxNode>
-    = ValueSyntaxNodeConstructor<TSyntaxNode>;
+export type DelimiterSyntaxNodeFactory<TSyntaxNode extends DelimiterSyntaxNode>
+    = ValueSyntaxNodeFactory<TSyntaxNode>;
 
 export abstract class DelimiterSyntaxNode extends ValueSyntaxNode { }

@@ -8,8 +8,8 @@
 
 import { TriviaSyntaxNode } from "../common/trivia-syntax-node.js";
 
-export type SyntaxNodeConstructor<TSyntaxNode extends SyntaxNode>
-    = new (leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
+export type SyntaxNodeFactory<TSyntaxNode extends SyntaxNode>
+    = (leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
 
 export abstract class SyntaxNode {
     public leadingTrivia: TriviaSyntaxNode | null;

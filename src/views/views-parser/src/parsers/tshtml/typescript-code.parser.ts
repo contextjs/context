@@ -13,12 +13,13 @@ import { TypescriptCodeValueSyntaxNode } from "../../syntax/typescript/typescrip
 import { CodeParser } from "../generic/code/code.parser.js";
 
 export class TypescriptCodeParser {
-    public static parse(context: ParserContext): TypescriptCodeBlockSyntaxNode {
+    public static parse(context: ParserContext): TypescriptCodeBlockSyntaxNode | TypescriptCodeExpressionSyntaxNode {
         return CodeParser.parse(
             context,
-            TypescriptCodeBlockSyntaxNode,
-            TypescriptCodeExpressionSyntaxNode,
-            TypescriptCodeValueSyntaxNode,
-            TypescriptCodeBraceSyntaxNode) as TypescriptCodeBlockSyntaxNode;
+            (transition, openingBrace, children, closingBrace, leadingTrivia, trailingTrivia) => new TypescriptCodeBlockSyntaxNode(transition, openingBrace, children, closingBrace, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TypescriptCodeExpressionSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TypescriptCodeValueSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TypescriptCodeBraceSyntaxNode(children, leadingTrivia, trailingTrivia)
+        )
     }
 }

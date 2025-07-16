@@ -6,6 +6,6 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ServerContext } from "./server-context.js";
+import { ServerContext } from "./models/server-context.js";
 
 new ServerContext().listen();

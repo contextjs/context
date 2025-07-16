@@ -78,31 +78,39 @@ export class TestParser {
     }
 }
 
-export class TestAttributeParser extends AttributeParser {
+export class TestAttributeParser {
     public static parse(context: ParserContext): TestAttributeSyntaxNode {
-        return AttributeParser.parse(
-            context,
-            TestAttributeSyntaxNode,
+        return AttributeParser.parse<TestAttributeSyntaxNode,
             TestAttributeNameSyntaxNode,
-            TestAttributeValueSyntaxNode
-        );
+            TestAttributeValueSyntaxNode>(
+                context,
+                (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+                (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+                (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia)
+            );
     }
 }
 
-export class TestTagParser extends TagParser {
+export class TestTagParser {
     public static parse(context: ParserContext): TestTagSyntaxNode {
+        const VOID_ELEMENTS = new Set([
+            "area", "base", "br", "col", "embed", "hr", "img",
+            "input", "link", "meta", "source", "track", "wbr"
+        ]);
+
         return TagParser.parse(
             context,
-            TestTagSyntaxNode,
-            TestTagNameSyntaxNode,
-            TestTagStartSyntaxNode,
-            TestTagEndSyntaxNode,
+            (context, tagName) => VOID_ELEMENTS.has(tagName.toLowerCase()) || context.currentCharacter === EndOfFileSyntaxNode.endOfFile,
+            (children, leadingTrivia, trailingTrivia) => new TestTagSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestTagNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestTagStartSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestTagEndSyntaxNode(children, leadingTrivia, trailingTrivia),
             {
-                attributeSyntaxNode: TestAttributeSyntaxNode,
-                attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
-                attributeValueSyntaxNode: TestAttributeValueSyntaxNode
+                attributeSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+                attributeNameSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+                attributeValueSyntaxNodeFactory: (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia)
             },
-            TestBracketSyntaxNode
+            (value, location, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(value, location, leadingTrivia, trailingTrivia)
         );
     }
 }
@@ -111,22 +119,28 @@ export class TestCodeParser {
     public static parse(context: ParserContext): SyntaxNode {
         return CodeParser.parse(
             context,
-            TestCodeBlockSyntaxNode,
-            TestCodeExpressionSyntaxNode,
-            TestCodeValueSyntaxNode,
-            TestBraceSyntaxNode
+            (transition, openingBrace, children, closingBrace, leadingTrivia, trailingTrivia) => new TestCodeBlockSyntaxNode(transition, openingBrace, children, closingBrace, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestCodeExpressionSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestCodeValueSyntaxNode(children, leadingTrivia, trailingTrivia),
+            (children, leadingTrivia, trailingTrivia) => new TestBraceSyntaxNode(children, leadingTrivia, trailingTrivia)
         );
     }
 }
 
 export class TestBraceParser {
     public static parse(context: ParserContext, expected: "{" | "}"): SyntaxNode {
-        return BraceParser.parse(context, TestBraceSyntaxNode, expected);
+        return BraceParser.parse(
+            context,
+            (children, leadingTrivia, trailingTrivia) => new TestBraceSyntaxNode(children, leadingTrivia, trailingTrivia),
+            expected);
     }
 }
 
 export class TestBracketParser {
     public static parse(context: ParserContext, expected: "<" | ">" | "/>" | "</"): SyntaxNode {
-        return BracketParser.parse(context, TestBracketSyntaxNode, expected);
+        return BracketParser.parse(
+            context,
+            (children, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(children, leadingTrivia, trailingTrivia),
+            expected);
     }
 }

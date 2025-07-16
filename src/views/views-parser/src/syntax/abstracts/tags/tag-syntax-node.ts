@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { CompositeSyntaxNode, CompositeSyntaxNodeConstructor } from "../composite-syntax-node.js";
+import { CompositeSyntaxNode, CompositeSyntaxNodeFactory } from "../composite-syntax-node.js";
 
-export type TagSyntaxNodeConstructor<TSyntaxNode extends TagSyntaxNode>
-    = CompositeSyntaxNodeConstructor<TSyntaxNode>;
+export type TagSyntaxNodeFactory<TSyntaxNode extends TagSyntaxNode>
+    = CompositeSyntaxNodeFactory<TSyntaxNode>;
 
 export abstract class TagSyntaxNode extends CompositeSyntaxNode { }

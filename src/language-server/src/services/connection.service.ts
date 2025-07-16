@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Console } from '@contextjs/system';
 import {
+    Connection,
     createConnection,
     DidChangeConfigurationNotification,
     InitializeParams,
@@ -15,14 +15,16 @@ import {
     ProposedFeatures,
     TextDocumentSyncKind
 } from 'vscode-languageserver/node.js';
+
+import { Console } from '@contextjs/system';
 import { Constants } from '../constants.js';
-import { SEMANTIC_TOKEN_LEGEND } from '../semantics/semantic-token-type.js';
-import { ServerContext } from '../server-context.js';
+import { ServerContext } from '../models/server-context.js';
+import { SEMANTIC_TOKEN_LEGEND } from '../models/syntax-node-type.js';
 
 export class ConnectionService {
     private hasConfigurationCapability = false;
     private hasWorkspaceFolderCapability = false;
-    public readonly connection = (createConnection as any)(process.stdin, process.stdout, ProposedFeatures.all);
+    public readonly connection: Connection = (createConnection as any)(process.stdin, process.stdout, ProposedFeatures.all);
 
     public constructor(private readonly context: ServerContext) {
         this.setupEvents();
@@ -45,6 +47,7 @@ export class ConnectionService {
             const result: InitializeResult = {
                 capabilities: {
                     textDocumentSync: TextDocumentSyncKind.Incremental,
+                    colorProvider: true,
                     //completionProvider: { triggerCharacters: [">"], resolveProvider: false },
                     semanticTokensProvider: {
                         full: true,
@@ -68,6 +71,14 @@ export class ConnectionService {
 
         this.connection.onDidChangeConfiguration(() => {
             this.connection.languages.diagnostics.refresh();
+        });
+
+        this.connection.onDocumentColor(() => {
+            return this.context.cssLanguageService.onDocumentColor();
+        });
+
+        this.connection.onColorPresentation((params) => {
+            return this.context.cssLanguageService.onColorPresentation(params);
         });
     }
 }

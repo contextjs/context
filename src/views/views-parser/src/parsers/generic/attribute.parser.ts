@@ -7,11 +7,13 @@
  */
 
 import { StringExtensions } from "@contextjs/system";
+import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { AttributeNameSyntaxNode, AttributeNameSyntaxNodeConstructor } from "../../syntax/abstracts/attributes/attribute-name-syntax-node.js";
-import { AttributeSyntaxNode, AttributeSyntaxNodeConstructor } from "../../syntax/abstracts/attributes/attribute-syntax-node.js";
-import { AttributeValueSyntaxNode, AttributeValueSyntaxNodeConstructor } from "../../syntax/abstracts/attributes/attribute-value-syntax-node.js";
+import { AttributeNameSyntaxNode, AttributeNameSyntaxNodeFactory } from "../../syntax/abstracts/attributes/attribute-name-syntax-node.js";
+import { AttributeSyntaxNode, AttributeSyntaxNodeFactory } from "../../syntax/abstracts/attributes/attribute-syntax-node.js";
+import { AttributeValueSyntaxNode, AttributeValueSyntaxNodeFactory } from "../../syntax/abstracts/attributes/attribute-value-syntax-node.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
+import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { EqualsParser } from "../common/equals.parser.js";
 import { TriviaParser } from "../common/trivia.parser.js";
 import { AttributeValueParser } from "./attribute-value.parser.js";
@@ -23,15 +25,16 @@ export class AttributeParser {
         TAttributeNameSyntaxNode extends AttributeNameSyntaxNode,
         TAttributeValueSyntaxNode extends AttributeValueSyntaxNode>(
             context: ParserContext,
-            attributeSyntaxNode: AttributeSyntaxNodeConstructor<TAttributeSyntaxNode>,
-            attributeNameSyntaxNode: AttributeNameSyntaxNodeConstructor<TAttributeNameSyntaxNode>,
-            attributeValueSyntaxNode: AttributeValueSyntaxNodeConstructor<TAttributeValueSyntaxNode>
-        ): AttributeSyntaxNode {
+            attributeSyntaxNodeFactory: AttributeSyntaxNodeFactory<TAttributeSyntaxNode>,
+            attributeNameSyntaxNodeFactory: AttributeNameSyntaxNodeFactory<TAttributeNameSyntaxNode>,
+            attributeValueSyntaxNodeFactory: AttributeValueSyntaxNodeFactory<TAttributeValueSyntaxNode>
+        ): TAttributeSyntaxNode {
 
         const children: SyntaxNode[] = [];
+        const attributeName = AttributeParser.getAttributeName(context);
 
         children.push(context.ensureProgress(
-            () => NameParser.parse(context, attributeNameSyntaxNode, this.nameStopPredicate),
+            () => NameParser.parse(context, attributeNameSyntaxNodeFactory, this.nameStopPredicate),
             'NameParser (attribute) did not advance context.'
         ));
 
@@ -43,16 +46,31 @@ export class AttributeParser {
             ));
 
             children.push(context.ensureProgress(
-                () => AttributeValueParser.parse(context, attributeValueSyntaxNode),
+                () => AttributeValueParser.parse(context, attributeName, attributeValueSyntaxNodeFactory),
                 'AttributeValueParser did not advance context.'
             ));
         }
 
-        return new attributeSyntaxNode(children, null, TriviaParser.parse(context));
+        return attributeSyntaxNodeFactory(children, null, TriviaParser.parse(context));
     }
 
     private static nameStopPredicate(context: ParserContext): boolean {
         const stopChars = new Set(['=', '/', '>', '"', "'", "`"]);
         return stopChars.has(context.currentCharacter) || StringExtensions.containsOnlyWhitespace(context.currentCharacter);
+    }
+
+    private static getAttributeName(context: ParserContext): string {
+        const attributeName = context.peekWhile((char) =>
+            char !== '=' &&
+            !StringExtensions.containsOnlyWhitespace(char) &&
+            char !== EndOfFileSyntaxNode.endOfFile
+        );
+
+        if (StringExtensions.isNullOrWhitespace(attributeName)) {
+            context.addErrorDiagnostic(DiagnosticMessages.UnexpectedEndOfInput);
+            return StringExtensions.empty;
+        }
+
+        return attributeName;
     }
 }

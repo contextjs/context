@@ -122,6 +122,8 @@ export class Build extends Script {
         packageFileContent = packageFileContent.replace(/__NODE_ENGINE_VERSION__/g, Config.nodeEngineVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_SERVER_VERSION__/g, Config.vscodeLanguageServerVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__/g, Config.vscodeLanguageServerTextDocumentVersion);
+        packageFileContent = packageFileContent.replace(/__VSCODE_CSS_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeCssLanguageServiceVersion);
+        packageFileContent = packageFileContent.replace(/__VSCODE_HTML_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeHtmlLanguageServiceVersion);
 
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }

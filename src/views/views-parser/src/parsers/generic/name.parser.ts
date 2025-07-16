@@ -9,7 +9,7 @@
 import { StringBuilder } from "@contextjs/text";
 import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { NameSyntaxNode, NameSyntaxNodeConstructor } from "../../syntax/abstracts/name-syntax-node.js";
+import { NameSyntaxNode, NameSyntaxNodeFactory } from "../../syntax/abstracts/name-syntax-node.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { LiteralSyntaxNode } from "../../syntax/common/literal-syntax-node.js";
@@ -19,7 +19,7 @@ import { TriviaParser } from "../common/trivia.parser.js";
 export class NameParser {
     public static parse<TNameSyntaxNode extends NameSyntaxNode>(
         context: ParserContext,
-        nameSyntaxNode: NameSyntaxNodeConstructor<TNameSyntaxNode>,
+        nameSyntaxNodeFactory: NameSyntaxNodeFactory<TNameSyntaxNode>,
         shouldStop: (context: ParserContext) => boolean
     ): TNameSyntaxNode {
 
@@ -35,7 +35,7 @@ export class NameParser {
                     context.addErrorDiagnostic(DiagnosticMessages.UnexpectedEndOfInput);
                     if (valueBuilder.length > 0)
                         children.push(new LiteralSyntaxNode(valueBuilder.toString(), context.getLocation()));
-                    return new nameSyntaxNode(children);
+                    return nameSyntaxNodeFactory(children);
                 case '@':
                     if (TransitionParser.isEscapedTransition(context)) {
                         valueBuilder.append("@");
@@ -68,6 +68,6 @@ export class NameParser {
         if (children.length === 0)
             context.addErrorDiagnostic(DiagnosticMessages.InvalidName);
 
-        return new nameSyntaxNode(children, null, TriviaParser.parse(context));
+        return nameSyntaxNodeFactory(children, null, TriviaParser.parse(context));
     }
 }

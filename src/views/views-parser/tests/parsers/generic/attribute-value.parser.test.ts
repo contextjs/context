@@ -39,7 +39,7 @@ test.afterEach(() => {
 
 function parseAttributeValue(input: string) {
     const parserContext = new ParserContext(new Source(input), testParser);
-    const node = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
+    const node = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
     return { node, parserContext };
 }
 
@@ -182,7 +182,7 @@ test("AttributeValueParser: multiple transitions unquoted", (context: TestContex
         }
     };
     const parserContext = new ParserContext(new Source("foo@bar@baz"), countingParser);
-    const node = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
+    const node = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.strictEqual(node.children.length, 5);
     context.assert.strictEqual(callTS, 2);
@@ -195,7 +195,7 @@ test("AttributeValueParser: multiple transitions unquoted", (context: TestContex
 
 test("AttributeValueParser: attaches trailing trivia after closing quote", (context: TestContext) => {
     const parserContext = new ParserContext(new Source('"foo"  '), testParser);
-    const node = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
+    const node = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.ok(node.trailingTrivia instanceof TriviaSyntaxNode);
     context.assert.strictEqual((node.children[1] as LiteralSyntaxNode).value, "foo");
@@ -203,16 +203,16 @@ test("AttributeValueParser: attaches trailing trivia after closing quote", (cont
 
 test("AttributeValueParser: parser advances context", (context: TestContext) => {
     const parserContext = new ParserContext(new Source('"foo" bar'), testParser);
-    AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
+    AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.strictEqual(parserContext.currentCharacter, "b");
 });
 
 test("AttributeValueParser: parser can be called repeatedly", (context: TestContext) => {
     const parserContext = new ParserContext(new Source('"foo" "bar" "baz"'), testParser);
-    const node1 = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
-    const node2 = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
-    const node3 = AttributeValueParser.parse(parserContext, TestAttributeSyntaxNode);
+    const node1 = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
+    const node2 = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
+    const node3 = AttributeValueParser.parse(parserContext, "", (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.strictEqual((node1.children[1] as LiteralSyntaxNode).value, "foo");
     context.assert.strictEqual((node2.children[1] as LiteralSyntaxNode).value, "bar");

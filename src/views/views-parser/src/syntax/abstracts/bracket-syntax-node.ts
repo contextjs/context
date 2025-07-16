@@ -6,9 +6,9 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { DelimiterSyntaxNode, DelimiterSyntaxNodeConstructor } from "../abstracts/delimiter-syntax-node.js";
+import { DelimiterSyntaxNode, DelimiterSyntaxNodeFactory } from "../abstracts/delimiter-syntax-node.js";
 
-export type BracketSyntaxNodeConstructor<TSyntaxNode extends BracketSyntaxNode>
-    = DelimiterSyntaxNodeConstructor<TSyntaxNode>;
+export type BracketSyntaxNodeFactory<TSyntaxNode extends BracketSyntaxNode>
+    = DelimiterSyntaxNodeFactory<TSyntaxNode>;
 
 export abstract class BracketSyntaxNode extends DelimiterSyntaxNode { }

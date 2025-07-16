@@ -9,9 +9,9 @@
 import * as url from 'node:url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { LanguageExtensions, Parser } from '@contextjs/views-parser';
 import { ObjectExtensions, StringExtensions } from '@contextjs/system';
-import { ServerContext } from '../server-context.js';
+import { LanguageExtensions, Parser } from '@contextjs/views-parser';
+import { ServerContext } from '../models/server-context.js';
 
 export class ParserService {
     public constructor(private readonly context: ServerContext) { }
@@ -35,16 +35,13 @@ export class ParserService {
         try {
             this.context.document = document;
             this.context.parserResult = Parser.parse(document.getText(), language);
+
+            this.context.visitParserResult();
         }
         catch (error) {
             this.context.document = null;
             this.context.parserResult = null;
             console.error(`Error parsing document: ${error}`);
         }
-    }
-
-    public reset(): void {
-        this.context.document = null;
-        this.context.parserResult = null;
     }
 }

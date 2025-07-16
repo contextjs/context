@@ -13,8 +13,8 @@ import { TriviaSyntaxNode } from "../../common/trivia-syntax-node.js";
 import { SyntaxNode } from "../syntax-node.js";
 import { CodeValueSyntaxNode } from "./code-value-syntax-node.js";
 
-export type CodeExpressionSyntaxNodeConstructor<TSyntaxNode extends CodeExpressionSyntaxNode>
-    = new (
+export type CodeExpressionSyntaxNodeFactory<TSyntaxNode extends CodeExpressionSyntaxNode>
+    = (
         transition: TransitionSyntaxNode,
         value: CodeValueSyntaxNode,
         leadingTrivia?: TriviaSyntaxNode | null,

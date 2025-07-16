@@ -19,8 +19,8 @@ function parseInline(input: string) {
     const parserContext = new ParserContext(new Source(input), TestParser);
     const node = InlineCodeParser.parse(
         parserContext,
-        TestCodeExpressionSyntaxNode,
-        TestCodeValueSyntaxNode
+        (transition, value, leadingTrivia, trailingTrivia) => new TestCodeExpressionSyntaxNode(transition, value, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestCodeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
     );
     return { node, parserContext };
 }

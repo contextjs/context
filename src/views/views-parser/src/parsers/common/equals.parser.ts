@@ -16,7 +16,10 @@ export class EqualsParser {
     public static readonly equalsCharacter = '=';
 
     public static parse(context: ParserContext): EqualsSyntaxNode {
-        const node = ContentParser.parse(context, EqualsSyntaxNode, EqualsParser.shouldStopParsing)
+        const node = ContentParser.parse(
+            context,
+            (value, location, leadingTrivia, trailingTrivia) => new EqualsSyntaxNode(value, location, leadingTrivia, trailingTrivia),
+            EqualsParser.shouldStopParsing)
 
         if (node.value !== EqualsParser.equalsCharacter)
             context.addErrorDiagnostic(DiagnosticMessages.ExpectedEquals);

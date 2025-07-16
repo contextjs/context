@@ -10,9 +10,9 @@ import { StringBuilder } from "@contextjs/text";
 import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContextState } from "../../../context/parser-context-state.js";
 import { ParserContext } from "../../../context/parser-context.js";
-import { BraceSyntaxNode, BraceSyntaxNodeConstructor } from "../../../syntax/abstracts/brace-syntax-node.js";
-import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-block-syntax-node.js";
-import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
+import { BraceSyntaxNode, BraceSyntaxNodeFactory } from "../../../syntax/abstracts/brace-syntax-node.js";
+import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-block-syntax-node.js";
+import { CodeValueSyntaxNode, CodeValueSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
 import { SyntaxNode } from "../../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../../syntax/common/end-of-file-syntax-node.js";
 import { TransitionParser } from "../../common/transition.parser.js";
@@ -25,9 +25,9 @@ export class BlockCodeParser {
         TCodeBlockSyntaxNode extends CodeBlockSyntaxNode,
         TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
             context: ParserContext,
-            codeBlockSyntaxNode: CodeBlockSyntaxNodeConstructor<TCodeBlockSyntaxNode>,
-            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>,
-            braceSyntaxNode: BraceSyntaxNodeConstructor<BraceSyntaxNode>
+            codeBlockSyntaxNodeFactory: CodeBlockSyntaxNodeFactory<TCodeBlockSyntaxNode>,
+            codeValueSyntaxNodeFactory: CodeValueSyntaxNodeFactory<TCodeValueSyntaxNode>,
+            braceSyntaxNodeFactory: BraceSyntaxNodeFactory<BraceSyntaxNode>
         ): TCodeBlockSyntaxNode {
 
         context.reset();
@@ -38,7 +38,7 @@ export class BlockCodeParser {
 
         context.reset();
         const openBraceNode = context.ensureProgress(
-            () => BraceParser.parse(context, braceSyntaxNode, '{'),
+            () => BraceParser.parse(context, braceSyntaxNodeFactory, '{'),
             "BlockCodeParser: BraceParser (open) did not advance context."
         );
 
@@ -99,7 +99,7 @@ export class BlockCodeParser {
                     break;
                 case '<': {
                     if (!insideQuotes) {
-                        const tagNodes = this.tryParseTag(context, valueBuilder.toString(), codeValueSyntaxNode);
+                        const tagNodes = this.tryParseTag(context, valueBuilder.toString(), codeValueSyntaxNodeFactory);
                         if (tagNodes.length === 0) {
                             valueBuilder.append(currentCharacter);
                             context.moveNext();
@@ -125,26 +125,26 @@ export class BlockCodeParser {
         }
 
         if (valueBuilder.length > 0)
-            children.push(new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation()));
+            children.push(codeValueSyntaxNodeFactory(valueBuilder.toString(), context.getLocation()));
 
         const closingBraceNode = context.ensureProgress(
-            () => BraceParser.parse(context, braceSyntaxNode, '}'),
+            () => BraceParser.parse(context, braceSyntaxNodeFactory, '}'),
             "BlockCodeParser: BraceParser (close) did not advance context."
         );
 
-        return new codeBlockSyntaxNode(transitionNode, openBraceNode, children, closingBraceNode, null, TriviaParser.parse(context));
+        return codeBlockSyntaxNodeFactory(transitionNode, openBraceNode, children, closingBraceNode, null, TriviaParser.parse(context));
     }
 
     private static tryParseTag<TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
         context: ParserContext,
         code: string,
-        codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>
+        codeValueSyntaxNode: CodeValueSyntaxNodeFactory<TCodeValueSyntaxNode>
     ): SyntaxNode[] {
 
         const value = context.peekUntil((char) => char === '>' || char === EndOfFileSyntaxNode.endOfFile);
         if (value && value.endsWith(">") && TagParser.isValidTag(value)) {
             const nodes: SyntaxNode[] = [];
-            nodes.push(new codeValueSyntaxNode(code, context.getLocation()));
+            nodes.push(codeValueSyntaxNode(code, context.getLocation()));
             nodes.push(context.parser.parse(context));
 
             return nodes;

@@ -12,8 +12,8 @@ import { BraceSyntaxNode } from "../brace-syntax-node.js";
 import { CompositeSyntaxNode } from "../composite-syntax-node.js";
 import { SyntaxNode } from "../syntax-node.js";
 
-export type CodeBlockSyntaxNodeConstructor<TSyntaxNode extends CodeBlockSyntaxNode>
-    = new (
+export type CodeBlockSyntaxNodeFactory<TSyntaxNode extends CodeBlockSyntaxNode>
+    = (
         transition: TransitionSyntaxNode,
         openingBrace: BraceSyntaxNode,
         children: SyntaxNode[],

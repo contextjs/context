@@ -6,11 +6,11 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeConstructor } from "../../../api/index.js";
+import { CodeBlockSyntaxNode, CodeBlockSyntaxNodeFactory } from "../../../api/index.js";
 import { ParserContext } from "../../../context/parser-context.js";
-import { BraceSyntaxNode, BraceSyntaxNodeConstructor } from "../../../syntax/abstracts/brace-syntax-node.js";
-import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
-import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
+import { BraceSyntaxNode, BraceSyntaxNodeFactory } from "../../../syntax/abstracts/brace-syntax-node.js";
+import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
+import { CodeValueSyntaxNode, CodeValueSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
 import { BlockCodeParser } from "./block-code.parser.js";
 import { InlineCodeParser } from "./inline-code.parser.js";
 
@@ -21,15 +21,15 @@ export class CodeParser {
         TCodeValueSyntaxNode extends CodeValueSyntaxNode,
         TBraceSyntaxNode extends BraceSyntaxNode>(
             context: ParserContext,
-            codeBlockSyntaxNode: CodeBlockSyntaxNodeConstructor<TCodeBlockSyntaxNode>,
-            codeExpressionSyntaxNode: CodeExpressionSyntaxNodeConstructor<TCodeExpressionSyntaxNode>,
-            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>,
-            braceSyntaxNode: BraceSyntaxNodeConstructor<TBraceSyntaxNode>
+            codeBlockSyntaxNodeFactory: CodeBlockSyntaxNodeFactory<TCodeBlockSyntaxNode>,
+            codeExpressionSyntaxNodeFactory: CodeExpressionSyntaxNodeFactory<TCodeExpressionSyntaxNode>,
+            codeValueSyntaxNodeFactory: CodeValueSyntaxNodeFactory<TCodeValueSyntaxNode>,
+            braceSyntaxNodeFactory: BraceSyntaxNodeFactory<TBraceSyntaxNode>
         ): TCodeExpressionSyntaxNode | TCodeBlockSyntaxNode {
 
         if (context.nextCharacter === '{')
-            return BlockCodeParser.parse(context, codeBlockSyntaxNode, codeValueSyntaxNode, braceSyntaxNode);
+            return BlockCodeParser.parse(context, codeBlockSyntaxNodeFactory, codeValueSyntaxNodeFactory, braceSyntaxNodeFactory);
 
-        return InlineCodeParser.parse(context, codeExpressionSyntaxNode, codeValueSyntaxNode);
+        return InlineCodeParser.parse(context, codeExpressionSyntaxNodeFactory, codeValueSyntaxNodeFactory);
     }
 }

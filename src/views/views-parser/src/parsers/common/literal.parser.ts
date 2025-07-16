@@ -18,11 +18,13 @@ export class LiteralParser {
         context.reset();
 
         const leadingTrivia = TriviaParser.parse(context);
-        const contentNode = ContentParser.parse(context, LiteralSyntaxNode, LiteralParser.shouldStopParsing);
-        contentNode.leadingTrivia = leadingTrivia;
+        const contentNode = ContentParser.parse(
+            context,
+            (value, location, _leadingTrivia, trailingTrivia) => new LiteralSyntaxNode(value, location, leadingTrivia, trailingTrivia),
+            LiteralParser.shouldStopParsing
+        );
 
         return contentNode;
-
     }
 
     private static shouldStopParsing(parserContext: ParserContext, valueBuilder: StringBuilder): boolean {

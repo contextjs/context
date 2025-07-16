@@ -24,7 +24,11 @@ export class TransitionParser {
         if (parserContext.currentCharacter !== this.transitionSymbol)
             parserContext.addErrorDiagnostic(DiagnosticMessages.ExpectedTransitionMarker(parserContext.currentCharacter));
 
-        const node = ContentParser.parse(parserContext, TransitionSyntaxNode, this.shouldStop);
+        const node = ContentParser.parse(
+            parserContext,
+            (value, location, leadingTrivia, trailingTrivia) => new TransitionSyntaxNode(value, location, leadingTrivia, trailingTrivia),
+            this.shouldStop
+        );
 
         if (StringExtensions.containsOnlyWhitespace(parserContext.currentCharacter))
             parserContext.addErrorDiagnostic(DiagnosticMessages.NoWhitespaceAfterTransition);

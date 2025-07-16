@@ -18,7 +18,7 @@ test("AttributeValueSyntaxNode: constructs with children and leading trivia", (c
     const child1 = new TestNode();
     const child2 = new TestNode();
     const leading = new TriviaSyntaxNode(" ", null!);
-    const node = new TestAttributeValueSyntaxNode([child1, child2], leading);
+    const node = new TestAttributeValueSyntaxNode("", [child1, child2], leading, null);
 
     context.assert.deepStrictEqual(node.children, [child1, child2]);
     context.assert.strictEqual(node.leadingTrivia, leading);
@@ -28,7 +28,7 @@ test("AttributeValueSyntaxNode: constructs with children and leading trivia", (c
 test("AttributeValueSyntaxNode: constructs with children and trailing trivia", (context: TestContext) => {
     const child = new TestNode();
     const trailing = new TriviaSyntaxNode("\n", null!);
-    const node = new TestAttributeValueSyntaxNode([child], null, trailing);
+    const node = new TestAttributeValueSyntaxNode("", [child], null, trailing);
 
     context.assert.deepStrictEqual(node.children, [child]);
     context.assert.strictEqual(node.leadingTrivia, null);
@@ -39,7 +39,7 @@ test("AttributeValueSyntaxNode: constructs with children and both trivia", (cont
     const child = new TestNode();
     const leading = new TriviaSyntaxNode(" ", null!);
     const trailing = new TriviaSyntaxNode("\t", null!);
-    const node = new TestAttributeValueSyntaxNode([child], leading, trailing);
+    const node = new TestAttributeValueSyntaxNode("", [child], leading, trailing);
 
     context.assert.deepStrictEqual(node.children, [child]);
     context.assert.strictEqual(node.leadingTrivia, leading);
@@ -47,7 +47,7 @@ test("AttributeValueSyntaxNode: constructs with children and both trivia", (cont
 });
 
 test("AttributeValueSyntaxNode: constructs with empty children", (context: TestContext) => {
-    const node = new TestAttributeValueSyntaxNode([]);
+    const node = new TestAttributeValueSyntaxNode("", []);
 
     context.assert.deepStrictEqual(node.children, []);
     context.assert.strictEqual(node.leadingTrivia, null);
@@ -56,7 +56,7 @@ test("AttributeValueSyntaxNode: constructs with empty children", (context: TestC
 
 test("AttributeValueSyntaxNode: can be subclassed with extra properties", (context: TestContext) => {
     class ExtendedAttributeValue extends AttributeValueSyntaxNode { public extra = "x"; }
-    const node = new ExtendedAttributeValue([new TestNode()]);
+    const node = new ExtendedAttributeValue("", [new TestNode()]);
 
     context.assert.strictEqual(node.extra, "x");
     context.assert.ok(node instanceof AttributeValueSyntaxNode);
@@ -65,7 +65,7 @@ test("AttributeValueSyntaxNode: can be subclassed with extra properties", (conte
 
 test("AttributeValueSyntaxNode: children array is the same instance", (context: TestContext) => {
     const nodes = [new TestNode(), new TestNode()];
-    const node = new TestAttributeValueSyntaxNode(nodes);
+    const node = new TestAttributeValueSyntaxNode("", nodes);
 
     context.assert.strictEqual(node.children, nodes);
 });

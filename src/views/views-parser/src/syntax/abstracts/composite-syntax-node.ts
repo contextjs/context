@@ -9,8 +9,8 @@
 import { TriviaSyntaxNode } from "../common/trivia-syntax-node.js";
 import { SyntaxNode } from "./syntax-node.js";
 
-export type CompositeSyntaxNodeConstructor<TSyntaxNode extends CompositeSyntaxNode>
-    = new (children: SyntaxNode[], leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
+export type CompositeSyntaxNodeFactory<TSyntaxNode extends CompositeSyntaxNode>
+    = (children: SyntaxNode[], leadingTrivia?: TriviaSyntaxNode | null, trailingTrivia?: TriviaSyntaxNode | null) => TSyntaxNode;
 
 export abstract class CompositeSyntaxNode extends SyntaxNode {
     public readonly children: SyntaxNode[];

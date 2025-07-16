@@ -20,7 +20,10 @@ function parseToken(
     input: string,
     shouldStopParsing: (parserContext: ParserContext, valueBuilder: StringBuilder) => boolean) {
     const parserContext = new ParserContext(new Source(input), TestParser);
-    const node = ContentParser.parse(parserContext, TestTokenNode, shouldStopParsing);
+    const node = ContentParser.parse(
+        parserContext, 
+        (value, leadingTrivia, trailingTrivia) => new TestTokenNode(value, leadingTrivia, trailingTrivia),
+        shouldStopParsing);
 
     return { node, parserContext };
 }

@@ -20,7 +20,12 @@ import { TestBraceSyntaxNode, TestCodeBlockSyntaxNode, TestCodeExpressionSyntaxN
 
 function parseCode(input: string) {
     const parserContext = new ParserContext(new Source(input), TestParser);
-    const node = CodeParser.parse(parserContext, TestCodeBlockSyntaxNode, TestCodeExpressionSyntaxNode, TestCodeValueSyntaxNode, TestBraceSyntaxNode);
+    const node = CodeParser.parse(
+        parserContext, 
+        (transition, openingBrace, closingBrace, children, leadingTrivia, trailingTrivia) => new TestCodeBlockSyntaxNode(transition, openingBrace, closingBrace, children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestCodeExpressionSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestCodeValueSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestBraceSyntaxNode(children, leadingTrivia, trailingTrivia));
     return { node, parserContext };
 }
 

@@ -9,8 +9,8 @@
 import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
 import { ParserContext } from "../../../context/parser-context.js";
-import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
-import { CodeValueSyntaxNode, CodeValueSyntaxNodeConstructor } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
+import { CodeExpressionSyntaxNode, CodeExpressionSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-expression-syntax-node.js";
+import { CodeValueSyntaxNode, CodeValueSyntaxNodeFactory } from "../../../syntax/abstracts/code/code-value-syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../../syntax/common/end-of-file-syntax-node.js";
 import { CommentParser } from "../../common/comment.parser.js";
 import { TransitionParser } from "../../common/transition.parser.js";
@@ -21,8 +21,8 @@ export class InlineCodeParser {
         TCodeExpressionSyntaxNode extends CodeExpressionSyntaxNode,
         TCodeValueSyntaxNode extends CodeValueSyntaxNode>(
             context: ParserContext,
-            codeExpressionSyntaxNode: CodeExpressionSyntaxNodeConstructor<TCodeExpressionSyntaxNode>,
-            codeValueSyntaxNode: CodeValueSyntaxNodeConstructor<TCodeValueSyntaxNode>
+            codeExpressionSyntaxNodeFactory: CodeExpressionSyntaxNodeFactory<TCodeExpressionSyntaxNode>,
+            codeValueSyntaxNodeFactory: CodeValueSyntaxNodeFactory<TCodeValueSyntaxNode>
         ): TCodeExpressionSyntaxNode {
 
         context.reset();
@@ -76,7 +76,7 @@ export class InlineCodeParser {
             }
         }
 
-        const valueNode = new codeValueSyntaxNode(valueBuilder.toString(), context.getLocation(), null, TriviaParser.parse(context));
-        return new codeExpressionSyntaxNode(transitionNode, valueNode);
+        const valueNode = codeValueSyntaxNodeFactory(valueBuilder.toString(), context.getLocation(), null, TriviaParser.parse(context));
+        return codeExpressionSyntaxNodeFactory(transitionNode, valueNode);
     }
 }

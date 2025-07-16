@@ -56,6 +56,8 @@
     "@contextjs/webserver-middleware-static": "file:_packages/contextjs-webserver-middleware-static-25.1.0.tgz",
     "reflect-metadata": "^0.2.2",
     "source-map": "^0.7.4",
+    "vscode-css-languageservice": "^6.3.7",
+    "vscode-html-languageservice": "^5.5.1",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.12"
   }

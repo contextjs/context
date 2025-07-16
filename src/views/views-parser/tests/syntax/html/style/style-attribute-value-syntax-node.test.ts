@@ -16,7 +16,7 @@ class TestNode extends SyntaxNode { }
 test("StyleAttributeValueSyntaxNode: constructs with children, trivia defaults to null", (context: TestContext) => {
     const child1 = new TestNode();
     const child2 = new TestNode();
-    const node = new StyleAttributeValueSyntaxNode([child1, child2]);
+    const node = new StyleAttributeValueSyntaxNode("", [child1, child2]);
 
     context.assert.deepStrictEqual(node.children, [child1, child2]);
     context.assert.strictEqual(node.leadingTrivia, null);
@@ -24,7 +24,7 @@ test("StyleAttributeValueSyntaxNode: constructs with children, trivia defaults t
 });
 
 test("StyleAttributeValueSyntaxNode: constructs with empty children", (context: TestContext) => {
-    const node = new StyleAttributeValueSyntaxNode([]);
+    const node = new StyleAttributeValueSyntaxNode("", []);
 
     context.assert.deepStrictEqual(node.children, []);
     context.assert.strictEqual(node.leadingTrivia, null);
@@ -33,7 +33,7 @@ test("StyleAttributeValueSyntaxNode: constructs with empty children", (context: 
 
 test("StyleAttributeValueSyntaxNode: supports leading trivia", (context: TestContext) => {
     const leading = new TriviaSyntaxNode("lead", null!);
-    const node = new StyleAttributeValueSyntaxNode([new TestNode()], leading);
+    const node = new StyleAttributeValueSyntaxNode("", [new TestNode()], leading);
 
     context.assert.strictEqual(node.leadingTrivia, leading);
     context.assert.strictEqual(node.trailingTrivia, null);
@@ -41,7 +41,7 @@ test("StyleAttributeValueSyntaxNode: supports leading trivia", (context: TestCon
 
 test("StyleAttributeValueSyntaxNode: supports trailing trivia", (context: TestContext) => {
     const trailing = new TriviaSyntaxNode("trail", null!);
-    const node = new StyleAttributeValueSyntaxNode([new TestNode()], null, trailing);
+    const node = new StyleAttributeValueSyntaxNode("", [new TestNode()], null, trailing);
 
     context.assert.strictEqual(node.leadingTrivia, null);
     context.assert.strictEqual(node.trailingTrivia, trailing);
@@ -50,7 +50,7 @@ test("StyleAttributeValueSyntaxNode: supports trailing trivia", (context: TestCo
 test("StyleAttributeValueSyntaxNode: supports both leading and trailing trivia", (context: TestContext) => {
     const leading = new TriviaSyntaxNode("lead", null!);
     const trailing = new TriviaSyntaxNode("trail", null!);
-    const node = new StyleAttributeValueSyntaxNode([new TestNode()], leading, trailing);
+    const node = new StyleAttributeValueSyntaxNode("", [new TestNode()], leading, trailing);
 
     context.assert.strictEqual(node.leadingTrivia, leading);
     context.assert.strictEqual(node.trailingTrivia, trailing);
@@ -58,7 +58,7 @@ test("StyleAttributeValueSyntaxNode: supports both leading and trailing trivia",
 
 test("StyleAttributeValueSyntaxNode: can be subclassed with extra properties", (context: TestContext) => {
     class ExtendedAttributeValue extends StyleAttributeValueSyntaxNode { public extra = "x"; }
-    const node = new ExtendedAttributeValue([new TestNode()]);
+    const node = new ExtendedAttributeValue("", [new TestNode()]);
 
     context.assert.strictEqual(node.extra, "x");
     context.assert.ok(node instanceof StyleAttributeValueSyntaxNode);
@@ -67,7 +67,7 @@ test("StyleAttributeValueSyntaxNode: can be subclassed with extra properties", (
 
 test("StyleAttributeValueSyntaxNode: children array is the same instance", (context: TestContext) => {
     const nodes = [new TestNode(), new TestNode()];
-    const node = new StyleAttributeValueSyntaxNode(nodes);
+    const node = new StyleAttributeValueSyntaxNode("", nodes);
 
     context.assert.strictEqual(node.children, nodes);
 });

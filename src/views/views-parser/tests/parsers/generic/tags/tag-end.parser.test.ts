@@ -17,7 +17,14 @@ import { TestBracketSyntaxNode, TestParser, TestTagEndSyntaxNode, TestTagNameSyn
 
 function parseTagEnd(input: string, expected = "div") {
     const context = new ParserContext(new Source(input), TestParser);
-    const node = TagEndParser.parse(context, expected, TestTagNameSyntaxNode, TestTagEndSyntaxNode, TestBracketSyntaxNode);
+    const node = TagEndParser.parse(
+        context, 
+        expected, 
+        (children, leadingTrivia, trailingTrivia) => new TestTagNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagEndSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (value, location, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(value, location, leadingTrivia, trailingTrivia)
+    );
+
     return { node, context };
 }
 

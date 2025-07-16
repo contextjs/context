@@ -13,26 +13,20 @@ import { TagStartParser } from "../../../../src/parsers/generic/tags/tag-start.p
 import { AttributeSyntaxNode } from "../../../../src/syntax/abstracts/attributes/attribute-syntax-node.js";
 import { BracketSyntaxNode } from "../../../../src/syntax/abstracts/bracket-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../../src/syntax/common/trivia-syntax-node.js";
-import { TestAttributeNameSyntaxNode, TestAttributeSyntaxNode, TestAttributeValueSyntaxNode, TestBracketParser, TestBracketSyntaxNode, TestParser, TestTagNameSyntaxNode, TestTagStartSyntaxNode } from "../../../_fixtures/parsers-fixtures.js";
-
-// class TestTagStartSyntaxNode extends TagStartSyntaxNode { }
-// class TestTagNameSyntaxNode extends TagNameSyntaxNode { }
-// class TestAttributeSyntaxNode extends AttributeSyntaxNode { }
-// class TestAttributeNameSyntaxNode extends AttributeNameSyntaxNode { }
-// class TestAttributeValueSyntaxNode extends AttributeValueSyntaxNode { }
+import { TestAttributeNameSyntaxNode, TestAttributeSyntaxNode, TestAttributeValueSyntaxNode, TestBracketSyntaxNode, TestParser, TestTagNameSyntaxNode, TestTagStartSyntaxNode } from "../../../_fixtures/parsers-fixtures.js";
 
 function parseTagStart(input: string) {
     const context = new ParserContext(new Source(input), TestParser);
     const result = TagStartParser.parse(
         context,
-        TestTagStartSyntaxNode,
-        TestTagNameSyntaxNode,
+        (children, leadingTrivia, trailingTrivia) => new TestTagStartSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestTagNameSyntaxNode(children, leadingTrivia, trailingTrivia),
         {
-            attributeSyntaxNode: TestAttributeSyntaxNode,
-            attributeNameSyntaxNode: TestAttributeNameSyntaxNode,
-            attributeValueSyntaxNode: TestAttributeValueSyntaxNode
+            attributeSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeNameSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+            attributeValueSyntaxNodeFactory: (children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
         },
-        TestBracketSyntaxNode
+        (value, location, leadingTrivia, trailingTrivia) => new TestBracketSyntaxNode(value, location, leadingTrivia, trailingTrivia)
     );
 
     return { ...result, context };

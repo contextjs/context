@@ -7,7 +7,7 @@
  */
 
 import { ICommandContext } from '@contextjs/system';
-import { ServerContext } from './server-context.js';
+import { ServerContext } from './models/server-context.js';
 
 export async function runAsync(context: ICommandContext) {
     new ServerContext().listen();

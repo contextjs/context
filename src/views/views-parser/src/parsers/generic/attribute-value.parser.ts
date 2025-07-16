@@ -10,7 +10,7 @@ import { StringExtensions } from "@contextjs/system";
 import { StringBuilder } from "@contextjs/text";
 import { DiagnosticMessages } from "@contextjs/views";
 import { ParserContext } from "../../context/parser-context.js";
-import { AttributeValueSyntaxNode, AttributeValueSyntaxNodeConstructor } from "../../syntax/abstracts/attributes/attribute-value-syntax-node.js";
+import { AttributeValueSyntaxNode, AttributeValueSyntaxNodeFactory } from "../../syntax/abstracts/attributes/attribute-value-syntax-node.js";
 import { SyntaxNode } from "../../syntax/abstracts/syntax-node.js";
 import { EndOfFileSyntaxNode } from "../../syntax/common/end-of-file-syntax-node.js";
 import { LiteralSyntaxNode } from "../../syntax/common/literal-syntax-node.js";
@@ -24,7 +24,8 @@ const ATTRIBUTE_VALUE_TERMINATORS = new Set(['=', '>', '"', "'", '`']);
 export class AttributeValueParser {
     public static parse<TAttributeValueSyntaxNode extends AttributeValueSyntaxNode>(
         context: ParserContext,
-        attributeValueSyntaxNode: AttributeValueSyntaxNodeConstructor<TAttributeValueSyntaxNode>
+        attributeName: string,
+        attributeValueSyntaxNode: AttributeValueSyntaxNodeFactory<TAttributeValueSyntaxNode>
     ): TAttributeValueSyntaxNode {
 
         const valueBuilder = new StringBuilder();
@@ -37,11 +38,12 @@ export class AttributeValueParser {
         context.reset();
 
         if (DEFAULT_QUOTES.has(context.currentCharacter)) {
-            const openingQuoteNode = new QuoteSyntaxNode(context.currentCharacter, context.getLocation(), null, TriviaParser.parse(context));
-            children.push(openingQuoteNode);
-            quoteCharacter = openingQuoteNode.value;
-            isQuoted = true;
+            quoteCharacter = context.currentCharacter;
             context.moveNext();
+            const openingQuoteNode = new QuoteSyntaxNode(quoteCharacter, context.getLocation(), null, TriviaParser.parse(context));
+            children.push(openingQuoteNode);
+            isQuoted = true;
+            context.reset();
         }
 
         let done = false;
@@ -58,7 +60,7 @@ export class AttributeValueParser {
                     else if (!isQuoted)
                         context.addErrorDiagnostic(DiagnosticMessages.EmptyAttributeValue);
 
-                    return new attributeValueSyntaxNode(children, null, TriviaParser.parse(context));
+                    return attributeValueSyntaxNode(attributeName, children, null, TriviaParser.parse(context));
 
                 case '@':
                     if (TransitionParser.isEscapedTransition(context)) {
@@ -108,13 +110,14 @@ export class AttributeValueParser {
 
         if (isQuoted) {
             if (context.currentCharacter === quoteCharacter) {
-                children.push(new QuoteSyntaxNode(context.currentCharacter, context.getLocation()));
+                context.reset();
                 context.moveNext();
+                children.push(new QuoteSyntaxNode(quoteCharacter, context.getLocation()));
             }
             else
                 context.addErrorDiagnostic(DiagnosticMessages.UnterminatedAttributeValue);
         }
 
-        return new attributeValueSyntaxNode(children, leadingTrivia, TriviaParser.parse(context));
+        return attributeValueSyntaxNode(attributeName, children, leadingTrivia, TriviaParser.parse(context));
     }
 }

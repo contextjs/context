@@ -8,13 +8,13 @@
 
 import { ObjectExtensions } from '@contextjs/system';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { TextDocuments } from 'vscode-languageserver/node.js';
-import { ServerContext } from '../server-context.js';
+import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/node.js';
+import { ServerContext } from '../models/server-context.js';
 
 export class DocumentService {
     public readonly documents: TextDocuments<TextDocument>;
     private readonly debounceTimeouts = new Map<string, NodeJS.Timeout>();
-    private readonly debounceDelay = 200;
+    private readonly debounceDelay = 100;
 
     public constructor(private readonly context: ServerContext) {
         this.documents = new TextDocuments(TextDocument);
@@ -27,8 +27,6 @@ export class DocumentService {
 
     private setupEvents() {
         this.documents.onDidChangeContent((event) => {
-            this.context.parserResult = null;
-            this.context.semanticTokensContext.clear();
             const uri = event.document.uri;
 
             const oldTimeout = this.debounceTimeouts.get(uri);
@@ -36,19 +34,25 @@ export class DocumentService {
                 clearTimeout(oldTimeout);
 
             const timeout = setTimeout(() => {
-                this.context.parserService.parse(event.document);
-                this.context.semanticsService.parseTokens();
-
-                const diagnostics = this.context.diagnosticsService.analyse();
-                if (ObjectExtensions.isNullOrUndefined(diagnostics))
-                    this.context.connectionService.connection.sendDiagnostics({ uri, diagnostics: [] });
-                else
-                    this.context.connectionService.connection.sendDiagnostics(diagnostics);
-
+                this.parseDocument(event);
                 this.debounceTimeouts.delete(uri);
             }, this.debounceDelay);
 
             this.debounceTimeouts.set(uri, timeout);
         });
+
+        this.documents.onDidOpen((event) => {
+            this.parseDocument(event);
+        });
+    }
+
+    private parseDocument(event: TextDocumentChangeEvent<TextDocument>) {
+        this.context.parserService.parse(event.document);
+
+        const diagnostics = this.context.diagnosticsService.analyse();
+        if (ObjectExtensions.isNullOrUndefined(diagnostics))
+            this.context.connectionService.connection.sendDiagnostics({ uri: event.document.uri, diagnostics: [] });
+        else
+            this.context.connectionService.connection.sendDiagnostics(diagnostics);
     }
 }

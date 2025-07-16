@@ -6,9 +6,27 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { CompositeSyntaxNode, CompositeSyntaxNodeConstructor } from "../composite-syntax-node.js";
+import { TriviaSyntaxNode } from "../../common/trivia-syntax-node.js";
+import { CompositeSyntaxNode } from "../composite-syntax-node.js";
+import { SyntaxNode } from "../syntax-node.js";
 
-export type AttributeValueSyntaxNodeConstructor<TSyntaxNode extends AttributeValueSyntaxNode>
-    = CompositeSyntaxNodeConstructor<TSyntaxNode>;
+export type AttributeValueSyntaxNodeFactory<TSyntaxNode extends AttributeValueSyntaxNode>
+    = (
+        attributeName: string,
+        children: SyntaxNode[],
+        leadingTrivia: TriviaSyntaxNode | null,
+        trailingTrivia: TriviaSyntaxNode | null
+    ) => TSyntaxNode;
 
-export abstract class AttributeValueSyntaxNode extends CompositeSyntaxNode { }
+export abstract class AttributeValueSyntaxNode extends CompositeSyntaxNode {
+    public readonly attributeName: string;
+
+    constructor(
+        attributeName: string,
+        children: SyntaxNode[],
+        leadingTrivia: TriviaSyntaxNode | null = null,
+        trailingTrivia: TriviaSyntaxNode | null = null) {
+        super(children, leadingTrivia, trailingTrivia);
+        this.attributeName = attributeName;
+    }
+}

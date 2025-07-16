@@ -48,13 +48,23 @@ function parseAttribute(input: string) {
     const parserContext = new ParserContext(new Source(input), testParser);
     (parserContext as any).transitionParser = testTransitionParser;
 
-    return AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
+    return AttributeParser.parse(
+        parserContext, 
+        (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
+    );
 }
 
 function parseAttributeWithContext(input: string) {
     const parserContext = new ParserContext(new Source(input), testParser);
     (parserContext as any).transitionParser = testTransitionParser;
-    const node = AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
+    const node = AttributeParser.parse(
+        parserContext, 
+        (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
+        (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia)
+    );
 
     return { node, parserContext };
 }
@@ -166,7 +176,7 @@ test("AttributeParser: parses value with unicode", (context: TestContext) => {
 test("AttributeParser: parser advances context", (context: TestContext) => {
     const parserContext = new ParserContext(new Source('foo="bar" baz=123'), testParser);
     (parserContext as any).transitionParser = testTransitionParser;
-    AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
+    AttributeParser.parse(parserContext, (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia), (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia), (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.strictEqual(parserContext.currentCharacter, "b");
 });
@@ -174,9 +184,9 @@ test("AttributeParser: parser advances context", (context: TestContext) => {
 test("AttributeParser: parser can be called repeatedly", (context: TestContext) => {
     const parserContext = new ParserContext(new Source('foo="bar" bar="baz" qux=123'), testParser);
     (parserContext as any).transitionParser = testTransitionParser;
-    const node1 = AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
-    const node2 = AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
-    const node3 = AttributeParser.parse(parserContext, TestAttributeSyntaxNode, TestAttributeNameSyntaxNode, TestAttributeValueSyntaxNode);
+    const node1 = AttributeParser.parse(parserContext, (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia), (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia), (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
+    const node2 = AttributeParser.parse(parserContext, (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia), (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia), (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
+    const node3 = AttributeParser.parse(parserContext, (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia), (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia), (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia));
 
     context.assert.strictEqual((node1 as any).children[0].children[0].value, "foo");
     context.assert.strictEqual((node2 as any).children[0].children[0].value, "bar");
