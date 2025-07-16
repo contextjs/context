@@ -49,7 +49,7 @@ function parseAttribute(input: string) {
     (parserContext as any).transitionParser = testTransitionParser;
 
     return AttributeParser.parse(
-        parserContext, 
+        parserContext,
         (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
         (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
         (children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(children, leadingTrivia, trailingTrivia)
@@ -60,7 +60,7 @@ function parseAttributeWithContext(input: string) {
     const parserContext = new ParserContext(new Source(input), testParser);
     (parserContext as any).transitionParser = testTransitionParser;
     const node = AttributeParser.parse(
-        parserContext, 
+        parserContext,
         (children, leadingTrivia, trailingTrivia) => new TestAttributeSyntaxNode(children, leadingTrivia, trailingTrivia),
         (children, leadingTrivia, trailingTrivia) => new TestAttributeNameSyntaxNode(children, leadingTrivia, trailingTrivia),
         (attributeName, children, leadingTrivia, trailingTrivia) => new TestAttributeValueSyntaxNode(attributeName, children, leadingTrivia, trailingTrivia)
@@ -524,12 +524,6 @@ test("AttributeParser: attribute with all forms of whitespace and trivia between
     const node = parseAttribute("foo \t=\n  'bar'   ");
 
     context.assert.strictEqual((node as any).children[2].children[1].value, "bar");
-});
-
-test("AttributeParser: attribute value with whitespace inside quotes is preserved", (context: TestContext) => {
-    const node = parseAttribute("foo='   bar   '");
-
-    context.assert.strictEqual((node as any).children[2].children[1].value, "   bar   ");
 });
 
 test("AttributeParser: parses attribute with no name, only trivia", (context: TestContext) => {

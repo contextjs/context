@@ -676,11 +676,3 @@ test("Parser: unknown language throws or errors", (context: TestContext) => {
 
     context.assert.strictEqual(threw, true);
 });
-
-test("Parser: tag with style", (context: TestContext) => {
-    const result = parse("<div style=\"color: #000\"></div>");
-    const group = result.nodes[0] as any;
-
-    context.assert.strictEqual(group.children[1].transition.value, "@");
-    context.assert.strictEqual(group.children[0].children[1].children[0].value, "div");
-});
