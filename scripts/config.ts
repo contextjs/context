@@ -38,7 +38,7 @@ export default class Config {
         { name: "views", path: "views/views" },
         { name: "views-parser", path: "views/views-parser" },
         { name: "views-compiler", path: "views/views-compiler" },
-        { name: "language-server", path: "language-server" },
+        { name: "language-server", path: "language-services/language-server" },
         { name: "webserver", path: "webserver/webserver" },
         { name: "webserver-middleware-static", path: "webserver/webserver-middleware-static" },
         { name: "webserver-middleware-cookies", path: "webserver/webserver-middleware-cookies" },

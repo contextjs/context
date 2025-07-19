@@ -64,14 +64,18 @@ export class Build extends Script {
     private async buildPackageAsync(packageInfo: PackageInfo): Promise<void> {
         await this.writeLogAsync(`Building "@contextjs/${packageInfo.name}"...`);
 
-        await this.removeDependencyAsync(packageInfo);
-        await this.createPackageDirectoryAsync(packageInfo);
-        await this.copyPackageFileAsync(packageInfo);
-        await this.copyLicenseFileAsync(packageInfo);
-        await this.writeVersionsAsync(packageInfo);
-        await this.buildAsync(packageInfo);
-        await this.createPackageAsync(packageInfo);
-        await this.installPackageAsync(packageInfo);
+        if (packageInfo.customBuild)
+            await this.buildAsync(packageInfo);
+        else {
+            await this.removeDependencyAsync(packageInfo);
+            await this.createPackageDirectoryAsync(packageInfo);
+            await this.copyPackageFileAsync(packageInfo);
+            await this.copyLicenseFileAsync(packageInfo);
+            await this.writeVersionsAsync(packageInfo);
+            await this.buildAsync(packageInfo);
+            await this.createPackageAsync(packageInfo);
+            await this.installPackageAsync(packageInfo);
+        }
 
         readline.moveCursor(process.stdout, 0, -1);
         readline.clearLine(process.stdout, 1);

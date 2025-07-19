@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import type PackageInfo from '../../../scripts/package-info.ts';
-import Script from '../../../scripts/script.ts';
+import type PackageInfo from '../../../../scripts/package-info.ts';
+import Script from '../../../../scripts/script.ts';
 
 export class Build extends Script {
     public override async runAsync(packageInfo: PackageInfo): Promise<void> {
