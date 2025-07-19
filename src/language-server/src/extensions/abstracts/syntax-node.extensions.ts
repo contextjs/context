@@ -28,5 +28,3 @@ SyntaxNode.prototype.visit = function (context: VisitorContext): void {
     for (const visitor of context.visitors)
         visitor.visit(this);
 }
-
-SyntaxNode.prototype.parseStyles = function (context: StyleContext): void { };

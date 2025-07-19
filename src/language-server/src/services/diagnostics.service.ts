@@ -6,15 +6,16 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams } from "vscode-languageserver/node.js";
+
 import { ObjectExtensions } from "@contextjs/system";
 import { Diagnostic as ParserDiagnostic, DiagnosticSeverity as ParserDiagnosticSeverity } from "@contextjs/views";
-import { Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams } from "vscode-languageserver/node.js";
 import { ServerContext } from "../models/server-context.js";
 
 export class DiagnosticsService {
     public constructor(private readonly context: ServerContext) { }
 
-    public analyse(): PublishDiagnosticsParams | null {
+    public parse(): PublishDiagnosticsParams | null {
         if (ObjectExtensions.isNullOrUndefined(this.context.document) ||
             ObjectExtensions.isNullOrUndefined(this.context.parserResult) ||
             this.context.parserResult.diagnostics.length === 0)

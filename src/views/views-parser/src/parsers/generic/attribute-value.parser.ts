@@ -55,13 +55,11 @@ export class AttributeValueParser {
                     if (isQuoted)
                         context.addErrorDiagnostic(DiagnosticMessages.UnterminatedAttributeValue);
 
-                    if (valueBuilder.length > 0)
-                        children.push(new LiteralSyntaxNode(valueBuilder.toString(), context.getLocation()));
-                    else if (!isQuoted)
+                    children.push(new LiteralSyntaxNode(valueBuilder.toString(), context.getLocation()));
+                    if (!isQuoted && valueBuilder.length === 0)
                         context.addErrorDiagnostic(DiagnosticMessages.EmptyAttributeValue);
 
                     return attributeValueSyntaxNode(attributeName, children, null, TriviaParser.parse(context));
-
                 case '@':
                     if (TransitionParser.isEscapedTransition(context)) {
                         valueBuilder.append("@");
@@ -103,9 +101,8 @@ export class AttributeValueParser {
             }
         }
 
-        if (valueBuilder.length > 0)
-            children.push(new LiteralSyntaxNode(valueBuilder.toString(), context.getLocation()));
-        else if (!isQuoted && !terminatedByWhitespace)
+        children.push(new LiteralSyntaxNode(valueBuilder.toString(), context.getLocation()));
+        if (!isQuoted && !terminatedByWhitespace && valueBuilder.length === 0)
             context.addErrorDiagnostic(DiagnosticMessages.EmptyAttributeValue);
 
         if (isQuoted) {

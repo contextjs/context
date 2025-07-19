@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { Exception, StringExtensions } from "@contextjs/system";
 import { LineInfo } from './line-info.js';
 import { Location } from "./location.js";
 
@@ -30,7 +30,7 @@ export class Source {
                 if (char === "\r" && this.content[i + 1] === "\n")
                     nextIndex++;
 
-                lines.push(new LineInfo(lineIndex++, lineStart, i + 1));
+                lines.push(new LineInfo(lineIndex++, lineStart, nextIndex + 1));
 
                 i = nextIndex;
                 lineStart = i + 1;
@@ -44,9 +44,9 @@ export class Source {
         return lines;
     }
 
-    public getLocation(startIndex: number, endIndex: number, text: string): Location {
+    public getLocation(startIndex: number, endIndex: number): Location {
         if (this.lines.length === 0)
-            return new Location(0, 0, 0, 0, text, []);
+            return new Location(0, 0, 0, 0, 0, 0, StringExtensions.empty, []);
 
         if (startIndex < 0 || startIndex > this.content.length)
             throw new Exception("startIndex is out of bounds");
@@ -70,23 +70,31 @@ export class Source {
         const startLineIndex = startLineInfo.index;
         const endLineIndex = endLineInfo.index;
 
-        const startChar = startIndex - startLineInfo.startCharacterIndex;
-        const endChar = endIndex === this.content.length
+        const startCharacterIndex = startIndex - startLineInfo.startCharacterIndex;
+        const endCharacterIndex = endIndex === this.content.length
             ? endLineInfo.endCharacterIndex - endLineInfo.startCharacterIndex
             : endIndex - endLineInfo.startCharacterIndex;
 
         const lines: LineInfo[] = [];
         for (let i = startLineIndex; i <= endLineIndex; i++) {
             if (i === startLineIndex && i === endLineIndex)
-                lines.push(new LineInfo(i, startChar, endChar));
+                lines.push(new LineInfo(i, startCharacterIndex, endCharacterIndex));
             else if (i === startLineIndex)
-                lines.push(new LineInfo(i, startChar, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex));
+                lines.push(new LineInfo(i, startCharacterIndex, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex));
             else if (i === endLineIndex)
-                lines.push(new LineInfo(i, 0, endChar));
+                lines.push(new LineInfo(i, 0, endCharacterIndex));
             else
                 lines.push(new LineInfo(i, 0, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex));
         }
 
-        return new Location(startLineIndex, startChar, endLineIndex, endChar, text, lines);
+        return new Location(
+            startLineIndex,
+            startCharacterIndex,
+            endLineIndex,
+            endCharacterIndex,
+            startIndex,
+            endIndex,
+            this.content.substring(startIndex, endIndex),
+            lines);
     }
 }

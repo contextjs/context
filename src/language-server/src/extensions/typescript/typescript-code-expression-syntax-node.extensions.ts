@@ -9,11 +9,13 @@
 import { TypescriptCodeExpressionSyntaxNode } from "@contextjs/views-parser";
 import { LanguageContext } from "../../visitors/languages/language-context.js";
 import { SemanticTokenContext } from "../../visitors/semantics/semantic-token-context.js";
+import { StyleContext } from "../../visitors/styles/style-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TypescriptCodeExpressionSyntaxNode {
         parseSemanticTokens(context: SemanticTokenContext): void;
         parseLanguage(context: LanguageContext): void;
+        parseStyles(context: StyleContext): void;
     }
 }
 
@@ -35,4 +37,13 @@ TypescriptCodeExpressionSyntaxNode.prototype.parseLanguage = function (context: 
     this.value.parseLanguage(context);
 
     this.trailingTrivia?.parseLanguage(context);
+};
+
+TypescriptCodeExpressionSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
+    this.leadingTrivia?.parseStyles(context);
+
+    this.transition.parseStyles(context);
+    this.value.parseStyles(context);
+    
+    this.trailingTrivia?.parseStyles(context);
 };

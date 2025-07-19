@@ -157,3 +157,12 @@ test("StyleParser: EOF inside style block", (context: TestContext) => {
     context.assert.strictEqual(parserContext.diagnostics.length, 1);
     context.assert.match(parserContext.diagnostics[0].message.message, /Expected end/i);
 });
+
+test("StyleParser: just opening tag", (context: TestContext) => {
+    const parserContext = createContext('<style>');
+    const node = StyleParser.parse(parserContext);
+
+    context.assert.strictEqual((node.children[1] as StyleContentSyntaxNode).value, 'unfinished');
+    context.assert.strictEqual(parserContext.diagnostics.length, 1);
+    context.assert.match(parserContext.diagnostics[0].message.message, /Expected end/i);
+});

@@ -8,6 +8,8 @@
 
 import "../extensions/syntax-node-extension-imports.js";
 
+import { SemanticTokensParams } from "vscode-languageserver";
+
 import { ObjectExtensions } from "@contextjs/system";
 import { ServerContext } from "../models/server-context.js";
 
@@ -17,7 +19,10 @@ export class SemanticsService {
     }
 
     private setupEvents() {
-        this.context.connectionService.connection.languages.semanticTokens.on((params: any) => {
+        this.context.connectionService.connection.languages.semanticTokens.on((params: SemanticTokensParams) => {
+            const document = this.context.documentsService.documents.get(params.textDocument.uri);
+            this.context.parsersService.parse(document);
+
             return Promise.resolve({
                 data: ObjectExtensions.isNullOrUndefined(this.context.semanticTokens)
                     ? []

@@ -7,9 +7,9 @@
  */
 
 export class SemanticToken {
-    public readonly line: number;
-    public readonly char: number;
-    public readonly endChar: number;
+    public readonly lineIndex: number;
+    public readonly characterIndex: number;
+    public readonly endCharacterIndex: number;
     public readonly length: number;
     public readonly type: number;
     public readonly modifiersBitset: number = 0;
@@ -22,11 +22,11 @@ export class SemanticToken {
         type: number,
         text: string,
         endChar: number) {
-        this.line = line;
-        this.char = char;
+        this.lineIndex = line;
+        this.characterIndex = char;
         this.length = length;
         this.type = type;
         this.text = text;
-        this.endChar = endChar;
+        this.endCharacterIndex = endChar;
     }
 }

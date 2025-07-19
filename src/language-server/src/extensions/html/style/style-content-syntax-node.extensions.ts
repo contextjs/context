@@ -36,5 +36,10 @@ StyleContentSyntaxNode.prototype.parseLanguage = function (context: LanguageCont
 };
 
 StyleContentSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
+    this.leadingTrivia?.parseStyles(context);
+
     context.setColors(this);
+    context.buildCss(this);
+
+    this.trailingTrivia?.parseStyles(context);
 };

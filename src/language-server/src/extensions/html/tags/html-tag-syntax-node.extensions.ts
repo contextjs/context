@@ -40,6 +40,10 @@ HtmlTagSyntaxNode.prototype.parseLanguage = function (context: LanguageContext):
 };
 
 HtmlTagSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
+    this.leadingTrivia?.parseStyles(context);
+    
     for (const node of this.children)
         node.parseStyles(context);
+
+    this.trailingTrivia?.parseStyles(context);
 };

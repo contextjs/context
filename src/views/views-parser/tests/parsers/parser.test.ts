@@ -676,3 +676,24 @@ test("Parser: unknown language throws or errors", (context: TestContext) => {
 
     context.assert.strictEqual(threw, true);
 });
+
+test("Parser: complex code", (context: TestContext) => {
+    const input = `<div style="color: #0c4202"></div>
+<div  style="color: #0c4202"></div>
+<style>
+    .my-body { 
+        background: #932424;
+        color: #734f4f; 
+        font-family: Arial, sans-serif; 
+        font-size: 16px; 
+    }
+</style>`;
+    const result = parse(input);
+
+    context.assert.strictEqual(result.nodes.length, 4);
+    context.assert.ok(result.nodes[0] instanceof TagSyntaxNode);
+    context.assert.ok(result.nodes[1] instanceof TagSyntaxNode);
+    context.assert.ok(result.nodes[2] instanceof TagSyntaxNode);
+    context.assert.ok(result.nodes[3] instanceof EndOfFileSyntaxNode);
+    context.assert.strictEqual(result.diagnostics.length, 0);
+});

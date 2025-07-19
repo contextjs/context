@@ -13,10 +13,10 @@ import { ObjectExtensions, StringExtensions } from '@contextjs/system';
 import { LanguageExtensions, Parser } from '@contextjs/views-parser';
 import { ServerContext } from '../models/server-context.js';
 
-export class ParserService {
+export class ParsersService {
     public constructor(private readonly context: ServerContext) { }
 
-    public parse(document: TextDocument): void {
+    public parse(document?: TextDocument): void {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
 
@@ -34,9 +34,12 @@ export class ParserService {
 
         try {
             this.context.document = document;
-            this.context.parserResult = Parser.parse(document.getText(), language);
+            const result = Parser.parse(document.getText(), language);
 
-            this.context.visitParserResult();
+            this.context.processParserResult(result);
+            console.error(`Parsed document: ${JSON.stringify(this.context.parserResult)}`);
+
+            this.context.parserResult = result;
         }
         catch (error) {
             this.context.document = null;

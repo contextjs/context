@@ -14,7 +14,6 @@ export enum SyntaxNodeType {
     Transition = "transition",
     Trivia = "trivia",
 
-    // HTML
     HtmlAttributeName = "htmlAttributeName",
     HtmlAttributeValue = "htmlAttributeValue",
     HtmlBracket = "htmlBracket",
@@ -23,12 +22,10 @@ export enum SyntaxNodeType {
     HtmlTagName = "htmlTagName",
     HtmlTagStart = "htmlTagStart",
 
-    // CDATA
     CdataContent = "cdataContent",
     CdataEnd = "cdataEnd",
     CdataStart = "cdataStart",
 
-    // Scripts
     ScriptAttributeName = "scriptAttributeName",
     ScriptAttributeValue = "scriptAttributeValue",
     ScriptContent = "scriptContent",
@@ -36,7 +33,6 @@ export enum SyntaxNodeType {
     ScriptTagName = "scriptTagName",
     ScriptTagStart = "scriptTagStart",
 
-    // Style
     StyleAttributeName = "styleAttributeName",
     StyleAttributeValue = "styleAttributeValue",
     StyleContent = "styleContent",
@@ -44,7 +40,6 @@ export enum SyntaxNodeType {
     StyleTagName = "styleTagName",
     StyleTagStart = "styleTagStart",
 
-    // Typescript
     TypescriptCodeBlock = "typescriptCodeBlock",
     TypescriptCodeBrace = "typescriptCodeBrace",
     TypescriptCodeExpression = "typescriptCodeExpression",

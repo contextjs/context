@@ -22,8 +22,9 @@ import { ServerContext } from '../models/server-context.js';
 import { SEMANTIC_TOKEN_LEGEND } from '../models/syntax-node-type.js';
 
 export class ConnectionService {
-    private hasConfigurationCapability = false;
-    private hasWorkspaceFolderCapability = false;
+    public hasConfigurationCapability = false;
+    public hasWorkspaceFolderCapability = false;
+
     public readonly connection: Connection = (createConnection as any)(process.stdin, process.stdout, ProposedFeatures.all);
 
     public constructor(private readonly context: ServerContext) {
@@ -48,10 +49,12 @@ export class ConnectionService {
                 capabilities: {
                     textDocumentSync: TextDocumentSyncKind.Incremental,
                     colorProvider: true,
-                    //completionProvider: { triggerCharacters: [">"], resolveProvider: false },
+                    completionProvider: { triggerCharacters: ['>', '/'], resolveProvider: false },
+                    executeCommandProvider: {
+                        commands: ['insertSnippet']
+                    },
                     semanticTokensProvider: {
                         full: true,
-                        range: false,
                         documentSelector: [{ scheme: 'file', language: Constants.LANGUAGE }],
                         legend: { tokenTypes: SEMANTIC_TOKEN_LEGEND, tokenModifiers: [] }
                     }
@@ -64,12 +67,16 @@ export class ConnectionService {
             return result;
         });
 
-        this.connection.onInitialized(() => {
+        this.connection.onInitialized(async () => {
             if (this.hasConfigurationCapability)
                 this.connection.client.register(DidChangeConfigurationNotification.type, undefined);
+
+            await this.context.settingsService.update();
         });
 
-        this.connection.onDidChangeConfiguration(() => {
+        this.connection.onDidChangeConfiguration(async (change) => {
+            await this.context.settingsService.update();
+            this.context.settingsService.handleDidChangeConfiguration(change);
             this.connection.languages.diagnostics.refresh();
         });
 

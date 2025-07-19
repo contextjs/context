@@ -7,55 +7,129 @@
  */
 
 import cssLanguageService from "vscode-css-languageservice";
+import { TextDocument } from "vscode-languageserver-textdocument";
+import {
+    Color,
+    ColorPresentationParams,
+    CompletionItemKind,
+    CompletionList,
+    InsertTextFormat,
+    Position,
+    TextDocumentPositionParams
+} from 'vscode-languageserver/node.js';
+
 const { getCSSLanguageService } = cssLanguageService;
 
 import { ObjectExtensions } from "@contextjs/system";
-import { TextDocument } from "vscode-languageserver-textdocument";
-import { Color, ColorPresentationParams, TextDocumentPositionParams } from 'vscode-languageserver/node.js';
+import { CssRegion } from "../../models/css-region.js";
 import { ServerContext } from '../../models/server-context.js';
 import { ILanguageService } from "./interfaces/i-language.service.js";
 
 export class CSSLanguageService implements ILanguageService {
     public service = getCSSLanguageService();
-    private stylesheet = null;
-    
     public context: ServerContext;
-    public readonly id: string = "css";
 
     public constructor(context: ServerContext) {
         this.context = context;
     }
 
-    public complete(node: any, document: TextDocument, position: TextDocumentPositionParams) {
-        // const docText = this.replaceExcept(document.getText(), [node.node.text]);
-        // const clone = TextDocument.create(document.uri, 'css', document.version, docText);
-        // this.stylesheet = this.service.parseStylesheet(clone);
-        // const ddd = this.service.doComplete(document, position.position, this.stylesheet);
-        // return ddd;
+    public getCssRegion(position: Position): CssRegion | null {
+        if (ObjectExtensions.isNullOrUndefined(this.context.document))
+            return null;
 
-        return this.service.doComplete(document, position.position, this.stylesheet || this.service.parseStylesheet(document));
+        const docOffset = this.context.document.offsetAt(position);
+
+        for (const region of this.context.cssRegions) {
+            if (region.documentStart <= docOffset && docOffset <= region.documentEnd) {
+                const cssOffset = region.mapDocumentOffsetToCss(docOffset);
+                if (cssOffset !== null)
+                    return region;
+            }
+        }
+
+        return null;
     }
+
+    public complete(position: TextDocumentPositionParams, region: CssRegion): CompletionList {
+        const document = this.context.documentsService.documents.get(position.textDocument.uri);
+
+        if (ObjectExtensions.isNullOrUndefined(region) || ObjectExtensions.isNullOrUndefined(document))
+            return { isIncomplete: false, items: [] };
+
+        this.context.documentsService.parseDocument(document);
+
+        const documentOffset = document.offsetAt(position.position);
+        const cssOffset = region.mapDocumentOffsetToCss(documentOffset);
+        if (cssOffset === null)
+            return { isIncomplete: false, items: [] };
+
+        const cssDocument = TextDocument.create(document.uri + ".css-virtual", "css", 1, this.context.cssDocument);
+        const stylesheet = this.service.parseStylesheet(cssDocument);
+        const cssWordPrefix = this.getCssWordPrefix(this.context.cssDocument, cssOffset);
+        const documentStartIndex = region.mapCssOffsetToDocument(cssWordPrefix.start);
+        const documentEndIndex = region.mapCssOffsetToDocument(cssOffset);
+        if (documentStartIndex === null || documentEndIndex === null)
+            return this.service.doComplete(cssDocument, cssDocument.positionAt(cssOffset), stylesheet);
+
+        const documentRange = { start: document.positionAt(documentStartIndex), end: document.positionAt(documentEndIndex) };
+        const result = this.service.doComplete(cssDocument, cssDocument.positionAt(cssOffset), stylesheet);
+
+        const patchedItems = result.items.map(item => {
+            if (item.kind === CompletionItemKind.Property)
+                return {
+                    ...item,
+                    textEdit: {
+                        range: documentRange,
+                        newText: `${item.label.replace(/[:;]$/, '')}: $1;`
+                    },
+                    insertTextFormat: InsertTextFormat.Snippet
+                };
+
+            return {
+                ...item,
+                textEdit: {
+                    range: documentRange,
+                    newText: item.label
+                }
+            };
+        });
+
+        return { ...result, items: patchedItems };
+    }
+
+    private getCssWordPrefix(buffer: string, offset: number): { start: number, value: string } {
+        let i = offset - 1;
+
+        while (i >= 0 && /[a-zA-Z0-9\-]/.test(buffer[i]))
+            i--;
+
+        const start = i + 1;
+        const value = buffer.slice(start, offset);
+
+        return { start, value };
+    }
+
 
     public onDocumentColor() {
         if (this.context.colors.length === 0)
-            return Promise.resolve(null);
+            return null;
 
         return Promise.resolve(this.context.colors.map(color => color.information));
     }
 
     public onColorPresentation(params: ColorPresentationParams) {
         if (this.context.colors.length === 0)
-            return Promise.resolve([]);
+            return [];
 
-        const colorBox = this.context.colors.find(color =>
+        const colorPresentation = this.context.colors.find(color =>
             color.information.range.start.line === params.range.start.line &&
             color.information.range.start.character === params.range.start.character &&
             color.information.range.end.line === params.range.end.line &&
             color.information.range.end.character === params.range.end.character
         );
 
-        if (ObjectExtensions.isNullOrUndefined(colorBox))
-            return Promise.resolve([]);
+        if (ObjectExtensions.isNullOrUndefined(colorPresentation))
+            return [];
 
         const hexColor = this.colorToHex(params.color);
         const hslColor = this.colorToHsl(params.color);
@@ -63,7 +137,7 @@ export class CSSLanguageService implements ILanguageService {
         const presentations = [
             {
                 label: hexColor,
-                textEdit: { range: colorBox.information.range, newText: hexColor }
+                textEdit: { range: colorPresentation.information.range, newText: hexColor }
             },
         ];
 
@@ -72,7 +146,7 @@ export class CSSLanguageService implements ILanguageService {
             presentations.push(
                 {
                     label: rgbColor,
-                    textEdit: { range: colorBox.information.range, newText: rgbColor }
+                    textEdit: { range: colorPresentation.information.range, newText: rgbColor }
                 });
         }
         else {
@@ -80,14 +154,14 @@ export class CSSLanguageService implements ILanguageService {
             presentations.push(
                 {
                     label: rgbaColor,
-                    textEdit: { range: colorBox.information.range, newText: rgbaColor }
+                    textEdit: { range: colorPresentation.information.range, newText: rgbaColor }
                 });
         }
 
         presentations.push(
             {
                 label: hslColor,
-                textEdit: { range: colorBox.information.range, newText: hslColor }
+                textEdit: { range: colorPresentation.information.range, newText: hslColor }
             }
         );
 
@@ -98,6 +172,7 @@ export class CSSLanguageService implements ILanguageService {
         const r = Math.round(color.red * 255);
         const g = Math.round(color.green * 255);
         const b = Math.round(color.blue * 255);
+
         return `rgb(${r}, ${g}, ${b})`;
     }
 
@@ -159,24 +234,3 @@ export class CSSLanguageService implements ILanguageService {
             : `hsla(${h}, ${s}%, ${l}%, ${parseFloat(color.alpha.toFixed(2))})`;
     }
 }
-
-// private replaceExcept(input: string, toExcludeArray: string[]): string {
-//     // Escape and join all strings in the exclusion array to create a regex
-//     const escapedPatterns = toExcludeArray.map(str =>
-//         str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-//     );
-//     const regex = new RegExp(escapedPatterns.join('|'), 'gs'); // Join with OR `|` operator
-
-//     // Replace everything except newlines with spaces
-//     let result = input.replace(/./gs, (char) => (char === '\n' ? '\n' : ' '));
-
-//     // Reinsert each excluded block back into the result
-//     toExcludeArray.forEach((block) => {
-//         const index = input.indexOf(block);
-//         if (index !== -1) {
-//             result = result.slice(0, index) + block + result.slice(index + block.length);
-//         }
-//     });
-
-//     return result;
-// }

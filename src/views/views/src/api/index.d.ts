@@ -118,6 +118,14 @@ export declare class Location {
      */
     public readonly endCharacterIndex: number;
     /**
+     * The absolute character index at the start of the location in the source file.
+     */
+    public readonly absoluteStartCharacterIndex: number;
+    /**
+     * The absolute character index at the end of the location in the source file.
+     */
+    public readonly absoluteEndCharacterIndex: number;
+    /**
      * The text contained within this location in the source file.
      */
     public readonly text: string;
@@ -128,10 +136,12 @@ export declare class Location {
 
     /**
      * Creates a new Location instance with the specified start and end positions, text, and lines.
-     * @param startLineIndex The index of the starting line.
-     * @param startCharacterIndex The character index at the start of the location.
+     * @param startLineIndex The index of the starting line .
+     * @param startCharacterIndex The character index at the start of the location (inclusive).
      * @param endLineIndex The index of the ending line.
-     * @param endCharacterIndex The character index at the end of the location.
+     * @param endCharacterIndex The character index at the end of the location (exclusive).
+     * @param absoluteStartCharacterIndex The absolute character index at the start of the location (inclusive).
+     * @param absoluteEndCharacterIndex The absolute character index at the end of the location (exclusive).
      * @param text The text contained within this location.
      * @param lines An array of LineInfo objects representing the lines in this location.
      */
@@ -140,6 +150,8 @@ export declare class Location {
         startCharacterIndex: number,
         endLineIndex: number,
         endCharacterIndex: number,
+        absoluteStartCharacterIndex: number,
+        absoluteEndCharacterIndex: number,
         text: string,
         lines: LineInfo[]);
 }
@@ -165,8 +177,8 @@ export declare class LineInfo {
     /**
      * Creates a new LineInfo instance with the specified index and character indices.
      * @param index The index of the line in the source file.
-     * @param startCharacterIndex The character index at the start of the line.
-     * @param endCharacterIndex The character index at the end of the line.
+     * @param startCharacterIndex The character index at the start of the line (inclusive).
+     * @param endCharacterIndex The character index at the end of the line (exclusive).
      */
     public constructor(index: number, startCharacterIndex: number, endCharacterIndex: number);
 }
@@ -206,15 +218,34 @@ export declare class DiagnosticMessages {
     public static readonly UnsupportedProjectType: (projectType: string) => DiagnosticMessage;
 }
 
+/**
+ * Represents a source containing text content.
+ * This class provides methods to retrieve line information and locations within the source.
+ */
 export declare class Source {
+    /**
+     * The content of the source.
+     */
     public readonly content: string;
+
+    /**
+     * The lines of the source.
+     */
     public readonly lines: LineInfo[];
 
+    /**
+     * Creates a new Source instance with the specified content.
+     * @param content The text content of the source.
+     */
     public constructor(content: string);
 
-    private getLines(): LineInfo[];
-
-    public getLocation(startIndex: number, endIndex: number, text: string): Location;
+    /**
+     * Gets the Location for the specified start and end indices in the source text.
+     * @param startIndex The starting index in the source text (inclusive).
+     * @param endIndex The ending index in the source text (exclusive).
+     * @returns A Location object representing the specified range [startIndex, endIndex) in the source.
+     */
+    public getLocation(startIndex: number, endIndex: number): Location;
 }
 
 /**

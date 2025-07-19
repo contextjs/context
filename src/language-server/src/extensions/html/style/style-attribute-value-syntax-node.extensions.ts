@@ -49,8 +49,12 @@ StyleAttributeValueSyntaxNode.prototype.parseLanguage = function (context: Langu
 StyleAttributeValueSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
     context.state.push(SyntaxNodeType.StyleAttributeValue);
 
+    this.leadingTrivia?.parseStyles(context);
+
     for (const node of this.children)
         node.parseStyles(context);
+
+    this.trailingTrivia?.parseStyles(context);
 
     context.state.pop();
 }

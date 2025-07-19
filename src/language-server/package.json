@@ -20,7 +20,8 @@
         "vscode-css-languageservice": "__VSCODE_CSS_LANGUAGE_SERVICE_VERSION__",
         "vscode-html-languageservice": "__VSCODE_HTML_LANGUAGE_SERVICE_VERSION__",
         "@contextjs/views-parser": "__VERSION__",
-        "@contextjs/collections": "__VERSION__"
+        "@contextjs/collections": "__VERSION__",
+        "@contextjs/text": "__VERSION__"
     },
     "devDependencies": {
         "typescript": "__TYPESCRIPT_VERSION__"

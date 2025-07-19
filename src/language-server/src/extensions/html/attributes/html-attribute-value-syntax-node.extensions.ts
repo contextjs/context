@@ -43,7 +43,10 @@ HtmlAttributeValueSyntaxNode.prototype.parseLanguage = function (context: Langua
 };
 
 HtmlAttributeValueSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
-    console.error(this)
+    this.leadingTrivia?.parseStyles(context);
+
     for (const node of this.children)
         node.parseStyles(context);
+
+    this.trailingTrivia?.parseStyles(context);
 }

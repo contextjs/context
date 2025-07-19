@@ -13,6 +13,8 @@ export class Location {
     public readonly startCharacterIndex: number;
     public readonly endLineIndex: number;
     public readonly endCharacterIndex: number;
+    public readonly absoluteStartCharacterIndex: number;
+    public readonly absoluteEndCharacterIndex: number;
     public readonly text: string;
     public readonly lines: LineInfo[];
 
@@ -21,12 +23,16 @@ export class Location {
         startCharacterIndex: number,
         endLineIndex: number,
         endCharacterIndex: number,
+        absoluteStartCharacterIndex: number,
+        absoluteEndCharacterIndex: number,
         text: string,
         lines: LineInfo[]) {
         this.startLineIndex = startLineIndex;
         this.startCharacterIndex = startCharacterIndex;
         this.endLineIndex = endLineIndex;
         this.endCharacterIndex = endCharacterIndex;
+        this.absoluteStartCharacterIndex = absoluteStartCharacterIndex;
+        this.absoluteEndCharacterIndex = absoluteEndCharacterIndex;
         this.text = text;
         this.lines = lines;
     }

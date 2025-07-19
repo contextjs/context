@@ -38,6 +38,14 @@ LiteralSyntaxNode.prototype.parseLanguage = function (context: LanguageContext):
 };
 
 LiteralSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
-    if (context.state.current === SyntaxNodeType.StyleAttributeValue)
+    this.leadingTrivia?.parseStyles(context);
+
+    if (context.state.current === SyntaxNodeType.StyleAttributeValue) {
         context.setColors(this, true);
+        context.buildCss(this, true);
+    }
+    else
+        context.buildCss(this);
+
+    this.trailingTrivia?.parseStyles(context);
 };

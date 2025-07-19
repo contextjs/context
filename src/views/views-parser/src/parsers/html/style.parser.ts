@@ -47,6 +47,12 @@ export class StyleParser {
         );
 
         children.push(tagStartResult.tagStartSyntaxNode);
+
+        if(context.currentCharacter === EndOfFileSyntaxNode.endOfFile){
+            context.addErrorDiagnostic(DiagnosticMessages.ExpectedEndStyleTag(context.currentCharacter));
+            return new StyleTagSyntaxNode(children, null, TriviaParser.parse(context));
+        }
+
         children.push(ContentParser.parse(
             context,
             (value, location, leadingTrivia, trailingTrivia) => new StyleContentSyntaxNode(value, location, leadingTrivia, trailingTrivia),

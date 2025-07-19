@@ -123,7 +123,7 @@ export class ParserContext {
 
     public getLocation(startIndex: number | null = null): Location {
         const initialIndex = startIndex === null ? this.startIndex : startIndex;
-        return this.source.getLocation(initialIndex, this.currentIndex, this.source.content.substring(initialIndex, this.currentIndex));
+        return this.source.getLocation(initialIndex, this.currentIndex);
     }
 
     public advanceWhile(predicate: (char: string) => boolean): string {

@@ -43,6 +43,10 @@ StyleTagStartSyntaxNode.prototype.parseLanguage = function (context: LanguageCon
 };
 
 StyleTagStartSyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
+    this.leadingTrivia?.parseStyles(context);
+    
     for (const node of this.children)
         node.parseStyles(context);
+
+    this.trailingTrivia?.parseStyles(context);
 }

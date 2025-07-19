@@ -41,14 +41,17 @@ export class SemanticTokenContext {
     }
 
     public getData(): number[] {
-        let lastLine = 0, lastChar = 0;
+        let lastLineIndex = 0;
+        let lastCharacterIndex = 0;
         const data: number[] = [];
-        for (const t of this.tokens) {
-            const deltaLine = t.line - lastLine;
-            const deltaChar = deltaLine === 0 ? t.char - lastChar : t.char;
-            data.push(deltaLine, deltaChar, t.length, t.type, t.modifiersBitset);
-            lastLine = t.line;
-            lastChar = t.char;
+
+        for (const token of this.tokens) {
+            const lineDelta = token.lineIndex - lastLineIndex;
+            const characterDelta = lineDelta === 0 ? token.characterIndex - lastCharacterIndex : token.characterIndex;
+            data.push(lineDelta, characterDelta, token.length, token.type, token.modifiersBitset);
+
+            lastLineIndex = token.lineIndex;
+            lastCharacterIndex = token.characterIndex;
         }
 
         return data;

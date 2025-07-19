@@ -6,15 +6,16 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ObjectExtensions } from '@contextjs/system';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/node.js';
+
+import { ObjectExtensions } from '@contextjs/system';
 import { ServerContext } from '../models/server-context.js';
 
-export class DocumentService {
+export class DocumentsService {
     public readonly documents: TextDocuments<TextDocument>;
     private readonly debounceTimeouts = new Map<string, NodeJS.Timeout>();
-    private readonly debounceDelay = 100;
+    private readonly debounceDelay = 200;
 
     public constructor(private readonly context: ServerContext) {
         this.documents = new TextDocuments(TextDocument);
@@ -25,8 +26,22 @@ export class DocumentService {
         this.documents.listen(this.context.connectionService.connection);
     }
 
+    public parseDocument(document?: TextDocument) {
+        if (ObjectExtensions.isNullOrUndefined(document) || document.version === this.context.documentVersion)
+            return;
+
+        this.context.documentVersion = document.version;
+        this.context.parsersService.parse(document);
+        const diagnostics = this.context.diagnosticsService.parse();
+
+        if (ObjectExtensions.isNullOrUndefined(diagnostics))
+            this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
+        else
+            this.context.connectionService.connection.sendDiagnostics(diagnostics);
+    }
+
     private setupEvents() {
-        this.documents.onDidChangeContent((event) => {
+        this.documents.onDidChangeContent((event: TextDocumentChangeEvent<TextDocument>) => {
             const uri = event.document.uri;
 
             const oldTimeout = this.debounceTimeouts.get(uri);
@@ -34,7 +49,7 @@ export class DocumentService {
                 clearTimeout(oldTimeout);
 
             const timeout = setTimeout(() => {
-                this.parseDocument(event);
+                this.parseDocument(event.document);
                 this.debounceTimeouts.delete(uri);
             }, this.debounceDelay);
 
@@ -42,17 +57,7 @@ export class DocumentService {
         });
 
         this.documents.onDidOpen((event) => {
-            this.parseDocument(event);
+            this.parseDocument(event.document);
         });
-    }
-
-    private parseDocument(event: TextDocumentChangeEvent<TextDocument>) {
-        this.context.parserService.parse(event.document);
-
-        const diagnostics = this.context.diagnosticsService.analyse();
-        if (ObjectExtensions.isNullOrUndefined(diagnostics))
-            this.context.connectionService.connection.sendDiagnostics({ uri: event.document.uri, diagnostics: [] });
-        else
-            this.context.connectionService.connection.sendDiagnostics(diagnostics);
     }
 }

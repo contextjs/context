@@ -8,7 +8,7 @@
 
 import { ColorInformation } from "vscode-languageserver/node.js";
 
-export class ColorBox {
+export class ColorPresentation {
     public label: string;
     public information: ColorInformation;
 
