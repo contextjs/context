@@ -64,9 +64,10 @@ test("AttributeValueParser: parses single-quoted value", (context: TestContext) 
 test("AttributeValueParser: parses empty quoted value", (context: TestContext) => {
     const { node } = parseAttributeValue('""');
 
-    context.assert.strictEqual(node.children.length, 2);
+    context.assert.strictEqual(node.children.length, 3);
     context.assert.strictEqual((node.children[0] as QuoteSyntaxNode).value, '"');
-    context.assert.strictEqual((node.children[1] as QuoteSyntaxNode).value, '"');
+    context.assert.strictEqual((node.children[1] as LiteralSyntaxNode).value, "");
+    context.assert.strictEqual((node.children[2] as QuoteSyntaxNode).value, '"');
 });
 
 test("AttributeValueParser: parses unquoted value", (context: TestContext) => {
@@ -110,7 +111,7 @@ test("AttributeValueParser: unterminated quoted value emits diagnostic", (contex
 test("AttributeValueParser: only opening quote", (context: TestContext) => {
     const { node, parserContext } = parseAttributeValue('"');
 
-    context.assert.strictEqual(node.children.length, 1);
+    context.assert.strictEqual(node.children.length, 2);
     context.assert.strictEqual(parserContext.diagnostics[0].message.code, DiagnosticMessages.UnterminatedAttributeValue.code);
     context.assert.strictEqual(parserContext.diagnostics[0].message.message, DiagnosticMessages.UnterminatedAttributeValue.message);
 });
@@ -161,7 +162,7 @@ test("AttributeValueParser: parses value with transitions and escapes", (context
 test("AttributeValueParser: parses only transition (@)", (context: TestContext) => {
     const { node } = parseAttributeValue("@");
 
-    context.assert.strictEqual(node.children.length, 1);
+    context.assert.strictEqual(node.children.length, 2);
     context.assert.strictEqual((node.children[0] as LiteralSyntaxNode).value, "TS");
 });
 
@@ -238,19 +239,19 @@ test("AttributeValueParser: handles sequence of stops and transitions", (context
 test("AttributeValueParser: parses with only whitespace", (context: TestContext) => {
     const { node } = parseAttributeValue("   ");
 
-    context.assert.strictEqual(node.children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
 });
 
 test("AttributeValueParser: parses empty unquoted value (value=)", (context: TestContext) => {
     const { node, parserContext } = parseAttributeValue('');
 
-    context.assert.strictEqual(node.children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
     context.assert.ok(parserContext.diagnostics.length === 1);
 });
 
 test("AttributeValueParser: only whitespace triggers diagnostic", (context: TestContext) => {
     const { node, parserContext } = parseAttributeValue('     ');
 
-    context.assert.strictEqual(node.children.length, 0);
+    context.assert.strictEqual(node.children.length, 1);
     context.assert.strictEqual(parserContext.diagnostics.length, 1);
 });

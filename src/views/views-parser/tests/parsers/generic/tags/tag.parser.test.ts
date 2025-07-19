@@ -328,9 +328,10 @@ test("TagParser: handles attribute with empty value", (context: TestContext) => 
     const startTag = getStartTag(node);
     const attr = getAttributes(startTag)[0];
 
-    context.assert.strictEqual(attr.children[2].children.length, 2);
+    context.assert.strictEqual(attr.children[2].children.length, 3);
     context.assert.strictEqual(attr.children[2].children[0].value, '"');
-    context.assert.strictEqual(attr.children[2].children[1].value, '"');
+    context.assert.strictEqual(attr.children[2].children[1].value, '');
+    context.assert.strictEqual(attr.children[2].children[2].value, '"');
 });
 
 test("TagParser: parses tag with attribute containing transitions (e.g. @)", (context: TestContext) => {

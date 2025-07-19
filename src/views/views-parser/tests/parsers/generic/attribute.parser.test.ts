@@ -82,7 +82,7 @@ test("AttributeParser: parses name and equals, no value", (context: TestContext)
     context.assert.strictEqual(node.children.length, 3);
     context.assert.strictEqual((node as any).children[0].children[0].value, "foo");
     context.assert.strictEqual((node as any).children[1].value, "=");
-    context.assert.strictEqual((node as any).children[2].children.length, 0);
+    context.assert.strictEqual((node as any).children[2].children.length, 1);
 });
 
 test("AttributeParser: parses name, equals, and quoted value", (context: TestContext) => {
@@ -119,7 +119,7 @@ test("AttributeParser: handles whitespace after name", (context: TestContext) =>
 test("AttributeParser: parses empty quoted value", (context: TestContext) => {
     const node = parseAttribute('foo=""');
 
-    context.assert.strictEqual((node as any).children[2].children.length, 2);
+    context.assert.strictEqual((node as any).children[2].children.length, 3);
 });
 
 test("AttributeParser: handles whitespace after equals", (context: TestContext) => {
@@ -152,7 +152,7 @@ test("AttributeParser: missing value after equals is allowed", (context: TestCon
 
     context.assert.ok(!parserContext.diagnostics.some(d => d.message.code === DiagnosticMessages.InvalidAttributeValue.code));
     context.assert.strictEqual(node.children.length, 3);
-    context.assert.strictEqual((node as any).children[2].children.length, 0);
+    context.assert.strictEqual((node as any).children[2].children.length, 1);
 });
 
 test("AttributeParser: parses only equals", (context: TestContext) => {
@@ -337,7 +337,7 @@ test("AttributeParser: transition at end of value", (context: TestContext) => {
     const node = parseAttribute('foo="bar@"');
     const valueChildren = (node as any).children[2].children;
 
-    context.assert.strictEqual((valueChildren[valueChildren.length - 2] as LiteralSyntaxNode).value, "TS");
+    context.assert.strictEqual((valueChildren[valueChildren.length - 3] as LiteralSyntaxNode).value, "TS");
 });
 
 test("AttributeParser: escaped transition (@@) in value", (context: TestContext) => {
@@ -361,7 +361,7 @@ test("AttributeParser: only transition char as value", (context: TestContext) =>
     const node = parseAttribute("foo=@");
     const valueChildren = (node as any).children[2].children;
 
-    context.assert.strictEqual(valueChildren.length, 1);
+    context.assert.strictEqual(valueChildren.length, 2);
     context.assert.strictEqual((valueChildren[0] as LiteralSyntaxNode).value, "TS");
 });
 
@@ -433,7 +433,7 @@ test("AttributeParser: parses quoted value that is only a transition", (context:
     const node = parseAttribute('foo="@"');
     const valueChildren = (node as any).children[2].children;
 
-    context.assert.strictEqual(valueChildren.length, 3);
+    context.assert.strictEqual(valueChildren.length, 4);
     context.assert.strictEqual((valueChildren[1] as LiteralSyntaxNode).value, "TS");
 });
 
@@ -442,7 +442,7 @@ test("AttributeParser: parses value with transition at end and trailing whitespa
     const node = parseAttribute('foo="bar@"  ');
     const valueChildren = (node as any).children[2].children;
 
-    context.assert.strictEqual((valueChildren[valueChildren.length - 2] as LiteralSyntaxNode).value, "TS");
+    context.assert.strictEqual((valueChildren[valueChildren.length - 3] as LiteralSyntaxNode).value, "TS");
 });
 
 test("AttributeParser: parses name, equals, value, each with trivia", (context: TestContext) => {

@@ -7,16 +7,16 @@
  */
 
 import { FileTemplate } from "../../models/file-template.js";
-import { ContextTemplate } from "../../templates/api/context.ctxp.template.js";
-import { AboutControllerTemplate } from "../../templates/api/controllers/about.controller.ts.template.js";
-import { HomeControllerTemplate } from "../../templates/api/controllers/home.controller.ts.template.js";
-import { MainTemplate } from "../../templates/api/main.ts.template.js";
-import { PackageTemplate } from "../../templates/api/package.json.template.js";
-import { ILoggerServiceTemplate } from "../../templates/api/services/interfaces/i-logger.service.template.js";
-import { IMessageServiceTemplate } from "../../templates/api/services/interfaces/i-message.service.template.js";
-import { LoggerServiceTemplate } from "../../templates/api/services/logger.service.template.js";
-import { MessageServiceTemplate } from "../../templates/api/services/message.service.template.js";
-import { ServiceCollectionExtensionsTemplate } from "../../templates/api/services/service-collection.extensions.template.js";
+import { ContextTemplate } from "../../templates/webapi/context.ctxp.template.js";
+import { AboutControllerTemplate } from "../../templates/webapi/controllers/about.controller.ts.template.js";
+import { HomeControllerTemplate } from "../../templates/webapi/controllers/home.controller.ts.template.js";
+import { MainTemplate } from "../../templates/webapi/main.ts.template.js";
+import { PackageTemplate } from "../../templates/webapi/package.json.template.js";
+import { ILoggerServiceTemplate } from "../../templates/webapi/services/interfaces/i-logger.service.template.js";
+import { IMessageServiceTemplate } from "../../templates/webapi/services/interfaces/i-message.service.template.js";
+import { LoggerServiceTemplate } from "../../templates/webapi/services/logger.service.template.js";
+import { MessageServiceTemplate } from "../../templates/webapi/services/message.service.template.js";
+import { ServiceCollectionExtensionsTemplate } from "../../templates/webapi/services/service-collection.extensions.template.js";
 import { TsConfigTemplate } from "../../templates/tsconfig.json.template.js";
 
 export class WebAPITemplateService {
