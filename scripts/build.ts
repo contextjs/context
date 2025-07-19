@@ -120,6 +120,7 @@ export class Build extends Script {
         let packageFileContent = await this.readFileAsync(packageFilePath);
 
         packageFileContent = packageFileContent.replace(/__VERSION__/g, Config.version);
+        packageFileContent = packageFileContent.replace(/0.0.0-dev/g, Config.version);
         packageFileContent = packageFileContent.replace(/__TYPESCRIPT_VERSION__/g, Config.typescriptVersion);
         packageFileContent = packageFileContent.replace(/__REFLECT_METADATA_VERSION__/g, Config.reflectMetadataVersion);
         packageFileContent = packageFileContent.replace(/__NODE_TYPES_VERSION__/g, Config.nodeTypesVersion);
@@ -128,6 +129,7 @@ export class Build extends Script {
         packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_SERVER_TEXTDOCUMENT_VERSION__/g, Config.vscodeLanguageServerTextDocumentVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_CSS_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeCssLanguageServiceVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_HTML_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeHtmlLanguageServiceVersion);
+        packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_CLIENT_VERSION__/g, Config.vscodeLanguageClientVersion);
 
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }

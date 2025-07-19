@@ -21,6 +21,7 @@ export default class Config {
     public static vscodeLanguageServerTextDocumentVersion: string = "^1.0.12";
     public static vscodeCssLanguageServiceVersion: string = "^6.3.7";
     public static vscodeHtmlLanguageServiceVersion: string = "^5.5.1";
+    public static vscodeLanguageClientVersion: string = "^9.0.1";
 
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";
@@ -46,6 +47,7 @@ export default class Config {
         { name: "webserver-middleware-mvc", path: "webserver/webserver-middleware-mvc" },
         { name: "context", path: "context" },
         { name: "templates", path: "templates" },
-        { name: "commands", path: "commands" }
+        { name: "commands", path: "commands" },
+        { name: "vscode", path: "language-services/extensions/vscode", disableNPM: true },
     ];
 }

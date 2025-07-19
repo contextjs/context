@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "../../../../_build/vscode",
+        "skipLibCheck": true
+    },
+    "extends": "../../../../tsconfig-base.json",
+    "exclude": [
+        "tests/*",
+        "scripts/*"
+    ]
+}

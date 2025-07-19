@@ -1,0 +1,339 @@
+{
+    "name": "contextjs",
+    "displayName": "ContextJS",
+    "description": "Official extension for ContextJS Language Server.",
+    "version": "0.0.0-dev",
+    "publisher": "ContextJS",
+    "license": "MIT",
+    "icon": "icon.png",
+    "type": "module",
+    "engines": {
+        "vscode": "^1.101.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/contextjs/vscode.git"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "main": "./extension.js",
+    "activationEvents": [
+        "onCommand:contextjs.start"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "contextjs",
+                "aliases": [
+                    "ContextJS",
+                    "TSHTML",
+                    "context"
+                ],
+                "extensions": [
+                    ".tshtml"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "configurationDefaults": {
+            "files.associations": {
+                "*.ctxp": "json"
+            }
+        },
+        "capabilities": {
+            "documentColorProvider": true
+        },
+        "grammars": [
+            {
+                "language": "contextjs",
+                "scopeName": "source.contextjs",
+                "path": "./contextjs.tmLanguage.json"
+            }
+        ],
+        "semanticTokenTypes": [
+            {
+                "id": "comment",
+                "description": "Comment"
+            },
+            {
+                "id": "equals",
+                "description": "Equals Sign"
+            },
+            {
+                "id": "literal",
+                "description": "Literal"
+            },
+            {
+                "id": "quote",
+                "description": "Quote"
+            },
+            {
+                "id": "transition",
+                "description": "Transition"
+            },
+            {
+                "id": "trivia",
+                "description": "Trivia"
+            },
+            {
+                "id": "htmlAttributeName",
+                "description": "HTML Attribute Name"
+            },
+            {
+                "id": "htmlAttributeValue",
+                "description": "HTML Attribute Value"
+            },
+            {
+                "id": "htmlBracket",
+                "description": "HTML Bracket"
+            },
+            {
+                "id": "htmlDoctype",
+                "description": "HTML Doctype"
+            },
+            {
+                "id": "htmlTagEnd",
+                "description": "HTML Tag End"
+            },
+            {
+                "id": "htmlTagName",
+                "description": "HTML Tag Name"
+            },
+            {
+                "id": "htmlTagStart",
+                "description": "HTML Tag Start"
+            },
+            {
+                "id": "cdataContent",
+                "description": "CDATA Content"
+            },
+            {
+                "id": "cdataEnd",
+                "description": "CDATA End"
+            },
+            {
+                "id": "cdataStart",
+                "description": "CDATA Start"
+            },
+            {
+                "id": "scriptAttributeName",
+                "description": "Script Attribute Name"
+            },
+            {
+                "id": "scriptAttributeValue",
+                "description": "Script Attribute Value",
+                "superType": "function"
+            },
+            {
+                "id": "scriptContent",
+                "description": "Script Content"
+            },
+            {
+                "id": "scriptTagEnd",
+                "description": "Script Tag End"
+            },
+            {
+                "id": "scriptTagName",
+                "description": "Script Tag Name"
+            },
+            {
+                "id": "scriptTagStart",
+                "description": "Script Tag Start"
+            },
+            {
+                "id": "styleAttributeName",
+                "description": "Style Attribute Name"
+            },
+            {
+                "id": "styleAttributeValue",
+                "description": "Style Attribute Value"
+            },
+            {
+                "id": "styleContent",
+                "description": "Style Content"
+            },
+            {
+                "id": "styleTagEnd",
+                "description": "Style Tag End"
+            },
+            {
+                "id": "styleTagName",
+                "description": "Style Tag Name"
+            },
+            {
+                "id": "styleTagStart",
+                "description": "Style Tag Start"
+            },
+            {
+                "id": "typescriptCodeBlock",
+                "description": "TypeScript Code Block"
+            },
+            {
+                "id": "typescriptCodeBrace",
+                "description": "TypeScript Code Brace"
+            },
+            {
+                "id": "typescriptCodeExpression",
+                "description": "TypeScript Code Expression"
+            },
+            {
+                "id": "typescriptCodeValue",
+                "description": "TypeScript Code Value"
+            }
+        ],
+        "semanticTokenScopes": [
+            {
+                "language": "contextjs",
+                "scopes": {
+                    "comment": [
+                        "comment"
+                    ],
+                    "endOfFile": [],
+                    "equals": [
+                        "keyword.operator.assignment"
+                    ],
+                    "quote": [
+                        "punctuation.definition.string"
+                    ],
+                    "transition": [
+                        "keyword.control.contextjs"
+                    ],
+                    "trivia": [
+                        "comment.block.documentation"
+                    ],
+                    "htmlAttributeName": [
+                        "entity.other.attribute-name.html"
+                    ],
+                    "htmlAttributeValue": [
+                        "string.quoted.double.html",
+                        "string.quoted.single.html"
+                    ],
+                    "htmlBracket": [
+                        "punctuation.definition.tag.html"
+                    ],
+                    "htmlDoctype": [
+                        "meta.doctype.html"
+                    ],
+                    "htmlTagEnd": [
+                        "punctuation.definition.tag.end.html"
+                    ],
+                    "htmlTagName": [
+                        "entity.name.tag.html"
+                    ],
+                    "htmlTagStart": [
+                        "punctuation.definition.tag.begin.html"
+                    ],
+                    "cdataContent": [
+                        "constant.other.cdata.html"
+                    ],
+                    "cdataEnd": [
+                        "punctuation.definition.tag.end.html"
+                    ],
+                    "cdataStart": [
+                        "punctuation.definition.tag.begin.html"
+                    ],
+                    "scriptAttributeName": [
+                        "entity.other.attribute-name.script.html"
+                    ],
+                    "scriptAttributeValue": [],
+                    "scriptContent": [
+                        "source.ts.embedded.html"
+                    ],
+                    "scriptTagEnd": [
+                        "punctuation.definition.tag.end.html"
+                    ],
+                    "scriptTagName": [
+                        "entity.name.tag.script.html"
+                    ],
+                    "scriptTagStart": [
+                        "punctuation.definition.tag.begin.html"
+                    ],
+                    "styleAttributeName": [
+                        "entity.other.attribute-name.style.html"
+                    ],
+                    "styleAttributeValue": [
+                        "string.quoted.style.html"
+                    ],
+                    "styleContent": [
+                        "source.css.embedded.html"
+                    ],
+                    "styleTagEnd": [
+                        "punctuation.definition.tag.end.html"
+                    ],
+                    "styleTagName": [
+                        "entity.name.tag.style.html"
+                    ],
+                    "styleTagStart": [
+                        "punctuation.definition.tag.begin.html"
+                    ],
+                    "typescriptCodeBlock": [
+                        "meta.embedded.block.ts"
+                    ],
+                    "typescriptCodeBrace": [
+                        "keyword.control.contextjs"
+                    ],
+                    "typescriptCodeExpression": [
+                        "meta.embedded.line.ts"
+                    ],
+                    "typescriptCodeValue": [
+                        "source.ts.embedded"
+                    ]
+                }
+            }
+        ],
+        "configuration": [
+            {
+                "id": "contextjs",
+                "title": "ContextJS",
+                "properties": {
+                    "contextjs.autocomplete.mode": {
+                        "type": "string",
+                        "enum": [
+                            "Completion",
+                            "Edit"
+                        ],
+                        "enumDescriptions": [
+                            "Show completions as insertable snippet items.",
+                            "Insert the closing tag immediately by directly editing the document."
+                        ],
+                        "default": "Completion",
+                        "description": "How to apply tag completions."
+                    },
+                    "contextjs.autocomplete.cursorPosition": {
+                        "type": "string",
+                        "enum": [
+                            "Between",
+                            "End"
+                        ],
+                        "enumDescriptions": [
+                            "Place the cursor between the tags after completion (<div>|</div>).",
+                            "Place the cursor at the end of the tag after completion (<div></div>|)."
+                        ],
+                        "default": "Between",
+                        "description": "Where to place the cursor after tag completion."
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "build": "tsc -b && npm run copy-assets",
+        "pack": "npm run build && cd ../../../../_build/vscode && npm install && npm update && vsce package --out ../../_packages/contextjs-vscode.vsix",
+        "copy-assets": "cpx \"src/*.json\" ../../../../_build/vscode/ && cpx \"icon.png\" ../../../../_build/vscode/"
+    },
+    "devDependencies": {
+        "@types/node": "^24.0.3",
+        "@types/vscode": "^1.101.0",
+        "cpx": "^1.5.0",
+        "typescript": "^5.8.3"
+    },
+    "dependencies": {
+        "@contextjs/context": "file:../../_packages/contextjs-context-__VERSION__.tgz",
+        "@contextjs/system": "file:../../_packages/contextjs-system-__VERSION__.tgz",
+        "@contextjs/language-server": "file:../../_packages/contextjs-language-server-__VERSION__.tgz",
+        "@contextjs/views": "file:../../_packages/contextjs-views-__VERSION__.tgz",
+        "@contextjs/views-parser": "file:../../_packages/contextjs-views-parser-__VERSION__.tgz",
+        "vscode-languageclient": "__VSCODE_LANGUAGE_CLIENT_VERSION__"
+    }
+}
