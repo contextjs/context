@@ -173,14 +173,19 @@ export declare class LineInfo {
      * The character index at the end of the line in the source file.
      */
     public readonly endCharacterIndex: number;
+    /**
+     * The text content of the line in the source file.
+     */
+    public readonly text: string;
 
     /**
      * Creates a new LineInfo instance with the specified index and character indices.
      * @param index The index of the line in the source file.
      * @param startCharacterIndex The character index at the start of the line (inclusive).
      * @param endCharacterIndex The character index at the end of the line (exclusive).
+     * @param text The text content of the line.
      */
-    public constructor(index: number, startCharacterIndex: number, endCharacterIndex: number);
+    public constructor(index: number, startCharacterIndex: number, endCharacterIndex: number, text: string);
 }
 
 /**

@@ -6,26 +6,42 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+
 import { Stack } from "@contextjs/collections";
-import { Location } from "@contextjs/views";
+import { CodeValueSyntaxNode, LocationSyntaxNode } from "@contextjs/views-parser";
+import { ServerContext } from "../../models/server-context.js";
 import { SEMANTIC_TOKEN_LEGEND, SyntaxNodeType } from "../../models/syntax-node-type.js";
 import { SemanticToken } from "./semantic-token.js";
 
 export class SemanticTokenContext {
+    private serverContext: ServerContext;
     private tokens: SemanticToken[] = [];
+
     public readonly state: Stack<SyntaxNodeType> = new Stack<SyntaxNodeType>();
+
+    public constructor(serverContext: ServerContext) {
+        this.serverContext = serverContext;
+    }
 
     public reset(): void {
         this.tokens = [];
         this.state.clear();
     }
 
-    public createToken(location: Location, type: SyntaxNodeType): void {
+    public createToken(node: LocationSyntaxNode, type: SyntaxNodeType): void {
+        if (node instanceof CodeValueSyntaxNode) {
+            const tokens = this.serverContext.codeLanguageService.getSemanticTokens(node)
+            if (tokens.length > 0)
+                this.tokens.push(...tokens);
+
+            return;
+        }
+
         const legendIndex = SEMANTIC_TOKEN_LEGEND.indexOf(type);
         if (legendIndex < 0)
             return;
 
-        for (const line of location.lines) {
+        for (const line of node.location.lines) {
             const length = line.endCharacterIndex - line.startCharacterIndex;
             if (length > 0) {
                 this.tokens.push(new SemanticToken(
@@ -33,7 +49,7 @@ export class SemanticTokenContext {
                     line.startCharacterIndex,
                     length,
                     legendIndex,
-                    location.text,
+                    line.text,
                     line.endCharacterIndex
                 ));
             }

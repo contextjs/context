@@ -37,8 +37,6 @@ export class ParsersService {
             const result = Parser.parse(document.getText(), language);
 
             this.context.processParserResult(result);
-            console.error(`Parsed document: ${JSON.stringify(this.context.parserResult)}`);
-
             this.context.parserResult = result;
         }
         catch (error) {

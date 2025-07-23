@@ -23,10 +23,14 @@ export class CompletionsService {
             this.context.documentsService.parseDocument(document);
 
             const cssRegion = this.context.cssLanguageService.getCssRegion(position.position);
-            if (ObjectExtensions.isNullOrUndefined(cssRegion))
-                return this.context.htmlLanguageService.complete(position);
+            if (!ObjectExtensions.isNullOrUndefined(cssRegion))
+                return this.context.cssLanguageService.complete(position, cssRegion);
 
-            return this.context.cssLanguageService.complete(position, cssRegion);
+            const codeRegion = this.context.codeLanguageService.getRegion(position.position);
+            if (!ObjectExtensions.isNullOrUndefined(codeRegion))
+                return this.context.codeLanguageService.complete(position, codeRegion);
+
+            return this.context.htmlLanguageService.complete(position);
         });
     }
 }

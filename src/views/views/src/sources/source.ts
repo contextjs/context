@@ -30,7 +30,7 @@ export class Source {
                 if (char === "\r" && this.content[i + 1] === "\n")
                     nextIndex++;
 
-                lines.push(new LineInfo(lineIndex++, lineStart, nextIndex + 1));
+                lines.push(new LineInfo(lineIndex++, lineStart, nextIndex + 1, this.content.substring(lineStart, nextIndex + 1)));
 
                 i = nextIndex;
                 lineStart = i + 1;
@@ -39,7 +39,7 @@ export class Source {
         if (lineStart < this.content.length || (this.content.length > 0 && (
             this.content[this.content.length - 1] === '\n' ||
             this.content[this.content.length - 1] === '\r')))
-            lines.push(new LineInfo(lineIndex, lineStart, this.content.length));
+            lines.push(new LineInfo(lineIndex, lineStart, this.content.length, this.content.substring(lineStart, this.content.length)));
 
         return lines;
     }
@@ -78,13 +78,13 @@ export class Source {
         const lines: LineInfo[] = [];
         for (let i = startLineIndex; i <= endLineIndex; i++) {
             if (i === startLineIndex && i === endLineIndex)
-                lines.push(new LineInfo(i, startCharacterIndex, endCharacterIndex));
+                lines.push(new LineInfo(i, startCharacterIndex, endCharacterIndex, this.lines[i].text.slice(startCharacterIndex, endCharacterIndex)));
             else if (i === startLineIndex)
-                lines.push(new LineInfo(i, startCharacterIndex, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex));
+                lines.push(new LineInfo(i, startCharacterIndex, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex, this.lines[i].text.slice(startCharacterIndex, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex)));
             else if (i === endLineIndex)
-                lines.push(new LineInfo(i, 0, endCharacterIndex));
+                lines.push(new LineInfo(i, 0, endCharacterIndex, this.lines[i].text.slice(0, endCharacterIndex)));
             else
-                lines.push(new LineInfo(i, 0, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex));
+                lines.push(new LineInfo(i, 0, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex, this.lines[i].text.slice(0, this.lines[i].endCharacterIndex - this.lines[i].startCharacterIndex)));
         }
 
         return new Location(

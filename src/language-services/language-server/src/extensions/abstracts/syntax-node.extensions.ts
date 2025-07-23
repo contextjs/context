@@ -8,19 +8,17 @@
 
 import { SyntaxNode } from "@contextjs/views-parser";
 import { VisitorContext } from "../../models/visitor-context.js";
-import { ILanguageService } from "../../services/languages/interfaces/i-language.service.js";
-import { LanguageContext } from "../../visitors/languages/language-context.js";
+import { CodeContext } from "../../visitors/code/code-context.js";
 import { SemanticTokenContext } from "../../visitors/semantics/semantic-token-context.js";
 import { StyleContext } from "../../visitors/styles/style-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface SyntaxNode {
-        languageService: ILanguageService;
-
         visit(context: VisitorContext): void;
-        parseSemanticTokens(context: SemanticTokenContext): void;
-        parseLanguage(context: LanguageContext): void;
+
         parseStyles(context: StyleContext): void;
+        parseCode(context: CodeContext): void;
+        parseSemantics(context: SemanticTokenContext): void;
     }
 }
 

@@ -39,9 +39,8 @@ export class StyleContext {
         this.colors.length = 0;
     }
 
-    public buildCss(node: SyntaxNode, addEnvelope: boolean = false): void {
+    public parseStyles(node: SyntaxNode, addEnvelope: boolean = false): void {
         const cssStart = this.builder.length;
-
         if (node instanceof StyleContentSyntaxNode && !StringExtensions.isNullOrUndefined(node.value)) {
             this.builder.append(node.value || '');
             this.regions.push(
@@ -56,7 +55,6 @@ export class StyleContext {
         }
         else if (node instanceof LiteralSyntaxNode) {
             if (addEnvelope) {
-                console.error('node value:', `|${node.value}|`)
                 const prefix = "t{";
                 const suffix = "}";
                 this.builder.append(prefix);

@@ -11,21 +11,21 @@ import "../../extensions/abstracts/syntax-node.extensions.js";
 import { SyntaxNode } from "@contextjs/views-parser";
 import { INodeVisitor } from "../../models/i-node-visitor{t}.js";
 import { ServerContext } from "../../models/server-context.js";
-import { LanguageContext } from "./language-context.js";
+import { CodeContext } from "./code-context.js";
 
-export class LanguageVisitor implements INodeVisitor<LanguageContext> {
-    public context: LanguageContext;
+export class CodeVisitor implements INodeVisitor<CodeContext> {
+    public context: CodeContext;
 
-    public constructor(context: LanguageContext) {
+    public constructor(context: CodeContext) {
         this.context = context;
     }
 
-    public static create(serverContext: ServerContext): LanguageVisitor {
-        serverContext.languageContext.reset();
-        return new LanguageVisitor(serverContext.languageContext);
+    public static create(serverContext: ServerContext): CodeVisitor {
+        serverContext.codeContext.reset();
+        return new CodeVisitor(serverContext.codeContext);
     }
 
     public visit(node: SyntaxNode) {
-        node.parseLanguage(this.context);
+        node.parseCode(this.context);
     }
 }

@@ -111,17 +111,17 @@ export class CSSLanguageService implements ILanguageService {
 
 
     public onDocumentColor() {
-        if (this.context.colors.length === 0)
+        if (this.context.colorPresentations.length === 0)
             return null;
 
-        return Promise.resolve(this.context.colors.map(color => color.information));
+        return Promise.resolve(this.context.colorPresentations.map(color => color.information));
     }
 
     public onColorPresentation(params: ColorPresentationParams) {
-        if (this.context.colors.length === 0)
+        if (this.context.colorPresentations.length === 0)
             return [];
 
-        const colorPresentation = this.context.colors.find(color =>
+        const colorPresentation = this.context.colorPresentations.find(color =>
             color.information.range.start.line === params.range.start.line &&
             color.information.range.start.character === params.range.start.character &&
             color.information.range.end.line === params.range.end.line &&

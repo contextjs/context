@@ -24,6 +24,6 @@ export class SemanticTokenVisitor implements INodeVisitor<SemanticTokenContext> 
     }
 
     public visit(node: SyntaxNode) {
-        node.parseSemanticTokens(this.context);
+        node.parseSemantics(this.context);
     }
 }

@@ -275,9 +275,6 @@
                     ],
                     "typescriptCodeExpression": [
                         "meta.embedded.line.ts"
-                    ],
-                    "typescriptCodeValue": [
-                        "source.ts.embedded"
                     ]
                 }
             }

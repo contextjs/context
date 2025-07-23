@@ -15,7 +15,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import readline from 'node:readline';
+
 import Config from "./config.ts";
 import type PackageInfo from './package-info.ts';
 import Script from "./script.ts";
@@ -77,9 +77,7 @@ export class Build extends Script {
             await this.installPackageAsync(packageInfo);
         }
 
-        readline.moveCursor(process.stdout, 0, -1);
-        readline.clearLine(process.stdout, 1);
-        await this.writeLogAsync(`Building "@contextjs/${packageInfo.name}"... Done.\r`);
+        await this.writeLogAsync(`Building "@contextjs/${packageInfo.name}"... Done.\r`, true);
     }
 
     private async afterBuildAsync(packageInfo: PackageInfo): Promise<void> {

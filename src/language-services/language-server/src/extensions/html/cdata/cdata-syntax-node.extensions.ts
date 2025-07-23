@@ -7,39 +7,17 @@
  */
 
 import { CDATASyntaxNode } from "@contextjs/views-parser";
-import { LanguageContext } from "../../../visitors/languages/language-context.js";
+import { CodeContext } from "../../../visitors/code/code-context.js";
 import { SemanticTokenContext } from "../../../visitors/semantics/semantic-token-context.js";
 import { StyleContext } from "../../../visitors/styles/style-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface CDATASyntaxNode {
-        parseSemanticTokens(context: SemanticTokenContext): void;
-        parseLanguage(context: LanguageContext): void;
         parseStyles(context: StyleContext): void;
+        parseCode(context: CodeContext): void;
+        parseSemantics(context: SemanticTokenContext): void;
     }
 }
-
-CDATASyntaxNode.prototype.parseSemanticTokens = function (context: SemanticTokenContext): void {
-    this.leadingTrivia?.parseSemanticTokens(context);
-
-    this.start?.parseSemanticTokens(context);
-    this.content?.parseSemanticTokens(context);
-    this.end?.parseSemanticTokens(context);
-
-    this.trailingTrivia?.parseSemanticTokens(context);
-}
-
-CDATASyntaxNode.prototype.parseLanguage = function (context: LanguageContext): void {
-    this.languageService = context.htmlLanguageService;
-
-    this.leadingTrivia?.parseLanguage(context);
-
-    this.start?.parseLanguage(context);
-    this.content?.parseLanguage(context);
-    this.end?.parseLanguage(context);
-
-    this.trailingTrivia?.parseLanguage(context);
-};
 
 CDATASyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
     this.leadingTrivia?.parseStyles(context);
@@ -49,4 +27,24 @@ CDATASyntaxNode.prototype.parseStyles = function (context: StyleContext): void {
     this.end?.parseStyles(context);
 
     this.trailingTrivia?.parseStyles(context);
-};
+}
+
+CDATASyntaxNode.prototype.parseCode = function (context: CodeContext): void {
+    this.leadingTrivia?.parseCode(context);
+
+    this.start?.parseCode(context);
+    this.content?.parseCode(context);
+    this.end?.parseCode(context);
+
+    this.trailingTrivia?.parseCode(context);
+}
+
+CDATASyntaxNode.prototype.parseSemantics = function (context: SemanticTokenContext): void {
+    this.leadingTrivia?.parseSemantics(context);
+
+    this.start?.parseSemantics(context);
+    this.content?.parseSemantics(context);
+    this.end?.parseSemantics(context);
+
+    this.trailingTrivia?.parseSemantics(context);
+}

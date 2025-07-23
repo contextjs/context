@@ -88,10 +88,10 @@ test("ParserContext: getLocation", (context: TestContext) => {
     parserContext.reset();
     parserContext.moveNext(2);
     const location = parserContext.getLocation();
-    const expectedLineInfo = new LineInfo(0, 2, 4);
+    const expectedLineInfo = new LineInfo(0, 2, 4, "cd");
     const expectedLocation = new Location(0, 2, 0, 4, 2, 4, "cd", [expectedLineInfo]);
 
-    context.assert.deepStrictEqual(location, expectedLocation);
+    context.assert.deepStrictEqual(expectedLocation, location);
 });
 
 test("ParserContext: advanceWhile, peekUntil, peekWhile", (context: TestContext) => {

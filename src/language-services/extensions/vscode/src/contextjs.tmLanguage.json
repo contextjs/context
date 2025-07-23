@@ -1,298 +1,45 @@
 {
-    "scopeName": "source.contextjs",
-    "name": "contextjs",
-    "fileTypes": [
-        "tshtml"
-    ],
-    "injectionSelector": "source.ts -comment -string",
-    "injections": {
-        "L:source.ts": {
-            "patterns": [
-                {
-                    "include": "#html"
-                }
-            ]
-        }
+  "scopeName": "source.contextjs",
+  "name": "contextjs",
+  "fileTypes": ["tshtml"],
+  "injections": {
+    "string.quoted.double.html": {
+      "patterns": [
+        { "include": "#escaped" },
+        { "include": "#inline" }
+      ]
     },
-    "patterns": [
-        {
-            "include": "#style"
-        },
-        {
-            "include": "#script"
-        },
-        {
-            "include": "#html"
-        },
-        {
-            "include": "#code"
-        },
-        {
-            "include": "text.html.basic"
-        }
-    ],
-    "repository": {
-        "html": {
-            "patterns": [
-                {
-                    "name": "meta.tag.custom.code.contextjs",
-                    "begin": "(<)(\\/?)(@)([a-zA-Z][a-zA-Z0-9\\-@]*)\\b",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.tag.begin.contextjs"
-                        },
-                        "1": {
-                            "name": "punctuation.definition.tag.begin.contextjs"
-                        },
-                        "2": {
-                            "name": "punctuation.definition.tag.begin.contextjs"
-                        },
-                        "3": {
-                            "name": "keyword.control.contextjs"
-                        },
-                        "4": {
-                            "name": "variable.other.readwrite.ts"
-                        }
-                    },
-                    "end": "\\s*(\\/?)>",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.tag.end1.contextjs"
-                        },
-                        "1": {
-                            "name": "punctuation.definition.tag.end2.contextjs"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#attributes"
-                        }
-                    ]
-                },
-                {
-                    "name": "meta.tag.custom.contextjs",
-                    "begin": "<(\\/)?([a-zA-Z][a-zA-Z0-9\\-@]*)\\b",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.tag.begin.contextjs"
-                        },
-                        "1": {
-                            "name": "punctuation.definition.tag.begin.contextjs"
-                        },
-                        "2": {
-                            "name": "entity.name.tag.custom.contextjs"
-                        }
-                    },
-                    "end": "\\s*(\\/?)>",
-                    "endCaptures": {
-                        "0": {
-                            "name": "punctuation.definition.tag.end.contextjs"
-                        },
-                        "1": {
-                            "name": "punctuation.definition.tag.end.contextjs"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "#attributes"
-                        }
-                    ]
-                }
-            ]
-        },
-        "attributes": {
-            "patterns": [
-                {
-                    "match": "(@)([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.contextjs"
-                        },
-                        "2": {
-                            "name": "entity.other.attribute-name.contextjs"
-                        }
-                    }
-                },
-                {
-                    "match": "\\b([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "name": "entity.other.attribute-name.contextjs"
-                },
-                {
-                    "begin": "\\s*=\\s*",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "keyword.operator.assignment.contextjs"
-                        }
-                    },
-                    "end": "(?=\\s|>|$)",
-                    "patterns": [
-                        {
-                            "include": "#attribute-value"
-                        }
-                    ]
-                }
-            ]
-        },
-        "attribute-value": {
-            "patterns": [
-                {
-                    "match": "(@)([^\\s>\"']+)(?=\\s|$|>)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.contextjs"
-                        },
-                        "2": {
-                            "name": "variable.other.attribute-value.contextjs"
-                        }
-                    }
-                },
-                {
-                    "match": "([^\\s>\"']+)(?=\\s|$|>)",
-                    "captures": {
-                        "1": {
-                            "name": "string.unquoted.html"
-                        }
-                    }
-                },
-                {
-                    "include": "#string_double"
-                },
-                {
-                    "include": "#string_single"
-                }
-            ]
-        },
-        "string_double": {
-            "name": "string.quoted.double.contextjs",
-            "contentName": "string.quoted.double.content.contextjs",
-            "begin": "\"",
-            "end": "\"",
-            "beginCaptures": {
-                "0": {
-                    "name": "punctuation.definition.string.begin.contextjs"
-                }
-            },
-            "endCaptures": {
-                "0": {
-                    "name": "punctuation.definition.string.end.contextjs"
-                }
-            },
-            "patterns": [
-                {
-                    "match": "(@)([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.contextjs"
-                        },
-                        "2": {
-                            "name": "entity.other.attribute-name.contextjs"
-                        }
-                    }
-                },
-                {
-                    "match": "\\b([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "name": "string.quoted.double.content.contextjs"
-                }
-            ]
-        },
-        "string_single": {
-            "name": "string.quoted.single.contextjs",
-            "begin": "'",
-            "end": "'",
-            "beginCaptures": {
-                "0": {
-                    "name": "punctuation.definition.string.begin.contextjs"
-                }
-            },
-            "endCaptures": {
-                "0": {
-                    "name": "punctuation.definition.string.end.contextjs"
-                }
-            },
-            "patterns": [
-                {
-                    "match": "(@)([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "captures": {
-                        "1": {
-                            "name": "keyword.control.contextjs"
-                        },
-                        "2": {
-                            "name": "entity.other.attribute-name.contextjs"
-                        }
-                    }
-                },
-                {
-                    "match": "\\b([a-zA-Z_:][a-zA-Z0-9_\\-:\\.@]*)",
-                    "name": "string.quoted.single.content.contextjs"
-                }
-            ]
-        },
-        "code": {
-            "patterns": [
-                {
-                    "name": "source.ts.embedded.contextjs",
-                    "begin": "@\\{",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "keyword.control.contextjs"
-                        }
-                    },
-                    "end": "\\}",
-                    "endCaptures": {
-                        "0": {
-                            "name": "keyword.control.contextjs"
-                        }
-                    },
-                    "patterns": [
-                        {
-                            "include": "source.ts"
-                        }
-                    ]
-                },
-                {
-                    "name": "source.ts.embedded.contextjs",
-                    "begin": "@",
-                    "beginCaptures": {
-                        "0": {
-                            "name": "keyword.control.contextjs"
-                        }
-                    },
-                    "end": "(?=\\s|$|[=<>/@])",
-                    "patterns": [
-                        {
-                            "include": "source.ts"
-                        }
-                    ]
-                }
-            ]
-        },
-        "script": {
-            "patterns": [
-                {
-                    "name": "meta.tag.script.contextjs",
-                    "begin": "(<script\\b[^>]*>)",
-                    "end": "(</script>)",
-                    "patterns": [
-                        {
-                            "include": "source.js"
-                        }
-                    ]
-                }
-            ]
-        },
-        "style": {
-            "patterns": [
-                {
-                    "name": "meta.tag.style.contextjs",
-                    "begin": "(<style\\b[^>]*>)",
-                    "end": "(</style>)",
-                    "patterns": [
-                        {
-                            "include": "source.css"
-                        }
-                    ]
-                }
-            ]
-        }
+    "string.quoted.single.html": {
+      "patterns": [
+        { "include": "#escaped" },
+        { "include": "#inline" }
+      ]
     }
+  },
+  "patterns": [
+    { "include": "#escaped" },
+    { "include": "#inline" },
+    { "include": "#comment" },
+    { "include": "#block-comment" },
+    { "include": "text.html.basic" }
+  ],
+  "repository": {
+    "inline": {
+      "name": "variable.other.tshtml",
+      "match": "@[a-zA-Z_][a-zA-Z0-9_]*(?:\\.[a-zA-Z_][a-zA-Z0-9_]*)*"
+    },
+    "escaped": {
+      "name": "constant.character.escape.tshtml",
+      "match": "@@"
+    },
+    "comment": {
+      "name": "comment.line.double-slash.tshtml",
+      "match": "//.*$"
+    },
+    "block-comment": {
+      "name": "comment.block.tshtml",
+      "begin": "/\\*",
+      "end": "\\*/"
+    }
+  }
 }

@@ -11,7 +11,7 @@ import { LineInfo } from "../../src/sources/line-info.js";
 import { Location } from "../../src/sources/location.js";
 
 test("Location: constructor sets all fields", (context: TestContext) => {
-    const lines = [new LineInfo(0, 0, 6), new LineInfo(1, 7, 13)];
+    const lines = [new LineInfo(0, 0, 6, "test"), new LineInfo(1, 7, 13, "test2")];
     const location = new Location(0, 2, 1, 4, 0, 0, "test", lines);
 
     context.assert.strictEqual(location.startLineIndex, 0);
@@ -47,7 +47,7 @@ test("Location: toString for first character of the first line", (context: TestC
 });
 
 test("Location: toString for last character of the last line", (context: TestContext) => {
-    const lines = [new LineInfo(0, 0, 6), new LineInfo(1, 7, 13)];
+    const lines = [new LineInfo(0, 0, 6, "test"), new LineInfo(1, 7, 13, "test2")];
     const location = new Location(1, 4, 1, 4, 0, 0, "end", lines);
 
     context.assert.strictEqual(location.toString(), "Line 2, Column 5");
