@@ -48,10 +48,6 @@ export class ParserContext {
         return this.currentIndex;
     }
 
-    public get moved(): boolean {
-        return this.currentIndex !== this.startIndex;
-    }
-
     public get currentLength(): number {
         return this.currentIndex - this.startIndex;
     }

@@ -216,6 +216,62 @@ test('StringExtensions: format - all placeholders unmatched', (context: TestCont
     context.assert.strictEqual(StringExtensions.format(template), "{0}{1}{2}");
 });
 
+test('StringExtensions: escape - backslash', (context: TestContext) => {
+    const input = "a\\b";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\\\b");
+});
+
+test('StringExtensions: escape - double quote', (context: TestContext) => {
+    const input = 'a"b"c';
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, 'a\\"b\\"c');
+});
+
+test("StringExtensions: escape - single quote", (context: TestContext) => {
+    const input = "a'b'c";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\'b\\'c");
+});
+
+test("StringExtensions: escape - backtick", (context: TestContext) => {
+    const input = "a`b`c";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "a\\`b\\`c");
+});
+
+test("StringExtensions: escape - template literal start (${)", (context: TestContext) => {
+    const input = "foo${bar}";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "foo\\${bar}");
+});
+
+test("StringExtensions: escape - all at once", (context: TestContext) => {
+    const input = 'a\\b"c\'d`e${f}';
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, 'a\\\\b\\"c\\\'d\\`e\\${f}');
+});
+
+test("StringExtensions: escape - nothing to escape", (context: TestContext) => {
+    const input = "abc123";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "abc123");
+});
+
+test("StringExtensions: escape - already escaped ${ is not double-escaped", (context: TestContext) => {
+    const input = "foo\\${bar}";
+    const result = StringExtensions.escape(input);
+
+    context.assert.strictEqual(result, "foo\\\\${bar}");
+});
+
 test("StringExtensions: escapeHtml - escapes ampersand", (context: TestContext) => {
     const input = "Tom & Jerry";
     const result = StringExtensions.escapeHtml(input);
@@ -298,4 +354,11 @@ test("StringExtensions: escapeCode - empty string", (context: TestContext) => {
     const result = StringExtensions.escapeCode(input);
 
     context.assert.strictEqual(result, "");
+});
+
+test("StringExtensions: removeLineBreaks - success", (context: TestContext) => {
+    const input = "Hello\nWorld\r\nThis is a test.\u0085\u2028\u2029";
+    const result = StringExtensions.removeLineBreaks(input);
+
+    context.assert.strictEqual(result, "HelloWorldThis is a test.");
 });
