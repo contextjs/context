@@ -7,12 +7,12 @@
  */
 
 import { EndOfFileSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface EndOfFileSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-EndOfFileSyntaxNode.prototype.generate = function (context: GeneratorContext): void { }
+EndOfFileSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void { }

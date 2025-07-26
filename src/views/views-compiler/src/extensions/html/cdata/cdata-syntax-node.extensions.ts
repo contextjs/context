@@ -7,20 +7,20 @@
  */
 
 import { CDATASyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface CDATASyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-CDATASyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate(context);
+CDATASyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode?.(context);
 
-    this.start?.generate(context);
-    this.content?.generate(context);
-    this.end?.generate(context);
+    this.start?.generateServerCode?.(context);
+    this.content?.generateServerCode?.(context);
+    this.end?.generateServerCode?.(context);
 
-    this.trailingTrivia?.generate(context);
+    this.trailingTrivia?.generateServerCode?.(context);
 }

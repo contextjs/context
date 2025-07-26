@@ -6,21 +6,20 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions } from "@contextjs/system";
 import { StyleContentSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface StyleContentSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-StyleContentSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate?.(context);
+StyleContentSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode?.(context);
 
     if (this.value && this.value?.length > 0)
         context.appendToPendingLiteral(this.value, this);
 
-    this.trailingTrivia?.generate?.(context);
+    this.trailingTrivia?.generateServerCode?.(context);
 };

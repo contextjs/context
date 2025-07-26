@@ -7,19 +7,19 @@
  */
 
 import { TypescriptCodeExpressionSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TypescriptCodeExpressionSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-TypescriptCodeExpressionSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate(context);
+TypescriptCodeExpressionSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode(context);
 
-    this.transition.generate(context);
-    this.value.generate(context);
+    this.transition.generateServerCode(context);
+    this.value.generateServerCode(context);
 
-    this.trailingTrivia?.generate(context);
+    this.trailingTrivia?.generateServerCode(context);
 };

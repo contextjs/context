@@ -10,7 +10,7 @@ import "../../src/extensions/syntax-node-extension-imports.js";
 
 import { Language } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { ServerCodeGenerator } from "../../src/generators/server-code.generator.js";
+import { ServerCodeGenerator } from "../../src/generators/server/server-code.generator.js";
 import { CompilationContext } from "../../src/models/compilation-context.js";
 import { CompiledView } from "../../src/models/views/compiled-view{t}.js";
 import { ServerCompiledViewData } from "../../src/models/views/server-compiled-view-data.js";

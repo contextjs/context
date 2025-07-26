@@ -6,19 +6,19 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import "../extensions/syntax-node-extension-imports.js";
+import "../../extensions/syntax-node-extension-imports.js";
 
 import { StringExtensions } from "@contextjs/system";
-import { ICodeGenerator } from "../interfaces/i-code.generator.js";
-import { CompilationContext } from "../models/compilation-context.js";
+import { ICodeGenerator } from "../../interfaces/i-code.generator.js";
+import { CompilationContext } from "../../models/compilation-context.js";
 
 import { Language } from "@contextjs/views";
 import { Parser } from "@contextjs/views-parser";
-import { GeneratorContext } from "../models/generator-context.js";
-import { CompiledView } from "../models/views/compiled-view{t}.js";
-import { ServerCompiledViewData } from "../models/views/server-compiled-view-data.js";
-import { NoopSourceMapWriter } from "../no-op-source-map-writer.js";
-import { SourceMapWriter } from "../source-map-writer.js";
+import { CompiledView } from "../../models/views/compiled-view{t}.js";
+import { ServerCompiledViewData } from "../../models/views/server-compiled-view-data.js";
+import { NoopSourceMapWriter } from "../../no-op-source-map-writer.js";
+import { SourceMapWriter } from "../../source-map-writer.js";
+import { ServerCodeGeneratorContext } from "./server-code-generator-context.js";
 
 export class ServerCodeGenerator implements ICodeGenerator {
     private readonly context: CompilationContext;
@@ -38,7 +38,7 @@ export class ServerCodeGenerator implements ICodeGenerator {
         sourceMapWriter.setSourceContent(filePath, fileContent);
 
         const parserResult = Parser.parse(fileContent, language);
-        const generatorContext = new GeneratorContext(parserResult, filePath, fileContent, sourceMapWriter);
+        const generatorContext = new ServerCodeGeneratorContext(parserResult, filePath, sourceMapWriter);
 
         let source =
             `import { ServerView } from "@contextjs/views";
@@ -53,7 +53,7 @@ export default class ${className} extends ServerView {
 }`;
 
         for (const node of generatorContext.parserResult.nodes)
-            node.generate(generatorContext);
+            node.generateServerCode(generatorContext);
 
         generatorContext.flushPendingLiteral();
 

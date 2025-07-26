@@ -7,27 +7,27 @@
  */
 
 import { TypescriptCodeBlockSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
 import { GeneratorState } from "../../enums/generator-state.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TypescriptCodeBlockSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-TypescriptCodeBlockSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
+TypescriptCodeBlockSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
     context.state.push(GeneratorState.InsideCodeBlock);
 
-    this.leadingTrivia?.generate(context);
-    this.transition.generate(context);
-    this.openingBrace.generate(context);
+    this.leadingTrivia?.generateServerCode(context);
+    this.transition.generateServerCode(context);
+    this.openingBrace.generateServerCode(context);
 
     for (const node of this.children)
-        node.generate(context);
+        node.generateServerCode(context);
 
-    this.closingBrace.generate(context);
-    this.trailingTrivia?.generate(context);
-    
+    this.closingBrace.generateServerCode(context);
+    this.trailingTrivia?.generateServerCode(context);
+
     context.state.pop();
 };

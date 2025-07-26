@@ -7,12 +7,12 @@
  */
 
 import { SyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface SyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-SyntaxNode.prototype.generate = function (context: GeneratorContext): void { }
+SyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void { }

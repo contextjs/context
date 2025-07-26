@@ -7,15 +7,15 @@
  */
 
 import { TriviaSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TriviaSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-TriviaSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
+TriviaSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
     if (this.value && this.value?.length > 0)
         context.appendToPendingLiteral(this.value, this);
 };

@@ -7,15 +7,15 @@
  */
 
 import { TransitionSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TransitionSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-TransitionSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate(context);
-    this.trailingTrivia?.generate(context);
+TransitionSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode?.(context);
+    this.trailingTrivia?.generateServerCode?.(context);
 }

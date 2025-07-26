@@ -9,7 +9,7 @@
 import { File } from "@contextjs/io";
 import { ObjectExtensions, StringExtensions } from "@contextjs/system";
 import { DiagnosticMessages, LanguageExtensions } from "@contextjs/views";
-import { ServerCodeGenerator } from "./generators/server-code.generator.js";
+import { ServerCodeGenerator } from "./generators/server/server-code.generator.js";
 import { ICodeGenerator } from "./interfaces/i-code.generator.js";
 import { CompilationContext } from "./models/compilation-context.js";
 import { Diagnostic } from "./models/diagnostic.js";

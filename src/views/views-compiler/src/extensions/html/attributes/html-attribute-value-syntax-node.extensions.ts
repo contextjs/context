@@ -6,21 +6,20 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringBuilder } from "@contextjs/text";
 import { HtmlAttributeValueSyntaxNode } from "@contextjs/views-parser";
-import { GeneratorContext } from "../../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface HtmlAttributeValueSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-HtmlAttributeValueSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate(context);
+HtmlAttributeValueSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode?.(context);
 
     for (const node of this.children)
-        node.generate(context);
+        node.generateServerCode(context);
 
-    this.trailingTrivia?.generate(context);
+    this.trailingTrivia?.generateServerCode?.(context);
 }

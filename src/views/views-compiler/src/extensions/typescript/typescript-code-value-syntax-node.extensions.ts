@@ -9,16 +9,16 @@
 import { StringExtensions } from "@contextjs/system";
 import { TypescriptCodeValueSyntaxNode } from "@contextjs/views-parser";
 import { GeneratorState } from "../../enums/generator-state.js";
-import { GeneratorContext } from "../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface TypescriptCodeValueSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-TypescriptCodeValueSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate?.(context);
+TypescriptCodeValueSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode(context);
 
     if (!StringExtensions.isNullOrWhitespace(this.value)) {
         context.flushPendingLiteral();
@@ -27,8 +27,6 @@ TypescriptCodeValueSyntaxNode.prototype.generate = function (context: GeneratorC
             context.valueBuilder.appendLine(`        this.write(${this.value});`);
         else
             context.valueBuilder.appendLine(`        ${this.value}`);
-
-        //context.valueBuilder.appendLine(`        this.write(${this.value});`);
 
         context.sourceMapWriter.addMapping({
             generated: { line: context.valueBuilder.outputLine, column: context.valueBuilder.outputColumn },
@@ -40,5 +38,5 @@ TypescriptCodeValueSyntaxNode.prototype.generate = function (context: GeneratorC
         });
     }
 
-    this.trailingTrivia?.generate?.(context);
+    this.trailingTrivia?.generateServerCode(context);
 };

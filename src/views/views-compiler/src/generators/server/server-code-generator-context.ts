@@ -10,16 +10,15 @@ import { Stack } from "@contextjs/collections";
 import { StringExtensions } from "@contextjs/system";
 import { TrackingStringBuilder } from "@contextjs/text";
 import type { LocationSyntaxNode, ParserResult } from "@contextjs/views-parser";
-import { GeneratorState } from "../enums/generator-state.js";
-import type { ISourceMapWriter } from "../interfaces/i-source-map-writer.js";
+import { GeneratorState } from "../../enums/generator-state.js";
+import type { ISourceMapWriter } from "../../interfaces/i-source-map-writer.js";
 
-export class GeneratorContext {
+export class ServerCodeGeneratorContext {
     public readonly valueBuilder: TrackingStringBuilder;
     public readonly state: Stack<GeneratorState>;
     public readonly parserResult: ParserResult;
     public readonly sourceMapWriter: ISourceMapWriter;
     public readonly filePath: string;
-    public readonly fileContent: string;
 
     private pendingLiteralBuilder: TrackingStringBuilder = new TrackingStringBuilder();
     private pendingLiteralNode: LocationSyntaxNode | null = null;
@@ -27,13 +26,11 @@ export class GeneratorContext {
     public constructor(
         parserResult: ParserResult,
         filePath: string,
-        fileContent: string,
         sourceMapWriter: ISourceMapWriter) {
         this.valueBuilder = new TrackingStringBuilder();
         this.state = new Stack<GeneratorState>();
         this.parserResult = parserResult;
         this.filePath = filePath;
-        this.fileContent = fileContent;
         this.sourceMapWriter = sourceMapWriter;
     }
 

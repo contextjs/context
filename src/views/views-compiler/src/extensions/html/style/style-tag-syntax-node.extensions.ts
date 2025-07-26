@@ -8,21 +8,21 @@
 
 import { StyleTagSyntaxNode } from "@contextjs/views-parser";
 import { GeneratorState } from "../../../enums/generator-state.js";
-import { GeneratorContext } from "../../../models/generator-context.js";
+import { ServerCodeGeneratorContext } from "../../../generators/server/server-code-generator-context.js";
 
 declare module "@contextjs/views-parser" {
     export interface StyleTagSyntaxNode {
-        generate(context: GeneratorContext): void;
+        generateServerCode(context: ServerCodeGeneratorContext): void;
     }
 }
 
-StyleTagSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
-    this.leadingTrivia?.generate(context);
+StyleTagSyntaxNode.prototype.generateServerCode = function (context: ServerCodeGeneratorContext): void {
+    this.leadingTrivia?.generateServerCode?.(context);
     context.state.push(GeneratorState.InsideTag);
 
     for (const node of this.children)
-        node.generate(context);
+        node.generateServerCode(context);
 
     context.state.pop();
-    this.trailingTrivia?.generate(context);
+    this.trailingTrivia?.generateServerCode?.(context);
 }
