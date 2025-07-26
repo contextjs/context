@@ -12,7 +12,7 @@ export class ContextTemplate {
   private static readonly name = "context.ctxp";
   private static readonly content = `{
   "name": "{{name}}",
-  "type": "mvc",
+  "kind": "mvc",
   "main": "main.ts"
 }`;
 

@@ -7,7 +7,7 @@
  */
 
 import test, { TestContext } from "node:test";
-import { Language, LanguageExtensions } from "../../src/parsers/language.js";
+import { Language, LanguageExtensions } from "../../src/models/language.js";
 
 test("LanguageExtensions.fromString: returns correct enum for 'tshtml'", (context: TestContext) => {
     context.assert.strictEqual(LanguageExtensions.fromString("tshtml"), Language.TSHTML);

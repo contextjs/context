@@ -6,8 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { Language } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { Language } from "../../src/parsers/language.js";
 import { ParserResolver } from "../../src/parsers/parser-resolver.js";
 import { TSHTMLParser } from "../../src/parsers/tshtml/tshtml.parser.js";
 
@@ -36,7 +36,7 @@ test("ParserResolver: returns null for undefined/null input", (context: TestCont
 test("ParserResolver: regression - Language enum contains only expected values", (context: TestContext) => {
     const expected = ["tshtml"];
     const actual = Object.values(Language);
-    
+
     context.assert.deepStrictEqual(actual.sort(), expected.sort());
 });
 

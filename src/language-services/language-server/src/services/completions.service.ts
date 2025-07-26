@@ -18,15 +18,14 @@ export class CompletionsService {
 
     private setupEvents() {
         this.context.connectionService.connection.onCompletion((position: TextDocumentPositionParams): CompletionList => {
-
             const document = this.context.documentsService.documents.get(position.textDocument.uri);
             this.context.documentsService.parseDocument(document);
 
-            const cssRegion = this.context.cssLanguageService.getCssRegion(position.position);
+            const cssRegion = this.context.cssLanguageService.getCssRegion(position);
             if (!ObjectExtensions.isNullOrUndefined(cssRegion))
                 return this.context.cssLanguageService.complete(position, cssRegion);
 
-            const codeRegion = this.context.codeLanguageService.getRegion(position.position);
+            const codeRegion = this.context.codeLanguageService.getRegion(position);
             if (!ObjectExtensions.isNullOrUndefined(codeRegion))
                 return this.context.codeLanguageService.complete(position, codeRegion);
 

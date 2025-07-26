@@ -41,6 +41,7 @@ export class BlockCodeParser {
             () => BraceParser.parse(context, braceSyntaxNodeFactory, '{'),
             "BlockCodeParser: BraceParser (open) did not advance context."
         );
+        openBraceNode.trailingTrivia = TriviaParser.parse(context);
 
         context.reset();
         const children: SyntaxNode[] = [];
@@ -132,7 +133,7 @@ export class BlockCodeParser {
             "BlockCodeParser: BraceParser (close) did not advance context."
         );
 
-        return codeBlockSyntaxNodeFactory(transitionNode, openBraceNode, children, closingBraceNode, null, TriviaParser.parse(context));
+        return codeBlockSyntaxNodeFactory(transitionNode, openBraceNode, children, closingBraceNode);
     }
 
     private static tryParseTag<TCodeValueSyntaxNode extends CodeValueSyntaxNode>(

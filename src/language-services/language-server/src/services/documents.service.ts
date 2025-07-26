@@ -9,6 +9,7 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/node.js';
 
+import { File } from '@contextjs/io';
 import { ObjectExtensions } from '@contextjs/system';
 import { ServerContext } from '../models/server-context.js';
 
@@ -27,10 +28,20 @@ export class DocumentsService {
     }
 
     public parseDocument(document?: TextDocument) {
-        if (ObjectExtensions.isNullOrUndefined(document) || document.version === this.context.documentVersion)
+        if (ObjectExtensions.isNullOrUndefined(document))
+            return;
+
+        const fileExtension = File.getExtension(document.uri);
+        if (ObjectExtensions.isNullOrUndefined(fileExtension))
+            return;
+        this.context.codeLanguageService.setLanguage(fileExtension);
+
+        if (document.uri === this.context.documentUri && document.version === this.context.documentVersion)
             return;
 
         this.context.documentVersion = document.version;
+        this.context.documentUri = document.uri;
+
         this.context.parsersService.parse(document);
         const diagnostics = this.context.diagnosticsService.parse();
 

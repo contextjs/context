@@ -7,11 +7,15 @@
  */
 
 //Diagnostics
-
 export * from "../diagnostics/diagnostic-message.js";
 export * from "../diagnostics/diagnostic-messages.js";
 export * from "../diagnostics/diagnostic-severity.js";
 export * from "../diagnostics/diagnostic.js";
+
+//Models
+export * from "../models/language.js";
+export * from "../models/view-base.js";
+export * from "../models/server-view.js";
 
 //Sources
 export * from "../sources/line-info.js";

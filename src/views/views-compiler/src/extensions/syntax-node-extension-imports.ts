@@ -6,27 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import "./abstracts/attributes/attribute-name-syntax-node.extensions.js";
-import "./abstracts/attributes/attribute-syntax-node.extensions.js";
-import "./abstracts/attributes/attribute-value-syntax-node.extensions.js";
-
-import "./abstracts/code/code-block-syntax-node.extensions.js";
-import "./abstracts/code/code-value-syntax-node.extensions.js";
-
-import "./abstracts/tags/tag-end-syntax-node.extensions.js";
-import "./abstracts/tags/tag-name-syntax-node.extensions.js";
-import "./abstracts/tags/tag-start-syntax-node.extensions.js";
-import "./abstracts/tags/tag-syntax-node.extensions.js";
-
-import "./abstracts/composite-syntax-node.extensions.js";
-import "./abstracts/delimiter-syntax-node.extensions.js";
-import "./abstracts/location-syntax-node.extensions.js";
-import "./abstracts/name-syntax-node.extensions.js";
 import "./abstracts/syntax-node.extensions.js";
-import "./abstracts/value-syntax-node.extensions.js";
 
-import "./abstracts/brace-syntax-node.extensions.js";
-import "./abstracts/bracket-syntax-node.extensions.js";
 import "./common/comment-syntax-node.extensions.js";
 import "./common/end-of-file-syntax-node.extensions.js";
 import "./common/equals-syntax-node.extensions.js";

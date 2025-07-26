@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Diagnostic, Location } from "@contextjs/views";
+import { Diagnostic, Language, Location } from "@contextjs/views";
 
 /**
  * Represents the parser for the view templates.
@@ -19,22 +19,6 @@ export declare class Parser {
      * @returns A ParserResult containing diagnostics and syntax nodes.
      */
     public static parse(text: string, language: Language): ParserResult;
-}
-
-export declare enum Language {
-    TSHTML = 'tshtml'
-}
-
-/**
- * Represents the extensions available for different languages.
- */
-export class LanguageExtensions {
-    /**
-     * Gets the Language enum value from a string.
-     * @param value The string representation of the language.
-     * @returns The Language enum value or null if the string does not match any language.
-     */
-    public static fromString(value: string): Language | null;
 }
 
 /**

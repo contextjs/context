@@ -6,9 +6,8 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { DiagnosticMessages } from "@contextjs/views";
+import { DiagnosticMessages, Language } from "@contextjs/views";
 import test, { TestContext } from "node:test";
-import { Language } from "../../src/parsers/language.js";
 import { ParserResolver } from "../../src/parsers/parser-resolver.js";
 import { Parser } from "../../src/parsers/parser.js";
 import { AttributeSyntaxNode } from "../../src/syntax/abstracts/attributes/attribute-syntax-node.js";
@@ -366,15 +365,16 @@ test("Parser: transition at start, middle, end", (context: TestContext) => {
     const group1 = result.nodes[0] as any;
     const literal1 = result.nodes[1] as LiteralSyntaxNode;
     const group2 = result.nodes[2] as any;
-    const group3 = result.nodes[3] as any;
+    const group3 = result.nodes[3] as LiteralSyntaxNode;
+    const group4 = result.nodes[4] as any;
 
     context.assert.strictEqual(group1.transition.value, "@");
     context.assert.strictEqual(group1.value.value, "foo");
     context.assert.strictEqual(literal1.value, "bar ");
     context.assert.strictEqual(group2.transition.value, "@");
     context.assert.strictEqual(group2.value.value, "baz");
-    context.assert.strictEqual(group3.transition.value, "@");
-    context.assert.strictEqual(group3.value.value, "qux");
+    context.assert.strictEqual(group4.transition.value, "@");
+    context.assert.strictEqual(group4.value.value, "qux");
     context.assert.strictEqual(result.diagnostics.length, 0);
 });
 

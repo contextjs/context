@@ -23,7 +23,7 @@ export class BraceParser {
         const leadingTrivia = TriviaParser.parse(context);
         const node = ContentParser.parse(
             context,
-            (value, location) => braceSyntaxNodeFactory(value, location, leadingTrivia, TriviaParser.parse(context)),
+            (value, location) => braceSyntaxNodeFactory(value, location, leadingTrivia),
             BraceParser.shouldStopParsing
         );
 

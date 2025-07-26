@@ -11,13 +11,14 @@ import test, { TestContext } from "node:test";
 import { Diagnostic } from "../../src/models/diagnostic.js";
 
 const lines = [
-    new LineInfo(0, 0, 10)
+    new LineInfo(0, 0, 10, "text")
 ];
 const location = new Location(
     0, 1,
     0, 4,
+    0, 4,
     "some text",
-    lines
+    lines,
 );
 
 const TEST_MESSAGE = new DiagnosticMessage(4321, "Compiler diagnostic message");

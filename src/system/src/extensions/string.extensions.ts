@@ -64,4 +64,22 @@ export class StringExtensions {
             .replace(/`/g, '\\`')
             .replace(/(?<!\\)\$\{/g, '\\${');
     }
+
+    public static escapeHtml(value: string): string {
+        return value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    public static escapeCode(value: string): string {
+        return value
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"')
+            .replace(/\r/g, "\\r")
+            .replace(/\n/g, "\\n")
+            .replace(/\t/g, "\\t");
+    }
 }

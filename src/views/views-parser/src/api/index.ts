@@ -6,8 +6,6 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-
-export * from "../parsers/language.js";
 export * from "../parsers/parser-result.js";
 export * from "../parsers/parser.js";
 

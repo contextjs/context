@@ -10,7 +10,8 @@ import * as url from 'node:url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ObjectExtensions, StringExtensions } from '@contextjs/system';
-import { LanguageExtensions, Parser } from '@contextjs/views-parser';
+import { LanguageExtensions } from '@contextjs/views';
+import { Parser } from '@contextjs/views-parser';
 import { ServerContext } from '../models/server-context.js';
 
 export class ParsersService {

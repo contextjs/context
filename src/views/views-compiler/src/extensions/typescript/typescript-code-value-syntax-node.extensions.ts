@@ -21,16 +21,17 @@ TypescriptCodeValueSyntaxNode.prototype.generate = function (context: GeneratorC
     this.leadingTrivia?.generate?.(context);
 
     if (!StringExtensions.isNullOrWhitespace(this.value)) {
-        const outputLine = context.valueBuilder.outputLine;
-        const outputColumn = context.valueBuilder.outputColumn;
+        context.flushPendingLiteral();
 
         if (context.state.current === GeneratorState.InsideTag)
-            context.valueBuilder.appendLine(`__out += ${this.value};`);
+            context.valueBuilder.appendLine(`        this.write(${this.value});`);
         else
-            context.valueBuilder.appendLine(this.value);
+            context.valueBuilder.appendLine(`        ${this.value}`);
+
+        //context.valueBuilder.appendLine(`        this.write(${this.value});`);
 
         context.sourceMapWriter.addMapping({
-            generated: { line: outputLine, column: outputColumn },
+            generated: { line: context.valueBuilder.outputLine, column: context.valueBuilder.outputColumn },
             original: {
                 line: this.location.startLineIndex + 1,
                 column: this.location.startCharacterIndex

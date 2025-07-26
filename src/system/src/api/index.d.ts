@@ -241,11 +241,25 @@ export declare class StringExtensions {
     public static format(template: string, ...args: any[]): string;
 
     /**
-     * Escapes special characters in a string for safe use in code.
+     * Escapes special characters in a string for safe use.
      * @param value The string to escape.
      * @returns {string} The escaped string.
      */
-    public static escape(value: string): string
+    public static escape(value: string): string;
+
+    /**
+     * Escapes special characters in a string for safe use in HTML contexts.
+     * @param value The string to escape.
+     * @returns {string} The escaped string.
+     */
+    public static escapeHtml(value: string): string;
+
+    /**
+     * Escapes a string for use in code literals, preserving line breaks.
+     * @param value The string to escape.
+     * @returns {string} The escaped string suitable for code literals.
+     */
+    public static escapeCode(value: string): string;
 }
 
 //#endregion

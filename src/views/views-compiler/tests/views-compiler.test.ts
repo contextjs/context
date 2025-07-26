@@ -6,91 +6,133 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { DiagnosticMessages } from "@contextjs/views";
 import test, { TestContext } from "node:test";
+import { CompilationContext } from "../src/models/compilation-context.js";
+import { CompiledView } from "../src/models/views/compiled-view{t}.js";
 import { ViewsCompiler } from "../src/views-compiler.js";
-import type { ICompilationContext } from "../src/interfaces/i-compilation-context.js";
-import type { IViewsCompilerOptions } from "../src/interfaces/i-views-compiler-options.js";
 
-const TEST_FILE_PATH = "index.tshtml";
-const TEST_FILE_CONTENT = `<div>
-    @{ if (items && items.length > 0) { <ul> @{ for (let i = 0; i < items.length; i++) { <li class="@(i % 2 === 0 ? 'even' : 'odd')"> @{ items[i].name } @{ if (items[i].selected) { <span> (selected) </span> } } </li> } } </ul> } else { <p>No items found.</p> } }
-</div>`;
-
-class MockCompilationContext implements ICompilationContext {
-    projectRoot: string;
-    files: string[];
-    layouts?: string[] | undefined;
-    partials?: string[] | undefined;
-    config?: Record<string, unknown> | undefined;
-    public async getFileContent(filePath: string): Promise<string> {
-        return TEST_FILE_CONTENT;
+class FakeCodeGenerator {
+    public generated: { filePath: string }[] = [];
+    async generateAsync(filePath: string): Promise<CompiledView> {
+        this.generated.push({ filePath });
+        return new CompiledView(filePath, "server", [], { code: `compiled:${filePath}` });
     }
 }
 
-test("ViewsCompiler: compiles a simple TSHTML file into ESM source as a class", async (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: [TEST_FILE_PATH], projectRoot: "" };
+function getTestFileContent(files: Record<string, string>): (filePath: string) => Promise<string> {
+    return async (filePath) => {
+        if (filePath in files) return files[filePath];
+        throw new Error("File not found: " + filePath);
+    };
+}
 
-    const compiler = new ViewsCompiler(contextMock, options);
-    const result = await compiler.compileFile(TEST_FILE_PATH);
+function makeContext(opts: Partial<{
+    files: string[];
+    project: Record<string, any>;
+    fileContent: Record<string, string>;
+}>) {
+    const files = opts.files || [];
+    const project = opts.project || { kind: "server" };
+    const fileContent = opts.fileContent || {};
 
-    context.assert.ok(result !== undefined, "Compilation result should not be undefined");
-    context.assert.match(result.esmSource, /^export default class \w+ \{[\s\S]+renderAsync/, "Should export a named class with renderAsync");
+    return new CompilationContext(
+        "/project",
+        files,
+        project,
+        getTestFileContent(fileContent)
+    );
+}
+
+function createCompilerWithGenerator(context: CompilationContext, generator: any) {
+    const compiler = new ViewsCompiler(context);
+    (compiler as any).codeGenerator = generator;
+
+    return compiler;
+}
+
+test("ViewsCompiler: compiles all files (happy path)", async (context: TestContext) => {
+    const files = ["a.tshtml", "b.tshtml"];
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files, fileContent: { "a.tshtml": "A", "b.tshtml": "B" } });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    const results = await compiler.compileAllAsync();
+
+    context.assert.ok(results[0] instanceof CompiledView);
+    context.assert.strictEqual(results.length, 2);
+    context.assert.deepStrictEqual(generator.generated, [{ filePath: "a.tshtml" }, { filePath: "b.tshtml" }]);
 });
 
-test("ViewsCompiler: compiles all files and returns an array of compiled views", async (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: [TEST_FILE_PATH], projectRoot: "" };
+test("ViewsCompiler: compiles single file (happy path)", async (context: TestContext) => {
+    const file = "test.tshtml";
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files: [file], fileContent: { [file]: "<div/>" } });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    const result = await compiler.compileFileAsync(file);
 
-    const compiler = new ViewsCompiler(contextMock, options);
-    const results = await compiler.compileAll();
-
-    context.assert.ok(results.length > 0);
-    context.assert.strictEqual(results[0].filePath, TEST_FILE_PATH);
-    context.assert.match(results[0].esmSource, /^export default class \w+ \{/);
+    context.assert.ok(result instanceof CompiledView);
+    context.assert.deepStrictEqual(generator.generated, [{ filePath: file }]);
+    context.assert.strictEqual(result.filePath, file);
+    context.assert.strictEqual(result.kind, "server");
+    context.assert.deepStrictEqual(result.diagnostics, []);
+    context.assert.deepStrictEqual(result.data, { code: `compiled:${file}` });
 });
 
-test("ViewsCompiler: handles unsupported languages gracefully", async (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: ["unsupported.lang"], projectRoot: "" };
+test("ViewsCompiler: returns error if codeGenerator is null (unsupported kind)", async (context: TestContext) => {
+    const file = "test.tshtml";
+    const compilationContext = makeContext({ files: [file], project: { kind: "unsupported" }, fileContent: { [file]: "foo" } });
+    const compiler = new ViewsCompiler(compilationContext);
+    const result = await compiler.compileFileAsync(file);
 
-    const compiler = new ViewsCompiler(contextMock, options);
-    const result = await compiler.compileFile("unsupported.lang");
-
-    context.assert.ok(result.diagnostics!.length > 0);
-    context.assert.strictEqual(result.diagnostics![0].message.message, "Unsupported language.");
+    context.assert.ok(result instanceof CompiledView);
+    context.assert.strictEqual(result.filePath, file);
+    context.assert.strictEqual(result.kind, "unsupported");
+    context.assert.deepStrictEqual(result.data, {});
+    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnsupportedProjectType("unsupported").code);
+    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnsupportedProjectType("unsupported").message);
 });
 
-test("ViewsCompiler: generates class names from file path and projectRoot (flat)", (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: [], projectRoot: "" };
-    const compiler = new ViewsCompiler(contextMock, options);
+test("ViewsCompiler: returns error if file is not in context.files", async (context: TestContext) => {
+    const file = "other.tshtml";
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files: ["not-this.tshtml"], fileContent: { [file]: "X" } });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    const result = await compiler.compileFileAsync(file);
 
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("about.view.tshtml"), "AboutView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("about.tshtml"), "About");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("home-page.view.tshtml"), "HomePageView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("some.long.name_with.view.tshtml"), "SomeLongNameWithView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("some.long.name-with.view.tshtml"), "SomeLongNameWithView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("some.long.name.with.view.tshtml"), "SomeLongNameWithView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("crazy.some_view.file.tshtml"), "CrazySomeViewFile");
+    context.assert.ok(result instanceof CompiledView);
+    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile(file).code);
+    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile(file).message);
 });
 
-test("ViewsCompiler: generates class names from file path and projectRoot (with folders)", (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: [], projectRoot: "src/views" };
-    const compiler = new ViewsCompiler(contextMock, options);
-
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/about.view.tshtml"), "AboutView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/admin/user.view.tshtml"), "AdminUserView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/admin/some_name.view.tshtml"), "AdminSomeNameView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/deep/nest/path/file.view.tshtml"), "DeepNestPathFileView");
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/other-pages/home.tshtml"), "OtherPagesHome");
+test("ViewsCompiler: returns error if file extension is unsupported", async (context: TestContext) => {
+    const file = "test.txt";
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files: [file], fileContent: { [file]: "hi" } });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    const result = await compiler.compileFileAsync(file);
+    
+    context.assert.ok(result instanceof CompiledView);
+    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnsupportedLanguage.code);
+    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnsupportedLanguage.message);
 });
 
-test("ViewsCompiler: handles projectRoot with trailing slash", (context: TestContext) => {
-    const contextMock = new MockCompilationContext();
-    const options: IViewsCompilerOptions = { files: [], projectRoot: "src/views/" };
-    const compiler = new ViewsCompiler(contextMock, options);
+test("ViewsCompiler: works if context.files is empty (edge case)", async (context: TestContext) => {
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files: [], fileContent: {} });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    const result = await compiler.compileFileAsync("foo.tshtml");
 
-    context.assert.strictEqual(compiler["getClassNameFromFilePath"]("src/views/other-pages/home.tshtml"), "OtherPagesHome");
+    context.assert.ok(result instanceof CompiledView);
+    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").code);
+    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").message);
+});
+
+test("ViewsCompiler: does not call codeGenerator if error early-out occurs", async (context: TestContext) => {
+    const file = "bad.txt";
+    const generator = new FakeCodeGenerator();
+    const compilationContext = makeContext({ files: [file], fileContent: {} });
+    const compiler = createCompilerWithGenerator(compilationContext, generator);
+    await compiler.compileFileAsync(file);
+
+    context.assert.deepStrictEqual(generator.generated, []);
 });

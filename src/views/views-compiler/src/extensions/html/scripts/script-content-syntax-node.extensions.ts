@@ -19,22 +19,8 @@ declare module "@contextjs/views-parser" {
 ScriptContentSyntaxNode.prototype.generate = function (context: GeneratorContext): void {
     this.leadingTrivia?.generate?.(context);
 
-    if (!StringExtensions.isNullOrWhitespace(this.value)) {
-        const outputLine = context.valueBuilder.outputLine;
-        const outputColumn = context.valueBuilder.outputColumn;
-        const escaped = StringExtensions.escape(this.value);
-
-        context.valueBuilder.appendLine(`__out += "${escaped}";`);
-
-        context.sourceMapWriter.addMapping({
-            generated: { line: outputLine, column: outputColumn },
-            original: {
-                line: this.location.startLineIndex + 1,
-                column: this.location.startCharacterIndex
-            },
-            source: context.filePath
-        });
-    }
+    if (this.value && this.value?.length > 0)
+        context.appendToPendingLiteral(this.value, this);
 
     this.trailingTrivia?.generate?.(context);
 };

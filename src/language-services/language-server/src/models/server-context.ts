@@ -9,7 +9,7 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import { ObjectExtensions, StringExtensions } from '@contextjs/system';
-import { ParserResult } from '@contextjs/views-parser';
+import { CodeValueSyntaxNode, ParserResult } from '@contextjs/views-parser';
 import { CompletionsService } from '../services/completions.service.js';
 import { ConnectionService } from '../services/connection.service.js';
 import { DiagnosticsService } from '../services/diagnostics.service.js';
@@ -30,10 +30,10 @@ import { StyleVisitor } from '../visitors/styles/style-visitor.js';
 import { ColorPresentation } from './color-presentation.js';
 import { CssRegion } from './css-region.js';
 import { VisitorContext } from './visitor-context.js';
-import { CodeValueSyntaxNode } from '@contextjs/views-parser';
 
 export class ServerContext {
     public document: TextDocument | null = null;
+    public documentUri: string = StringExtensions.empty;
     public documentVersion: number = 0;
     public parserResult: ParserResult | null = null;
     public semanticTokens: number[] = [];

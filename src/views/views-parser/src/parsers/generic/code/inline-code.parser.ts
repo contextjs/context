@@ -76,7 +76,7 @@ export class InlineCodeParser {
             }
         }
 
-        const valueNode = codeValueSyntaxNodeFactory(valueBuilder.toString(), context.getLocation(), null, TriviaParser.parse(context));
+        const valueNode = codeValueSyntaxNodeFactory(valueBuilder.toString(), context.getLocation(), null);
         return codeExpressionSyntaxNodeFactory(transitionNode, valueNode);
     }
 }

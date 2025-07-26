@@ -6,6 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { StringExtensions } from "@contextjs/system";
 import type { ISourceMapWriter } from "./interfaces/i-source-map-writer.js";
 
 export class NoopSourceMapWriter implements ISourceMapWriter {
@@ -16,5 +17,5 @@ export class NoopSourceMapWriter implements ISourceMapWriter {
         name?: string;
     }): void { }
     setSourceContent(_sourceFile: string, _content: string): void { }
-    toString(): string { return ""; }
+    toString(): string { return StringExtensions.empty; }
 }

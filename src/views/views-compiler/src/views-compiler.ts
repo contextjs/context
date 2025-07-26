@@ -8,77 +8,64 @@
 
 import { File } from "@contextjs/io";
 import { ObjectExtensions, StringExtensions } from "@contextjs/system";
-import { DiagnosticMessages } from "@contextjs/views";
-import { Language, LanguageExtensions, Parser } from "@contextjs/views-parser";
-import { CodeGenerator } from "./code.generator.js";
-import type { ICompilationContext } from "./interfaces/i-compilation-context.js";
-import { ICompiledView } from "./interfaces/i-compiled-view.js";
-import { IViewsCompilerOptions } from "./interfaces/i-views-compiler-options.js";
+import { DiagnosticMessages, LanguageExtensions } from "@contextjs/views";
+import { ServerCodeGenerator } from "./generators/server-code.generator.js";
+import { ICodeGenerator } from "./interfaces/i-code.generator.js";
+import { CompilationContext } from "./models/compilation-context.js";
 import { Diagnostic } from "./models/diagnostic.js";
-import { GeneratorContext } from "./models/generator-context.js";
-import { SourceMapWriter } from "./source-map-writer.js";
+import { CompiledView } from "./models/views/compiled-view{t}.js";
 
 export class ViewsCompiler {
-    private readonly context: ICompilationContext;
-    private readonly options: IViewsCompilerOptions;
+    private readonly context: CompilationContext;
+    private readonly codeGenerator: ICodeGenerator | null = null;
 
-    public constructor(context: ICompilationContext, options: IViewsCompilerOptions) {
+    public constructor(context: CompilationContext) {
         this.context = context;
-        this.options = options;
+        this.codeGenerator = this.resolveCodeGenerator(context);
     }
 
-    public async compileFile(filePath: string): Promise<ICompiledView> {
-        const diagnostics: Diagnostic[] = [];
-        const fileContent = await this.context.getFileContent(filePath);
-        const fileExtension = File.getExtension(filePath) || StringExtensions.empty;
-        const language = LanguageExtensions.fromString(fileExtension);
+    public async compileAllAsync(): Promise<CompiledView[]> {
+        const results: CompiledView[] = [];
 
-        if (StringExtensions.isNullOrWhitespace(fileExtension) || ObjectExtensions.isNullOrUndefined(language))
-            diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage, filePath));
-
-        const parserResult = Parser.parse(fileContent, language ?? Language.TSHTML);
-        diagnostics.push(...parserResult.diagnostics.map(parserDiagnostic => new Diagnostic(parserDiagnostic, filePath)));
-
-        const className = this.getClassNameFromFilePath(filePath);
-        const generatedFileName = `${className}.ts`;
-        const sourceMap = new SourceMapWriter(generatedFileName);
-        sourceMap.setSourceContent(filePath, fileContent);
-
-        const context = new GeneratorContext(parserResult, filePath, sourceMap);
-        const generatedCode = CodeGenerator.generate(context);
-
-        const esmSource =
-            `export default class ${className} {
-    public static metadata = { filePath: ${JSON.stringify(filePath)} };
-    public async renderAsync(model) {
-${generatedCode}
-    }
-}
-const __sourcemap = ${sourceMap.toString()};`;
-
-        return { filePath, className, esmSource, esmSourceMap: sourceMap.toString(), diagnostics };
-    }
-
-    public async compileAll(): Promise<ICompiledView[]> {
-        const results: ICompiledView[] = [];
-
-        for (const filePath of this.options.files)
-            results.push(await this.compileFile(filePath));
+        for (const filePath of this.context.files)
+            results.push(await this.compileFileAsync(filePath));
 
         return results;
     }
 
-    private getClassNameFromFilePath(filePath: string): string {
-        const normalizedFilePath = filePath.replace(/\\/g, "/");
-        let projectRoot = this.options.projectRoot.replace(/\\/g, "/").replace(/\/+$/, "");
+    public async compileFileAsync(filePath: string): Promise<CompiledView> {
+        const diagnostics: Diagnostic[] = [];
+        const projectKind = this.context.project['kind'];
 
-        let relative = normalizedFilePath;
-        if (projectRoot && normalizedFilePath.startsWith(projectRoot + "/"))
-            relative = normalizedFilePath.substring(projectRoot.length + 1);
+        if (ObjectExtensions.isNullOrUndefined(this.codeGenerator)) {
+            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind), filePath));
+            return new CompiledView(filePath, projectKind, diagnostics, {});
+        }
 
-        relative = relative.replace(/\.tshtml$/i, '');
-        const segments = relative.split(/[/.\-_]+/);
+        if (this.context.files.length === 0 || this.context.files.indexOf(filePath) === -1) {
+            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath), filePath));
+            return new CompiledView(filePath, projectKind, diagnostics, {});
+        }
 
-        return segments.filter(Boolean).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+        const fileExtension = File.getExtension(filePath) || StringExtensions.empty;
+        const language = LanguageExtensions.fromString(fileExtension);
+
+        if (StringExtensions.isNullOrWhitespace(fileExtension) || ObjectExtensions.isNullOrUndefined(language)) {
+            diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage, filePath));
+            return new CompiledView(filePath, projectKind, diagnostics, {});
+        }
+
+        return await this.codeGenerator.generateAsync(filePath, language);
+    }
+
+    private resolveCodeGenerator(context: CompilationContext): ICodeGenerator | null {
+        const kind = context.project['kind'];
+
+        switch (kind) {
+            case "server":
+                return new ServerCodeGenerator(context);
+            default:
+                return null;
+        }
     }
 }

@@ -47,4 +47,6 @@ export class DiagnosticMessages {
     public static readonly UnexpectedEndOfInput = new DiagnosticMessage(9000, "Unexpected end of input.");
     public static readonly UnsupportedLanguage = new DiagnosticMessage(9001, "Unsupported language.");
     public static readonly UnsupportedProjectType = (projectType: string) => new DiagnosticMessage(9002, `Unsupported project type: '${projectType}'.`);
+    public static readonly FileNotFound = (filePath: string) => new DiagnosticMessage(9003, `File not found: ${filePath}`);
+    public static readonly UnknownCompilationContextFile = (filePath: string) => new DiagnosticMessage(9004, `Unknown compilation context file: ${filePath}`);
 }

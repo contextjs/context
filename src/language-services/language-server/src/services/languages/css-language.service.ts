@@ -33,11 +33,11 @@ export class CSSLanguageService implements ILanguageService {
         this.context = context;
     }
 
-    public getCssRegion(position: Position): CssRegion | null {
+    public getCssRegion(position: TextDocumentPositionParams): CssRegion | null {
         if (ObjectExtensions.isNullOrUndefined(this.context.document))
             return null;
 
-        const docOffset = this.context.document.offsetAt(position);
+        const docOffset = this.context.document.offsetAt(position.position);
 
         for (const region of this.context.cssRegions) {
             if (region.documentStart <= docOffset && docOffset <= region.documentEnd) {

@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Language } from "./language.js";
+import { Language } from "@contextjs/views";
 import { ParserType } from "./parser.js";
 import { TSHTMLParser } from "./tshtml/tshtml.parser.js";
 

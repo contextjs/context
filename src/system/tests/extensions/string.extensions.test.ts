@@ -216,65 +216,86 @@ test('StringExtensions: format - all placeholders unmatched', (context: TestCont
     context.assert.strictEqual(StringExtensions.format(template), "{0}{1}{2}");
 });
 
-test('StringExtensions: escape - backslash', (context: TestContext) => {
-    const input = "a\\b";
-    const result = StringExtensions.escape(input);
+test("StringExtensions: escapeHtml - escapes ampersand", (context: TestContext) => {
+    const input = "Tom & Jerry";
+    const result = StringExtensions.escapeHtml(input);
 
-    context.assert.strictEqual(result, "a\\\\b");
+    context.assert.strictEqual(result, "Tom &amp; Jerry");
 });
 
-test('StringExtensions: escape - double quote', (context: TestContext) => {
-    const input = 'a"b"c';
-    const result = StringExtensions.escape(input);
+test("StringExtensions: escapeHtml - escapes less than/greater than", (context: TestContext) => {
+    const input = "<div>Hi</div>";
+    const result = StringExtensions.escapeHtml(input);
 
-    context.assert.strictEqual(result, 'a\\"b\\"c');
+    context.assert.strictEqual(result, "&lt;div&gt;Hi&lt;/div&gt;");
 });
 
-test("StringExtensions: escape - single quote", (context: TestContext) => {
-    const input = "a'b'c";
-    const result = StringExtensions.escape(input);
+test("StringExtensions: escapeHtml - escapes double and single quotes", (context: TestContext) => {
+    const input = `"O'Reilly"`;
+    const result = StringExtensions.escapeHtml(input);
 
-    context.assert.strictEqual(result, "a\\'b\\'c");
+    context.assert.strictEqual(result, "&quot;O&#39;Reilly&quot;");
 });
 
-test("StringExtensions: escape - backtick", (context: TestContext) => {
-    const input = "a`b`c";
-    const result = StringExtensions.escape(input);
+test("StringExtensions: escapeHtml - escapes all at once", (context: TestContext) => {
+    const input = `<a href='foo&bar"baz'>Test</a>`;
+    const result = StringExtensions.escapeHtml(input);
 
-    context.assert.strictEqual(result, "a\\`b\\`c");
+    context.assert.strictEqual(result, "&lt;a href=&#39;foo&amp;bar&quot;baz&#39;&gt;Test&lt;/a&gt;");
 });
 
-test("StringExtensions: escape - template literal start (${)", (context: TestContext) => {
-    const input = "foo${bar}";
-    const result = StringExtensions.escape(input);
-
-    context.assert.strictEqual(result, "foo\\${bar}");
-});
-
-test("StringExtensions: escape - all at once", (context: TestContext) => {
-    const input = 'a\\b"c\'d`e${f}';
-    const result = StringExtensions.escape(input);
-
-    context.assert.strictEqual(result, 'a\\\\b\\"c\\\'d\\`e\\${f}');
-});
-
-test("StringExtensions: escape - nothing to escape", (context: TestContext) => {
+test("StringExtensions: escapeHtml - nothing to escape", (context: TestContext) => {
     const input = "abc123";
-    const result = StringExtensions.escape(input);
+    const result = StringExtensions.escapeHtml(input);
 
     context.assert.strictEqual(result, "abc123");
 });
 
-test("StringExtensions: escape - already escaped ${ is not double-escaped", (context: TestContext) => {
-    const input = "foo\\${bar}";
-    const result = StringExtensions.escape(input);
+test("StringExtensions: escapeHtml - empty string", (context: TestContext) => {
+    const input = "";
+    const result = StringExtensions.escapeHtml(input);
 
-    context.assert.strictEqual(result, "foo\\\\${bar}");
+    context.assert.strictEqual(result, "");
 });
 
-test("StringExtensions: removeLineBreaks - success", (context: TestContext) => {
-    const input = "Hello\nWorld\r\nThis is a test.\u0085\u2028\u2029";
-    const result = StringExtensions.removeLineBreaks(input);
+test("StringExtensions: escapeCode - escapes double quotes", (context: TestContext) => {
+    const input = 'foo "bar" baz';
+    const result = StringExtensions.escapeCode(input);
 
-    context.assert.strictEqual(result, "HelloWorldThis is a test.");
+    context.assert.strictEqual(result, 'foo \\"bar\\" baz');
+});
+
+test("StringExtensions: escapeCode - escapes backslashes", (context: TestContext) => {
+    const input = "c:\\folder\\file.txt";
+    const result = StringExtensions.escapeCode(input);
+
+    context.assert.strictEqual(result, "c:\\\\folder\\\\file.txt");
+});
+
+test("StringExtensions: escapeCode - escapes newlines and carriage returns", (context: TestContext) => {
+    const input = "foo\nbar\r\nbaz";
+    const result = StringExtensions.escapeCode(input);
+
+    context.assert.strictEqual(result, "foo\\nbar\\r\\nbaz");
+});
+
+test("StringExtensions: escapeCode - mixed special chars", (context: TestContext) => {
+    const input = 'a\\b"c\nd\re';
+    const result = StringExtensions.escapeCode(input);
+
+    context.assert.strictEqual(result, 'a\\\\b\\"c\\nd\\re');
+});
+
+test("StringExtensions: escapeCode - nothing to escape", (context: TestContext) => {
+    const input = "abc123";
+    const result = StringExtensions.escapeCode(input);
+
+    context.assert.strictEqual(result, "abc123");
+});
+
+test("StringExtensions: escapeCode - empty string", (context: TestContext) => {
+    const input = "";
+    const result = StringExtensions.escapeCode(input);
+
+    context.assert.strictEqual(result, "");
 });
