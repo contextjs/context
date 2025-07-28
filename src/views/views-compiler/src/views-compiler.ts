@@ -9,6 +9,7 @@
 import { File } from "@contextjs/io";
 import { ObjectExtensions, StringExtensions } from "@contextjs/system";
 import { Diagnostic, DiagnosticMessages, LanguageExtensions } from "@contextjs/views";
+import { ParserResult } from "@contextjs/views-parser";
 import { ServerCodeGenerator } from "./generators/server/server-code.generator.js";
 import { ICodeGenerator } from "./interfaces/i-code.generator.js";
 import { CompilationContext } from "./models/compilation-context.js";
@@ -37,21 +38,27 @@ export class ViewsCompiler {
         const projectKind = this.context.project['kind'];
 
         if (ObjectExtensions.isNullOrUndefined(this.codeGenerator)) {
-            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind)));
-            return new CompiledView(filePath, projectKind, diagnostics, {});
+            const parserResult = new ParserResult();
+            parserResult.diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind)));
+
+            return new CompiledView(filePath, projectKind, parserResult, {});
         }
 
         if (this.context.files.length === 0 || this.context.files.indexOf(filePath) === -1) {
-            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath)));
-            return new CompiledView(filePath, projectKind, diagnostics, {});
+            const parserResult = new ParserResult();
+            parserResult.diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath)));
+
+            return new CompiledView(filePath, projectKind, parserResult, {});
         }
 
         const fileExtension = File.getExtension(filePath) || StringExtensions.empty;
         const language = LanguageExtensions.fromString(fileExtension);
 
         if (StringExtensions.isNullOrWhitespace(fileExtension) || ObjectExtensions.isNullOrUndefined(language)) {
-            diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage));
-            return new CompiledView(filePath, projectKind, diagnostics, {});
+            const parserResult = new ParserResult();
+            parserResult.diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage));
+
+            return new CompiledView(filePath, projectKind, parserResult, {});
         }
 
         return await this.codeGenerator.generateAsync(filePath, language);

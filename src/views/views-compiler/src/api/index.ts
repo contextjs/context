@@ -8,5 +8,4 @@
 
 export * from "../models/compilation-context.js";
 export * from "../models/compiled-view{t}.js";
-export * from "../models/views/server-compiled-view-data.js";
 export * from "../views-compiler.js";

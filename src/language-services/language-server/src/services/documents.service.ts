@@ -13,7 +13,7 @@ import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/no
 import { File } from '@contextjs/io';
 import { ObjectExtensions, StringExtensions } from '@contextjs/system';
 import { LanguageExtensions } from '@contextjs/views';
-import { CompilationContext, ServerCompiledViewData, ViewsCompiler } from "@contextjs/views-compiler";
+import { CompilationContext, ViewsCompiler } from "@contextjs/views-compiler";
 import { Parser, ParserResult } from '@contextjs/views-parser';
 import { ServerContext } from '../models/server-context.js';
 
@@ -122,7 +122,7 @@ export class DocumentsService {
             const compiler = new ViewsCompiler(compilationContext);
             const compilerView = await compiler.compileFileAsync(document.uri);
 
-            this.processParserResult((compilerView.data as ServerCompiledViewData)['parserResult'], document);
+            this.processParserResult(compilerView.parserResult, document);
         }
         catch (error) {
             this.context.document = null;
