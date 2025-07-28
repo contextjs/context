@@ -14,7 +14,7 @@ import { CompilationContext } from "../../models/compilation-context.js";
 
 import { Language } from "@contextjs/views";
 import { Parser } from "@contextjs/views-parser";
-import { CompiledView } from "../../models/views/compiled-view{t}.js";
+import { CompiledView } from "../../models/compiled-view{t}.js";
 import { ServerCompiledViewData } from "../../models/views/server-compiled-view-data.js";
 import { NoopSourceMapWriter } from "../../no-op-source-map-writer.js";
 import { SourceMapWriter } from "../../source-map-writer.js";

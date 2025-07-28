@@ -7,7 +7,7 @@
  */
 
 import { Language } from "@contextjs/views";
-import { CompiledView } from "../models/views/compiled-view{t}.js";
+import { CompiledView } from "../models/compiled-view{t}.js";
 
 export interface ICodeGenerator {
     generateAsync(filePath: string, language: Language): Promise<CompiledView>;

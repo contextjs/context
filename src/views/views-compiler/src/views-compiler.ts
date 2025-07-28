@@ -12,7 +12,7 @@ import { Diagnostic, DiagnosticMessages, LanguageExtensions } from "@contextjs/v
 import { ServerCodeGenerator } from "./generators/server/server-code.generator.js";
 import { ICodeGenerator } from "./interfaces/i-code.generator.js";
 import { CompilationContext } from "./models/compilation-context.js";
-import { CompiledView } from "./models/views/compiled-view{t}.js";
+import { CompiledView } from "./models/compiled-view{t}.js";
 
 export class ViewsCompiler {
     private readonly context: CompilationContext;

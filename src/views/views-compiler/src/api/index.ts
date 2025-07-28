@@ -7,5 +7,5 @@
  */
 
 export * from "../models/compilation-context.js";
-export * from "../models/views/compiled-view{t}.js";
+export * from "../models/compiled-view{t}.js";
 export * from "../views-compiler.js";
