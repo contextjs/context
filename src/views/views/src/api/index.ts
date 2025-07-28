@@ -14,8 +14,6 @@ export * from "../diagnostics/diagnostic.js";
 
 //Models
 export * from "../models/language.js";
-export * from "../models/view-base.js";
-export * from "../models/server-view.js";
 
 //Sources
 export * from "../sources/line-info.js";

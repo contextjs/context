@@ -37,6 +37,7 @@ export default class Config {
         { name: "di", path: "di" },
         { name: "compiler", path: "compiler" },
         { name: "views", path: "views/views" },
+        { name: "views-runtime", path: "views/views-runtime" },
         { name: "views-parser", path: "views/views-parser" },
         { name: "views-compiler", path: "views/views-compiler" },
         { name: "language-server", path: "language-services/language-server" },

@@ -29,7 +29,7 @@ export class HtmlLanguageService implements ILanguageService {
         if (ObjectExtensions.isNullOrUndefined(document))
             return { isIncomplete: false, items: [] };
 
-        this.context.documentsService.parseDocument(document);
+        this.context.documentsService.processDocument(document);
         this.htmlDocument = this.service.parseHTMLDocument(document);
 
         const settings = this.context.settingsService.settings;

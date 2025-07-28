@@ -51,6 +51,7 @@
     "@contextjs/views": "file:_packages/contextjs-views-25.1.0.tgz",
     "@contextjs/views-compiler": "file:_packages/contextjs-views-compiler-25.1.0.tgz",
     "@contextjs/views-parser": "file:_packages/contextjs-views-parser-25.1.0.tgz",
+    "@contextjs/views-runtime": "file:_packages/contextjs-views-runtime-25.1.0.tgz",
     "@contextjs/webserver": "file:_packages/contextjs-webserver-25.1.0.tgz",
     "@contextjs/webserver-middleware-controllers": "file:_packages/contextjs-webserver-middleware-controllers-25.1.0.tgz",
     "@contextjs/webserver-middleware-cookies": "file:_packages/contextjs-webserver-middleware-cookies-25.1.0.tgz",

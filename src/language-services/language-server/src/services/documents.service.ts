@@ -6,11 +6,14 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import * as url from 'node:url';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/node.js';
 
 import { File } from '@contextjs/io';
-import { ObjectExtensions } from '@contextjs/system';
+import { ObjectExtensions, StringExtensions } from '@contextjs/system';
+import { LanguageExtensions } from '@contextjs/views';
+import { Parser } from '@contextjs/views-parser';
 import { ServerContext } from '../models/server-context.js';
 
 export class DocumentsService {
@@ -27,9 +30,11 @@ export class DocumentsService {
         this.documents.listen(this.context.connectionService.connection);
     }
 
-    public parseDocument(document?: TextDocument) {
+    public processDocument(document?: TextDocument) {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
+
+        this.context.projectsService.findProject(document.uri);
 
         const fileExtension = File.getExtension(document.uri);
         if (ObjectExtensions.isNullOrUndefined(fileExtension))
@@ -42,13 +47,7 @@ export class DocumentsService {
         this.context.documentVersion = document.version;
         this.context.documentUri = document.uri;
 
-        this.context.parsersService.parse(document);
-        const diagnostics = this.context.diagnosticsService.parse();
-
-        if (ObjectExtensions.isNullOrUndefined(diagnostics))
-            this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
-        else
-            this.context.connectionService.connection.sendDiagnostics(diagnostics);
+        this.parse(document);
     }
 
     private setupEvents() {
@@ -60,7 +59,7 @@ export class DocumentsService {
                 clearTimeout(oldTimeout);
 
             const timeout = setTimeout(() => {
-                this.parseDocument(event.document);
+                this.processDocument(event.document);
                 this.debounceTimeouts.delete(uri);
             }, this.debounceDelay);
 
@@ -68,7 +67,44 @@ export class DocumentsService {
         });
 
         this.documents.onDidOpen((event) => {
-            this.parseDocument(event.document);
+            this.processDocument(event.document);
         });
+    }
+
+    public parse(document?: TextDocument): void {
+        if (ObjectExtensions.isNullOrUndefined(document))
+            return;
+
+        const localPath = url.fileURLToPath(document.uri);
+        if (StringExtensions.isNullOrWhitespace(localPath))
+            return;
+
+        const fileExtension = localPath.split('.').pop()?.toLowerCase();
+        if (StringExtensions.isNullOrWhitespace(fileExtension))
+            return;
+
+        const language = LanguageExtensions.fromString(fileExtension);
+        if (ObjectExtensions.isNullOrUndefined(language))
+            return;
+
+        try {
+            this.context.document = document;
+            const result = Parser.parse(document.getText(), language);
+
+            this.context.processParserResult(result);
+            this.context.parserResult = result;
+
+            const diagnostics = this.context.diagnosticsService.parse();
+
+            if (ObjectExtensions.isNullOrUndefined(diagnostics))
+                this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
+            else
+                this.context.connectionService.connection.sendDiagnostics(diagnostics);
+        }
+        catch (error) {
+            this.context.document = null;
+            this.context.parserResult = null;
+            console.error(`Error parsing document: ${error}`);
+        }
     }
 }

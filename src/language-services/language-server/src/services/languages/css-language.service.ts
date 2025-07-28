@@ -56,7 +56,7 @@ export class CSSLanguageService implements ILanguageService {
         if (ObjectExtensions.isNullOrUndefined(region) || ObjectExtensions.isNullOrUndefined(document))
             return { isIncomplete: false, items: [] };
 
-        this.context.documentsService.parseDocument(document);
+        this.context.documentsService.processDocument(document);
 
         const documentOffset = document.offsetAt(position.position);
         const cssOffset = region.mapDocumentOffsetToCss(documentOffset);

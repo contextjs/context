@@ -10,6 +10,7 @@ import {
     Connection,
     createConnection,
     DidChangeConfigurationNotification,
+    DidChangeWorkspaceFoldersNotification,
     InitializeParams,
     InitializeResult,
     ProposedFeatures,
@@ -86,6 +87,19 @@ export class ConnectionService {
 
         this.connection.onColorPresentation((params) => {
             return this.context.cssLanguageService.onColorPresentation(params);
+        });
+
+        this.connection.onDidChangeWatchedFiles((params) => {
+            for (const change of params.changes)
+                if (change.uri.includes(".ctxp"))
+                    this.context.projectsService.invalidateProject(change.uri);
+        });
+
+        this.connection.onNotification(DidChangeWorkspaceFoldersNotification.type, (params) => {
+            if (!this.hasWorkspaceFolderCapability)
+                return;
+
+            this.context.projectsService.clearCache();
         });
     }
 }

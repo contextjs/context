@@ -1,0 +1,22 @@
+{
+  "name": "@contextjs/views-runtime",
+  "version": "__VERSION__",
+  "description": "ContextJS - Views runtime",
+  "author": "ContextJS",
+  "license": "MIT",
+  "type": "module",
+  "main": "api/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contextjs/context.git",
+    "directory": "src/views/views-runtime"
+  },
+  "config": {
+    "id": "views-runtime"
+  },
+  "dependencies": {
+    "@contextjs/system": "__VERSION__",
+    "@contextjs/text": "__VERSION__",
+    "@contextjs/views": "__VERSION__"
+  }
+}

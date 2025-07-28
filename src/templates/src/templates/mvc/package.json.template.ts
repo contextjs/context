@@ -18,10 +18,11 @@ export class PackageTemplate {
   "private": true,
   "dependencies": {
     "@contextjs/webserver-middleware-views": "${VersionService.get()}",
-    "@contextjs/views-compiler": "${VersionService.get()}"
+    "@contextjs/views-runtime": "${VersionService.get()}"
   },
   "devDependencies": {
-    "@types/node": "^24.0.7"
+    "@types/node": "^24.0.7",
+    "@contextjs/views-compiler": "${VersionService.get()}"
   }
 }`;
 

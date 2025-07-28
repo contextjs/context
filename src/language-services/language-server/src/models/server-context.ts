@@ -18,7 +18,7 @@ import { CodeLanguageService } from '../services/languages/code-language.service
 import { CSSLanguageService } from '../services/languages/css-language.service.js';
 import { HtmlLanguageService } from '../services/languages/html-language.service.js';
 import { TSHTMLLanguageService } from '../services/languages/tshtml-language.service.js';
-import { ParsersService } from '../services/parsers.service.js';
+import { ProjectsService } from '../services/projects.service.js';
 import { SemanticsService } from '../services/semantics.service.js';
 import { SettingsService } from '../services/settings.service.js';
 import { CodeContext } from '../visitors/code/code-context.js';
@@ -47,18 +47,18 @@ export class ServerContext {
     public styleContext = new StyleContext(this);
     public codeContext = new CodeContext();
 
-    public connectionService: ConnectionService = new ConnectionService(this);
-    public documentsService: DocumentsService = new DocumentsService(this);
-    public parsersService: ParsersService = new ParsersService(this);
-    public diagnosticsService: DiagnosticsService = new DiagnosticsService(this);
-    public semanticsService: SemanticsService = new SemanticsService(this);
-    public completionsService: CompletionsService = new CompletionsService(this);
-    public settingsService: SettingsService = new SettingsService(this);
+    public readonly projectsService: ProjectsService = new ProjectsService(this);
+    public readonly connectionService: ConnectionService = new ConnectionService(this);
+    public readonly documentsService: DocumentsService = new DocumentsService(this);
+    public readonly diagnosticsService: DiagnosticsService = new DiagnosticsService(this);
+    public readonly semanticsService: SemanticsService = new SemanticsService(this);
+    public readonly completionsService: CompletionsService = new CompletionsService(this);
+    public readonly settingsService: SettingsService = new SettingsService(this);
 
-    public htmlLanguageService: HtmlLanguageService = new HtmlLanguageService(this);
-    public cssLanguageService: CSSLanguageService = new CSSLanguageService(this);
-    public tshtmlLanguageService: TSHTMLLanguageService = new TSHTMLLanguageService(this);
-    public codeLanguageService: CodeLanguageService = new CodeLanguageService(this);
+    public readonly htmlLanguageService: HtmlLanguageService = new HtmlLanguageService(this);
+    public readonly cssLanguageService: CSSLanguageService = new CSSLanguageService(this);
+    public readonly tshtmlLanguageService: TSHTMLLanguageService = new TSHTMLLanguageService(this);
+    public readonly codeLanguageService: CodeLanguageService = new CodeLanguageService(this);
 
     public listen(): void {
         this.documentsService.listen();

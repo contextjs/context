@@ -8,11 +8,10 @@
 
 import { File } from "@contextjs/io";
 import { ObjectExtensions, StringExtensions } from "@contextjs/system";
-import { DiagnosticMessages, LanguageExtensions } from "@contextjs/views";
+import { Diagnostic, DiagnosticMessages, LanguageExtensions } from "@contextjs/views";
 import { ServerCodeGenerator } from "./generators/server/server-code.generator.js";
 import { ICodeGenerator } from "./interfaces/i-code.generator.js";
 import { CompilationContext } from "./models/compilation-context.js";
-import { Diagnostic } from "./models/diagnostic.js";
 import { CompiledView } from "./models/views/compiled-view{t}.js";
 
 export class ViewsCompiler {
@@ -38,12 +37,12 @@ export class ViewsCompiler {
         const projectKind = this.context.project['kind'];
 
         if (ObjectExtensions.isNullOrUndefined(this.codeGenerator)) {
-            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind), filePath));
+            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind)));
             return new CompiledView(filePath, projectKind, diagnostics, {});
         }
 
         if (this.context.files.length === 0 || this.context.files.indexOf(filePath) === -1) {
-            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath), filePath));
+            diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath)));
             return new CompiledView(filePath, projectKind, diagnostics, {});
         }
 
@@ -51,7 +50,7 @@ export class ViewsCompiler {
         const language = LanguageExtensions.fromString(fileExtension);
 
         if (StringExtensions.isNullOrWhitespace(fileExtension) || ObjectExtensions.isNullOrUndefined(language)) {
-            diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage, filePath));
+            diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage));
             return new CompiledView(filePath, projectKind, diagnostics, {});
         }
 

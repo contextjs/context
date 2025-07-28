@@ -15,7 +15,12 @@ export function activate(context: vscode.ExtensionContext) {
         debug: { command: nodePath, args: [serverPath, '--inspect=6009'], transport: TransportKind.stdio }
     };
 
-    const clientOptions = { documentSelector: [{ scheme: 'file', language: "contextjs" }] };
+    const clientOptions = {
+        documentSelector: [{ scheme: 'file', language: "contextjs" }],
+        synchronize: {
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/context.ctxp')
+        }
+    };
 
     client = new LanguageClient(Constants.LANGUAGE_NAME, Constants.SERVER_NAME, serverOptions, clientOptions);
 
@@ -35,12 +40,8 @@ export function activate(context: vscode.ExtensionContext) {
             const { snippet, position, uri } = params.arguments[0];
             const editor = vscode.window.activeTextEditor;
 
-            if (editor && editor.document.uri.toString() === uri) {
-                await editor.insertSnippet(
-                    new vscode.SnippetString(snippet),
-                    new vscode.Position(position.line, position.character)
-                );
-            }
+            if (editor && editor.document.uri.toString() === uri)
+                await editor.insertSnippet(new vscode.SnippetString(snippet), new vscode.Position(position.line, position.character));
         }
     });
 

@@ -19,7 +19,7 @@ export class CompletionsService {
     private setupEvents() {
         this.context.connectionService.connection.onCompletion((position: TextDocumentPositionParams): CompletionList => {
             const document = this.context.documentsService.documents.get(position.textDocument.uri);
-            this.context.documentsService.parseDocument(document);
+            this.context.documentsService.processDocument(document);
 
             const cssRegion = this.context.cssLanguageService.getCssRegion(position);
             if (!ObjectExtensions.isNullOrUndefined(cssRegion))
