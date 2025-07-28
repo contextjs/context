@@ -31,7 +31,7 @@ export class DocumentsService {
         this.documents.listen(this.context.connectionService.connection);
     }
 
-    public async processDocumentAsync(document?: TextDocument) {
+    public async processDocumentAsync(document?: TextDocument, force: boolean = false): Promise<void> {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
 
@@ -42,7 +42,7 @@ export class DocumentsService {
             return;
         this.context.codeLanguageService.setLanguage(fileExtension);
 
-        if (document.uri === this.context.documentUri && document.version === this.context.documentVersion)
+        if (!force && (document.uri === this.context.documentUri && document.version === this.context.documentVersion))
             return;
 
         this.context.documentVersion = document.version;
@@ -50,7 +50,7 @@ export class DocumentsService {
         this.context.document = document;
 
         if (this.context.projectsService.hasProject(document.uri))
-            this.compileAsync(document);
+            await this.compileAsync(document);
         else
             this.parse(document);
     }
@@ -132,14 +132,9 @@ export class DocumentsService {
     }
 
     private processParserResult(parserResult: ParserResult, document: TextDocument): void {
-        this.context.processParserResult(parserResult);
         this.context.parserResult = parserResult;
-
-        console.error(`Processing parser result: ${parserResult.toString()}`);
-
+        this.context.processParserResult(parserResult);
         const diagnostics = this.context.diagnosticsService.parse();
-
-        console.error(`Processing diagnostics: ${JSON.stringify(diagnostics)}`);
 
         if (ObjectExtensions.isNullOrUndefined(diagnostics))
             this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
