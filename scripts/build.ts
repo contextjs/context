@@ -128,6 +128,7 @@ export class Build extends Script {
         packageFileContent = packageFileContent.replace(/__VSCODE_CSS_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeCssLanguageServiceVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_HTML_LANGUAGE_SERVICE_VERSION__/g, Config.vscodeHtmlLanguageServiceVersion);
         packageFileContent = packageFileContent.replace(/__VSCODE_LANGUAGE_CLIENT_VERSION__/g, Config.vscodeLanguageClientVersion);
+        packageFileContent = packageFileContent.replace(/__SOURCE_MAP_VERSION__/g, Config.sourceMapVersion);
 
         await this.writeFileAsync(packageFilePath, packageFileContent);
     }

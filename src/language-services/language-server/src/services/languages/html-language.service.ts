@@ -24,12 +24,12 @@ export class HtmlLanguageService implements ILanguageService {
         this.context = context;
     }
 
-    public complete(position: TextDocumentPositionParams): CompletionList {
+    public async completeAsync(position: TextDocumentPositionParams): Promise<CompletionList> {
         const document = this.context.documentsService.documents.get(position.textDocument.uri);
         if (ObjectExtensions.isNullOrUndefined(document))
             return { isIncomplete: false, items: [] };
 
-        this.context.documentsService.processDocument(document);
+        await this.context.documentsService.processDocumentAsync(document);
         this.htmlDocument = this.service.parseHTMLDocument(document);
 
         const settings = this.context.settingsService.settings;

@@ -7,6 +7,7 @@
  */
 
 import { Diagnostic } from "@contextjs/views";
+import { ParserResult } from "@contextjs/views-parser";
 
 /**
  * Represents the context for compilation, including project details and file handling.
@@ -115,4 +116,49 @@ export declare class ViewsCompiler {
      * @returns A promise that resolves to the compiled view.
      */
     public compileFileAsync(filePath: string): Promise<CompiledView>;
+}
+
+/**
+ * Represents the data associated with a compiled view on the server.
+ */
+export declare class ServerCompiledViewData {
+    /*
+     * The source code of the compiled view.
+     */
+    public readonly source: string;
+
+    /*
+     * The source map of the compiled view, if available.
+     */
+    public readonly sourceMap: string | null;
+
+    /*
+     * The class name generated for the compiled view.
+     */
+    public readonly className: string;
+
+    /*
+     * The name of the generated file for the compiled view.
+     */
+    public readonly generatedFileName: string;
+
+    /*
+     * The parser result associated with the compiled view.
+     */
+    public readonly parserResult: ParserResult;
+
+    /**
+     * Constructs a new ServerCompiledViewData.
+     * @param source The source code of the compiled view.
+     * @param sourceMap The source map of the compiled view, if available.
+     * @param className The class name generated for the compiled view.
+     * @param generatedFileName The name of the generated file for the compiled view.
+     * @param parserResult The parser result associated with the compiled view.
+     */
+    public constructor(
+        source: string,
+        sourceMap: string | null,
+        className: string,
+        generatedFileName: string,
+        parserResult: ParserResult)
 }

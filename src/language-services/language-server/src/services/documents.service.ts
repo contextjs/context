@@ -13,7 +13,8 @@ import { TextDocumentChangeEvent, TextDocuments } from 'vscode-languageserver/no
 import { File } from '@contextjs/io';
 import { ObjectExtensions, StringExtensions } from '@contextjs/system';
 import { LanguageExtensions } from '@contextjs/views';
-import { Parser } from '@contextjs/views-parser';
+import { CompilationContext, ServerCompiledViewData, ViewsCompiler } from "@contextjs/views-compiler";
+import { Parser, ParserResult } from '@contextjs/views-parser';
 import { ServerContext } from '../models/server-context.js';
 
 export class DocumentsService {
@@ -30,7 +31,7 @@ export class DocumentsService {
         this.documents.listen(this.context.connectionService.connection);
     }
 
-    public processDocument(document?: TextDocument) {
+    public async processDocumentAsync(document?: TextDocument) {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
 
@@ -46,8 +47,12 @@ export class DocumentsService {
 
         this.context.documentVersion = document.version;
         this.context.documentUri = document.uri;
+        this.context.document = document;
 
-        this.parse(document);
+        if (this.context.projectsService.hasProject(document.uri))
+            this.compileAsync(document);
+        else
+            this.parse(document);
     }
 
     private setupEvents() {
@@ -59,7 +64,7 @@ export class DocumentsService {
                 clearTimeout(oldTimeout);
 
             const timeout = setTimeout(() => {
-                this.processDocument(event.document);
+                this.processDocumentAsync(event.document);
                 this.debounceTimeouts.delete(uri);
             }, this.debounceDelay);
 
@@ -67,11 +72,11 @@ export class DocumentsService {
         });
 
         this.documents.onDidOpen((event) => {
-            this.processDocument(event.document);
+            this.processDocumentAsync(event.document);
         });
     }
 
-    public parse(document?: TextDocument): void {
+    private parse(document?: TextDocument): void {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
 
@@ -88,23 +93,57 @@ export class DocumentsService {
             return;
 
         try {
-            this.context.document = document;
             const result = Parser.parse(document.getText(), language);
-
-            this.context.processParserResult(result);
-            this.context.parserResult = result;
-
-            const diagnostics = this.context.diagnosticsService.parse();
-
-            if (ObjectExtensions.isNullOrUndefined(diagnostics))
-                this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
-            else
-                this.context.connectionService.connection.sendDiagnostics(diagnostics);
+            this.processParserResult(result, document);
         }
         catch (error) {
             this.context.document = null;
             this.context.parserResult = null;
             console.error(`Error parsing document: ${error}`);
         }
+    }
+
+    private async compileAsync(document: TextDocument): Promise<void> {
+        try {
+            const project = this.context.projectsService.findProject(document.uri);
+            if (ObjectExtensions.isNullOrUndefined(project)) {
+                this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
+                return;
+            }
+
+            const compilationContext = new CompilationContext(
+                project['root'],
+                [document.uri],
+                project,
+                async () => document.getText(),
+                true
+            );
+
+            const compiler = new ViewsCompiler(compilationContext);
+            const compilerView = await compiler.compileFileAsync(document.uri);
+
+            this.processParserResult((compilerView.data as ServerCompiledViewData)['parserResult'], document);
+        }
+        catch (error) {
+            this.context.document = null;
+            this.context.parserResult = null;
+            console.error(`Error compiling document: ${error}`);
+        }
+    }
+
+    private processParserResult(parserResult: ParserResult, document: TextDocument): void {
+        this.context.processParserResult(parserResult);
+        this.context.parserResult = parserResult;
+
+        console.error(`Processing parser result: ${parserResult.toString()}`);
+
+        const diagnostics = this.context.diagnosticsService.parse();
+
+        console.error(`Processing diagnostics: ${JSON.stringify(diagnostics)}`);
+
+        if (ObjectExtensions.isNullOrUndefined(diagnostics))
+            this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
+        else
+            this.context.connectionService.connection.sendDiagnostics(diagnostics);
     }
 }

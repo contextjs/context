@@ -32,8 +32,8 @@ export class CodeLanguageService {
         }
     }
 
-    public complete(position: TextDocumentPositionParams, ...parameters: any[]): CompletionList {
-        return this.service.complete(position, ...parameters);
+    public async completeAsync(position: TextDocumentPositionParams, ...parameters: any[]): Promise<CompletionList> {
+        return await this.service.completeAsync(position, ...parameters);
     }
 
     public getSemanticTokens(node: CodeValueSyntaxNode): SemanticToken[] {

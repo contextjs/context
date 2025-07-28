@@ -58,7 +58,7 @@ export class TypescriptLanguageService implements ICodeLanguageService {
         return null;
     }
 
-    public complete(position: TextDocumentPositionParams, region: CodeValueSyntaxNode): CompletionList {
+    public async completeAsync(position: TextDocumentPositionParams, region: CodeValueSyntaxNode): Promise<CompletionList> {
         const document = this.context.documentsService.documents.get(position.textDocument.uri);
 
         if (ObjectExtensions.isNullOrUndefined(region) || ObjectExtensions.isNullOrUndefined(document))

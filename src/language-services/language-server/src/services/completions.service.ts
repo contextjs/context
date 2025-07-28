@@ -16,20 +16,20 @@ export class CompletionsService {
         this.setupEvents();
     }
 
-    private setupEvents() {
-        this.context.connectionService.connection.onCompletion((position: TextDocumentPositionParams): CompletionList => {
+    private setupEvents(): void {
+        this.context.connectionService.connection.onCompletion(async (position: TextDocumentPositionParams): Promise<CompletionList> => {
             const document = this.context.documentsService.documents.get(position.textDocument.uri);
-            this.context.documentsService.processDocument(document);
+            await this.context.documentsService.processDocumentAsync(document);
 
             const cssRegion = this.context.cssLanguageService.getCssRegion(position);
             if (!ObjectExtensions.isNullOrUndefined(cssRegion))
-                return this.context.cssLanguageService.complete(position, cssRegion);
+                return await this.context.cssLanguageService.completeAsync(position, cssRegion);
 
             const codeRegion = this.context.codeLanguageService.getRegion(position);
             if (!ObjectExtensions.isNullOrUndefined(codeRegion))
-                return this.context.codeLanguageService.complete(position, codeRegion);
+                return await this.context.codeLanguageService.completeAsync(position, codeRegion);
 
-            return this.context.htmlLanguageService.complete(position);
+            return await this.context.htmlLanguageService.completeAsync(position);
         });
     }
 }

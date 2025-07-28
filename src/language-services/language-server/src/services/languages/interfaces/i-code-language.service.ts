@@ -13,7 +13,7 @@ import { SemanticToken } from "../../../visitors/semantics/semantic-token.js";
 
 export interface ICodeLanguageService {
     context: ServerContext;
-    complete(position: TextDocumentPositionParams, ...parameters: any[]): CompletionList;
+    completeAsync(position: TextDocumentPositionParams, ...parameters: any[]): Promise<CompletionList>;
     getRegion(position: Position): CodeValueSyntaxNode | null;
     getSemanticTokens(node: CodeValueSyntaxNode): SemanticToken[];
 }

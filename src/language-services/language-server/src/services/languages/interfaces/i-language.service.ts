@@ -11,5 +11,5 @@ import { ServerContext } from "../../../models/server-context.js";
 
 export interface ILanguageService {
     context: ServerContext;
-    complete(position: TextDocumentPositionParams, ...parameters: any[]): CompletionList;
+    completeAsync(position: TextDocumentPositionParams, ...parameters: any[]): Promise<CompletionList>;
 }

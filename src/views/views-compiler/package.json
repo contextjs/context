@@ -17,7 +17,9 @@
   "dependencies": {
     "@contextjs/system": "__VERSION__",
     "@contextjs/io": "__VERSION__",
+    "@contextjs/text": "__VERSION__",
     "@contextjs/views-parser": "__VERSION__",
-    "source-map": "^0.7.4"
+    "@contextjs/views-compiler": "__VERSION__",
+    "source-map": "__SOURCE_MAP_VERSION__"
   }
 }

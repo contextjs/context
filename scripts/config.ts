@@ -22,6 +22,7 @@ export default class Config {
     public static vscodeCssLanguageServiceVersion: string = "^6.3.7";
     public static vscodeHtmlLanguageServiceVersion: string = "^5.5.1";
     public static vscodeLanguageClientVersion: string = "^9.0.1";
+    public static sourceMapVersion: string = "^0.7.4";
 
     public static buildFolder: string = "_build";
     public static packagesFolder: string = "_packages";

@@ -19,9 +19,9 @@ export class SemanticsService {
     }
 
     private setupEvents() {
-        this.context.connectionService.connection.languages.semanticTokens.on((params: SemanticTokensParams) => {
+        this.context.connectionService.connection.languages.semanticTokens.on(async (params: SemanticTokensParams) => {
             const document = this.context.documentsService.documents.get(params.textDocument.uri);
-            this.context.documentsService.processDocument(document);
+            await this.context.documentsService.processDocumentAsync(document);
 
             return Promise.resolve({
                 data: ObjectExtensions.isNullOrUndefined(this.context.semanticTokens)

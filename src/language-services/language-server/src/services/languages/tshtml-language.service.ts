@@ -17,7 +17,7 @@ export class TSHTMLLanguageService implements ILanguageService {
         this.context = context;
     }
 
-    public complete(position: TextDocumentPositionParams) {
+    public async completeAsync(position: TextDocumentPositionParams): Promise<CompletionList> {
         return CompletionList.create([]);
     }
 }

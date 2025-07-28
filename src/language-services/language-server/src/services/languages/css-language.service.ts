@@ -50,13 +50,13 @@ export class CSSLanguageService implements ILanguageService {
         return null;
     }
 
-    public complete(position: TextDocumentPositionParams, region: CssRegion): CompletionList {
+    public async completeAsync(position: TextDocumentPositionParams, region: CssRegion): Promise<CompletionList> {
         const document = this.context.documentsService.documents.get(position.textDocument.uri);
 
         if (ObjectExtensions.isNullOrUndefined(region) || ObjectExtensions.isNullOrUndefined(document))
             return { isIncomplete: false, items: [] };
 
-        this.context.documentsService.processDocument(document);
+        await this.context.documentsService.processDocumentAsync(document);
 
         const documentOffset = document.offsetAt(position.position);
         const cssOffset = region.mapDocumentOffsetToCss(documentOffset);

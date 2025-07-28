@@ -45,7 +45,7 @@ export class ProjectsService {
 
             if (File.exists(projectPath)) {
                 try {
-                    const project = JSON.parse(File.read(projectPath));
+                    const project = this.processProjectFile(projectPath);
                     this.projectCache.set(cacheKey, project);
                     return project;
                 }
@@ -64,5 +64,13 @@ export class ProjectsService {
         }
 
         return null;
+    }
+
+    private processProjectFile(filePath: string): Record<string, any> {
+        const project = JSON.parse(File.read(filePath));
+
+        project['root'] = path.dirname(filePath);
+
+        return project;
     }
 }

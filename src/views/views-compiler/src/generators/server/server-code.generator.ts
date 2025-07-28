@@ -66,11 +66,13 @@ export default class ${className} extends ServerView {
         if (!StringExtensions.isNullOrWhitespace(sourceMap))
             source += `\n${sourceMap}`;
 
+        console.error(`Processing parser result from compiler: ${parserResult.toString()}`);
+
         return new CompiledView<ServerCompiledViewData>(
             filePath,
             "server",
             parserResult.diagnostics,
-            new ServerCompiledViewData(source, sourceMap, className, generatedFileName),
+            new ServerCompiledViewData(source, sourceMap, className, generatedFileName, parserResult),
         );
     }
 
