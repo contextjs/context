@@ -35,8 +35,6 @@ export class DocumentsService {
         if (ObjectExtensions.isNullOrUndefined(document))
             return;
 
-        this.context.projectsService.findProject(document.uri);
-
         const fileExtension = File.getExtension(document.uri);
         if (ObjectExtensions.isNullOrUndefined(fileExtension))
             return;
@@ -49,10 +47,12 @@ export class DocumentsService {
         this.context.documentUri = document.uri;
         this.context.document = document;
 
-        if (this.context.projectsService.hasProject(document.uri))
-            await this.compileAsync(document);
-        else
+        const project = this.context.projectsService.findProject(document.uri);
+
+        if (ObjectExtensions.isNullOrUndefined(project))
             this.parse(document);
+        else
+            await this.compileAsync(document, project);
     }
 
     private setupEvents() {
@@ -103,14 +103,8 @@ export class DocumentsService {
         }
     }
 
-    private async compileAsync(document: TextDocument): Promise<void> {
+    private async compileAsync(document: TextDocument, project: Record<string, any>): Promise<void> {
         try {
-            const project = this.context.projectsService.findProject(document.uri);
-            if (ObjectExtensions.isNullOrUndefined(project)) {
-                this.context.connectionService.connection.sendDiagnostics({ uri: document.uri, diagnostics: [] });
-                return;
-            }
-
             const compilationContext = new CompilationContext(
                 project['root'],
                 [document.uri],

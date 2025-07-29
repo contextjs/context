@@ -64,9 +64,9 @@ export declare class CompiledView<T = unknown> {
     public readonly filePath: string;
 
     /*
-     * The kind of the project
+     * The type of the project
      */
-    public readonly kind: string;
+    public readonly type: string;
 
     /*
      * The parser result associated with the compilation.
@@ -81,13 +81,13 @@ export declare class CompiledView<T = unknown> {
     /**
      * Constructs a new CompiledView.
      * @param filePath The source file path.
-     * @param kind The kind of the project.
+     * @param type The type of the project.
      * @param parserResult The parser result associated with the compilation.
      * @param data The data associated with the compiled view.
      */
     public constructor(
         filePath: string,
-        kind: string,
+        type: string,
         parserResult: ParserResult,
         data: T);
 }

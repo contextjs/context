@@ -10,17 +10,17 @@ import { ParserResult } from "@contextjs/views-parser";
 
 export class CompiledView<T = unknown> {
     public readonly filePath: string;
-    public readonly kind: string;
+    public readonly type: string;
     public readonly parserResult: ParserResult;
     public readonly data: T;
 
     public constructor(
         filePath: string,
-        kind: string,
+        type: string,
         parserResult: ParserResult,
         data: T) {
         this.filePath = filePath;
-        this.kind = kind;
+        this.type = type;
         this.parserResult = parserResult;
         this.data = data;
     }

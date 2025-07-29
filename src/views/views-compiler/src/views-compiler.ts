@@ -34,21 +34,20 @@ export class ViewsCompiler {
     }
 
     public async compileFileAsync(filePath: string): Promise<CompiledView> {
-        const diagnostics: Diagnostic[] = [];
-        const projectKind = this.context.project['kind'];
+        const projectType = this.context.project['type'];
 
         if (ObjectExtensions.isNullOrUndefined(this.codeGenerator)) {
             const parserResult = new ParserResult();
-            parserResult.diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectKind)));
+            parserResult.diagnostics.push(Diagnostic.error(DiagnosticMessages.UnsupportedProjectType(projectType)));
 
-            return new CompiledView(filePath, projectKind, parserResult, {});
+            return new CompiledView(filePath, projectType, parserResult, {});
         }
 
         if (this.context.files.length === 0 || this.context.files.indexOf(filePath) === -1) {
             const parserResult = new ParserResult();
             parserResult.diagnostics.push(Diagnostic.error(DiagnosticMessages.UnknownCompilationContextFile(filePath)));
 
-            return new CompiledView(filePath, projectKind, parserResult, {});
+            return new CompiledView(filePath, projectType, parserResult, {});
         }
 
         const fileExtension = File.getExtension(filePath) || StringExtensions.empty;
@@ -58,16 +57,16 @@ export class ViewsCompiler {
             const parserResult = new ParserResult();
             parserResult.diagnostics.push(Diagnostic.info(DiagnosticMessages.UnsupportedLanguage));
 
-            return new CompiledView(filePath, projectKind, parserResult, {});
+            return new CompiledView(filePath, projectType, parserResult, {});
         }
 
         return await this.codeGenerator.generateAsync(filePath, language);
     }
 
     private resolveCodeGenerator(context: CompilationContext): ICodeGenerator | null {
-        const kind = context.project['kind'];
+        const projectType = context.project['type'];
 
-        switch (kind) {
+        switch (projectType) {
             case "server":
                 return new ServerCodeGenerator(context);
             default:

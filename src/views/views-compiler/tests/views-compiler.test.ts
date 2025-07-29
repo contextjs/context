@@ -9,14 +9,15 @@
 import { DiagnosticMessages } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { CompilationContext } from "../src/models/compilation-context.js";
-import { CompiledView } from "../src/models/views/compiled-view{t}.js";
+import { CompiledView } from "../src/models/compiled-view{t}.js";
 import { ViewsCompiler } from "../src/views-compiler.js";
+import { ParserResult } from "@contextjs/views-parser";
 
 class FakeCodeGenerator {
     public generated: { filePath: string }[] = [];
     async generateAsync(filePath: string): Promise<CompiledView> {
         this.generated.push({ filePath });
-        return new CompiledView(filePath, "server", [], { code: `compiled:${filePath}` });
+        return new CompiledView(filePath, "server", new ParserResult(), { code: `compiled:${filePath}` });
     }
 }
 
@@ -33,7 +34,7 @@ function makeContext(opts: Partial<{
     fileContent: Record<string, string>;
 }>) {
     const files = opts.files || [];
-    const project = opts.project || { kind: "server" };
+    const project = opts.project || { type: "server" };
     const fileContent = opts.fileContent || {};
 
     return new CompilationContext(
@@ -73,23 +74,23 @@ test("ViewsCompiler: compiles single file (happy path)", async (context: TestCon
     context.assert.ok(result instanceof CompiledView);
     context.assert.deepStrictEqual(generator.generated, [{ filePath: file }]);
     context.assert.strictEqual(result.filePath, file);
-    context.assert.strictEqual(result.kind, "server");
-    context.assert.deepStrictEqual(result.diagnostics, []);
+    context.assert.strictEqual(result.type, "server");
+    context.assert.deepStrictEqual(result.parserResult.diagnostics, []);
     context.assert.deepStrictEqual(result.data, { code: `compiled:${file}` });
 });
 
-test("ViewsCompiler: returns error if codeGenerator is null (unsupported kind)", async (context: TestContext) => {
+test("ViewsCompiler: returns error if codeGenerator is null (unsupported type)", async (context: TestContext) => {
     const file = "test.tshtml";
-    const compilationContext = makeContext({ files: [file], project: { kind: "unsupported" }, fileContent: { [file]: "foo" } });
+    const compilationContext = makeContext({ files: [file], project: { type: "unsupported" }, fileContent: { [file]: "foo" } });
     const compiler = new ViewsCompiler(compilationContext);
     const result = await compiler.compileFileAsync(file);
 
     context.assert.ok(result instanceof CompiledView);
     context.assert.strictEqual(result.filePath, file);
-    context.assert.strictEqual(result.kind, "unsupported");
+    context.assert.strictEqual(result.type, "unsupported");
     context.assert.deepStrictEqual(result.data, {});
-    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnsupportedProjectType("unsupported").code);
-    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnsupportedProjectType("unsupported").message);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.code, DiagnosticMessages.UnsupportedProjectType("unsupported").code);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.message, DiagnosticMessages.UnsupportedProjectType("unsupported").message);
 });
 
 test("ViewsCompiler: returns error if file is not in context.files", async (context: TestContext) => {
@@ -100,8 +101,8 @@ test("ViewsCompiler: returns error if file is not in context.files", async (cont
     const result = await compiler.compileFileAsync(file);
 
     context.assert.ok(result instanceof CompiledView);
-    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile(file).code);
-    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile(file).message);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile(file).code);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile(file).message);
 });
 
 test("ViewsCompiler: returns error if file extension is unsupported", async (context: TestContext) => {
@@ -110,10 +111,10 @@ test("ViewsCompiler: returns error if file extension is unsupported", async (con
     const compilationContext = makeContext({ files: [file], fileContent: { [file]: "hi" } });
     const compiler = createCompilerWithGenerator(compilationContext, generator);
     const result = await compiler.compileFileAsync(file);
-    
+
     context.assert.ok(result instanceof CompiledView);
-    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnsupportedLanguage.code);
-    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnsupportedLanguage.message);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.code, DiagnosticMessages.UnsupportedLanguage.code);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.message, DiagnosticMessages.UnsupportedLanguage.message);
 });
 
 test("ViewsCompiler: works if context.files is empty (edge case)", async (context: TestContext) => {
@@ -123,8 +124,8 @@ test("ViewsCompiler: works if context.files is empty (edge case)", async (contex
     const result = await compiler.compileFileAsync("foo.tshtml");
 
     context.assert.ok(result instanceof CompiledView);
-    context.assert.strictEqual(result.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").code);
-    context.assert.strictEqual(result.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").message);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.code, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").code);
+    context.assert.strictEqual(result.parserResult.diagnostics[0].message.message, DiagnosticMessages.UnknownCompilationContextFile("foo.tshtml").message);
 });
 
 test("ViewsCompiler: does not call codeGenerator if error early-out occurs", async (context: TestContext) => {

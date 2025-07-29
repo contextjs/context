@@ -17,7 +17,7 @@ function createContext(value: string) {
     return new CompilationContext(
         ".",
         [TEST_FILE_PATH],
-        { "kind": "server" },
+        { "type": "server" },
         async (filePath: string) => { return value; },
         false);
 }

@@ -12,7 +12,7 @@ import { Language } from "@contextjs/views";
 import test, { TestContext } from "node:test";
 import { ServerCodeGenerator } from "../../src/generators/server/server-code.generator.js";
 import { CompilationContext } from "../../src/models/compilation-context.js";
-import { CompiledView } from "../../src/models/views/compiled-view{t}.js";
+import { CompiledView } from "../../src/models/compiled-view{t}.js";
 import { ServerCompiledViewData } from "../../src/models/views/server-compiled-view-data.js";
 
 function createCompilationContext(opts: Partial<{
@@ -27,7 +27,7 @@ function createCompilationContext(opts: Partial<{
     return new CompilationContext(
         opts.projectRoot ?? "/repo",
         files,
-        opts.project ?? { kind: "server" },
+        opts.project ?? { type: "server" },
         async (filePath: string) => {
             if (filePath in fileContent) return fileContent[filePath];
             throw new Error("File not found: " + filePath);
@@ -56,7 +56,7 @@ test("ServerCodeGenerator: generates minimal code for valid input (no source map
     context.assert.match(result.data.source, /public async renderAsync\(model\): Promise<string>/);
     context.assert.match(result.data.source, /return this\.getOutput\(\);/);
     context.assert.ok(!result.data.source.includes("__sourcemap"));
-    context.assert.strictEqual(result.diagnostics.length, 0);
+    context.assert.strictEqual(result.parserResult.diagnostics.length, 0);
 });
 
 test("ServerCodeGenerator: generates code with source map (enabled)", async (context: TestContext) => {
@@ -113,7 +113,7 @@ test("ServerCodeGenerator: handles empty template gracefully", async (context: T
 
     context.assert.strictEqual(result.data.className, "ViewsEmpty");
     context.assert.match(result.data.source, /return this\.getOutput\(\);/);
-    context.assert.strictEqual(result.diagnostics.length, 0);
+    context.assert.strictEqual(result.parserResult.diagnostics.length, 0);
 });
 
 test("ServerCodeGenerator: throws if file is not found", async (context: TestContext) => {

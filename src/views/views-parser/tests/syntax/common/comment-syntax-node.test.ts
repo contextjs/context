@@ -14,7 +14,7 @@ import { ValueSyntaxNode } from "../../../src/syntax/abstracts/value-syntax-node
 import { CommentSyntaxNode } from "../../../src/syntax/common/comment-syntax-node.js";
 import { TriviaSyntaxNode } from "../../../src/syntax/common/trivia-syntax-node.js";
 
-const testLocation = new Location(0, 0, 0, 10, "", []);
+const testLocation = new Location(0, 0, 0, 10, 0, 10, "", []);
 
 test('CommentSyntaxNode: instantiates with value and location, trivia defaults to null', (context: TestContext) => {
     const content = "// a comment";
