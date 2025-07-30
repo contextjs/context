@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { StringExtensions, Throw } from "@contextjs/system";
+import { StringExtensions, NullReferenceException } from "@contextjs/system";
 import { CookieOptions } from "./cookie.options.js";
 
 export class Cookie {
@@ -18,7 +18,7 @@ export class Cookie {
     public constructor(name: string, value: string);
     public constructor(name: string, value: string, options?: CookieOptions);
     public constructor(name: string, value?: string, options?: CookieOptions) {
-        Throw.ifNullOrWhitespace(name);
+        NullReferenceException.throwIfNullOrWhitespace(name);
 
         this.name = name;
         this.value = value ?? StringExtensions.empty;

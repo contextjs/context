@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import { copyFileSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";
@@ -23,7 +23,7 @@ export class File {
     }
 
     public static save(file: string, content: string, overwrite: boolean = false): boolean {
-        Throw.ifNullOrWhitespace(file);
+        NullReferenceException.throwIfNullOrWhitespace(file);
 
         if (!overwrite && Path.isFile(file))
             throw new FileExistsException(file);
@@ -37,8 +37,8 @@ export class File {
     }
 
     public static rename(oldFile: string, newFile: string): boolean {
-        Throw.ifNullOrWhitespace(oldFile);
-        Throw.ifNullOrWhitespace(newFile);
+        NullReferenceException.throwIfNullOrWhitespace(oldFile);
+        NullReferenceException.throwIfNullOrWhitespace(newFile);
 
         if (!this.exists(oldFile))
             throw new FileNotFoundException(oldFile);
@@ -52,7 +52,7 @@ export class File {
     }
 
     public static delete(file: string): boolean {
-        Throw.ifNullOrWhitespace(file);
+        NullReferenceException.throwIfNullOrWhitespace(file);
 
         if (this.exists(file)) {
             rmSync(file);
@@ -63,8 +63,8 @@ export class File {
     }
 
     public static copy(source: string, target: string, overwrite: boolean = false): boolean {
-        Throw.ifNullOrWhitespace(source);
-        Throw.ifNullOrWhitespace(target);
+        NullReferenceException.throwIfNullOrWhitespace(source);
+        NullReferenceException.throwIfNullOrWhitespace(target);
 
         if (!this.exists(source))
             throw new FileNotFoundException(source);
@@ -86,7 +86,7 @@ export class File {
     }
 
     public static getName(file: string, withExtension: boolean = true): string | null {
-        Throw.ifNullOrWhitespace(file);
+        NullReferenceException.throwIfNullOrWhitespace(file);
 
         return withExtension
             ? path.basename(file)
@@ -94,13 +94,13 @@ export class File {
     }
 
     public static getDirectory(file: string): string | null {
-        Throw.ifNullOrWhitespace(file);
+        NullReferenceException.throwIfNullOrWhitespace(file);
 
         return path.dirname(file);
     }
 
     public static getExtension(file: string): string | null {
-        Throw.ifNullOrWhitespace(file);
+        NullReferenceException.throwIfNullOrWhitespace(file);
 
         const normalizedPath = Path.normalize(file);
         return path.extname(normalizedPath).slice(1).toLowerCase();

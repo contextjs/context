@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import { RouteService } from "../services/route.service.js";
 
 export class RouteInfo {
@@ -15,7 +15,7 @@ export class RouteInfo {
     public readonly decodedTemplate: string;
 
     public constructor(template: string, name: string | null = null) {
-        Throw.ifNullOrWhitespace(template);
+        NullReferenceException.throwIfNullOrWhitespace(template);
 
         this.template = template;
         this.name = name;

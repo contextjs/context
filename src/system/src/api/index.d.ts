@@ -96,6 +96,34 @@ export declare class NullReferenceException extends Exception {
      * @param options Optional error options.
      */
     constructor(message?: string, options?: ErrorOptions);
+
+    /**
+     * Throws an error if the value is null.
+     * @param value The value to check.
+     * @throws {NullReferenceException} When the value is null.
+     */
+    public static throwIfNull(value: any): void;
+
+    /**
+     * Throws an error if the value is null or undefined.
+     * @param value The value to check.
+     * @throws {NullReferenceException} When the value is null or undefined.
+     */
+    public static throwIfNullOrUndefined(value: any): void;
+
+    /**
+     * Throws an error if the string is null or empty.
+     * @param value The string to check.
+     * @throws {NullReferenceException} When the string is null or empty.
+     */
+    public static throwIfNullOrEmpty(value: string | null | undefined): void;
+
+    /**
+     * Throws an error if the string is null or contains only whitespace.
+     * @param value The string to check.
+     * @throws {NullReferenceException} When the string is null or contains only whitespace.
+     */
+    public static throwIfNullOrWhitespace(value: string | null | undefined): void;
 }
 
 /**
@@ -269,20 +297,20 @@ export declare class StringExtensions {
 /**
  * Represents a project in the system.
  */
-export declare interface IProject {
-    /**
-     * The name of the project.
-     */
-    name: string;
-    /**
-     * The type of the project.
-     */
-    type: string;
-    /**
-     * The main entry point of the project.
-     */
-    main: string;
-}
+// export declare interface IProject {
+//     /**
+//      * The name of the project.
+//      */
+//     name: string;
+//     /**
+//      * The type of the project.
+//      */
+//     type: string;
+//     /**
+//      * The main entry point of the project.
+//      */
+//     main: string;
+// }
 
 /**
  * Represents the context of a command.
@@ -506,39 +534,6 @@ export declare class Console {
      * @returns {void}
      */
     public static resetOutput(): void;
-}
-
-/**
- * A utility class for throwing exceptions.
- */
-export declare class Throw {
-    /**
-     * Throws an error if the value is null.
-     * @param {any} value - The value to check.
-     * @throws {NullReferenceException} When the value is null.
-     */
-    public static ifNull(value: any): void;
-
-    /**
-     * Throws an error if the value is null or undefined.
-     * @param {any} value - The value to check.
-     * @throws {NullReferenceException} When the value is null or undefined.
-     */
-    public static ifNullOrUndefined(value: any): void;
-
-    /**
-     * Throws an error if the string is null or empty.
-     * @param {string | null | undefined} value - The string to check.
-     * @throws {NullReferenceException} When the string is null or empty.
-     */
-    public static ifNullOrEmpty(value: string | null | undefined): void;
-
-    /**
-     * Throws an error if the string is null or contains only empty spaces.
-     * @param {string | null | undefined} value - The string to check.
-     * @throws {NullReferenceException} When the string is null or contains only empty spaces.
-     */
-    public static ifNullOrWhitespace(value: string | null | undefined): void;
 }
 
 /**

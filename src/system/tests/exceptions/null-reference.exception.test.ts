@@ -9,6 +9,7 @@
 import test, { TestContext } from 'node:test';
 import { Exception } from '../../src/exceptions/exception.ts';
 import { NullReferenceException } from '../../src/exceptions/null-reference.exception.ts';
+import { StringExtensions } from '../../src/extensions/string.extensions.ts';
 
 test('NullReferenceException: instance - success', (context: TestContext) => {
     const exception = new NullReferenceException();
@@ -30,4 +31,42 @@ test('NullReferenceException: name - success', (context: TestContext) => {
 test('NullReferenceException: toString - success', (context: TestContext) => {
     const exception = new NullReferenceException();
     context.assert.strictEqual(exception.toString(), "NullReferenceException: The specified reference is null or undefined.");
+});
+
+test('NullReferenceException: throwIfNull - throws NullReferenceException', (context: TestContext) => {
+    context.assert.throws(() => NullReferenceException.throwIfNull(null), NullReferenceException);
+});
+
+test('NullReferenceException: throwIfNull - does not throw on valid object', (context: TestContext) => {
+    context.assert.doesNotThrow(() => NullReferenceException.throwIfNull({}));
+});
+
+test('NullReferenceException: throwIfNullOrUndefined - throws NullReferenceException', (context: TestContext) => {
+    context.assert.throws(() => NullReferenceException.throwIfNullOrUndefined(null), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrUndefined(undefined), NullReferenceException);
+});
+
+test('NullReferenceException: throwIfNullOrUndefined - does not throw on defined value', (context: TestContext) => {
+    context.assert.doesNotThrow(() => NullReferenceException.throwIfNullOrUndefined('contextjs'));
+});
+
+test('NullReferenceException: throwIfNullOrEmpty - throws NullReferenceException', (context: TestContext) => {
+    context.assert.throws(() => NullReferenceException.throwIfNullOrEmpty(null), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrEmpty(undefined), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrEmpty(StringExtensions.empty), NullReferenceException);
+});
+
+test('NullReferenceException: throwIfNullOrEmpty - does not throw on valid string', (context: TestContext) => {
+    context.assert.doesNotThrow(() => NullReferenceException.throwIfNullOrEmpty('contextjs'));
+});
+
+test('NullReferenceException: throwIfNullOrWhiteSpace - throws NullReferenceException', (context: TestContext) => {
+    context.assert.throws(() => NullReferenceException.throwIfNullOrWhitespace(null), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrWhitespace(undefined), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrWhitespace(StringExtensions.empty), NullReferenceException);
+    context.assert.throws(() => NullReferenceException.throwIfNullOrWhitespace(' '), NullReferenceException);
+});
+
+test('NullReferenceException: throwIfNullOrWhiteSpace - does not throw on non-empty string', (context: TestContext) => {
+    context.assert.doesNotThrow(() => NullReferenceException.throwIfNullOrWhitespace('contextjs'));
 });

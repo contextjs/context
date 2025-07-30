@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/system";
+import { Application, NullReferenceException } from "@contextjs/system";
 import { WebServerOptions } from "../options/webserver-options.js";
 import { WebServer } from "../webserver.js";
 
@@ -18,7 +18,7 @@ declare module "@contextjs/system" {
 }
 
 Application.prototype.useWebServer = function (options: (webserverOptions: WebServerOptions) => void): Application {
-    Throw.ifNullOrUndefined(options);
+    NullReferenceException.throwIfNullOrUndefined(options);
 
     let webServerOptions = new WebServerOptions();
     const webServer = new WebServer(webServerOptions);

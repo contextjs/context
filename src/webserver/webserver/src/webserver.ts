@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/system";
+import { Application, NullReferenceException } from "@contextjs/system";
 import { IMiddleware } from "./interfaces/i-middleware.js";
 import { WebServerOptions } from "./options/webserver-options.js";
 import { HttpServer } from "./services/http-server.js";
@@ -32,7 +32,7 @@ export class WebServer {
     }
 
     public useMiddleware(middleware: IMiddleware): this {
-        Throw.ifNullOrUndefined(middleware);
+        NullReferenceException.throwIfNullOrUndefined(middleware);
 
         this.middleware.push(middleware);
         return this;

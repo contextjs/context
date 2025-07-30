@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import { mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
 import path from "node:path";
 import { DirectoryExistsException } from "../exceptions/directory-exists.exception.js";
@@ -15,7 +15,7 @@ import { Path } from "./path.js";
 
 export class Directory {
     public static create(directory: string): boolean {
-        Throw.ifNullOrWhitespace(directory);
+        NullReferenceException.throwIfNullOrWhitespace(directory);
 
         if (Path.exists(directory))
             return false;
@@ -25,8 +25,8 @@ export class Directory {
     }
 
     public static rename(oldDirectory: string, newDirectory: string): boolean {
-        Throw.ifNullOrWhitespace(oldDirectory);
-        Throw.ifNullOrWhitespace(newDirectory);
+        NullReferenceException.throwIfNullOrWhitespace(oldDirectory);
+        NullReferenceException.throwIfNullOrWhitespace(newDirectory);
 
         if (!Directory.exists(oldDirectory))
             throw new PathNotFoundException(oldDirectory);
@@ -39,7 +39,7 @@ export class Directory {
     }
 
     public static delete(directory: string): boolean {
-        Throw.ifNullOrWhitespace(directory);
+        NullReferenceException.throwIfNullOrWhitespace(directory);
 
         if (!Path.exists(directory))
             return true;
@@ -49,7 +49,8 @@ export class Directory {
     }
 
     public static exists(directory: string): boolean {
-        Throw.ifNullOrWhitespace(directory);
+        NullReferenceException.throwIfNullOrWhitespace(directory);
+        
         return Path.isDirectory(directory);
     }
 

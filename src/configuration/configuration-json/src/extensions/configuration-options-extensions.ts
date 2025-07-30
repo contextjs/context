@@ -7,7 +7,7 @@
  */
 
 import { ConfigurationOptions } from "@contextjs/configuration";
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import { JsonConfigurationOptions } from "../json-configuration-options.js";
 import { JsonConfigurationProvider } from "../json-configuration.provider.js";
 
@@ -18,7 +18,7 @@ declare module "@contextjs/configuration" {
 }
 
 ConfigurationOptions.prototype.useJsonConfiguration = function (options: (configurationOptions: JsonConfigurationOptions) => void): ConfigurationOptions {
-    Throw.ifNullOrUndefined(options);
+    NullReferenceException.throwIfNullOrUndefined(options);
 
     const jsonConfigurationProvider = new JsonConfigurationProvider(this.configuration.application.environment);
     this.configuration.providers.push(jsonConfigurationProvider);

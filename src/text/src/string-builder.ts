@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { ArgumentOutOfRangeException, StringExtensions, Throw } from "@contextjs/system";
+import { ArgumentOutOfRangeException, StringExtensions, NullReferenceException } from "@contextjs/system";
 
 export class StringBuilder {
     protected _segments: string[] = [];
@@ -35,7 +35,7 @@ export class StringBuilder {
     }
 
     public appendFormat(format: string, ...args: any[]): this {
-        Throw.ifNullOrWhitespace(format);
+        NullReferenceException.throwIfNullOrWhitespace(format);
 
         const formatted = StringExtensions.format(format, ...args);
         this._segments.push(formatted);

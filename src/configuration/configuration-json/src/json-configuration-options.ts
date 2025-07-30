@@ -6,12 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import { JsonConfigurationProvider } from "./json-configuration.provider.js";
 
 export class JsonConfigurationOptions {
     public constructor(private readonly provider: JsonConfigurationProvider) {
-        Throw.ifNullOrUndefined(provider);
+        NullReferenceException.throwIfNullOrUndefined(provider);
     }
 
     public useFile(file: string, environmentName: string | null = null): JsonConfigurationOptions {

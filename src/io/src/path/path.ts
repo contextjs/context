@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Throw } from "@contextjs/system";
+import { NullReferenceException } from "@contextjs/system";
 import fs from "node:fs";
 import * as nodePath from 'node:path';
 import { PathNotFoundException } from "../exceptions/path-not-found.exception.js";
@@ -25,7 +25,7 @@ export class Path {
     }
 
     public static normalize(path: string): string {
-        Throw.ifNullOrWhitespace(path);
+        NullReferenceException.throwIfNullOrWhitespace(path);
 
         return nodePath.normalize(path).replace(/^(\.\.[\/\\])+/, '');
     }
@@ -35,7 +35,7 @@ export class Path {
     }
 
     public static listDirectories(directory: string): string[] {
-        Throw.ifNullOrWhitespace(directory);
+        NullReferenceException.throwIfNullOrWhitespace(directory);
         if (!Path.isDirectory(directory))
             throw new PathNotFoundException(`The directory "${directory}" does not exist or is not a directory.`);
 
@@ -45,7 +45,7 @@ export class Path {
     }
 
     public static resolve(...paths: string[]): string {
-        paths.forEach(Throw.ifNullOrWhitespace);
+        paths.forEach(NullReferenceException.throwIfNullOrWhitespace);
 
         return nodePath.resolve(...paths);
     }

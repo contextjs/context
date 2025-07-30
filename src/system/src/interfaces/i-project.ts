@@ -6,10 +6,10 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-export interface IProject {
-    name: string;
-    type: string;
-    main: string;
-    files: string[];
-    extensions?: string[];
-}
+// export interface IProject {
+//     name: string;
+//     type: string;
+//     main: string;
+//     files: string[];
+//     extensions?: string[];
+// }

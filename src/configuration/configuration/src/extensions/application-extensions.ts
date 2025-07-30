@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, Throw } from "@contextjs/system";
+import { Application, NullReferenceException } from "@contextjs/system";
 import { ConfigurationOptions } from "../configuration-options.js";
 import { Configuration } from "../configuration.js";
 
@@ -18,7 +18,7 @@ declare module "@contextjs/system" {
 }
 
 Application.prototype.useConfiguration = function (options: (configurationOptions: ConfigurationOptions) => void): Application {
-    Throw.ifNullOrUndefined(options);
+    NullReferenceException.throwIfNullOrUndefined(options);
 
     this.configuration = new Configuration(this);
     options(new ConfigurationOptions(this.configuration));

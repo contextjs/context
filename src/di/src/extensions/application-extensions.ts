@@ -6,7 +6,7 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Application, ObjectExtensions, Throw } from "@contextjs/system";
+import { Application, ObjectExtensions } from "@contextjs/system";
 import { ServiceCollection } from "../service-collection.js";
 import { DependencyInjectionOptions } from "./dependency-injection-options.js";
 
