@@ -11,6 +11,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test, { TestContext, after } from 'node:test';
+import { UnsupportedPathOperationException } from "../../src/exceptions/unsupported-path-operation.exception.js";
+import { DirectoryPathOperation } from "../../src/models/directory-path-operation.js";
+import { PathOperationType } from "../../src/models/path-operation-type.js";
 import { Directory } from '../../src/path/directory.ts';
 
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'contextjs-directory-'));
@@ -301,6 +304,157 @@ test('Directory: listFilesAsync - throws if not directory', async (context: Test
     fs.writeFileSync(file, 'hi');
 
     await context.assert.rejects(() => Directory.listFilesAsync(file));
-    
+
     fs.unlinkSync(file);
+});
+
+test('Directory: copy - copies directory recursively', (context: TestContext) => {
+    const src = path.join(base, 'copy-src');
+    const dest = path.join(base, 'copy-dest');
+    Directory.create(src);
+    fs.writeFileSync(path.join(src, 'file1.txt'), 'a');
+    fs.mkdirSync(path.join(src, 'subdir'));
+    fs.writeFileSync(path.join(src, 'subdir', 'file2.txt'), 'b');
+
+    context.assert.strictEqual(Directory.copy(src, dest), true);
+
+    context.assert.strictEqual(fs.existsSync(dest), true);
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'file1.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'file1.txt'), 'utf8'), 'a');
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'subdir', 'file2.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'subdir', 'file2.txt'), 'utf8'), 'b');
+});
+
+test('Directory: copy - throws if source does not exist', (context: TestContext) => {
+    const src = path.join(base, 'copy-no-src');
+    const dest = path.join(base, 'copy-dest-no-src');
+
+    context.assert.throws(() => Directory.copy(src, dest));
+});
+
+test('Directory: copyAsync - copies directory recursively', async (context: TestContext) => {
+    const src = path.join(base, 'copy-async-src');
+    const dest = path.join(base, 'copy-async-dest');
+    Directory.create(src);
+    fs.writeFileSync(path.join(src, 'fileA.txt'), 'asyncA');
+    fs.mkdirSync(path.join(src, 'nest'));
+    fs.writeFileSync(path.join(src, 'nest', 'fileB.txt'), 'asyncB');
+
+    context.assert.strictEqual(await Directory.copyAsync(src, dest), true);
+    context.assert.strictEqual(fs.existsSync(dest), true);
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'fileA.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'fileA.txt'), 'utf8'), 'asyncA');
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'nest', 'fileB.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'nest', 'fileB.txt'), 'utf8'), 'asyncB');
+});
+
+test('Directory: copyAsync - throws if source does not exist', async (context: TestContext) => {
+    const src = path.join(base, 'copy-async-missing-src');
+    const dest = path.join(base, 'copy-async-missing-dest');
+
+    await context.assert.rejects(() => Directory.copyAsync(src, dest));
+});
+
+test('Directory: processOperation - performs copy operation', (context: TestContext) => {
+    const src = path.join(base, 'proc-op-src');
+    const dest = path.join(base, 'proc-op-dest');
+    Directory.create(src);
+    fs.writeFileSync(path.join(src, 'a.txt'), 'proc');
+    const op = new DirectoryPathOperation(src, dest, PathOperationType.Copy);
+
+    context.assert.strictEqual(Directory.processOperation(op), true);
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'a.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'a.txt'), 'utf8'), 'proc');
+});
+
+test('Directory: processOperation - performs move operation', (context: TestContext) => {
+    const src = path.join(base, 'proc-op-move-src');
+    const dest = path.join(base, 'proc-op-move-dest');
+    Directory.create(src);
+    const op = new DirectoryPathOperation(src, dest, PathOperationType.Move);
+
+    context.assert.strictEqual(Directory.processOperation(op), true);
+    context.assert.strictEqual(fs.existsSync(dest), true);
+    context.assert.strictEqual(fs.existsSync(src), false);
+});
+
+test('Directory: processOperation - throws on unsupported operation', (context: TestContext) => {
+    const op = new DirectoryPathOperation('src', 'dest', "link" as PathOperationType);
+
+    context.assert.throws(() => Directory.processOperation(op), UnsupportedPathOperationException);
+});
+
+test('Directory: processOperationAsync - performs copy operation', async (context: TestContext) => {
+    const src = path.join(base, 'proc-op-async-src');
+    const dest = path.join(base, 'proc-op-async-dest');
+    Directory.create(src);
+    fs.writeFileSync(path.join(src, 'a.txt'), 'proc-async');
+    const op = new DirectoryPathOperation(src, dest, PathOperationType.Copy);
+
+    context.assert.strictEqual(await Directory.processOperationAsync(op), true);
+    context.assert.strictEqual(fs.existsSync(path.join(dest, 'a.txt')), true);
+    context.assert.strictEqual(fs.readFileSync(path.join(dest, 'a.txt'), 'utf8'), 'proc-async');
+});
+
+test('Directory: processOperationAsync - throws on unsupported operation', async (context: TestContext) => {
+    const op = new DirectoryPathOperation('src', 'dest', "symlink" as PathOperationType);
+    await context.assert.rejects(() => Directory.processOperationAsync(op), UnsupportedPathOperationException);
+});
+
+test('Directory: processOperations - processes multiple operations', (context: TestContext) => {
+    const src1 = path.join(base, 'proc-batch-src1');
+    const dest1 = path.join(base, 'proc-batch-dest1');
+    const src2 = path.join(base, 'proc-batch-src2');
+    const dest2 = path.join(base, 'proc-batch-dest2');
+    Directory.create(src1);
+    Directory.create(src2);
+
+    const op1 = new DirectoryPathOperation(src1, dest1, PathOperationType.Move);
+    const op2 = new DirectoryPathOperation(src2, dest2, PathOperationType.Move);
+
+    Directory.processOperations([op1, op2]);
+
+    context.assert.strictEqual(fs.existsSync(dest1), true);
+    context.assert.strictEqual(fs.existsSync(dest2), true);
+    context.assert.strictEqual(fs.existsSync(src1), false);
+    context.assert.strictEqual(fs.existsSync(src2), false);
+});
+
+test('Directory: processOperations - throws NullReferenceException if not array', (context: TestContext) => {
+    context.assert.throws(() => Directory.processOperations(undefined as any));
+    context.assert.throws(() => Directory.processOperations(null as any));
+    context.assert.throws(() => Directory.processOperations("not-an-array" as any));
+});
+
+test('Directory: processOperations - does nothing with empty array', (context: TestContext) => {
+    context.assert.doesNotThrow(() => Directory.processOperations([]));
+});
+
+test('Directory: processOperationsAsync - processes multiple operations', async (context: TestContext) => {
+    const src1 = path.join(base, 'proc-batch-async-src1');
+    const dest1 = path.join(base, 'proc-batch-async-dest1');
+    const src2 = path.join(base, 'proc-batch-async-src2');
+    const dest2 = path.join(base, 'proc-batch-async-dest2');
+    Directory.create(src1);
+    Directory.create(src2);
+
+    const op1 = new DirectoryPathOperation(src1, dest1, PathOperationType.Move);
+    const op2 = new DirectoryPathOperation(src2, dest2, PathOperationType.Move);
+
+    await Directory.processOperationsAsync([op1, op2]);
+
+    context.assert.strictEqual(fs.existsSync(dest1), true);
+    context.assert.strictEqual(fs.existsSync(dest2), true);
+    context.assert.strictEqual(fs.existsSync(src1), false);
+    context.assert.strictEqual(fs.existsSync(src2), false);
+});
+
+test('Directory: processOperationsAsync - throws NullReferenceException if not array', async (context: TestContext) => {
+    await context.assert.rejects(() => Directory.processOperationsAsync(undefined as any));
+    await context.assert.rejects(() => Directory.processOperationsAsync(null as any));
+    await context.assert.rejects(() => Directory.processOperationsAsync("not-an-array" as any));
+});
+
+test('Directory: processOperationsAsync - does nothing with empty array', async (context: TestContext) => {
+    await context.assert.doesNotReject(() => Directory.processOperationsAsync([]));
 });

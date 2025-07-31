@@ -7,10 +7,13 @@
  */
 
 import { NullReferenceException } from "@contextjs/system";
-import { mkdirSync, readdirSync, renameSync, rmSync, statSync, promises as fsp } from "node:fs";
+import { cpSync, promises as fsp, mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
 import path from "node:path";
 import { DirectoryExistsException } from "../exceptions/directory-exists.exception.js";
 import { PathNotFoundException } from "../exceptions/path-not-found.exception.js";
+import { UnsupportedPathOperationException } from "../exceptions/unsupported-path-operation.exception.js";
+import { DirectoryPathOperation } from "../models/directory-path-operation.js";
+import { PathOperationType } from "../models/path-operation-type.js";
 import { Path } from "./path.js";
 
 export class Directory {
@@ -146,5 +149,73 @@ export class Directory {
         }
 
         return result;
+    }
+
+    public static copy(source: string, destination: string, overwrite: boolean = true): boolean {
+        NullReferenceException.throwIfNullOrWhitespace(source);
+        NullReferenceException.throwIfNullOrWhitespace(destination);
+
+        if (!Directory.exists(source))
+            throw new PathNotFoundException(source);
+
+        cpSync(source, destination, { recursive: true, force: overwrite });
+
+        return true;
+    }
+
+    public static async copyAsync(source: string, destination: string, overwrite: boolean = true): Promise<boolean> {
+        NullReferenceException.throwIfNullOrWhitespace(source);
+        NullReferenceException.throwIfNullOrWhitespace(destination);
+
+        if (!await Directory.existsAsync(source))
+            throw new PathNotFoundException(source);
+
+        await fsp.cp(source, destination, { recursive: true, force: overwrite });
+
+        return true;
+    }
+
+    public static processOperation(entry: DirectoryPathOperation, overwrite: boolean = true): boolean {
+        switch (entry.type) {
+            case PathOperationType.Copy:
+                return Directory.copy(entry.source, entry.destination, overwrite);
+            case PathOperationType.Move:
+                return Directory.rename(entry.source, entry.destination);
+            default:
+                throw new UnsupportedPathOperationException(entry.type);
+        }
+    }
+
+    public static async processOperationAsync(entry: DirectoryPathOperation, overwrite: boolean = true): Promise<boolean> {
+        switch (entry.type) {
+            case PathOperationType.Copy:
+                return await Directory.copyAsync(entry.source, entry.destination, overwrite);
+            case PathOperationType.Move:
+                return await Directory.renameAsync(entry.source, entry.destination);
+            default:
+                throw new UnsupportedPathOperationException(entry.type);
+        }
+    }
+
+    public static processOperations(entries: DirectoryPathOperation[], overwrite: boolean = true): void {
+        if (!Array.isArray(entries))
+            throw new NullReferenceException("entries must be an array");
+
+        if (entries.length === 0)
+            return;
+
+        for (const entry of entries)
+            Directory.processOperation(entry, overwrite);
+    }
+
+    public static async processOperationsAsync(entries: DirectoryPathOperation[], overwrite: boolean = true): Promise<void> {
+        if (!Array.isArray(entries))
+            throw new NullReferenceException("entries must be an array");
+
+        if (entries.length === 0)
+            return;
+
+        for (const entry of entries)
+            await Directory.processOperationAsync(entry, overwrite);
     }
 }

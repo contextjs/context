@@ -11,6 +11,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test, { TestContext, after } from 'node:test';
+import { UnsupportedPathOperationException } from "../../src/exceptions/unsupported-path-operation.exception.js";
+import { FilePathOperation } from "../../src/models/file-path-operation.js";
+import { PathOperationType } from "../../src/models/path-operation-type.js";
 import { File } from '../../src/path/file.ts';
 
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'contextjs-file-'));
@@ -337,6 +340,124 @@ test('File: existsAsync - true for file', async (context: TestContext) => {
 
 test('File: existsAsync - false if missing', async (context: TestContext) => {
     const file = path.join(base, 'exists-async-missing.txt');
-    
+
     context.assert.strictEqual(await File.existsAsync(file), false);
+});
+
+test('File: processOperation - performs copy', (context: TestContext) => {
+    const src = path.join(base, 'proc-op-file-src.txt');
+    const dest = path.join(base, 'proc-op-file-dest.txt');
+    File.save(src, 'abc', true);
+
+    const op = new FilePathOperation(src, dest, PathOperationType.Copy);
+    context.assert.strictEqual(File.processOperation(op), true);
+    context.assert.strictEqual(File.read(dest), 'abc');
+});
+
+test('File: processOperation - performs move', (context: TestContext) => {
+    const src = path.join(base, 'proc-op-file-move-src.txt');
+    const dest = path.join(base, 'proc-op-file-move-dest.txt');
+    File.save(src, 'move!');
+    const op = new FilePathOperation(src, dest, PathOperationType.Move);
+
+    context.assert.strictEqual(File.processOperation(op), true);
+    context.assert.strictEqual(File.exists(dest), true);
+    context.assert.strictEqual(File.exists(src), false);
+    context.assert.strictEqual(File.read(dest), 'move!');
+});
+
+test('File: processOperation - throws on unsupported operation', (context: TestContext) => {
+    const op = new FilePathOperation('src.txt', 'dest.txt', "symlink" as PathOperationType);
+    
+    context.assert.throws(() => File.processOperation(op), UnsupportedPathOperationException);
+});
+
+test('File: processOperationAsync - performs copy', async (context: TestContext) => {
+    const src = path.join(base, 'proc-op-async-file-src.txt');
+    const dest = path.join(base, 'proc-op-async-file-dest.txt');
+    await File.saveAsync(src, 'async-copy');
+    const op = new FilePathOperation(src, dest, PathOperationType.Copy);
+
+    context.assert.strictEqual(await File.processOperationAsync(op), true);
+    context.assert.strictEqual(await File.readAsync(dest), 'async-copy');
+});
+
+test('File: processOperationAsync - performs move', async (context: TestContext) => {
+    const src = path.join(base, 'proc-op-async-file-move-src.txt');
+    const dest = path.join(base, 'proc-op-async-file-move-dest.txt');
+    await File.saveAsync(src, 'async-move');
+    const op = new FilePathOperation(src, dest, PathOperationType.Move);
+
+    context.assert.strictEqual(await File.processOperationAsync(op), true);
+    context.assert.strictEqual(await File.existsAsync(dest), true);
+    context.assert.strictEqual(await File.existsAsync(src), false);
+    context.assert.strictEqual(await File.readAsync(dest), 'async-move');
+});
+
+test('File: processOperationAsync - throws on unsupported operation', async (context: TestContext) => {
+    const op = new FilePathOperation('src.txt', 'dest.txt', "symlink" as PathOperationType);
+    
+    await context.assert.rejects(() => File.processOperationAsync(op), UnsupportedPathOperationException);
+});
+
+test('File: processOperations - processes multiple operations', (context: TestContext) => {
+    const src1 = path.join(base, 'batch-file-src1.txt');
+    const dest1 = path.join(base, 'batch-file-dest1.txt');
+    const src2 = path.join(base, 'batch-file-src2.txt');
+    const dest2 = path.join(base, 'batch-file-dest2.txt');
+    File.save(src1, 'batch1');
+    File.save(src2, 'batch2');
+
+    const op1 = new FilePathOperation(src1, dest1, PathOperationType.Move);
+    const op2 = new FilePathOperation(src2, dest2, PathOperationType.Move);
+
+    File.processOperations([op1, op2]);
+
+    context.assert.strictEqual(File.exists(dest1), true);
+    context.assert.strictEqual(File.exists(dest2), true);
+    context.assert.strictEqual(File.exists(src1), false);
+    context.assert.strictEqual(File.exists(src2), false);
+    context.assert.strictEqual(File.read(dest1), 'batch1');
+    context.assert.strictEqual(File.read(dest2), 'batch2');
+});
+
+test('File: processOperations - throws NullReferenceException if not array', (context: TestContext) => {
+    context.assert.throws(() => File.processOperations(undefined as any));
+    context.assert.throws(() => File.processOperations(null as any));
+    context.assert.throws(() => File.processOperations("not-an-array" as any));
+});
+
+test('File: processOperations - does nothing with empty array', (context: TestContext) => {
+    context.assert.doesNotThrow(() => File.processOperations([]));
+});
+
+test('File: processOperationsAsync - processes multiple operations', async (context: TestContext) => {
+    const src1 = path.join(base, 'batch-async-file-src1.txt');
+    const dest1 = path.join(base, 'batch-async-file-dest1.txt');
+    const src2 = path.join(base, 'batch-async-file-src2.txt');
+    const dest2 = path.join(base, 'batch-async-file-dest2.txt');
+    await File.saveAsync(src1, 'async-batch1');
+    await File.saveAsync(src2, 'async-batch2');
+
+    const op1 = new FilePathOperation(src1, dest1, PathOperationType.Move);
+    const op2 = new FilePathOperation(src2, dest2, PathOperationType.Move);
+
+    await File.processOperationsAsync([op1, op2]);
+
+    context.assert.strictEqual(await File.existsAsync(dest1), true);
+    context.assert.strictEqual(await File.existsAsync(dest2), true);
+    context.assert.strictEqual(await File.existsAsync(src1), false);
+    context.assert.strictEqual(await File.existsAsync(src2), false);
+    context.assert.strictEqual(await File.readAsync(dest1), 'async-batch1');
+    context.assert.strictEqual(await File.readAsync(dest2), 'async-batch2');
+});
+
+test('File: processOperationsAsync - throws NullReferenceException if not array', async (context: TestContext) => {
+    await context.assert.rejects(() => File.processOperationsAsync(undefined as any));
+    await context.assert.rejects(() => File.processOperationsAsync(null as any));
+    await context.assert.rejects(() => File.processOperationsAsync("not-an-array" as any));
+});
+
+test('File: processOperationsAsync - does nothing with empty array', async (context: TestContext) => {
+    await context.assert.doesNotReject(() => File.processOperationsAsync([]));
 });

@@ -6,14 +6,14 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
-import { Exception } from "@contextjs/system";
+import { SystemException } from "@contextjs/system";
 
 //#region Exceptions
 
 /**
  * Represents an exception that occurs when a file already exists.
  */
-export declare class FileExistsException extends Exception {
+export declare class FileExistsException extends SystemException {
     /**
      * Creates an instance of FileExistsException.
      * @param {string} file - The file that already exists.
@@ -24,7 +24,7 @@ export declare class FileExistsException extends Exception {
 /**
  * Represents an exception that occurs when a file is not found.
  */
-export declare class FileNotFoundException extends Exception {
+export declare class FileNotFoundException extends SystemException {
     /**
      * Creates an instance of FileNotFoundException.
      * @param {string} file - The file that was not found.
@@ -35,12 +35,93 @@ export declare class FileNotFoundException extends Exception {
 /**
  * Represents an exception that occurs when a path is not found.
  */
-export declare class PathNotFoundException extends Exception {
+export declare class PathNotFoundException extends SystemException {
     /**
      * Creates an instance of PathNotFoundException.
      * @param {string} path - The path that was not found.
      */
     public constructor(path: string);
+}
+
+/**
+ * Represents an exception that occurs when an unsupported path operation is attempted.
+ */
+export declare class UnsupportedPathOperationException extends SystemException {
+    /**
+     * Creates an instance of UnsupportedPathOperationException.
+     * @param {string} operation - The unsupported path operation.
+     */
+    public constructor(operation: string);
+}
+
+//#endregion
+
+//#region Models
+
+/**
+ * Represents a path operation that can be performed on a directory.
+ */
+export declare class DirectoryPathOperation extends PathOperation { }
+
+/**
+ * Represents a path operation that can be performed on a file.
+ */
+export declare class FilePathOperation extends PathOperation { }
+
+/**
+ * Represents a mapping between a source path and a destination path.
+ */
+export declare class PathMapping {
+
+    /**
+     * The source path.
+     */
+    public readonly source: string;
+
+    /**
+     * The destination path.
+     */
+    public readonly destination: string;
+
+    /**
+     * Creates an instance of PathMapping.
+     * @param {string} source - The source path.
+     * @param {string} destination - The destination path.
+     */
+    public constructor(source: string, destination: string);
+}
+
+/**
+ * Represents the type of operation to perform on a path.
+ */
+export declare enum PathOperationType {
+    /**
+     * Copy the path.
+     */
+    Copy = "copy",
+
+    /**
+     * Move the path.
+     */
+    Move = "move"
+}
+
+/**
+ * Represents a path operation that can be performed on a path.
+ */
+export declare class PathOperation extends PathMapping {
+    /**
+     * The type of operation to perform.
+     */
+    public readonly type: PathOperationType;
+
+    /**
+     * Creates an instance of PathOperation.
+     * @param {string} source - The source path.
+     * @param {string} destination - The destination path.
+     * @param {PathOperationType} type - The type of operation to perform.
+     */
+    public constructor(source: string, destination: string, type: PathOperationType);
 }
 
 //#endregion
@@ -164,6 +245,120 @@ export declare class Directory {
      * @throws {PathNotFoundException} When the directory does not exist or is not a directory.
      */
     public static listFilesAsync(directory: string, recursive?: boolean): Promise<string[]>;
+
+    /**
+     * Copies a directory to a new location, Overwrite is true by default.
+     * @param source The source directory path.
+     * @param destination The destination directory path.
+     * @returns true if the directory was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or destination string is null or contains only empty spaces.
+     * @throws {PathNotFoundException} When the source directory does not exist.
+     * @throws {DirectoryExistsException} When the destination directory already exists.
+     */
+    public static copy(source: string, destination: string): boolean;
+
+    /**
+     * Copies a directory to a new location.
+     * @param source The source directory path.
+     * @param destination The destination directory path.
+     * @param overwrite true to overwrite the destination directory; otherwise, false.
+     * @returns true if the directory was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or destination string is null or contains only empty spaces.
+     * @throws {PathNotFoundException} When the source directory does not exist.
+     * @throws {DirectoryExistsException} When the destination directory already exists and overwrite is false.
+     */
+    public static copy(source: string, destination: string, overwrite: boolean): boolean;
+
+    /**
+     * Asynchronously copies a directory to a new location. Overwrite is true by default.
+     * @param source The source directory path.
+     * @param destination The destination directory path.
+     * @returns Promise resolving to true if the directory was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or destination string is null or contains only empty spaces.
+     * @throws {PathNotFoundException} When the source directory does not exist.
+     * @throws {DirectoryExistsException} When the destination directory already exists and overwrite is false.
+     */
+    public static copyAsync(source: string, destination: string): Promise<boolean>;
+
+    /**
+     * Asynchronously copies a directory to a new location.
+     * @param source The source directory path.
+     * @param destination The destination directory path.
+     * @param overwrite true to overwrite the destination directory; otherwise, false.
+     * @returns Promise resolving to true if the directory was copied; otherwise, false.
+     * @throws {NullReferenceException} When the source or destination string is null or contains only empty spaces.
+     * @throws {PathNotFoundException} When the source directory does not exist.
+     * @throws {DirectoryExistsException} When the destination directory already exists and overwrite is false.
+     */
+    public static copyAsync(source: string, destination: string, overwrite: boolean): Promise<boolean>;
+
+    /**
+     * Processes a directory path operation. Overwrite is true by default.
+     * @param entry The directory path operation to process.
+     * @returns true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperation(entry: DirectoryPathOperation): boolean;
+
+    /**
+     * Processes a directory path operation.
+     * @param entry The directory path operation to process.
+     * @param overwrite true to overwrite existing files/directories; otherwise, false.
+     * @returns true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperation(entry: DirectoryPathOperation, overwrite: boolean): boolean;
+
+    /**
+     * Asynchronously processes a directory path operation. Overwrite is true by default.
+     * @param entry The directory path operation to process.
+     * @returns Promise resolving to true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperationAsync(entry: DirectoryPathOperation): Promise<boolean>;
+
+    /**
+     * Asynchronously processes a directory path operation.
+     * @param entry The directory path operation to process.
+     * @param overwrite true to overwrite existing files/directories; otherwise, false.
+     * @returns Promise resolving to true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperationAsync(entry: DirectoryPathOperation, overwrite: boolean): Promise<boolean>;
+
+    /**
+     * Processes a batch of directory path operations. Overwrite is true by default.
+     * @param entries The directory path operations to process.
+     * @returns Promise resolving to true if all operations were successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperations(entries: DirectoryPathOperation[]): void;
+
+    /**
+     * Processes a batch of directory path operations.
+     * @param entries The directory path operations to process.
+     * @param overwrite true to overwrite existing files/directories; otherwise, false.
+     * @returns void
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperations(entries: DirectoryPathOperation[], overwrite: boolean): void;
+
+    /**
+     * Asynchronously processes a batch of directory path operations. Overwrite is true by default.
+     * @param entries The directory path operations to process.
+     * @returns Promise resolving to true if all operations were successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperationsAsync(entries: DirectoryPathOperation[]): Promise<void>;
+
+    /**
+     * Asynchronously processes a batch of directory path operations.
+     * @param entries The directory path operations to process.
+     * @param overwrite true to overwrite existing files/directories; otherwise, false.
+     * @returns Promise resolving to true if all operations were successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperationsAsync(entries: DirectoryPathOperation[], overwrite: boolean): Promise<void>;
 }
 
 /**
@@ -339,6 +534,74 @@ export declare class File {
      * @throws {NullReferenceException} When the file string is null or contains only empty spaces.
      */
     public static getExtension(file: string): string | null;
+
+    /**
+     * Processes a file path operation. Overwrite is true by default.
+     * @param entry The file path operation to process.
+     * @returns true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperation(entry: FilePathOperation): boolean;
+
+    /**
+     * Processes a file path operation.
+     * @param entry The file path operation to process.
+     * @param overwrite true to overwrite existing files; otherwise, false.
+     * @returns true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperation(entry: FilePathOperation, overwrite: boolean): boolean;
+
+    /**
+     * Asynchronously processes a file path operation. Overwrite is true by default.
+     * @param entry The file path operation to process.
+     * @returns Promise resolving to true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperationAsync(entry: FilePathOperation): Promise<boolean>;
+
+    /**
+     * Asynchronously processes a file path operation.
+     * @param entry The file path operation to process.
+     * @param overwrite true to overwrite existing files; otherwise, false.
+     * @returns Promise resolving to true if the operation was successful; otherwise, false.
+     * @throws {UnsupportedPathOperationException} When the operation type is not supported.
+     */
+    public static processOperationAsync(entry: FilePathOperation, overwrite: boolean): Promise<boolean>;
+
+    /**
+     * Processes a batch of file path operations. Overwrite is true by default.
+     * @param entries The file path operations to process.
+     * @returns void
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperations(entries: FilePathOperation[]): void;
+
+    /**
+     * Processes a batch of file path operations.
+     * @param entries The file path operations to process.
+     * @param overwrite true to overwrite existing files; otherwise, false.
+     * @returns void
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperations(entries: FilePathOperation[], overwrite: boolean): void;
+
+    /**
+     * Asynchronously processes a batch of file path operations. Overwrite is true by default.
+     * @param entries The file path operations to process.
+     * @returns Promise resolving to void
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperationsAsync(entries: FilePathOperation[]): Promise<void>;
+
+    /**
+     * Asynchronously processes a batch of file path operations.
+     * @param entries The file path operations to process.
+     * @param overwrite true to overwrite existing files; otherwise, false.
+     * @returns Promise resolving to void
+     * @throws {UnsupportedPathOperationException} When any operation type is not supported.
+     */
+    public static processOperationsAsync(entries: FilePathOperation[], overwrite: boolean): Promise<void>;
 }
 
 /**

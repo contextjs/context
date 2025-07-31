@@ -11,6 +11,9 @@ import { copyFileSync, promises as fsp, readFileSync, renameSync, rmSync, writeF
 import * as path from "node:path";
 import { FileExistsException } from "../exceptions/file-exists.exception.js";
 import { FileNotFoundException } from "../exceptions/file-not-found.exception.js";
+import { UnsupportedPathOperationException } from "../exceptions/unsupported-path-operation.exception.js";
+import { FilePathOperation } from "../models/file-path-operation.js";
+import { PathOperationType } from "../models/path-operation-type.js";
 import { Directory } from "./directory.js";
 import { Path } from "./path.js";
 
@@ -174,7 +177,51 @@ export class File {
     public static getExtension(file: string): string | null {
         NullReferenceException.throwIfNullOrWhitespace(file);
         const normalizedPath = Path.normalize(file);
-        
+
         return path.extname(normalizedPath).slice(1).toLowerCase();
+    }
+
+    public static processOperation(entry: FilePathOperation, overwrite: boolean = false): boolean {
+        switch (entry.type) {
+            case PathOperationType.Copy:
+                return File.copy(entry.source, entry.destination, overwrite);
+            case PathOperationType.Move:
+                return File.rename(entry.source, entry.destination);
+            default:
+                throw new UnsupportedPathOperationException(entry.type);
+        }
+    }
+
+    public static async processOperationAsync(entry: FilePathOperation, overwrite: boolean = false): Promise<boolean> {
+        switch (entry.type) {
+            case PathOperationType.Copy:
+                return await File.copyAsync(entry.source, entry.destination, overwrite);
+            case PathOperationType.Move:
+                return await File.renameAsync(entry.source, entry.destination);
+            default:
+                throw new UnsupportedPathOperationException(entry.type);
+        }
+    }
+
+    public static processOperations(entries: FilePathOperation[], overwrite: boolean = false): void {
+        if (!Array.isArray(entries))
+            throw new NullReferenceException("entries must be an array");
+
+        if (entries.length === 0)
+            return;
+
+        for (const entry of entries)
+            File.processOperation(entry, overwrite);
+    }
+
+    public static async processOperationsAsync(entries: FilePathOperation[], overwrite: boolean = false): Promise<void> {
+        if (!Array.isArray(entries))
+            throw new NullReferenceException("entries must be an array");
+
+        if (entries.length === 0)
+            return;
+
+        for (const entry of entries)
+            await File.processOperationAsync(entry, overwrite);
     }
 }
