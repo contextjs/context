@@ -6,12 +6,12 @@
  * found at https://github.com/contextjs/context/blob/main/LICENSE
  */
 
+import { NullReferenceException } from '@contextjs/system';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test, { after, TestContext } from 'node:test';
 import { Directory, Path } from '../../src/api';
-import { NullReferenceException } from '@contextjs/system';
 
 const base = fs.mkdtempSync(path.join(os.tmpdir(), 'contextjs-io-path-'));
 
@@ -99,7 +99,7 @@ test('Path: normalize - handles mixed "." and ".." segments', (context: TestCont
 
 test('Path: normalize - preserves absolute paths', (context: TestContext) => {
     const input = '/var//log/../tmp/';
-    const expected = path.normalize(input); 
+    const expected = path.normalize(input);
 
     context.assert.strictEqual(Path.normalize(input), expected);
 });
@@ -182,4 +182,98 @@ test('Path: listDirectories - throws if missing', (context: TestContext) => {
 test('Path: listDirectories - throws on empty/whitespace', (context: TestContext) => {
     context.assert.throws(() => Path.listDirectories(''), NullReferenceException);
     context.assert.throws(() => Path.listDirectories('   '), NullReferenceException);
+});
+
+test('Path: existsAsync - success', async (context: TestContext) => {
+    const dir = path.join(base, 'exists-async-success');
+    Directory.create(dir);
+
+    context.assert.strictEqual(await Path.existsAsync(dir), true);
+
+    Directory.delete(dir);
+});
+
+test('Path: existsAsync - failure', async (context: TestContext) => {
+    const dir = path.join(base, 'exists-async-failure');
+
+    context.assert.strictEqual(await Path.existsAsync(dir), false);
+});
+
+test('Path: isDirectoryAsync - success', async (context: TestContext) => {
+    const dir = path.join(base, 'is-dir-async-success');
+    Directory.create(dir);
+
+    context.assert.strictEqual(await Path.isDirectoryAsync(dir), true);
+
+    Directory.delete(dir);
+});
+
+test('Path: isDirectoryAsync - failure', async (context: TestContext) => {
+    const dir = path.join(base, 'is-dir-async-failure');
+
+    context.assert.strictEqual(await Path.isDirectoryAsync(dir), false);
+});
+
+test('Path: isFileAsync - success', async (context: TestContext) => {
+    const file = path.join(base, 'file-async.txt');
+    fs.writeFileSync(file, 'hello world');
+
+    context.assert.strictEqual(await Path.isFileAsync(file), true);
+
+    fs.unlinkSync(file);
+});
+
+test('Path: isFileAsync - false when directory', async (context: TestContext) => {
+    const dir = path.join(base, 'not-a-file-async');
+    Directory.create(dir);
+
+    context.assert.strictEqual(await Path.isFileAsync(dir), false);
+
+    Directory.delete(dir);
+});
+
+test('Path: isFileAsync - false when not found', async (context: TestContext) => {
+    const missing = path.join(base, 'missing-async.txt');
+
+    context.assert.strictEqual(await Path.isFileAsync(missing), false);
+});
+
+test('Path: listDirectoriesAsync - success', async (context: TestContext) => {
+    const root = path.join(base, 'list-dirs-async-root');
+    const dirA = path.join(root, 'A');
+    const dirB = path.join(root, 'B');
+    const file = path.join(root, 'file.txt');
+    Directory.create(root);
+    Directory.create(dirA);
+    Directory.create(dirB);
+    fs.writeFileSync(file, 'hello');
+
+    const dirs = await Path.listDirectoriesAsync(root);
+
+    context.assert.deepEqual(dirs.sort(), ['A', 'B']);
+
+    fs.unlinkSync(file);
+    Directory.delete(dirA);
+    Directory.delete(dirB);
+    Directory.delete(root);
+});
+
+test('Path: listDirectoriesAsync - throws if not directory', async (context: TestContext) => {
+    const file = path.join(base, 'not-a-dir-async.txt');
+    fs.writeFileSync(file, 'hi');
+
+    await context.assert.rejects(() => Path.listDirectoriesAsync(file), /not a directory/);
+
+    fs.unlinkSync(file);
+});
+
+test('Path: listDirectoriesAsync - throws if missing', async (context: TestContext) => {
+    const missing = path.join(base, 'missing-async-folder');
+
+    await context.assert.rejects(() => Path.listDirectoriesAsync(missing), /does not exist/);
+});
+
+test('Path: listDirectoriesAsync - throws on empty/whitespace', async (context: TestContext) => {
+    await context.assert.rejects(() => Path.listDirectoriesAsync(''), NullReferenceException);
+    await context.assert.rejects(() => Path.listDirectoriesAsync('   '), NullReferenceException);
 });

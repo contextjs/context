@@ -13,20 +13,65 @@ import { PathNotFoundException } from "../exceptions/path-not-found.exception.js
 
 export class Path {
     public static exists(path: string): boolean {
-        return fs.existsSync(path);
+        try {
+            fs.accessSync(path);
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
+
+    public static async existsAsync(path: string): Promise<boolean> {
+        try {
+            await fs.promises.access(path);
+            return true;
+        }
+        catch {
+            return false;
+        }
     }
 
     public static isDirectory(path: string): boolean {
-        return Path.exists(path) && fs.statSync(path).isDirectory();
+        try {
+            return fs.statSync(path).isDirectory();
+        }
+        catch {
+            return false;
+        }
+    }
+
+    public static async isDirectoryAsync(path: string): Promise<boolean> {
+        try {
+            const stats = await fs.promises.stat(path);
+            return stats.isDirectory();
+        }
+        catch {
+            return false;
+        }
     }
 
     public static isFile(path: string): boolean {
-        return Path.exists(path) && fs.statSync(path).isFile();
+        try {
+            return fs.statSync(path).isFile();
+        }
+        catch {
+            return false;
+        }
+    }
+
+    public static async isFileAsync(path: string): Promise<boolean> {
+        try {
+            const stats = await fs.promises.stat(path);
+            return stats.isFile();
+        }
+        catch {
+            return false;
+        }
     }
 
     public static normalize(path: string): string {
         NullReferenceException.throwIfNullOrWhitespace(path);
-
         return nodePath.normalize(path).replace(/^(\.\.[\/\\])+/, '');
     }
 
@@ -44,9 +89,17 @@ export class Path {
             .map(dirent => dirent.name);
     }
 
+    public static async listDirectoriesAsync(directory: string): Promise<string[]> {
+        NullReferenceException.throwIfNullOrWhitespace(directory);
+        if (!await Path.isDirectoryAsync(directory))
+            throw new PathNotFoundException(`The directory "${directory}" does not exist or is not a directory.`);
+
+        const dirents = await fs.promises.readdir(directory, { withFileTypes: true });
+        return dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+    }
+
     public static resolve(...paths: string[]): string {
         paths.forEach(NullReferenceException.throwIfNullOrWhitespace);
-
         return nodePath.resolve(...paths);
     }
 }
