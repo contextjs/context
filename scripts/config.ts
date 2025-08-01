@@ -36,6 +36,7 @@ export default class Config {
         { name: "configuration-json", path: "configuration/configuration-json" },
         { name: "routing", path: "routing" },
         { name: "di", path: "di" },
+        { name: "sdk", path: "sdk" },
         { name: "compiler", path: "compiler" },
         { name: "views", path: "views/views" },
         { name: "views-runtime", path: "views/views-runtime" },
